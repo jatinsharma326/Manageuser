@@ -84,7 +84,6 @@ export default new Vuex.Store({
 		// Super Admin
 		typeTenLogin: (state, data) => {
 			state.authToken = data.token ? data.token : true;
-			state.isVerified = data.dataObj.isVerified;
 			state.refreshToken = data.dataObj.refreshToken;
 			state.auth = !!data.token;
 			state.userType = state.ADMIN;
@@ -97,7 +96,6 @@ export default new Vuex.Store({
 		// Checker
 		typeTwentyLogin: (state, data) => {
 			state.authToken = data.token ? data.token : true;
-			state.isVerified = data.dataObj.isVerified;
 			state.refreshToken = data.dataObj.refreshToken;
 			state.auth = !!data.token;
 			state.userType = state.CHECKER;
@@ -110,7 +108,6 @@ export default new Vuex.Store({
 		// Maker
 		typeThirtyLogin: (state, data) => {
 			state.authToken = data.token ? data.token : true;
-			state.isVerified = data.dataObj.isVerified;
 			state.refreshToken = data.dataObj.refreshToken;
 			state.auth = !!data.token;
 			state.userType = state.MAKER;

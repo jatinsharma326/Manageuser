@@ -1,65 +1,291 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+    <v-navigation-drawer v-model="navigationToggle" color="primary" hide-overlay fixed app>
+      <div class="title-wrapper">Global Destinations</div>
+      <v-list color="primary" id="navigation-list" flat>
+        <template v-for="(navItem, index) of routeItems">
+          <v-list-item
+            :key="navItem.route + '' + index"
+            id="basic-list-item"
+            @click="openPortal(navItem)"
+            :class="{
+              'active-list-item': currentRoute == navItem.route ? true : false,
+            }"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                <span
+                  class="list-title"
+                  :class="{
+                    'selected-route':
+                      currentRoute == navItem.title ? true : false,
+                  }"
+                  >{{ navItem.title }}</span
+                >
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+      </v-list>
+    </v-navigation-drawer>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
+    <v-app-bar color="white" app fixed>
+      <v-icon color="black" @click="toggleNav">menu</v-icon>
+      <v-toolbar-title>{{title}}</v-toolbar-title>
       <v-spacer></v-spacer>
+      <span class="mr-2 body-1 font-weight-medium">
+        <!-- {{ userData.name }} -->
+        Taher is god
+      </span>
+      <v-menu transition="slide-x-transition" open-on-click bottom offset-y>
+        <template v-slot:activator="{ on }">
+          <v-icon color="secondaryFontColor" v-on="on"
+            >keyboard_arrow_down</v-icon
+          >
+        </template>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2 huzefa">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+        <v-list>
+          <v-list-item @click="logoutUser">
+            <v-list-item-title>Logout</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
-    <v-main>
-      <HelloWorld/>
-    </v-main>
+    <v-content>
+      <router-view />
+    </v-content>
+
+    <v-snackbar
+      v-model="localSnackbarState"
+      multi-line
+      top
+      right
+      :timeout="snackbarTime"
+    >
+      {{ snackbarText }}
+      <v-btn color="accent" text @click.stop="closeSnackbar">
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-snackbar>
+
+    <v-overlay :value="loaderDialog" :z-index="100">
+      <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
-
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
-  name: 'App',
+  name: "App",
 
-  components: {
-    HelloWorld,
-  },
-
+  components: {},
   data: () => ({
-    //
+    navigationToggle: false,
+    localSnackbarState: false,
+    currentRoute: "",
+    title: "TITLE",
+    routeItems: [
+      {
+        icon: "data_usage",
+        title: "Dashboard",
+        route: "/",
+        highlight: false,
+      },
+      {
+        icon: "rule_folder",
+        title: "Map Files",
+        route: "/file-extraction",
+        highlight: "#00a0ff",
+        iconColor: "#00a0ff",
+      },
+      {
+        icon: "file_copy",
+        title: "Extracted Files",
+        route: "/extracted-data",
+        highlight: false,
+      },
+      {
+        icon: "repeat",
+        title: "Rework Extracted Files",
+        route: "/reword-extracted-data",
+        highlight: "#00a0ff",
+        iconColor: "#00a0ff",
+      },
+      {
+        icon: "delete_forever",
+        title: "Rejected Files",
+        route: "/rejected-meta",
+        highlight: false,
+      },
+      {
+        icon: "loop",
+        title: "Rework Rejected Files",
+        route: "/reject-meta-two",
+        highlight: "#00a0ff",
+        iconColor: "#00a0ff",
+      },
+      {
+        icon: "list_alt",
+        title: "Stockist List",
+        route: "/stockist-mapping",
+        highlight: false,
+      },
+      {
+        icon: "search",
+        title: "Identify Stockist",
+        route: "/identify-stockist",
+        highlight: "#00a0ff",
+        iconColor: "#00a0ff",
+      },
+    ],
   }),
+  created() {
+    this.currentRoute = "Dashboard";
+  },
+  methods: {
+    ...mapActions(["logout"]),
+    ...mapMutations([
+      "openLoaderDialog",
+      "closeLoaderDialog",
+      "resetState",
+      "openSnackbar",
+      "closeSnackbar",
+    ]),
+    toggleNav() {
+      this.navigationToggle = !this.navigationToggle;
+    },
+    logoutUser() {
+      this.logout();
+      // if (this.currentRoute != "overview") this.$router.push({ path: "/" });
+      localStorage.clear();
+      this.resetState();
+      // hit the logout api here as well.
+    },
+    openPortal(item) {
+      if (item.title !== this.currentRoute) {
+        this.title = this.title.split("/")[0] + "/" + item.title;
+        this.currentRoute = item.title
+        if (item.hasOwnProperty("prop")) {
+          this.$router.push({
+            name: item.route,
+            params: {
+              propItem: item.prop,
+            },
+          });
+        } else {
+          this.$router.push({
+            path: item.route,
+          });
+        }
+      }
+    },
+  },
+  computed: {
+    ...mapGetters([
+      "loaderDialog",
+      "userData",
+      "userType",
+      "snackbarState",
+      "snackbarText",
+      "snackbarTime",
+      "ADMIN",
+      "CHECKER",
+      "MAKER",
+    ]),
+  },
+  watch: {
+    snackbarState(nv) {
+      this.localSnackbarState = nv;
+    },
+    localSnackbarState(nv) {
+      if (!nv) {
+        this.closeSnackbar();
+      }
+    },
+  },
 };
 </script>
-<style scoped lang="scss">
-.huzefa{
-  color: $error;
+<style lang="scss" scoped>
+.title-wrapper {
+  // transform: translateX(-50%);
+  text-align: center;
+  width: 100%;
+  font-size: 20px;
+  color: white;
+  padding-top: 24px;
+  padding-bottom: 54px;
+}
+
+#navigation-list {
+  // background-color: $primary;
+  .v-list-group__header {
+    font-size: 16px;
+    &:not(.v-list-item--active) {
+      .list-group-title {
+        color: white;
+      }
+    }
+
+    &.v-list-item--active {
+      background-color: $error;
+    }
+  }
+
+  .list-title {
+    color: white;
+  }
+
+  .selected-route {
+    color: $accent;
+  }
+
+  #basic-list-item {
+    .selected-route {
+      color: $accent;
+    }
+  }
+
+  .list-group-title-dot {
+    height: 12px;
+    width: 12px;
+    background-color: $accent;
+    border-radius: 50%;
+    float: right;
+  }
+}
+</style>
+
+<style lang="scss">
+#navigation-list {
+  .v-list-group
+    .v-list-group__header
+    .v-list-item__icon.v-list-group__header__append-icon {
+    margin-left: 0px;
+  }
+
+  .v-list-item__icon.v-list-group__header__append-icon {
+    .v-icon.v-icon {
+      color: white;
+    }
+  }
+
+  .v-list-group__header {
+    &.v-list-item--active {
+      background-color: $secondary;
+      border-left: 4px solid $accent;
+    }
+  }
+}
+#basic-list-item {
+  .v-list-item.v-list-item--link.active-list-item {
+    background-color: $secondary;
+    border-left: 4px solid $accent;
+  }
 }
 </style>

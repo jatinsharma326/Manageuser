@@ -7,12 +7,8 @@
 				size="64"
 			></v-progress-circular>
 		</v-overlay>
-		<app v-if="showApp"></app>
-		<auth @startSession="startSessionAuth" v-else-if="showAuth"></auth>
-		<verify-auth
-			@startSession="startSessionVerifyAuth"
-			v-else-if="showVerifyAuth"
-		></verify-auth>
+		<app v-if="showApp || true"></app>
+		<auth  @startSession="startRefreshCycle" v-else></auth>
 	</div>
 </template>
 
@@ -22,7 +18,6 @@
 	import lt from "long-timeout";
 	import App from "./App.vue";
 	import Auth from "./Auth.vue";
-	import VerifyAuth from "./VerifyAuth.vue";
 
 	import { mapGetters, mapMutations, mapActions } from "vuex";
 	export default {
@@ -33,7 +28,7 @@
 		 */
 		created() {
 			this.expiryBuffer = 60 * 1000;
-			let id = setTimeout(function() {}, 0);
+			let id = setTimeout(function() {}, 0); // This Clear all references to any previous timeouts
 			console.log("In memory timeouts", id);
 			while (id--) {
 				clearTimeout(id); // will do nothing if no timeout with id is present
@@ -64,15 +59,12 @@
 			async checkUserSession() {
 				let currentState = JSON.parse(localStorage.getItem("userState"));
 				let existingToken = localStorage.getItem("auth");
-				if (existingToken && currentState.isVerified) {
+				if (existingToken) {
 					let decodedAuthToken = jwt.decode(existingToken);
 					let decodedRefreshToken = jwt.decode(currentState.refreshToken);
 					if (this.isTokenExpired(decodedAuthToken.exp)) {
 						this.autoLoginUser();
 						this.startRefreshCycle();
-						this.getVisualConfig().then(() => {
-							this.loaderDialog = false;
-						});
 						console.log("AUTO LOGIN HAPPENED");
 					} else if (this.isTokenExpired(decodedRefreshToken.exp)) {
 						await this.extendUserSession({
@@ -80,9 +72,6 @@
 							currentState
 						});
 						this.startRefreshCycle();
-						this.getVisualConfig().then(() => {
-							this.loaderDialog = false;
-						});
 					}
 				} else {
 					this.loaderDialog = false;
@@ -141,23 +130,6 @@
 					}
 				}, interval);
 			},
-			async getVisualConfig() {
-				await this.fetchVisualConfig();
-			},
-			/*
-			 * emitted from the auth component when login happens, used to startRefreshCycle() and fetch the visual config
-			 */
-			async startSessionAuth() {
-				this.startRefreshCycle();
-				await this.getVisualConfig();
-			},
-			/*
-			 * emitted from the verifyAuth component when password is updated, used to startRefreshCycle() and fetch the visual config
-			 */
-			async startSessionVerifyAuth() {
-				this.startRefreshCycle();
-				await this.getVisualConfig();
-			}
 		},
 		destroyed() {
 			lt.clearTimeout(this.refreshTokenTimeoutRef);
@@ -166,39 +138,19 @@
 			...mapGetters([
 				"auth",
 				"authToken",
-				"isVerified",
 				"refreshToken",
 				"currentState",
-				"isVisualConfigAvailable",
 				"ADMIN",
 				"CHECKER",
 				"MAKER"
 			]),
 			showApp: function() {
-				return this.auth && this.isVerified && this.isVisualConfigAvailable;
+				return this.auth;
 			},
-			showAuth: function() {
-				if (!this.auth && !this.isVerified) {
-					return true;
-				} else if (
-					this.auth &&
-					this.isVerified &&
-					!this.isVisualConfigAvailable
-				) {
-					return true;
-				} else if (this.auth && !this.isVerified) {
-					return false;
-				}
-				return false;
-			},
-			showVerifyAuth: function() {
-				return this.auth && !this.isVerified;
-			}
 		},
 		components: {
 			App,
-			Auth,
-			VerifyAuth
+			Auth
 		}
 	};
 </script>

@@ -7,7 +7,10 @@ module.exports = {
 		types.forEach(type =>
 			addStyleResource(config.module.rule("scss").oneOf(type))
 		);
-	}
+	},
+	devServer: {
+		host: 'localhost'
+	  }
 };
 
 function addStyleResource(rule) {
