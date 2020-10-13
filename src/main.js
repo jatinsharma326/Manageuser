@@ -13,6 +13,18 @@ Vue.use(Vuelidate);
 
 Vue.config.productionTip = false
 
+router.beforeEach((to, from, next) => {
+	let userType = store.getters.userType || Number(localStorage.userType);
+	if (
+		(to.meta.policy && to.meta.policy.includes(userType)) ||
+		to.path == "/"
+	) {
+		next();
+	} else {
+		router.push({ path: "/" });
+	}
+});
+
 new Vue({
   router,
   store,
