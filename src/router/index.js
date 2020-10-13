@@ -5,9 +5,10 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
+    path: "/manage-users",
+    name: "Manage Users",
+    component: () => import("../views/manage-users"),
+    meta: { policy: [10, 20, 30, 40] }
   }
 ]
 
