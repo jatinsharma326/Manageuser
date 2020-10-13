@@ -1,6 +1,12 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="navigationToggle" color="primary" hide-overlay fixed app>
+    <v-navigation-drawer
+      v-model="navigationToggle"
+      color="primary"
+      hide-overlay
+      fixed
+      app
+    >
       <div class="title-wrapper">Global Destinations</div>
       <v-list color="primary" id="navigation-list" flat>
         <template v-for="(navItem, index) of routeItems">
@@ -31,7 +37,7 @@
 
     <v-app-bar color="white" app fixed>
       <v-icon color="black" @click="toggleNav">menu</v-icon>
-      <v-toolbar-title>{{title}}</v-toolbar-title>
+      <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <span class="mr-2 body-1 font-weight-medium">
         <!-- {{ userData.name }} -->
@@ -81,6 +87,7 @@
 
 <script>
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import helpers from "./components/helpers";
 export default {
   name: "App",
 
@@ -99,54 +106,79 @@ export default {
       },
       {
         icon: "rule_folder",
-        title: "Map Files",
-        route: "/file-extraction",
+        title: "Manage Users",
+        route: "/manage-users",
         highlight: "#00a0ff",
         iconColor: "#00a0ff",
       },
       {
         icon: "file_copy",
-        title: "Extracted Files",
+        title: "Travel Agents",
         route: "/extracted-data",
         highlight: false,
       },
       {
         icon: "repeat",
-        title: "Rework Extracted Files",
-        route: "/reword-extracted-data",
+        title: "Regions and Partners",
+        route: "/regions-and-partners",
         highlight: "#00a0ff",
         iconColor: "#00a0ff",
       },
       {
         icon: "delete_forever",
-        title: "Rejected Files",
-        route: "/rejected-meta",
+        title: "Sales Call",
+        route: "/sales-call",
         highlight: false,
       },
       {
         icon: "loop",
-        title: "Rework Rejected Files",
-        route: "/reject-meta-two",
+        title: "Daily Sales Report",
+        route: "/dsr",
         highlight: "#00a0ff",
         iconColor: "#00a0ff",
       },
       {
         icon: "list_alt",
-        title: "Stockist List",
-        route: "/stockist-mapping",
+        title: "Monthly Sales Report",
+        route: "/msr",
         highlight: false,
       },
       {
         icon: "search",
-        title: "Identify Stockist",
-        route: "/identify-stockist",
+        title: "Follow Up",
+        route: "/follow-up",
+        highlight: "#00a0ff",
+        iconColor: "#00a0ff",
+      },
+      {
+        icon: "search",
+        title: "Reports",
+        route: "/reports",
+        highlight: "#00a0ff",
+        iconColor: "#00a0ff",
+      },
+      {
+        icon: "search",
+        title: "Manage Leaves",
+        route: "/follow-up",
+        highlight: "#00a0ff",
+        iconColor: "#00a0ff",
+      },
+      {
+        icon: "search",
+        title: "Set Targets",
+        route: "/follow-up",
         highlight: "#00a0ff",
         iconColor: "#00a0ff",
       },
     ],
   }),
   created() {
-    this.currentRoute = "Dashboard";
+    this.currentRoute =
+      this.routeItems.find((e) => e.route == "/" + helpers.getCurrentRoute())
+        .title || "Dashboard";
+
+    console.log(this.currentRoute);
   },
   methods: {
     ...mapActions(["logout"]),
@@ -162,15 +194,15 @@ export default {
     },
     logoutUser() {
       this.logout();
-      // if (this.currentRoute != "overview") this.$router.push({ path: "/" });
+      if (this.currentRoute != "Dashboard") this.$router.push({ path: "/" });
       localStorage.clear();
       this.resetState();
-      // hit the logout api here as well.
+      this.$emit("userHasLoggedOut");
     },
     openPortal(item) {
       if (item.title !== this.currentRoute) {
         this.title = this.title.split("/")[0] + "/" + item.title;
-        this.currentRoute = item.title
+        this.currentRoute = item.title;
         if (item.hasOwnProperty("prop")) {
           this.$router.push({
             name: item.route,
@@ -195,8 +227,9 @@ export default {
       "snackbarText",
       "snackbarTime",
       "ADMIN",
-      "CHECKER",
-      "MAKER",
+      "MANAGEMENT",
+      "SALES_AGENT",
+      "REMOTE_SALES_AGENT",
     ]),
   },
   watch: {
