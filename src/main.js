@@ -4,7 +4,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
-import "material-design-icons-iconfont/dist/material-design-icons.css";
+// import "material-design-icons-iconfont/dist/material-design-icons.css";
 
 //Import Global SCSS
 import "./styles/main.scss";
