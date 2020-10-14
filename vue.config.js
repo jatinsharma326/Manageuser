@@ -8,9 +8,14 @@ module.exports = {
 			addStyleResource(config.module.rule("scss").oneOf(type))
 		);
 	},
-	devServer: {
-		host: 'localhost'
-	  }
+	// devServer: {
+	// 	// host: 'localhost',
+	// 	// hot: true,
+	// 	// watchOptions: {
+	// 	// 	poll: 1000,
+	// 	// 	aggregateTimeout: 300
+	// 	// }
+	//   }
 };
 
 function addStyleResource(rule) {
