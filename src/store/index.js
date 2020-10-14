@@ -4,6 +4,8 @@ import Vuex from "vuex";
 import axios from "axios";
 import constants from "@/api";
 
+import UserManagement from "../views/manage-users/store";
+
 Vue.use(Vuex);
 
 let apiErrorFunction = ({ err, commit, reject }) => {
@@ -37,7 +39,8 @@ const initialState = () => ({
   snackbarState: false,
   snackbarText: "",
   snackbarTime: 2000,
-  userType: false,
+  // userType: false,
+  userType: 10,
   authToken: "",
   refreshToken: "",
   currentState: {},
@@ -55,7 +58,12 @@ const initialState = () => ({
 });
 
 export default new Vuex.Store({
+  modules: {
+    UserManagement,
+  },
+
   state: initialState(),
+
   mutations: {
     openLoaderDialog(s) {
       s.loaderDialog = true;
@@ -136,8 +144,9 @@ export default new Vuex.Store({
       Object.keys(initial).forEach((key) => {
         state[key] = initial[key];
       });
-	}
+    },
   },
+
   actions: {
     apiCallWithHeaderConfig({ commit, state }, { partConfig, headerConfig }) {
       return new Promise((resolve, reject) => {
@@ -341,6 +350,7 @@ export default new Vuex.Store({
         });
     },
   },
+
   getters: {
     loaderDialog: (state) => state.loaderDialog,
     snackbarState: (state) => state.snackbarState,
@@ -356,6 +366,83 @@ export default new Vuex.Store({
     ADMIN: (state) => state.ADMIN,
     MANAGEMENT: (state) => state.MANAGEMENT,
     SALES_AGENT: (state) => state.SALES_AGENT,
+    REMOTE_SALES_AGENT: (state) => state.REMOTE_SALES_AGENT,
   },
-  modules: {},
 });
+
+/*
+{
+        _id: "5f817d95fbe37d1388361067",
+        record: {
+          created_on: "2020-10-10T09:23:33.491Z",
+          updated_on: "2020-10-10T11:51:04.863Z",
+          active: false,
+        },
+        credentials: {
+          username: "pocketwala.a@gmail.com",
+        },
+        type: 30,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Aliasgar Pocketwala",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "Mazgaon",
+          phone_number: ["9768835921", "9768835921"],
+          email: "pocketwala.a@gmail.com",
+          designation: "SS",
+          doj: "2020-09-30T18:30:00.000Z",
+          doe: "2020-09-30T18:30:00.000Z",
+          no_of_leaves: 26,
+          countries: ["Mexico", "Brazil"],
+          representing_partner_names: ["Taher", "Rohan"],
+        },
+      },
+      {
+        _id: "5f817d95fbe37d1388361027",
+        record: {
+          created_on: "2020-10-10T09:23:33.491Z",
+          updated_on: "2020-10-10T11:51:04.863Z",
+          active: false,
+        },
+        credentials: {
+          username: "pocketwala.a@gmail.com",
+        },
+        type: 40,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Aliasgar Pocketwala",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "Mazgaon",
+          phone_number: ["9768835921"],
+          email: "pocketwala.a@gmail.com",
+          designation: "SS",
+          doj: "2020-09-30T18:30:00.000Z",
+          doe: "2020-09-30T18:30:00.000Z",
+          zone: "EAST",
+          no_of_leaves: 26,
+        },
+      },
+      {
+        _id: "5f817d95fbe37d1388361077",
+        record: {
+          created_on: "2020-10-10T09:23:33.491Z",
+          updated_on: "2020-10-10T11:51:04.863Z",
+          active: false,
+        },
+        credentials: {
+          username: "pocketwala.a@gmail.com",
+        },
+        type: 20,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Aliasgar Pocketwala",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "Mazgaon",
+          phone_number: ["9768835921"],
+          email: "pocketwala.a@gmail.com",
+          designation: "SS",
+          doj: "2020-09-30T18:30:00.000Z",
+          doe: "2020-09-30T18:30:00.000Z",
+        },
+      },
+*/
