@@ -7,7 +7,7 @@
         size="64"
       ></v-progress-circular>
     </v-overlay>
-    <app @userHasLoggedOut="clearTimeoutAfterLogout" v-if="showApp || true"></app>
+    <app @userHasLoggedOut="clearTimeoutAfterLogout" v-if="showApp"></app>
     <auth @startSession="startRefreshCycle" v-else></auth>
   </div>
 </template>
