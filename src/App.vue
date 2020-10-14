@@ -36,14 +36,23 @@
     </v-navigation-drawer>
 
     <v-app-bar color="white" app fixed>
-      <v-icon color="black" @click="toggleNav">menu</v-icon>
+      <v-btn icon tile x-large>
+        <v-icon color="black" @click="toggleNav">menu</v-icon>
+      </v-btn>
+
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer></v-spacer>
-      <span class="mr-2 body-1 font-weight-medium">
-        <!-- {{ userData.name }} -->
+      <!-- <span class="mr-2 body-1 font-weight-medium">
         Taher is god
-      </span>
-      <v-menu transition="slide-x-transition" open-on-click bottom offset-y>
+      </span> -->
+      <v-btn x-large icon @click="settings">
+        <v-icon color="primary" large>mdi-cog</v-icon>
+      </v-btn>
+      <v-btn x-large icon @click="logoutUser">
+        <v-icon color="primary" large>mdi-logout</v-icon>
+      </v-btn>
+
+      <!-- <v-menu transition="slide-x-transition" open-on-click bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-icon color="secondaryFontColor" v-on="on"
             >keyboard_arrow_down</v-icon
@@ -55,7 +64,7 @@
             <v-list-item-title>Logout</v-list-item-title>
           </v-list-item>
         </v-list>
-      </v-menu>
+      </v-menu> -->
     </v-app-bar>
 
     <v-content>
@@ -177,8 +186,7 @@ export default {
     this.currentRoute =
       this.routeItems.find((e) => e.route == "/" + helpers.getCurrentRoute())
         .title || "Dashboard";
-
-    console.log(this.currentRoute);
+    this.title = this.title.split("/")[0] + " / " + this.currentRoute;
   },
   methods: {
     ...mapActions(["logout"]),
@@ -192,12 +200,16 @@ export default {
     toggleNav() {
       this.navigationToggle = !this.navigationToggle;
     },
+    settings() {
+      console.log("Clicked Settings Icon");
+    },
     logoutUser() {
-      this.logout();
-      if (this.currentRoute != "Dashboard") this.$router.push({ path: "/" });
-      localStorage.clear();
-      this.resetState();
-      this.$emit("userHasLoggedOut");
+      console.log("User Logged Out");
+      // this.logout();
+      // if (this.currentRoute != "Dashboard") this.$router.push({ path: "/" });
+      // localStorage.clear();
+      // this.resetState();
+      // this.$emit("userHasLoggedOut");
     },
     openPortal(item) {
       if (item.title !== this.currentRoute) {
