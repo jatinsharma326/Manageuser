@@ -37,7 +37,7 @@
 
     <v-app-bar color="white" app fixed>
       <v-btn icon tile x-large>
-        <v-icon color="black" @click="toggleNav">menu</v-icon>
+        <v-icon color="black" @click="toggleNav">mdi-menu</v-icon>
       </v-btn>
 
       <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -67,9 +67,9 @@
       </v-menu> -->
     </v-app-bar>
 
-    <v-content>
+    <v-main>
       <router-view />
-    </v-content>
+    </v-main>
 
     <v-snackbar
       v-model="localSnackbarState"
