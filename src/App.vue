@@ -45,11 +45,11 @@
       <!-- <span class="mr-2 body-1 font-weight-medium">
         Taher is god
       </span> -->
-      <v-btn x-large icon @click="settings">
-        <v-icon color="primary" large>mdi-cog</v-icon>
+      <v-btn large icon @click="settings">
+        <v-icon color="primary">mdi-cog</v-icon>
       </v-btn>
-      <v-btn x-large icon @click="logoutUser">
-        <v-icon color="primary" large>mdi-logout</v-icon>
+      <v-btn large icon @click="logoutUser">
+        <v-icon color="primary">mdi-logout</v-icon>
       </v-btn>
 
       <!-- <v-menu transition="slide-x-transition" open-on-click bottom offset-y>
@@ -80,7 +80,7 @@
     >
       {{ snackbarText }}
       <v-btn color="accent" text @click.stop="closeSnackbar">
-        <v-icon>close</v-icon>
+        <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-snackbar>
 
