@@ -188,7 +188,6 @@ export default {
   methods: {
     // ...mapActions("UserManagement", ["getUserList"]),
     formValidation() {
-      console.log("vuetify$", this.$vuetify);
       this.showError = false;
       this.errorText = false;
       this.$v.$touch();
