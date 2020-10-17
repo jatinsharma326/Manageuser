@@ -32,11 +32,15 @@
               ><v-icon>mdi-information-outline</v-icon></v-btn
             > -->
             <template v-if="userType == ADMIN">
-              <v-btn color="orange lighten-2" text>
+              <v-btn
+                @click="userPasswordReset(user)"
+                color="orange lighten-2"
+                text
+              >
                 Reset Password
               </v-btn>
-              <v-btn color="error" text>
-                Disable
+              <v-btn @click="disableUser(user)" color="error" text>
+                {{ user.record.active ? "Disable" : "Enable" }}
               </v-btn>
               <v-btn
                 @click="openInputForm(true, user)"
@@ -156,7 +160,97 @@ export default {
     UserForm,
   },
   data: () => ({
-    userList: [],
+    userList: [
+      {
+        _id: "5f86e229249b154d40536494",
+        record: {
+          created_on: "2020-10-14T11:34:01.617Z",
+          updated_on: "2020-10-14T11:34:01.617Z",
+          active: true,
+        },
+        credentials: {
+          username: "pocketwala.ali@gmail.com",
+        },
+        type: 30,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Aliasgar Pocketwala",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "Mazgaon",
+          phone_numbers: ["9768835921"],
+          email: "pocketwala.ali@gmail.com",
+          designation: "SS",
+          doj: "2020-09-30T18:30:00.000Z",
+          doe: "2020-09-30T18:30:00.000Z",
+          representing_partner_ids: [],
+          countries: ["USA"],
+          no_of_leaves: 26,
+        },
+      },
+      {
+        _id: "5f86f00568c8a450285d6f93",
+        record: {
+          created_on: "2020-10-14T12:33:09.032Z",
+          updated_on: "2020-10-14T12:33:09.032Z",
+          active: true,
+        },
+        credentials: {
+          username: "skypunch@gmail.com",
+        },
+        type: 30,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Aliasgar Pocketwala",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "Mazgaon",
+          phone_numbers: ["9768835921"],
+          email: "skypunch@gmail.com",
+          designation: "SS",
+          doj: "2020-09-30T18:30:00.000Z",
+          doe: "2020-09-30T18:30:00.000Z",
+          representing_partner_ids: [
+            {
+              text: "Allied Partneras",
+              value: "5f857a9ad8a96c2e4ca6e7c5",
+            },
+          ],
+          countries: ["United States"],
+          no_of_leaves: 26,
+        },
+      },
+      {
+        _id: "5f899e04c0f5464a64a301ab",
+        record: {
+          created_on: "2020-10-16T13:20:04.748Z",
+          updated_on: "2020-10-16T13:20:04.748Z",
+          active: true,
+        },
+        credentials: {
+          username: "hsuhhuhu@huhhu.com",
+        },
+        type: 30,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Huzefa",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "bbhbhbh ghjgjgjhgjhg hgjhgjhgjh",
+          phone_numbers: ["1111111111111111"],
+          email: "hsuhhuhu@huhhu.com",
+          designation: "uuhhuhuhhhuuu",
+          doj: "2020-09-30T18:30:00.000Z",
+          representing_partner_ids: [
+            {
+              text: "Allied Partneras",
+              value: "5f857a9ad8a96c2e4ca6e7c5",
+            },
+          ],
+          countries: ["Australia"],
+          doe: null,
+          no_of_leaves: 26,
+        },
+      },
+    ],
+
     search_text: "",
     pageSize: 20,
     pageNo: 1,
@@ -167,7 +261,7 @@ export default {
     rowToEdit: {},
   }),
   created() {
-    this.getUsers();
+    // this.getUsers();
   },
   computed: {
     ...mapGetters([
@@ -179,7 +273,12 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions("UserManagement", ["getUserList", "addUser"]),
+    ...mapActions("UserManagement", [
+      "getUserList",
+      "addUser",
+      "editUser",
+      "resetPassword",
+    ]),
     getUsers() {
       this.getUserList({
         filter: {
@@ -238,7 +337,15 @@ export default {
           }
         });
       } else {
-        // made edit API call here
+        this.editUser(formData).then((data) => {
+          if (data.ok) {
+            console.log("Edit user success");
+            this.getUsers();
+            this.closeForm();
+          } else {
+            console.log("Edit user failed");
+          }
+        });
       }
     },
     openInputForm(mode = false, data = {}) {
@@ -249,6 +356,32 @@ export default {
     },
     closeForm() {
       this.toggleForm = false;
+    },
+    disableUser(data) {
+      this.editUser({ _id: data._id, active: !data.record.active }).then(
+        (data) => {
+          if (data.ok) {
+            console.log("Failed to Update user status");
+            this.getUsers();
+            this.closeForm();
+          } else {
+            console.log("Failed to Update user status");
+          }
+        }
+      );
+    },
+    userPasswordReset(data) {
+      this.resetPassword({ username: data.credentials.username }).then(
+        (data) => {
+          if (data.ok) {
+            console.log("Failed to Reset Password");
+            this.getUsers();
+            this.closeForm();
+          } else {
+            console.log("Failed to Reset Password");
+          }
+        }
+      );
     },
   },
   props: {
