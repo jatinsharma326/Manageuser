@@ -1,8 +1,8 @@
 <template>
   <div class="usersComponentWrapper">
-    <v-row class="mt-10 px-6" justify="center" align="center">
+    <v-row class="px-6" justify="center" align="center">
       <v-col cols="12" sm="8" md="6">
-        <Search @queryString="queryString" :placeholder="dataProp.placeholder"></Search>
+        <Search @queryString="queryString" :placeholder="placeholder"></Search>
       </v-col>
     </v-row>
 
@@ -31,20 +31,26 @@
             <!-- <v-btn icon color="primary lighten-2" text
               ><v-icon>mdi-information-outline</v-icon></v-btn
             > -->
-            <v-btn color="orange lighten-2" text>
-              <!-- <v-btn color="red lighten-2" text>
-              Delete
-            </v-btn> -->
-              Disable
-            </v-btn>
-            <v-btn color="primary lighten-2" text>
-              Edit
-            </v-btn>
+            <template v-if="userType == ADMIN">
+              <v-btn color="orange lighten-2" text>
+                Reset Password
+              </v-btn>
+              <v-btn color="error" text>
+                Disable
+              </v-btn>
+              <v-btn
+                @click="openInputForm(true, user)"
+                color="primary lighten-2"
+                text
+              >
+                Edit
+              </v-btn>
+            </template>
           </template>
           <template v-slot:expandCardContent>
             <v-list>
               <v-list-item
-                v-for="(number, index) in user.usr_data.phone_number"
+                v-for="(number, index) in user.usr_data.phone_numbers"
                 :key="user._id + '+' + index"
               >
                 <v-list-item-icon>
@@ -79,8 +85,8 @@
               <template v-if="user.type == SALES_AGENT">
                 <v-list-item
                   v-for="(partner, index) in user.usr_data
-                    .representing_partner_names"
-                  :key="user._id + '+' + index + '+' + partner"
+                    .representing_partner_ids"
+                  :key="user._id + '+' + index + '+' + partner.value"
                 >
                   <v-list-item-icon>
                     <v-icon v-if="index == 0" color="indigo">
@@ -89,7 +95,7 @@
                   </v-list-item-icon>
 
                   <v-list-item-content>
-                    <v-list-item-title>{{ partner }}</v-list-item-title>
+                    <v-list-item-title>{{ partner.text }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
                 <v-divider inset></v-divider>
@@ -113,40 +119,71 @@
         </InformationCard>
       </div>
     </div>
+    <!-- <div v-for="(fields, key) in schema" class="">{{ fields }} : {{ key }}</div> -->
+
+    <UserForm
+      @formOutput="formOutput"
+      @closeForm="closeForm"
+      :name="name"
+      :type="type"
+      :inputConfig="inputConfig"
+      :toggleForm="toggleForm"
+      :formData="rowToEdit"
+      :isEditMode="isEditMode"
+    ></UserForm>
+
+    <div class="floating-button">
+      <v-btn @click="openInputForm()" color="primary" dark fab>
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import moment from "moment-timezone";
+// import moment from "moment-timezone";
+import helpers from "../../components/helpers";
 import InformationCard from "../../components/InformationCard.vue";
 import Search from "../../components/Search.vue";
+import UserForm from "../../components/Form";
+
 export default {
   name: "Users",
   components: {
     InformationCard,
     Search,
+    UserForm,
   },
   data: () => ({
     userList: [],
-    search_text:"",
+    search_text: "",
     pageSize: 20,
     pageNo: 1,
     totalCount: 0,
     fetchCount: 0,
+    toggleForm: false,
+    isEditMode: false,
+    rowToEdit: {},
   }),
   created() {
     this.getUsers();
   },
   computed: {
-    ...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT"]),
+    ...mapGetters([
+      "REMOTE_SALES_AGENT",
+      "SALES_AGENT",
+      "MANAGEMENT",
+      "ADMIN",
+      "userType",
+    ]),
   },
   methods: {
-    ...mapActions("UserManagement", ["getUserList"]),
+    ...mapActions("UserManagement", ["getUserList", "addUser"]),
     getUsers() {
       this.getUserList({
         filter: {
-          type: this.dataProp.type,
+          type: this.type,
         },
         search_text: this.search_text,
         pageSize: this.pageSize,
@@ -159,9 +196,10 @@ export default {
       });
     },
     getFormattedDate(date) {
-      return moment(date)
-        .tz("Asia/Kolkata")
-        .format("DD/MM/YYYY");
+      return helpers.getFormattedDate(date, "DD/MM/YYYY");
+    },
+    getISODate(date) {
+      return helpers.getISODate(date);
     },
     getMainContentSubtitle(user) {
       if (user.type == this.SALES_AGENT) {
@@ -172,16 +210,52 @@ export default {
       return "";
     },
     queryString(data) {
-      console.log(data)
       this.search_text = data;
-      this.getUsers()
-    }  
+      this.getUsers();
+    },
+    formOutput(data) {
+      console.log(data);
+      var formData = { ...data };
+      formData.type = this.type;
+      formData.dob = this.getISODate(formData.dob);
+      formData.doj = this.getISODate(formData.doj);
+      if (formData.doe) {
+        formData.doe = this.getISODate(formData.dob);
+      } else {
+        delete formData.doe;
+      }
+      formData.phone_numbers = data.phone_numbers.map((data) => data.input);
+      console.log(formData);
+
+      if (!this.isEditMode) {
+        this.addUser(formData).then((data) => {
+          if (data.ok) {
+            console.log("Add user success");
+            this.getUsers();
+            this.closeForm();
+          } else {
+            console.log("Add user failed");
+          }
+        });
+      } else {
+        // made edit API call here
+      }
+    },
+    openInputForm(mode = false, data = {}) {
+      console.log(data);
+      this.isEditMode = mode;
+      this.rowToEdit = { ...data.usr_data, _id: data._id };
+      this.toggleForm = true;
+    },
+    closeForm() {
+      this.toggleForm = false;
+    },
   },
   props: {
-    dataProp: {
-      required: true,
-      type: Object,
-    },
+    name: { required: true, type: String },
+    type: { required: true, type: String },
+    placeholder: { required: true, type: String },
+    inputConfig: { required: true, type: Array },
   },
 };
 </script>
@@ -189,6 +263,7 @@ export default {
 <style lang="scss" scopped>
 .usersComponentWrapper {
   position: relative;
+  width: 100%;
 }
 .card-wrapper {
   //   display: flex;
@@ -203,5 +278,10 @@ export default {
     // flex: 1 0 400px;
     // margin: 16px 10px;
   }
+}
+.floating-button {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
 }
 </style>
