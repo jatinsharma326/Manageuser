@@ -51,32 +51,32 @@ export default {
           return { ok: false, totalCount: 0, fetchCount: 0, userList: [] };
         });
     },
-    // addMasterDataRows: ({ commit, dispatch }, payload) => {
-    //   let fail = (msg) => commit("failure", msg);
-    //   return dispatch(
-    //     "apiCall",
-    //     {
-    //       method: "post",
-    //       data: payload,
-    //       url: constants.INPUT_MASTER_DATA_ROW,
-    //     },
-    //     { root: true }
-    //   )
-    //     .then((data) => {
-    //       if (!data.ok) fail(data.message || "Failed to add master data rows");
-    //       return data;
-    //     })
-    //     .catch((err) => {
-    //       fail(err.toString() || "Failed to add master data rows");
-    //       return {
-    //         ok: false,
-    //         message: err.message,
-    //       };
-    //     });
-    // },
+    addUser: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch(
+        "apiCall",
+        {
+          method: "post",
+          data: payload,
+          url: constants.MANAGE_USERS,
+        },
+        { root: true }
+      )
+        .then((data) => {
+          if (!data.ok) fail(data.message || "Failed to add master data rows");
+          return data;
+        })
+        .catch((err) => {
+          fail(err.toString() || "Failed to add master data rows");
+          return {
+            ok: false,
+            message: err.message,
+          };
+        });
+    },
   },
   getters: {
-    masterData: (state) => state.masterData,
-    masterDataCount: (state) => state.masterDataCount,
+    // masterData: (state) => state.masterData,
+    // masterDataCount: (state) => state.masterDataCount,
   },
 };
