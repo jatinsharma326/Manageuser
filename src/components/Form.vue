@@ -4,7 +4,7 @@
       <div class="headline">
         <div class="">{{ isEditMode ? "Edit " : "Add " }}{{ name }}</div>
       </div>
-      <div v-show="showError" class="error-container">
+      <div v-show="showError" id="error-container" class="error-container">
         {{ errorText }}
       </div>
       <div class="form-input">
@@ -128,7 +128,7 @@
         <v-btn color="error" text @click="closeForm()">
           Cancel
         </v-btn>
-        <v-btn color="green darken-1" text @click="formValidation">
+        <v-btn color="primary" text @click="formValidation">
           Submit
         </v-btn>
       </v-card-actions>
@@ -188,6 +188,7 @@ export default {
   methods: {
     // ...mapActions("UserManagement", ["getUserList"]),
     formValidation() {
+      console.log("vuetify$", this.$vuetify);
       this.showError = false;
       this.errorText = false;
       this.$v.$touch();
@@ -225,9 +226,19 @@ export default {
             break;
           }
         }
+        this.$vuetify.goTo("#error-container", {
+          duration: 300,
+        });
         return false;
       } else {
-        this.$emit("formOutput", this.formElements);
+        if (!this.isEditMode) {
+          this.$emit("formOutput", this.formElements);
+        } else {
+          this.$emit("formOutput", {
+            ...this.formElements,
+            _id: this.formData._id,
+          });
+        }
         return true;
       }
     },
@@ -321,7 +332,7 @@ export default {
 .error-container {
   margin-top: 8px;
   margin-bottom: 16px;
-  width: 300px;
+  // width: 300px;
   background: #ff5d5d1a 0% 0% no-repeat padding-box;
   border-radius: 5px;
   color: $error;
