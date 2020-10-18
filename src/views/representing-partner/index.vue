@@ -33,7 +33,11 @@
               >
                 Edit
               </v-btn>
-              <v-btn color="primary lighten-2" text>
+              <v-btn
+                @click="openEmployeeModal(user)"
+                color="primary lighten-2"
+                text
+              >
                 View
               </v-btn>
             </template>
@@ -68,6 +72,20 @@
     </div>
     <!-- <div v-for="(fields, key) in schema" class="">{{ fields }} : {{ key }}</div> -->
 
+    <div class="employees-modal">
+      <v-dialog
+        v-model="employeesModal"
+        fullscreen
+        hide-overlay
+        transition="dialog-bottom-transition"
+      >
+        <partnerEmployees
+          @closeModal="employeesModal = false"
+          :partnerInfo="selectedPartnerInfo"
+        ></partnerEmployees>
+      </v-dialog>
+    </div>
+
     <UserForm
       @formOutput="formOutput"
       @closeForm="closeForm"
@@ -101,6 +119,7 @@ import helpers from "../../components/helpers";
 import InformationCard from "../../components/InformationCard.vue";
 import Search from "../../components/Search.vue";
 import UserForm from "../../components/Form";
+import PartnerEmployees from "./PartnerEmployees";
 
 export default {
   name: "Partners",
@@ -108,6 +127,7 @@ export default {
     InformationCard,
     Search,
     UserForm,
+    PartnerEmployees,
   },
   data: () => ({
     userList: [
@@ -257,6 +277,8 @@ export default {
     toggleForm: false,
     isEditMode: false,
     rowToEdit: {},
+    employeesModal: false,
+    selectedPartnerInfo: {},
   }),
   created() {
     // this.getUsers();
@@ -335,6 +357,11 @@ export default {
           }
         }
       );
+    },
+    openEmployeeModal(userData) {
+      this.selectedPartnerInfo = { ...userData };
+      console.log(this.selectedPartnerInfo);
+      this.employeesModal = true;
     },
   },
 };
