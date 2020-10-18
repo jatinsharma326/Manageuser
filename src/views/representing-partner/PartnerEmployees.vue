@@ -5,7 +5,7 @@
         <v-btn icon dark @click="closeModal">
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-toolbar-title>Settings</v-toolbar-title>
+        <v-toolbar-title>{{ partnerInfo.name }}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
           <v-btn dark text @click="dialog = false">
@@ -33,6 +33,10 @@ export default {
     closeModal() {
       this.$emit("closeModal");
     },
+  },
+  watch: {},
+  props: {
+    partnerInfo: { required: true, type: Object },
   },
 };
 </script>
