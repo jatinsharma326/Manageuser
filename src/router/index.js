@@ -1,19 +1,25 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/manage-users",
     name: "Manage Users",
     component: () => import("../views/manage-users"),
-    meta: { policy: [10, 20, 30, 40] }
-  }
-]
+    meta: { policy: [10, 20, 30, 40] },
+  },
+  {
+    path: "/regions-and-partners",
+    name: "Regions and Partners",
+    component: () => import("../views/representing-partner"),
+    meta: { policy: [10, 20, 30, 40] },
+  },
+];
 
 const router = new VueRouter({
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;
