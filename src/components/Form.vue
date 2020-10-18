@@ -16,6 +16,7 @@
             v-model="formElements[config.key]"
             class="form-item"
           ></v-text-field>
+
           <template v-if="config.type == 'Dropdown'">
             <v-autocomplete
               :key="config.name + '__' + index"
@@ -28,6 +29,7 @@
               class="form-item"
             ></v-autocomplete>
           </template>
+
           <template v-if="config.type == 'Date'">
             <div
               :key="config.name + '__' + index"
@@ -121,6 +123,84 @@
               >
             </div>
           </template>
+
+          <template
+            v-if="
+              config.type == 'MultiInputWithGroupKey' &&
+                formElements[config.key]
+            "
+          >
+            <template v-for="(row, rowIndex) in formElements[config.key]">
+              Enter {{ config.name }} for {{ row.groupKey }}
+              <template v-for="(input, mulIndex) in row.input">
+                <div
+                  :key="
+                    config.name +
+                      '__' +
+                      index +
+                      '__' +
+                      mulIndex +
+                      '__' +
+                      rowIndex +
+                      '__' +
+                      row.groupKey
+                  "
+                  class="multi-input-field form-item"
+                >
+                  <v-text-field
+                    :value="
+                      formElements[config.key][rowIndex].input[mulIndex].input
+                    "
+                    :label="config.name"
+                    @blur="
+                      updateMultiInputWithGroupKey(
+                        $event.target.value,
+                        config,
+                        rowIndex,
+                        mulIndex
+                      )
+                    "
+                  ></v-text-field>
+                </div>
+              </template>
+              <div
+                :key="config.name + '__' + index + '__buttons__' + row.groupKey"
+                class="multi-input-buttons"
+              >
+                <v-btn
+                  @click="removeMultiInputWithGroupKeyField(config, rowIndex)"
+                  :key="config.name + '__' + index + '__remove'"
+                  depressed
+                  color="error"
+                  small
+                  text
+                  :disabled="
+                    formElements[config.key][rowIndex].input.length == 1
+                  "
+                  >Remove</v-btn
+                >
+                <v-btn
+                  @click="addMultiInputWithGroupKeyField(config, rowIndex)"
+                  :key="config.name + '__' + index + '__add'"
+                  depressed
+                  color="primary"
+                  small
+                  class="ml-2"
+                  >Add</v-btn
+                >
+              </div>
+            </template>
+          </template>
+
+          <template v-if="config.type == 'FilePicker'">
+            <v-file-input
+              v-model="formElements[config.key]"
+              :key="config.name + '__' + index"
+              :accept="config.acceptRules"
+              :rules="config.rules"
+              :label="config.name"
+            ></v-file-input>
+          </template>
         </template>
       </div>
       <v-card-actions>
@@ -156,6 +236,7 @@ export default {
     errorText: false,
     formElements: {},
     dateMenuRef: {},
+    watcherList: [],
     errorMessages: {
       required: {
         type: "normal",
@@ -183,7 +264,7 @@ export default {
   },
   mounted() {},
   computed: {
-    ...mapGetters(["countries", "partners", "zone"]),
+    ...mapGetters(["countries", "partners", "zone", "businessType"]),
   },
   methods: {
     // ...mapActions("UserManagement", ["getUserList"]),
@@ -245,8 +326,18 @@ export default {
       return this[config.listVariable];
     },
     updateMultiInputObject(value, config, mulIndex) {
-      console.log(value, config, mulIndex);
       this.formElements[config.key][mulIndex].input = value;
+    },
+    updateMultiInputWithGroupKey(value, config, rowIndex, mulIndex) {
+      this.formElements[config.key][rowIndex].input[mulIndex].input = value;
+    },
+    removeMultiInputWithGroupKeyField(config, rowIndex) {
+      if (this.formElements[config.key][rowIndex].input.length > 1) {
+        this.formElements[config.key][rowIndex].input.pop({ input: "" });
+      }
+    },
+    addMultiInputWithGroupKeyField(config, rowIndex) {
+      this.formElements[config.key][rowIndex].input.push({ input: "" });
     },
     removeMultiInputField(config) {
       if (this.formElements[config.key].length > 1) {
@@ -260,11 +351,19 @@ export default {
       this.$emit("closeForm");
     },
     initialiseFormElements() {
+      if (this.watcherList.length) {
+        for (let i of this.watcherList) {
+          i();
+        }
+      }
+
       for (let i of this.inputConfig) {
         if (!this.isEditMode) {
           // This will initialize the form when add user button is clicked
           if (i.type == "MultiInput") {
             this.$set(this.formElements, i.key, [{ input: "" }]);
+          } else if (i.type == "MultiInputWithGroupKey") {
+            this.$set(this.formElements, i.key, null);
           } else {
             this.$set(this.formElements, i.key, null);
           }
@@ -282,6 +381,28 @@ export default {
                 input: e,
               }))
             );
+          } else if (i.type == "MultiInputWithGroupKey") {
+            if (this.formData[i.key]) {
+              let tempObj = this.formData[i.key].map((e) => ({
+                groupKey: e.country,
+                input: e.contacts.map((f) => ({ input: f })),
+              }));
+              for (let j of this.formData[i.keyToGroup]) {
+                let found = false;
+                for (let k of tempObj) {
+                  if (j != k.groupKey) {
+                    found = true;
+                  }
+                }
+                if (found) {
+                  tempObj.push({
+                    groupKey: j,
+                    input: [{ input: "" }],
+                  });
+                }
+              }
+              this.$set(this.formElements, i.key, tempObj);
+            }
           } else if (i.type == "Date") {
             this.$set(
               this.formElements,
@@ -299,6 +420,54 @@ export default {
           }
         }
       }
+
+      // Initialise watchers
+      if (this.keysToWatch && this.keysToWatch.length > 0) {
+        // create watchers here
+        for (let watchKey of this.keysToWatch) {
+          console.log(watchKey);
+          this.watcherList.push(
+            this.$watch(
+              `formElements.${watchKey}`,
+              this.keyUpdated.bind(this, watchKey)
+            )
+          );
+        }
+      }
+    },
+    keyUpdated(watchKey, nv, ov) {
+      for (let i of this.inputConfig) {
+        if (i.type == "MultiInputWithGroupKey" && watchKey == i.keyToGroup) {
+          if (!ov || !ov.length) {
+            this.formElements[i.key] = nv.map((e) => ({
+              groupKey: e,
+              input: [{ input: "" }],
+            }));
+          } else {
+            if (!nv.length) {
+              this.formElements[i.key] = null;
+            } else {
+              let tempObj = [];
+              console.log(nv, this.formElements[i.key]);
+              for (let k of this.formElements[i.key]) {
+                if (ov.includes(k.groupKey) && nv.includes(k.groupKey)) {
+                  tempObj.push(k);
+                }
+              }
+              for (let j of nv) {
+                if (!ov.includes(j)) {
+                  tempObj.push({
+                    groupKey: j,
+                    input: [{ input: "" }],
+                  });
+                }
+              }
+              this.formElements[i.key] = tempObj;
+            }
+          }
+          console.log(this.formElements[i.key]);
+        }
+      }
     },
   },
   validations() {
@@ -312,8 +481,8 @@ export default {
   },
   props: {
     name: { required: true, type: String },
-    type: { required: true, type: String },
     inputConfig: { required: true, type: Array },
+    keysToWatch: { required: false, type: Array },
     toggleForm: { required: true, type: Boolean, default: false },
     formData: { required: true, type: Object },
     isEditMode: { required: true, type: Boolean, default: false },
