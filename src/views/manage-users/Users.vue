@@ -355,6 +355,7 @@ export default {
       this.toggleForm = true;
     },
     closeForm() {
+      this.rowToEdit = {};
       this.toggleForm = false;
     },
     disableUser(data) {
@@ -393,28 +394,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scopped>
-.usersComponentWrapper {
-  position: relative;
-  width: 100%;
-}
-.card-wrapper {
-  //   display: flex;
-  //   justify-content: flex-start;
-  //   flex-wrap: wrap;
-  padding: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  grid-gap: 16px;
-
-  .card-element {
-    // flex: 1 0 400px;
-    // margin: 16px 10px;
-  }
-}
-.floating-button {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-}
-</style>
+<style lang="scss" scopped></style>
