@@ -1,5 +1,5 @@
 <template>
-  <v-card class="information-card" min-width="350px">
+  <v-card class="information-card" min-width="300px">
     <div class="top-content-wrapper">
       <div class="subtitle">
         <slot name="topLeft"></slot>
@@ -8,13 +8,7 @@
         <slot name="topRight"></slot>
       </div>
     </div>
-    <!-- <v-row no-gutters>
-      <v-col cols="7">
-      </v-col>
-      <v-col cols="5">
-        
-      </v-col>
-    </v-row> -->
+
     <div class="main-content-wrapper">
       <div class="main-content-left">
         <div class="main-content">
@@ -31,30 +25,12 @@
     <div class="more-info subtitle">
       <slot name="moreInfo"></slot>
     </div>
-    <!-- <v-row>
-      <v-col>
-        <v-card-subtitle>
-        </v-card-subtitle>
-      </v-col>
-    </v-row> -->
 
     <div class="bottom-content-wrapper">
       <v-card-actions>
         <div class="action-button">
           <slot name="actionButtons"></slot>
         </div>
-        <!-- <v-btn icon color="orange lighten-2" text
-        ><v-icon>mdi-information-outline</v-icon></v-btn
-      >
-      <v-btn color="orange lighten-2" text>
-        Disable
-      </v-btn>
-      <v-btn color="orange lighten-2" text>
-        Delete
-      </v-btn>
-      <v-btn color="orange lighten-2" text>
-        Edit
-      </v-btn> -->
 
         <v-spacer></v-spacer>
         <div v-if="expandCard" class="">
@@ -108,7 +84,10 @@ export default {
 
 .main-content {
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 500;
+  @include custom-max(475px) {
+    font-size: 24px;
+  }
 }
 
 .information-card {
