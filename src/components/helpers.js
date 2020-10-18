@@ -7,6 +7,41 @@ let traverseObject = (obj, is, value) => {
   else return traverseObject(obj[is[0]], is.slice(1), value);
 };
 
+// will have to split the result on / and then use the second one to get the extension
+function base64MimeType(encoded) {
+  var result = null;
+  if (typeof encoded !== "string") {
+    return result;
+  }
+  var mime = encoded.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
+  if (mime && mime.length) {
+    result = mime[1];
+  }
+  return result;
+}
+
+function dataURLtoFile(dataurl, filename) {
+  var arr = dataurl.split(","),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+
+  return new File([u8arr], filename, { type: mime });
+}
+
+let toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
 export default {
   getCurrentRoute: () => {
     let hashUrl = window.location.hash.split("/");
@@ -23,4 +58,5 @@ export default {
       .format(format);
   },
   traverseObject,
+  toBase64,
 };
