@@ -5,6 +5,7 @@ import axios from "axios";
 import constants from "@/api";
 
 import UserManagement from "../views/manage-users/store";
+import PartnerManagement from "../views/representing-partner/store";
 
 Vue.use(Vuex);
 
@@ -1065,11 +1066,34 @@ const initialState = () => ({
       value: "SOUTH",
     },
   ],
+  businessType: [
+    {
+      text: "FIT",
+      value: "FIT",
+    },
+    {
+      text: "GIT",
+      value: "GIT",
+    },
+    {
+      text: "ADHOC",
+      value: "ADHOC",
+    },
+    {
+      text: "MICE",
+      value: "MICE",
+    },
+    {
+      text: "LUXURY",
+      value: "LUXURY",
+    },
+  ],
 });
 
 export default new Vuex.Store({
   modules: {
     UserManagement,
+    PartnerManagement,
   },
 
   state: initialState(),
@@ -1380,6 +1404,7 @@ export default new Vuex.Store({
     countries: (state) => state.countries,
     partners: (state) => state.partners,
     zone: (state) => state.zone,
+    businessType: (state) => state.businessType,
   },
 });
 
