@@ -317,6 +317,7 @@ export default {
           this.$emit("formOutput", {
             ...this.formElements,
             _id: this.formData._id,
+            updated_on: this.formData.updated_on,
           });
         }
         return true;
@@ -374,22 +375,27 @@ export default {
         } else {
           // This will initialize the form when Edit user button is clicked
           if (i.type == "MultiInput") {
-            this.$set(
-              this.formElements,
-              i.key,
-              this.formData[i.key].map((e) => ({
-                input: e,
-              }))
-            );
+            if (this.formData[i.key]) {
+              this.$set(
+                this.formElements,
+                i.key,
+                this.formData[i.key].map((e) => ({
+                  input: e,
+                }))
+              );
+            } else {
+              this.$set(this.formElements, i.key, [{ input: "" }]);
+            }
           } else if (i.type == "MultiInputWithGroupKey") {
             if (this.formData[i.key]) {
               let tempObj = this.formData[i.key].map((e) => ({
                 groupKey: e.country,
                 input: e.contacts.map((f) => ({ input: f })),
               }));
+              let tempObjRefForLoop = JSON.parse(JSON.stringify(tempObj));
               for (let j of this.formData[i.keyToGroup]) {
                 let found = false;
-                for (let k of tempObj) {
+                for (let k of tempObjRefForLoop) {
                   if (j != k.groupKey) {
                     found = true;
                   }
@@ -409,6 +415,18 @@ export default {
               i.key,
               helpers.getFormattedDate(this.formData[i.key], "YYYY-MM-DD")
             );
+          } else if (i.type == "FilePicker") {
+            if (this.formData[i.key]) {
+              let extn = helpers.base64MimeType(this.formData[i.key]);
+              let fileObj = helpers.dataURLtoFile(
+                this.formData[i.key],
+                "logo." + extn
+              );
+
+              this.$set(this.formElements, i.key, fileObj);
+            } else {
+              this.$set(this.formElements, i.key, null);
+            }
           } else {
             this.$set(this.formElements, i.key, this.formData[i.key]);
           }
@@ -482,7 +500,7 @@ export default {
   props: {
     name: { required: true, type: String },
     inputConfig: { required: true, type: Array },
-    keysToWatch: { required: false, type: Array },
+    keysToWatch: { required: false, type: Array, default: () => [] },
     toggleForm: { required: true, type: Boolean, default: false },
     formData: { required: true, type: Object },
     isEditMode: { required: true, type: Boolean, default: false },
