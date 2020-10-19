@@ -1,23 +1,62 @@
 <template>
   <div class="">
     <v-text-field
-      @click:append="toggleAdvanceSearchSection()"
-      :append-icon="appendIcon"
       label="Search"
       filled
       class="search-bar"
       @input="performBasicSearch()"
       v-model="queryString"
       :placeholder="placeholder"
-    ></v-text-field>
+    >
+      <template v-slot:append>
+        <v-badge dot overlap :value="areFiltersApplied">
+          <v-icon @click="toggleAdvanceSearchSection()">{{
+            appendIcon
+          }}</v-icon>
+        </v-badge>
+      </template>
+    </v-text-field>
     <v-expand-transition v-if="isAdvanceSearch">
       <div v-show="menu">
         <v-card elevation="0">
-          Filters Come Here
+          <div class="filters-container">
+            <template v-for="(filter, filterIndex) in filterConfig">
+              <div
+                v-if="filter.inputType == 'textfield'"
+                :key="filter.key + '__' + filterIndex"
+                class="form-item"
+              >
+                <v-text-field
+                  :type="filter.type"
+                  :label="filter.name"
+                  v-model="filterObject[filter.key]"
+                ></v-text-field>
+              </div>
+              <div
+                v-if="filter.inputType == 'dropdown'"
+                :key="filter.key + '__' + filterIndex"
+                class="form-item"
+              >
+                <v-autocomplete
+                  :label="filter.name"
+                  v-model="filterObject[filter.key]"
+                  chips
+                  clearable
+                  :items="getItems(filter, 'test')"
+                  :multiple="filter.multi"
+                ></v-autocomplete>
+              </div>
+            </template>
+          </div>
           <v-card-actions>
             <v-spacer></v-spacer>
 
-            <v-btn color="error" text @click="clearFilters()">
+            <v-btn
+              :disabled="!areFiltersApplied"
+              color="error"
+              text
+              @click="clearFilters()"
+            >
               Clear
             </v-btn>
             <v-btn outlined color="primary" @click="performAdvanceSearch()">
@@ -38,11 +77,15 @@ export default {
   data: () => ({
     menu: false,
     queryString: "",
-    filterObject: "",
+    filterObject: {},
     searchTimeoutRef: "",
+    areFiltersApplied: false,
   }),
+  created() {
+    this.initialiseFilterElements();
+  },
   computed: {
-    ...mapGetters([]),
+    ...mapGetters(["countries", "partners", "zone", "businessType"]),
     appendIcon() {
       if (this.isAdvanceSearch) {
         return this.menu
@@ -61,14 +104,40 @@ export default {
         this.$emit("queryString", this.queryString);
       }, 500);
     },
-    clearFilters() {},
+    clearFilters() {
+      this.initialiseFilterElements();
+      this.areFiltersApplied = false;
+      this.toggleAdvanceSearchSection = false;
+      this.$emit("filterObject", {});
+    },
     performAdvanceSearch() {
+      for (let key in this.filterObject) {
+        if (this.filterObject[key] == "") {
+          delete this.filterObject[key];
+        }
+      }
+
+      if (Object.keys(this.filterObject).length) this.areFiltersApplied = true;
+      this.toggleAdvanceSearchSection = false;
       this.$emit("filterObject", this.filterObject);
     },
     toggleAdvanceSearchSection() {
       this.menu = !this.menu;
     },
+    getItems(filter, t) {
+      if (filter.isListInStore) {
+        return this[filter.listVariable];
+      } else {
+        return filter.listItems;
+      }
+    },
+    initialiseFilterElements() {
+      for (let filter of this.filterConfig) {
+        this.$set(this.filterObject, filter.key, filter.defaultValue);
+      }
+    },
   },
+  watch: {},
   props: {
     isAdvanceSearch: {
       required: false,
@@ -79,6 +148,11 @@ export default {
       required: false,
       type: String,
       default: "Type to Search",
+    },
+    filterConfig: {
+      required: false,
+      type: Array,
+      default: () => [],
     },
   },
 };
