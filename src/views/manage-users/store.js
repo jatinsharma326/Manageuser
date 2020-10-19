@@ -33,7 +33,7 @@ export default {
               ok: true,
               totalCount: data.totalCount,
               fetchCount: data.fetchCount,
-              userList: data.data,
+              list: data.data,
             };
           } else {
             fail(data.message || "Failed to load User List");
@@ -41,14 +41,14 @@ export default {
               ok: false,
               totalCount: data.totalCount,
               fetchCount: 0,
-              userList: [],
+              list: [],
             };
           }
         })
         .catch((err) => {
           console.log("Yo ", err);
           fail(err.toString() || "Failed to load User List");
-          return { ok: false, totalCount: 0, fetchCount: 0, userList: [] };
+          return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
         });
     },
     addUser: ({ commit, dispatch }, payload) => {
