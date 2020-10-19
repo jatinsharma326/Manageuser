@@ -37,7 +37,7 @@
                 color="orange lighten-2"
                 text
               >
-                Reset Password
+                Reset
               </v-btn>
               <v-btn @click="disableUser(user)" color="error" text>
                 {{ user.record.active ? "Disable" : "Enable" }}
@@ -118,12 +118,32 @@
                   }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
+
+              <v-divider></v-divider>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <div class="date-container">
+                      <div class="doj">
+                        DOJ: {{ getFormattedDate(user.usr_data.doj) }}
+                      </div>
+                      <div class="doe">
+                        DOE:
+                        {{
+                          user.usr_data.doe
+                            ? getFormattedDate(user.usr_data.doe)
+                            : "--/--/----"
+                        }}
+                      </div>
+                    </div>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
           </template>
         </InformationCard>
       </div>
     </div>
-    <!-- <div v-for="(fields, key) in schema" class="">{{ fields }} : {{ key }}</div> -->
 
     <UserForm
       @formOutput="formOutput"
@@ -145,7 +165,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 // import moment from "moment-timezone";
 import helpers from "../../components/helpers";
 import InformationCard from "../../components/InformationCard.vue";
@@ -161,96 +181,95 @@ export default {
   },
   data: () => ({
     userList: [
-      {
-        _id: "5f86e229249b154d40536494",
-        record: {
-          created_on: "2020-10-14T11:34:01.617Z",
-          updated_on: "2020-10-14T11:34:01.617Z",
-          active: true,
-        },
-        credentials: {
-          username: "pocketwala.ali@gmail.com",
-        },
-        type: 30,
-        owner: "5f758a8d90d2426336f37c44",
-        usr_data: {
-          name: "Aliasgar Pocketwala",
-          dob: "2020-09-30T18:30:00.000Z",
-          address: "Mazgaon",
-          phone_numbers: ["9768835921"],
-          email: "pocketwala.ali@gmail.com",
-          designation: "SS",
-          doj: "2020-09-30T18:30:00.000Z",
-          doe: "2020-09-30T18:30:00.000Z",
-          representing_partner_ids: [],
-          countries: ["USA"],
-          no_of_leaves: 26,
-        },
-      },
-      {
-        _id: "5f86f00568c8a450285d6f93",
-        record: {
-          created_on: "2020-10-14T12:33:09.032Z",
-          updated_on: "2020-10-14T12:33:09.032Z",
-          active: true,
-        },
-        credentials: {
-          username: "skypunch@gmail.com",
-        },
-        type: 30,
-        owner: "5f758a8d90d2426336f37c44",
-        usr_data: {
-          name: "Aliasgar Pocketwala",
-          dob: "2020-09-30T18:30:00.000Z",
-          address: "Mazgaon",
-          phone_numbers: ["9768835921"],
-          email: "skypunch@gmail.com",
-          designation: "SS",
-          doj: "2020-09-30T18:30:00.000Z",
-          doe: "2020-09-30T18:30:00.000Z",
-          representing_partner_ids: [
-            {
-              text: "Allied Partneras",
-              value: "5f857a9ad8a96c2e4ca6e7c5",
-            },
-          ],
-          countries: ["United States"],
-          no_of_leaves: 26,
-        },
-      },
-      {
-        _id: "5f899e04c0f5464a64a301ab",
-        record: {
-          created_on: "2020-10-16T13:20:04.748Z",
-          updated_on: "2020-10-16T13:20:04.748Z",
-          active: true,
-        },
-        credentials: {
-          username: "hsuhhuhu@huhhu.com",
-        },
-        type: 30,
-        owner: "5f758a8d90d2426336f37c44",
-        usr_data: {
-          name: "Huzefa",
-          dob: "2020-09-30T18:30:00.000Z",
-          address: "bbhbhbh ghjgjgjhgjhg hgjhgjhgjh",
-          phone_numbers: ["1111111111111111"],
-          email: "hsuhhuhu@huhhu.com",
-          designation: "uuhhuhuhhhuuu",
-          doj: "2020-09-30T18:30:00.000Z",
-          representing_partner_ids: [
-            {
-              text: "Allied Partneras",
-              value: "5f857a9ad8a96c2e4ca6e7c5",
-            },
-          ],
-          countries: ["Australia"],
-          doe: null,
-          no_of_leaves: 26,
-        },
-      },
+      // {
+      //   _id: "5f86e229249b154d40536494",
+      //   record: {
+      //     created_on: "2020-10-14T11:34:01.617Z",
+      //     updated_on: "2020-10-14T11:34:01.617Z",
+      //     active: true,
+      //   },
+      //   credentials: {
+      //     username: "pocketwala.ali@gmail.com",
+      //   },
+      //   type: 30,
+      //   owner: "5f758a8d90d2426336f37c44",
+      //   usr_data: {
+      //     name: "Aliasgar Pocketwala",
+      //     dob: "2020-09-30T18:30:00.000Z",
+      //     address: "Mazgaon",
+      //     phone_numbers: ["9768835921"],
+      //     email: "pocketwala.ali@gmail.com",
+      //     designation: "SS",
+      //     doj: "2020-09-30T18:30:00.000Z",
+      //     doe: "2020-09-30T18:30:00.000Z",
+      //     representing_partner_ids: [],
+      //     countries: ["USA"],
+      //     no_of_leaves: 26,
+      //   },
+      // },
+      // {
+      //   _id: "5f86f00568c8a450285d6f93",
+      //   record: {
+      //     created_on: "2020-10-14T12:33:09.032Z",
+      //     updated_on: "2020-10-14T12:33:09.032Z",
+      //     active: true,
+      //   },
+      //   credentials: {
+      //     username: "skypunch@gmail.com",
+      //   },
+      //   type: 30,
+      //   owner: "5f758a8d90d2426336f37c44",
+      //   usr_data: {
+      //     name: "Aliasgar Pocketwala",
+      //     dob: "2020-09-30T18:30:00.000Z",
+      //     address: "Mazgaon",
+      //     phone_numbers: ["9768835921"],
+      //     email: "skypunch@gmail.com",
+      //     designation: "SS",
+      //     doj: "2020-09-30T18:30:00.000Z",
+      //     doe: "2020-09-30T18:30:00.000Z",
+      //     representing_partner_ids: [
+      //       {
+      //         text: "Allied Partneras",
+      //         value: "5f857a9ad8a96c2e4ca6e7c5",
+      //       },
+      //     ],
+      //     countries: ["United States"],
+      //     no_of_leaves: 26,
+      //   },
+      // },
+      // {
+      //   _id: "5f899e04c0f5464a64a301ab",
+      //   record: {
+      //     created_on: "2020-10-16T13:20:04.748Z",
+      //     updated_on: "2020-10-16T13:20:04.748Z",
+      //     active: true,
+      //   },
+      //   credentials: {
+      //     username: "hsuhhuhu@huhhu.com",
+      //   },
+      //   type: 30,
+      //   owner: "5f758a8d90d2426336f37c44",
+      //   usr_data: {
+      //     name: "Huzefa",
+      //     dob: "2020-09-30T18:30:00.000Z",
+      //     address: "bbhbhbh ghjgjgjhgjhg hgjhgjhgjh",
+      //     phone_numbers: ["1111111111111111"],
+      //     email: "hsuhhuhu@huhhu.com",
+      //     designation: "uuhhuhuhhhuuu",
+      //     doj: "2020-09-30T18:30:00.000Z",
+      //     representing_partner_ids: [
+      //       {
+      //         text: "Allied Partneras",
+      //         value: "5f857a9ad8a96c2e4ca6e7c5",
+      //       },
+      //     ],
+      //     countries: ["Australia"],
+      //     doe: null,
+      //     no_of_leaves: 26,
+      //   },
+      // },
     ],
-
     search_text: "",
     pageSize: 20,
     pageNo: 1,
@@ -261,7 +280,7 @@ export default {
     rowToEdit: {},
   }),
   created() {
-    // this.getUsers();
+    this.getUsers();
   },
   computed: {
     ...mapGetters([
@@ -279,17 +298,20 @@ export default {
       "editUser",
       "resetPassword",
     ]),
+    ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
     getUsers() {
+      this.openLoaderDialog();
       this.getUserList({
         filter: {
           type: this.type,
+          search_text: this.search_text,
         },
-        search_text: this.search_text,
         pageSize: this.pageSize,
         pageNo: this.pageNo,
       }).then((data) => {
+        this.closeLoaderDialog();
         console.log(data);
-        this.userList = data.userList;
+        this.userList = data.list;
         this.totalCount = data.totalCount;
         this.fetchCount = data.fetchCount;
       });
@@ -326,8 +348,10 @@ export default {
       formData.phone_numbers = data.phone_numbers.map((data) => data.input);
       console.log(formData);
 
+      this.openLoaderDialog();
       if (!this.isEditMode) {
         this.addUser(formData).then((data) => {
+          this.closeLoaderDialog();
           if (data.ok) {
             console.log("Add user success");
             this.getUsers();
@@ -338,6 +362,7 @@ export default {
         });
       } else {
         this.editUser(formData).then((data) => {
+          this.closeLoaderDialog();
           if (data.ok) {
             console.log("Edit user success");
             this.getUsers();
@@ -349,40 +374,61 @@ export default {
       }
     },
     openInputForm(mode = false, data = {}) {
-      console.log(data);
       this.isEditMode = mode;
-      this.rowToEdit = { ...data.usr_data, _id: data._id };
+      if (this.isEditMode) {
+        this.rowToEdit = {
+          ...data.usr_data,
+          _id: data._id,
+          updated_on: data.record.updated_on,
+        };
+      }
       this.toggleForm = true;
     },
     closeForm() {
       this.rowToEdit = {};
+      this.isEditMode = false;
       this.toggleForm = false;
     },
     disableUser(data) {
-      this.editUser({ _id: data._id, active: !data.record.active }).then(
-        (data) => {
+      if (
+        window.confirm(
+          "Do you really want to " +
+            (data.record.active ? "Disable the User?" : "Enable the User?")
+        )
+      ) {
+        this.openLoaderDialog();
+        this.editUser({
+          _id: data._id,
+          active: !data.record.active,
+          updated_on: data.record.updated_on,
+        }).then((data) => {
+          this.closeLoaderDialog();
           if (data.ok) {
-            console.log("Failed to Update user status");
+            console.log("Updated user status");
             this.getUsers();
             this.closeForm();
           } else {
             console.log("Failed to Update user status");
           }
-        }
-      );
+        });
+      }
     },
     userPasswordReset(data) {
-      this.resetPassword({ username: data.credentials.username }).then(
-        (data) => {
-          if (data.ok) {
-            console.log("Failed to Reset Password");
-            this.getUsers();
-            this.closeForm();
-          } else {
-            console.log("Failed to Reset Password");
+      if (window.confirm("Do you really want to Reset User Password")) {
+        this.openLoaderDialog();
+        this.resetPassword({ username: data.credentials.username }).then(
+          (data) => {
+            this.closeLoaderDialog();
+            if (data.ok) {
+              console.log("Failed to Reset Password");
+              this.getUsers();
+              this.closeForm();
+            } else {
+              console.log("Failed to Reset Password");
+            }
           }
-        }
-      );
+        );
+      }
     },
   },
   props: {
@@ -394,4 +440,9 @@ export default {
 };
 </script>
 
-<style lang="scss" scopped></style>
+<style lang="scss" scopped>
+.date-container {
+  display: flex;
+  justify-content: space-between;
+}
+</style>
