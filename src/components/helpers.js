@@ -8,7 +8,7 @@ let traverseObject = (obj, is, value) => {
 };
 
 // will have to split the result on / and then use the second one to get the extension
-function base64MimeType(encoded) {
+let base64MimeType = (encoded) => {
   var result = null;
   if (typeof encoded !== "string") {
     return result;
@@ -17,10 +17,10 @@ function base64MimeType(encoded) {
   if (mime && mime.length) {
     result = mime[1];
   }
-  return result;
-}
+  return result.split("/")[0];
+};
 
-function dataURLtoFile(dataurl, filename) {
+let dataURLtoFile = (dataurl, filename) => {
   var arr = dataurl.split(","),
     mime = arr[0].match(/:(.*?);/)[1],
     bstr = atob(arr[1]),
@@ -32,7 +32,7 @@ function dataURLtoFile(dataurl, filename) {
   }
 
   return new File([u8arr], filename, { type: mime });
-}
+};
 
 let toBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -59,4 +59,6 @@ export default {
   },
   traverseObject,
   toBase64,
+  base64MimeType,
+  dataURLtoFile,
 };
