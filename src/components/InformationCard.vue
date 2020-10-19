@@ -120,3 +120,11 @@ export default {
   }
 }
 </style>
+<style lang="scss">
+// .information-card {
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+// }
+</style>
