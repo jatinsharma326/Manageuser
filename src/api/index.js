@@ -19,4 +19,5 @@ export default {
   //API ENDPOINT FOR MANAGE USER DATA
   MANAGE_USERS: BASE_URL + "/Mortals/v0.1/",
   MANAGE_PARTNER: BASE_URL + "/Partners/v0.1/",
+  MANAGE_PARTNER_EMPLOYEES: BASE_URL + "/RepEmployees/v0.1/",
 };
