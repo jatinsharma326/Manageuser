@@ -37,7 +37,7 @@
           </template>
           <template v-slot:actionButtons>
             <template v-if="userType == ADMIN">
-              <v-btn @click="disableUser(user)" color="error" text>
+              <v-btn @click="disablePartner(user)" color="error" text>
                 {{ user.record.active ? "Disable" : "Enable" }}
               </v-btn>
               <v-btn
@@ -84,7 +84,6 @@
         </InformationCard>
       </div>
     </div>
-    <!-- <div v-for="(fields, key) in schema" class="">{{ fields }} : {{ key }}</div> -->
 
     <div class="text-center">
       <v-pagination
@@ -283,16 +282,6 @@ export default {
         key: "emergency_contacts",
         width: "half",
         keyToGroup: "countries",
-        validations: {
-          required,
-          minLength: minLength(1),
-          $each: {
-            input: {
-              required,
-              minLength: minLength(8),
-            },
-          },
-        },
       },
     ],
     pageSize: 20,
@@ -309,7 +298,7 @@ export default {
     filter: {},
   }),
   created() {
-    this.getPartners();
+    // this.getPartners();
     this.setSearchConfig();
   },
   computed: {
@@ -324,9 +313,8 @@ export default {
   methods: {
     ...mapActions("PartnerManagement", [
       "getPartnerList",
-      // "addUser",
-      // "editUser",
-      // "resetPassword",
+      "addPartner",
+      "editPartner",
     ]),
     ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
     getPartners() {
@@ -349,29 +337,72 @@ export default {
     advanceSearch(filterObject) {
       this.filter = { ...filterObject };
       this.pageNo = 1;
-      this.getPartners();
+      // this.getPartners();
     },
     async formOutput(data) {
-      console.log("Partner Form Data", data);
-      //   Here we need to make sure
-      var formData = { ...data };
+      var formData = JSON.parse(JSON.stringify(data));
+      var tempArray = [];
+      var tempObj = {};
 
+      // loop over the emergency contacts objects to convert it into theh backend format
+      for (let contact of formData.emergency_contacts) {
+        tempObj = {};
+        for (let num of contact.input) {
+          if (num.input != "") {
+            tempObj["country"] = contact.groupKey;
+            if (!tempObj["contacts"]) tempObj["contacts"] = [];
+            tempObj["contacts"].push(num.input);
+          }
+        }
+        if (Object.keys(tempObj).length) {
+          tempArray.push(tempObj);
+        }
+      }
+      formData.emergency_contacts = tempArray;
+
+      // remove logo key if it's empty
       if (formData.logo) {
         formData.logo = await helpers.toBase64(formData.logo);
       } else {
         delete formData.logo;
       }
 
-      console.log("Partner Form Data After", formData);
+      console.log("Before API call FormData Object", formData);
 
+      this.openLoaderDialog();
       if (!this.isEditMode) {
+        this.addPartner(formData).then((data) => {
+          this.closeLoaderDialog();
+          if (data.ok) {
+            console.log("Add Partner success");
+            this.getPartners();
+            this.closeForm();
+          } else {
+            console.log("Add Partner failed");
+          }
+        });
       } else {
+        this.editPartner(formData).then((data) => {
+          this.closeLoaderDialog();
+          if (data.ok) {
+            console.log("Edit Partner success");
+            this.getPartners();
+            this.closeForm();
+          } else {
+            console.log("Edit Partner failed");
+          }
+        });
       }
     },
     openInputForm(mode = false, data = {}) {
-      console.log("data", data);
       this.isEditMode = mode;
-      this.rowToEdit = { ...data, _id: data._id };
+      if (this.isEditMode) {
+        this.rowToEdit = {
+          ...data,
+          _id: data._id,
+          updated_on: data.record.updated_on,
+        };
+      }
       this.toggleForm = true;
     },
     closeForm() {
@@ -379,24 +410,33 @@ export default {
       this.isEditMode = false;
       this.toggleForm = false;
     },
-    disableUser(data) {
-      this.openLoaderDialog();
-      this.editUser({ _id: data._id, active: !data.record.active }).then(
-        (data) => {
+    disablePartner(data) {
+      if (
+        window.confirm(
+          "Do you really want to " +
+            (data.record.active ? "Disable the User?" : "Enable the User?")
+        )
+      ) {
+        this.openLoaderDialog();
+        this.editPartner({
+          _id: data._id,
+          active: !data.record.active,
+          updated_on: data.record.updated_on,
+        }).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
-            console.log("Failed to Update user status");
-            this.getPartners();
+            console.log("Updated Partner status");
+            this.getUsers();
             this.closeForm();
           } else {
-            console.log("Failed to Update user status");
+            console.log("Failed to Update Partner status");
           }
-        }
-      );
+        });
+      }
     },
     openEmployeeModal(userData) {
       this.selectedPartnerInfo = { ...userData };
-      console.log(this.selectedPartnerInfo);
+      // console.log(this.selectedPartnerInfo);
       this.employeesModal = true;
     },
     setSearchConfig() {
@@ -434,8 +474,8 @@ export default {
       ];
     },
     updatedPageNo(page) {
-      console.log("Page", page);
-      console.log("Page Number", this.pageNo);
+      // console.log("Page", page);
+      // console.log("Page Number", this.pageNo);
     },
   },
 };
