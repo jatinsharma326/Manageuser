@@ -157,6 +157,10 @@ export default {
     PartnerEmployees,
     ViewMoreModal,
   },
+  created() {
+    // this.getPartners();
+    this.setSearchConfig();
+  },
   data: () => ({
     partnerList: [
       {
@@ -297,10 +301,6 @@ export default {
     selectedSearchConfig: [],
     filter: {},
   }),
-  created() {
-    // this.getPartners();
-    this.setSearchConfig();
-  },
   computed: {
     ...mapGetters([
       "REMOTE_SALES_AGENT",
