@@ -29,7 +29,6 @@ export default {
       )
         .then((data) => {
           if (data.ok) {
-            console.log("Get user data", data);
             return {
               ok: true,
               totalCount: data.totalCount,
@@ -52,75 +51,157 @@ export default {
           return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
         });
     },
-    // addUser: ({ commit, dispatch }, payload) => {
-    //   let fail = (msg) => commit("failure", msg);
-    //   return dispatch(
-    //     "apiCall",
-    //     {
-    //       method: "post",
-    //       data: payload,
-    //       url: constants.MANAGE_USERS,
-    //     },
-    //     { root: true }
-    //   )
-    //     .then((data) => {
-    //       if (!data.ok) fail(data.message || "Failed to add user");
-    //       return data;
-    //     })
-    //     .catch((err) => {
-    //       fail(err.toString() || "Failed to add user");
-    //       return {
-    //         ok: false,
-    //         message: err.message,
-    //       };
-    //     });
-    // },
-    // editUser: ({ commit, dispatch }, payload) => {
-    //   let fail = (msg) => commit("failure", msg);
-    //   return dispatch(
-    //     "apiCall",
-    //     {
-    //       method: "put",
-    //       data: payload,
-    //       url: constants.MANAGE_USERS,
-    //     },
-    //     { root: true }
-    //   )
-    //     .then((data) => {
-    //       if (!data.ok) fail(data.message || "Failed to edit user");
-    //       return data;
-    //     })
-    //     .catch((err) => {
-    //       fail(err.toString() || "Failed to edit user");
-    //       return {
-    //         ok: false,
-    //         message: err.message,
-    //       };
-    //     });
-    // },
-    // resetPassword: ({ commit, dispatch }, payload) => {
-    //   let fail = (msg) => commit("failure", msg);
-    //   return dispatch(
-    //     "apiCall",
-    //     {
-    //       method: "post",
-    //       data: payload,
-    //       url: constants.RESET_PASSWORD,
-    //     },
-    //     { root: true }
-    //   )
-    //     .then((data) => {
-    //       if (!data.ok) fail(data.message || "Failed to Reset Password");
-    //       return data;
-    //     })
-    //     .catch((err) => {
-    //       fail(err.toString() || "Failed to Reset Password");
-    //       return {
-    //         ok: false,
-    //         message: err.message,
-    //       };
-    //     });
-    // },
+    addPartner: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch(
+        "apiCall",
+        {
+          method: "post",
+          data: payload,
+          url: constants.MANAGE_PARTNER,
+        },
+        { root: true }
+      )
+        .then((data) => {
+          if (!data.ok) fail(data.message || "Failed to add Partner");
+          return data;
+        })
+        .catch((err) => {
+          fail(err.toString() || "Failed to add Partner");
+          return {
+            ok: false,
+            message: err.message,
+          };
+        });
+    },
+    editPartner: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch(
+        "apiCall",
+        {
+          method: "put",
+          data: payload,
+          url: constants.MANAGE_PARTNER,
+        },
+        { root: true }
+      )
+        .then((data) => {
+          if (!data.ok) fail(data.message || "Failed to edit Partner");
+          return data;
+        })
+        .catch((err) => {
+          fail(err.toString() || "Failed to edit Partner");
+          return {
+            ok: false,
+            message: err.message,
+          };
+        });
+    },
+    getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch(
+        "apiCall",
+        {
+          method: "get",
+          params: payload,
+          url: constants.MANAGE_PARTNER_EMPLOYEES,
+        },
+        { root: true }
+      )
+        .then((data) => {
+          if (data.ok) {
+            return {
+              ok: true,
+              totalCount: data.totalCount,
+              fetchCount: data.fetchCount,
+              list: data.data,
+            };
+          } else {
+            fail(data.message || "Failed to Load Partner Employees List");
+            return {
+              ok: false,
+              totalCount: data.totalCount,
+              fetchCount: 0,
+              list: [],
+            };
+          }
+        })
+        .catch((err) => {
+          console.log("Yo ", err);
+          fail(err.toString() || "Failed to Load Partner Employees List");
+          return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+        });
+    },
+    addPartnerEmployees: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch(
+        "apiCall",
+        {
+          method: "post",
+          data: payload,
+          url: constants.MANAGE_PARTNER_EMPLOYEES,
+        },
+        { root: true }
+      )
+        .then((data) => {
+          if (!data.ok) fail(data.message || "Failed to add Partner Employees");
+          return data;
+        })
+        .catch((err) => {
+          fail(err.toString() || "Failed to add Partner Employees");
+          return {
+            ok: false,
+            message: err.message,
+          };
+        });
+    },
+    editPartnerEmployees: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch(
+        "apiCall",
+        {
+          method: "put",
+          data: payload,
+          url: constants.MANAGE_PARTNER_EMPLOYEES,
+        },
+        { root: true }
+      )
+        .then((data) => {
+          if (!data.ok) fail(data.message || "Failed to edit Partner Employee");
+          return data;
+        })
+        .catch((err) => {
+          fail(err.toString() || "Failed to edit Partner Employee");
+          return {
+            ok: false,
+            message: err.message,
+          };
+        });
+    },
+    deletePartnerEmployees: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch(
+        "apiCall",
+        {
+          method: "delete",
+          data: payload,
+          url: constants.MANAGE_PARTNER_EMPLOYEES,
+        },
+        { root: true }
+      )
+        .then((data) => {
+          if (!data.ok)
+            fail(data.message || "Failed to Delete Partner Employee");
+          return data;
+        })
+        .catch((err) => {
+          fail(err.toString() || "Failed to edit Partner Employee");
+          return {
+            ok: false,
+            message: err.message,
+          };
+        });
+    },
   },
   getters: {
     // masterData: (state) => state.masterData,
