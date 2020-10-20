@@ -274,13 +274,13 @@ export default {
       this.$v.$touch();
       if (this.$v.$invalid) {
         for (let config of this.inputConfig) {
-          console.log(config.name, this.$v.formElements);
+          // console.log(config.name, this.$v.formElements);
           if (
             this.$v.formElements[config.key] &&
             this.$v.formElements[config.key].$invalid
           ) {
-            console.log(config);
-            console.log(this.$v.formElements[config.key]);
+            // console.log(config);
+            // console.log(this.$v.formElements[config.key]);
             for (let param in this.$v.formElements[config.key].$params) {
               if (
                 param != "$each" &&
@@ -295,7 +295,7 @@ export default {
                   );
                 } else {
                   this.errorText = this.errorMessages[param].msg(config.name);
-                  console.log(this.errorText);
+                  // console.log(this.errorText);
                 }
               }
             }
@@ -324,7 +324,11 @@ export default {
       }
     },
     getItems(config) {
-      return this[config.listVariable];
+      if (config.isListInStore) {
+        return this[config.listVariable];
+      } else {
+        return config.listItems;
+      }
     },
     updateMultiInputObject(value, config, mulIndex) {
       this.formElements[config.key][mulIndex].input = value;
@@ -431,7 +435,7 @@ export default {
             this.$set(this.formElements, i.key, this.formData[i.key]);
           }
 
-          console.log(this.formElements);
+          // console.log(this.formElements);
 
           if (i.type == "Date") {
             this.$set(this.dateMenuRef, i.key, false);
@@ -443,7 +447,7 @@ export default {
       if (this.keysToWatch && this.keysToWatch.length > 0) {
         // create watchers here
         for (let watchKey of this.keysToWatch) {
-          console.log(watchKey);
+          // console.log(watchKey);
           this.watcherList.push(
             this.$watch(
               `formElements.${watchKey}`,
@@ -466,7 +470,7 @@ export default {
               this.formElements[i.key] = null;
             } else {
               let tempObj = [];
-              console.log(nv, this.formElements[i.key]);
+              // console.log(nv, this.formElements[i.key]);
               for (let k of this.formElements[i.key]) {
                 if (ov.includes(k.groupKey) && nv.includes(k.groupKey)) {
                   tempObj.push(k);
@@ -483,7 +487,7 @@ export default {
               this.formElements[i.key] = tempObj;
             }
           }
-          console.log(this.formElements[i.key]);
+          // console.log(this.formElements[i.key]);
         }
       }
     },
