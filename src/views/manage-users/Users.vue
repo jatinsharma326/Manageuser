@@ -316,12 +316,12 @@ export default {
         this.fetchCount = data.fetchCount;
       });
     },
-    getFormattedDate(date) {
-      return helpers.getFormattedDate(date, "DD/MM/YYYY");
-    },
-    getISODate(date) {
-      return helpers.getISODate(date);
-    },
+    // getFormattedDate(date) {
+    //   return helpers.getFormattedDate(date, "DD/MM/YYYY");
+    // },
+    // getISODate(date) {
+    //   return helpers.getISODate(date);
+    // },
     getMainContentSubtitle(user) {
       if (user.type == this.SALES_AGENT) {
         return user.usr_data.countries.join(", ");
@@ -338,10 +338,10 @@ export default {
       console.log(data);
       var formData = { ...data };
       formData.type = this.type;
-      formData.dob = this.getISODate(formData.dob);
-      formData.doj = this.getISODate(formData.doj);
+      formData.dob = helpers.getISODate(formData.dob);
+      formData.doj = helpers.getISODate(formData.doj);
       if (formData.doe) {
-        formData.doe = this.getISODate(formData.dob);
+        formData.doe = helpers.getISODate(formData.dob);
       } else {
         delete formData.doe;
       }
