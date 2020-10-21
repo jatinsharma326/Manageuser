@@ -25,11 +25,14 @@ import {
   numeric,
   alpha,
 } from "vuelidate/lib/validators";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import Users from "./Users";
 export default {
   name: "ManageUsers",
   components: { Users },
+  created() {
+    this.getPartnerList();
+  },
   data: () => ({
     tab: "",
     tabConfig: [
@@ -89,6 +92,7 @@ export default {
               key: "countries",
               width: "half",
               multi: true,
+              isListInStore: true,
               listVariable: "countries",
               validations: {
                 required,
@@ -100,6 +104,7 @@ export default {
               key: "representing_partner_ids",
               width: "half",
               multi: true,
+              isListInStore: true,
               listVariable: "partners",
               validations: {
                 required,
@@ -336,6 +341,8 @@ export default {
   computed: {
     ...mapGetters([]),
   },
-  methods: {},
+  methods: {
+    ...mapActions(["getPartnerList"]),
+  },
 };
 </script>

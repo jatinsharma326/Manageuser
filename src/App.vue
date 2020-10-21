@@ -84,7 +84,7 @@
       </v-btn>
     </v-snackbar>
 
-    <v-overlay :value="loaderDialog" :z-index="100">
+    <v-overlay class="app-loader" :value="loaderDialog" :z-index="203">
       <v-progress-circular
         color="primary"
         indeterminate
@@ -187,9 +187,19 @@ export default {
       this.routeItems.find((e) => e.route == "/" + helpers.getCurrentRoute())
         .title || "Dashboard";
     this.title = this.title.split("/")[0] + " / " + this.currentRoute;
+    this.getCountries();
+    this.getPartnerList();
+    this.getZones();
+    this.getBusinessTypes();
   },
   methods: {
-    ...mapActions(["logout"]),
+    ...mapActions([
+      "logout",
+      "getCountries",
+      "getPartnerList",
+      "getZones",
+      "getBusinessTypes",
+    ]),
     ...mapMutations([
       "openLoaderDialog",
       "closeLoaderDialog",
@@ -205,11 +215,11 @@ export default {
     },
     logoutUser() {
       console.log("User Logged Out");
-      // this.logout();
-      // if (this.currentRoute != "Dashboard") this.$router.push({ path: "/" });
-      // localStorage.clear();
-      // this.resetState();
-      // this.$emit("userHasLoggedOut");
+      this.logout();
+      if (this.currentRoute != "Dashboard") this.$router.push({ path: "/" });
+      localStorage.clear();
+      this.resetState();
+      this.$emit("userHasLoggedOut");
     },
     openPortal(item) {
       if (item.title !== this.currentRoute) {
@@ -332,5 +342,8 @@ export default {
     background-color: $secondary;
     border-left: 4px solid $accent;
   }
+}
+.app-loader {
+  z-index: 10;
 }
 </style>

@@ -17,7 +17,7 @@ let base64MimeType = (encoded) => {
   if (mime && mime.length) {
     result = mime[1];
   }
-  return result.split("/")[0];
+  return result.split("/")[1];
 };
 
 let dataURLtoFile = (dataurl, filename) => {

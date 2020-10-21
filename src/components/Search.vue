@@ -107,7 +107,7 @@ export default {
     clearFilters() {
       this.initialiseFilterElements();
       this.areFiltersApplied = false;
-      this.toggleAdvanceSearchSection = false;
+      this.toggleAdvanceSearchSection();
       this.$emit("filterObject", {});
     },
     performAdvanceSearch() {
@@ -118,7 +118,7 @@ export default {
       }
       this.areFiltersApplied = true;
       if (Object.keys(this.filterObject).length) this.areFiltersApplied = true;
-      this.toggleAdvanceSearchSection = false;
+      this.toggleAdvanceSearchSection();
       this.$emit("filterObject", this.filterObject);
     },
     toggleAdvanceSearchSection() {

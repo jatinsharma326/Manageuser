@@ -33,7 +33,7 @@ const defaultCRUDMixins = {
     ]),
   },
   methods: {
-    ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
+    ...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
     openInputForm(mode = false, data = {}) {
       this.isEditMode = mode;
       if (this.isEditMode) {
