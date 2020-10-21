@@ -36,7 +36,7 @@
     </v-navigation-drawer>
 
     <v-app-bar color="white" app fixed>
-      <v-btn icon tile x-large>
+      <v-btn fab small icon tile x-large>
         <v-icon color="black" @click="toggleNav">mdi-menu</v-icon>
       </v-btn>
 
