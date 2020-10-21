@@ -398,10 +398,10 @@ export default {
               }));
               let tempObjRefForLoop = JSON.parse(JSON.stringify(tempObj));
               for (let j of this.formData[i.keyToGroup]) {
-                let found = false;
+                let found = true;
                 for (let k of tempObjRefForLoop) {
-                  if (j != k.groupKey) {
-                    found = true;
+                  if (j == k.groupKey) {
+                    found = false;
                   }
                 }
                 if (found) {
