@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <v-tabs icons-and-text grow v-model="tab">
+    <v-tabs grow v-model="tab">
       <v-tab v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">{{
         ele.name
       }}</v-tab>
