@@ -1,53 +1,62 @@
 <template>
-  <v-card class="information-card" min-width="300px">
-    <div class="top-content-wrapper">
-      <div class="subtitle">
-        <slot name="topLeft"></slot>
-      </div>
-      <div class="subtitle text-right">
-        <slot name="topRight"></slot>
-      </div>
-    </div>
-
-    <div class="main-content-wrapper">
-      <div class="main-content-left">
-        <div class="main-content">
-          <slot name="mainContent"></slot>
+  <div class="informationCardWrapper">
+    <v-card
+      :class="{ 'remove-bottom-border-radius': show }"
+      class="information-card"
+      min-width="300px"
+    >
+      <div class="top-content-wrapper">
+        <div class="subtitle color-secondary fw-600 text-uppercase">
+          <slot name="topLeft"></slot>
         </div>
-        <div class="subtitle">
-          <slot name="mainContentSubtitle"></slot>
+        <div class="subtitle text-right color-secondary fw-600 text-uppercase">
+          <slot name="topRight"></slot>
         </div>
       </div>
-      <div class="main-content-right">
-        <slot name="mainContentRight"></slot>
-      </div>
-    </div>
-    <div class="more-info subtitle">
-      <slot name="moreInfo"></slot>
-    </div>
 
-    <div class="bottom-content-wrapper">
-      <v-card-actions>
-        <div class="action-button">
-          <slot name="actionButtons"></slot>
+      <div class="main-content-wrapper">
+        <div class="main-content-left">
+          <div class="main-content">
+            <slot name="mainContent"></slot>
+          </div>
+          <div class="subtitle">
+            <slot name="mainContentSubtitle"></slot>
+          </div>
         </div>
-
-        <v-spacer></v-spacer>
-        <div v-if="expandCard" class="">
-          <v-btn icon @click="show = !show">
-            <v-icon>{{ show ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
-          </v-btn>
+        <div class="main-content-right">
+          <slot name="mainContentRight"></slot>
         </div>
-      </v-card-actions>
-    </div>
-
-    <v-expand-transition>
-      <div v-show="show">
-        <v-divider></v-divider>
-        <slot name="expandCardContent"></slot>
       </div>
-    </v-expand-transition>
-  </v-card>
+      <div class="more-info subtitle">
+        <slot name="moreInfo"></slot>
+      </div>
+
+      <div class="bottom-content-wrapper">
+        <v-card-actions>
+          <div class="action-button">
+            <slot name="actionButtons"></slot>
+          </div>
+
+          <v-spacer></v-spacer>
+          <div v-if="expandCard">
+            <v-btn color="tertiary" icon @click="show = !show">
+              <v-icon>{{
+                show ? "mdi-chevron-up" : "mdi-chevron-down"
+              }}</v-icon>
+            </v-btn>
+          </div>
+        </v-card-actions>
+      </div>
+    </v-card>
+    <v-card class="expansionPanelWrapper">
+      <v-expand-transition>
+        <div v-show="show">
+          <v-divider></v-divider>
+          <slot name="expandCardContent"></slot>
+        </div>
+      </v-expand-transition>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -74,11 +83,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.informationCardWrapper {
+  position: relative;
+  height: 100%;
+}
+
+.expansionPanelWrapper {
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  @include custom-min(767px) {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    z-index: 1;
+    margin-bottom: 1em;
+  }
+}
+
 .v-card__actions {
   padding: 0;
 }
 .subtitle {
-  color: grey;
   font-size: 14px;
 }
 
@@ -92,6 +117,15 @@ export default {
 
 .information-card {
   padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &.remove-bottom-border-radius {
+    border-bottom-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+  }
 
   .top-content-wrapper {
     display: flex;
