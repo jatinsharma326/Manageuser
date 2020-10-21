@@ -7,18 +7,20 @@
       transition="dialog-bottom-transition"
     >
       <div class="toolbarWrapper">
-        <v-card>
+        <div>
           <v-toolbar color="primary">
-            <v-btn color="white" icon @click="closeModal">
+            <v-btn color="accent" icon @click="closeModal">
               <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-toolbar-title>
-              <div class="modalTitleWrapper">
-                <slot name="modalTitle"></slot>
+            <div class="titleWrapperContainer">
+              <v-toolbar-title>
+                <div class="modalTitleWrapper">
+                  <slot name="modalTitle"></slot>
+                </div>
+              </v-toolbar-title>
+              <div class="modalSubtitle">
+                <slot name="modalSubtitle"></slot>
               </div>
-            </v-toolbar-title>
-            <div class="modalSubtitle">
-              <slot name="modalSubtitle"></slot>
             </div>
             <v-spacer></v-spacer>
             <v-toolbar-items>
@@ -29,7 +31,7 @@
           <div class="modalContent">
             <slot name="modalContent"></slot>
           </div>
-        </v-card>
+        </div>
       </div>
     </v-dialog>
   </div>
@@ -62,8 +64,21 @@ export default {
   background-color: white;
   height: 100%;
 
-  .modalTitleWrapper {
-    color: $accent;
+  .titleWrapperContainer {
+    display: flex;
+    align-items: flex-end;
+
+    .modalTitleWrapper {
+      color: white;
+      line-height: 1;
+    }
+
+    .modalSubtitle {
+      font-size: 14px;
+      color: $secondaryFontColor;
+      margin-left: 6px;
+      line-height: 1;
+    }
   }
 }
 </style>
