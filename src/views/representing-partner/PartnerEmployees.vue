@@ -127,7 +127,7 @@ export default {
   name: "PartnerEmployee",
   mixins: [defaultCRUDMixin],
   created() {
-    // this.getEmployees();
+    this.getEmployees();
     console.log("Partner Info", this.partnerInfo);
     if (this.partnerInfo.countries) {
       this.setSearchConfig(this.partnerInfo.countries);
@@ -136,48 +136,48 @@ export default {
   },
   data: () => ({
     employeesList: [
-      {
-        _id: "5f8e8f36bbaf403c3cf40e47",
-        representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
-        name: "Sachin Tendulkar",
-        designation: "SS",
-        country: "United States",
-        phone_numbers: ["123", "321300"],
-        email_id: ["eassa@tese.com", "fasda@fcsa.in"],
-        record: {
-          created_on: "2020-10-20T07:18:14.082Z",
-          updated_on: "2020-10-20T07:18:14.082Z",
-          active: true,
-        },
-      },
-      {
-        _id: "5f8e8f36bbaf403c3cf41e47",
-        representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
-        name: "Sachin Tendulkar",
-        designation: "SS",
-        country: "Egypt",
-        phone_numbers: ["123", "321300"],
-        email_id: ["eassa@tese.com", "fasda@fcsa.in"],
-        record: {
-          created_on: "2020-10-20T07:18:14.082Z",
-          updated_on: "2020-10-20T07:18:14.082Z",
-          active: true,
-        },
-      },
-      {
-        _id: "5f8e8f36bbaf413c3cf40e47",
-        representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
-        name: "Sachin Tendulkar",
-        designation: "SS",
-        country: "United States",
-        phone_numbers: ["123", "321300"],
-        email_id: ["eassa@tese.com", "fasda@fcsa.in"],
-        record: {
-          created_on: "2020-10-20T07:18:14.082Z",
-          updated_on: "2020-10-20T07:18:14.082Z",
-          active: true,
-        },
-      },
+      // {
+      //   _id: "5f8e8f36bbaf403c3cf40e47",
+      //   representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
+      //   name: "Sachin Tendulkar",
+      //   designation: "SS",
+      //   country: "United States",
+      //   phone_numbers: ["123", "321300"],
+      //   email_id: ["eassa@tese.com", "fasda@fcsa.in"],
+      //   record: {
+      //     created_on: "2020-10-20T07:18:14.082Z",
+      //     updated_on: "2020-10-20T07:18:14.082Z",
+      //     active: true,
+      //   },
+      // },
+      // {
+      //   _id: "5f8e8f36bbaf403c3cf41e47",
+      //   representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
+      //   name: "Sachin Tendulkar",
+      //   designation: "SS",
+      //   country: "Egypt",
+      //   phone_numbers: ["123", "321300"],
+      //   email_id: ["eassa@tese.com", "fasda@fcsa.in"],
+      //   record: {
+      //     created_on: "2020-10-20T07:18:14.082Z",
+      //     updated_on: "2020-10-20T07:18:14.082Z",
+      //     active: true,
+      //   },
+      // },
+      // {
+      //   _id: "5f8e8f36bbaf413c3cf40e47",
+      //   representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
+      //   name: "Sachin Tendulkar",
+      //   designation: "SS",
+      //   country: "United States",
+      //   phone_numbers: ["123", "321300"],
+      //   email_id: ["eassa@tese.com", "fasda@fcsa.in"],
+      //   record: {
+      //     created_on: "2020-10-20T07:18:14.082Z",
+      //     updated_on: "2020-10-20T07:18:14.082Z",
+      //     active: true,
+      //   },
+      // },
     ],
     search_text: "",
     placeholder: "Search Employees",
@@ -426,8 +426,10 @@ export default {
       deep: true,
       handler(nv, ov) {
         console.log("Handler");
+        this.getEmployees();
         if (nv.countries) {
           this.setSearchConfig(nv.countries);
+          this.setInputConfig(this.partnerInfo.countries);
         }
       },
     },
