@@ -20,11 +20,21 @@
     grid-template-columns: 100%;
   }
 }
+
 .card-element {
   margin: 10px;
 }
+
 .floating-button {
   position: fixed;
   right: 20px;
   bottom: 20px;
+}
+
+.color-secondary {
+  color: $secondary;
+}
+
+.fw-600 {
+  font-weight: 600;
 }
