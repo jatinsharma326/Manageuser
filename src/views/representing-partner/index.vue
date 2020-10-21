@@ -327,7 +327,7 @@ export default {
     advanceSearch(filterObject) {
       this.filter = { ...filterObject };
       this.pageNo = 1;
-      // this.getPartners();
+      this.getPartners();
     },
     async formOutput(data) {
       console.log("Before Cleaning", data);
@@ -368,10 +368,12 @@ export default {
         this.addPartner(formData).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
+            this.openSnackbar({ text: "Sucessfully Added Partner" });
             console.log("Add Partner success");
             this.getPartners();
             this.closeForm();
           } else {
+            this.openSnackbar({ text: data.message });
             console.log("Add Partner failed");
           }
         });
@@ -379,10 +381,12 @@ export default {
         this.editPartner(formData).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
+            this.openSnackbar({ text: "Sucessfully Edited Partner" });
             console.log("Edit Partner success");
             this.getPartners();
             this.closeForm();
           } else {
+            this.openSnackbar({ text: data.message });
             console.log("Edit Partner failed");
           }
         });
@@ -410,10 +414,12 @@ export default {
         }).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
+            this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
             console.log("Updated Partner status");
-            this.getUsers();
+            this.getPartners();
             this.closeForm();
           } else {
+            this.openSnackbar({ text: data.message });
             console.log("Failed to Update Partner status");
           }
         });
@@ -440,7 +446,7 @@ export default {
         },
         {
           name: "Business Type",
-          key: "business_type",
+          key: "business_types",
           multi: true,
           inputType: "dropdown",
           defaultValue: [],

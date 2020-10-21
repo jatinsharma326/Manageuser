@@ -12,83 +12,85 @@
       </v-col>
     </v-row>
 
-    <template v-for="(country, countryIndex) in partnerInfo.countries">
-      <div
-        :key="country + '__' + countryIndex + '__tilte'"
-        class="country-title"
-      >
-        {{ country }}
-      </div>
-      <div :key="country + '__' + countryIndex" class="card-wrapper">
-        <template v-for="user in employeesList">
-          <div
-            v-if="country == user.country"
-            class="card-element"
-            :key="user._id"
-          >
-            <InformationCard :expandCard="true">
-              <template v-slot:mainContent>
-                {{ user.name }}
-              </template>
-              <template v-slot:mainContentSubtitle>
-                {{ user.designation }}
-              </template>
-              <template v-slot:moreInfo>
-                {{ user.country }}
-              </template>
-              <template v-slot:actionButtons>
-                <template v-if="userType == ADMIN || userType == MANAGEMENT">
-                  <v-btn @click="deleteEmployee(user)" color="error" text>
-                    Delete
-                  </v-btn>
-                  <v-btn
-                    @click="openInputForm(true, user)"
-                    color="secondary lighten-2"
-                    text
-                  >
-                    Edit
-                  </v-btn>
+    <template v-if="employeesList.length">
+      <template v-for="(country, countryIndex) in partnerInfo.countries">
+        <div
+          :key="country + '__' + countryIndex + '__tilte'"
+          class="country-title"
+        >
+          {{ country }}
+        </div>
+        <div :key="country + '__' + countryIndex" class="card-wrapper">
+          <template v-for="user in employeesList">
+            <div
+              v-if="country == user.country"
+              class="card-element"
+              :key="user._id"
+            >
+              <InformationCard :expandCard="true">
+                <template v-slot:mainContent>
+                  {{ user.name }}
                 </template>
-              </template>
-              <template v-slot:expandCardContent>
-                <v-list>
-                  <v-list-item
-                    v-for="(number, index) in user.mobile_number"
-                    :key="user._id + '+' + index"
-                  >
-                    <v-list-item-icon>
-                      <v-icon v-if="index == 0" color="indigo">
-                        mdi-phone
-                      </v-icon>
-                    </v-list-item-icon>
+                <template v-slot:mainContentSubtitle>
+                  {{ user.designation }}
+                </template>
+                <template v-slot:moreInfo>
+                  {{ user.country }}
+                </template>
+                <template v-slot:actionButtons>
+                  <template v-if="userType == ADMIN || userType == MANAGEMENT">
+                    <v-btn @click="deleteEmployee(user)" color="error" text>
+                      Delete
+                    </v-btn>
+                    <v-btn
+                      @click="openInputForm(true, user)"
+                      color="secondary lighten-2"
+                      text
+                    >
+                      Edit
+                    </v-btn>
+                  </template>
+                </template>
+                <template v-slot:expandCardContent>
+                  <v-list>
+                    <v-list-item
+                      v-for="(number, index) in user.phone_numbers"
+                      :key="user._id + '+' + index"
+                    >
+                      <v-list-item-icon>
+                        <v-icon v-if="index == 0" color="indigo">
+                          mdi-phone
+                        </v-icon>
+                      </v-list-item-icon>
 
-                    <v-list-item-content>
-                      <v-list-item-title>{{ number }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title>{{ number }}</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
 
-                  <v-divider inset></v-divider>
+                    <v-divider inset></v-divider>
 
-                  <v-list-item
-                    v-for="(email, index) in user.email_id"
-                    :key="user._id + '+' + index + 'Email'"
-                  >
-                    <v-list-item-icon>
-                      <v-icon v-if="index == 0" color="indigo">
-                        mdi-email
-                      </v-icon>
-                    </v-list-item-icon>
+                    <v-list-item
+                      v-for="(email, index) in user.email_ids"
+                      :key="user._id + '+' + index + 'Email'"
+                    >
+                      <v-list-item-icon>
+                        <v-icon v-if="index == 0" color="indigo">
+                          mdi-email
+                        </v-icon>
+                      </v-list-item-icon>
 
-                    <v-list-item-content>
-                      <v-list-item-title>{{ email }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list>
-              </template>
-            </InformationCard>
-          </div>
-        </template>
-      </div>
+                      <v-list-item-content>
+                        <v-list-item-title>{{ email }}</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </template>
+              </InformationCard>
+            </div>
+          </template>
+        </div>
+      </template>
     </template>
 
     <UserForm
@@ -257,13 +259,14 @@ export default {
     ]),
     getEmployees() {
       this.openLoaderDialog();
+      this.filter.representing_partner_id = this.partnerInfo._id;
       this.getPartnerEmployeesList({
         filter: this.filter,
         pageSize: this.pageSize,
         pageNo: this.pageNo,
       }).then((data) => {
         this.closeLoaderDialog();
-        this.partnerList = data.list;
+        this.employeesList = data.list;
         this.totalCount = data.totalCount;
         this.fetchCount = data.fetchCount;
       });
@@ -276,7 +279,7 @@ export default {
       // make changes here to the filterObject
       this.filter = { ...filterObject };
       this.pageNo = 1;
-      // this.getEmployees();
+      this.getEmployees();
     },
     setSearchConfig(countries = []) {
       /*
@@ -362,13 +365,14 @@ export default {
         {
           name: "Email",
           type: "MultiInput",
-          key: "email_id",
+          key: "email_ids",
           width: "half",
           validations: {
             required,
             minLength: minLength(1),
             $each: {
               input: {
+                email,
                 required,
               },
             },
@@ -381,18 +385,21 @@ export default {
       // var tempArray = [];
       // var tempObj = {};
       formData.phone_numbers = data.phone_numbers.map((data) => data.input);
-      formData.email_id = data.email_id.map((data) => data.input);
+      formData.email_ids = data.email_ids.map((data) => data.input);
       console.log("Before API call FormData Object", formData);
 
       this.openLoaderDialog();
       if (!this.isEditMode) {
+        formData.representing_partner_id = this.partnerInfo._id;
         this.addPartnerEmployees(formData).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
+            this.openSnackbar({ text: "Sucessfully Added Employee Info" });
             console.log("Add Partner Employee success");
-            this.getPartners();
+            this.getEmployees();
             this.closeForm();
           } else {
+            this.openSnackbar({ text: data.message });
             console.log("Add Partner Employee failed");
           }
         });
@@ -400,10 +407,12 @@ export default {
         this.editPartnerEmployees(formData).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
+            this.openSnackbar({ text: "Sucessfully Edited Employee Info" });
             console.log("Edit Partner Employee success");
-            this.getPartners();
+            this.getEmployees();
             this.closeForm();
           } else {
+            this.openSnackbar({ text: data.message });
             console.log("Edit Partner Employee failed");
           }
         });
@@ -418,7 +427,23 @@ export default {
     },
     // Implement the delete API
     deleteEmployee(user) {
-      console.log("Delete User");
+      console.log(user);
+      if (
+        window.confirm("Do you really want to Delete the Partner Employee?")
+      ) {
+        this.openLoaderDialog();
+        this.deletePartnerEmployees({
+          _id: user._id,
+        }).then((data) => {
+          this.closeLoaderDialog();
+          if (data.ok) {
+            this.openSnackbar({ text: "Sucessfully Deleted Employee" });
+            this.getEmployees();
+          } else {
+            this.openSnackbar({ text: data.message });
+          }
+        });
+      }
     },
   },
   watch: {
@@ -426,6 +451,8 @@ export default {
       deep: true,
       handler(nv, ov) {
         console.log("Handler");
+        this.filter = {};
+        this.employeesList = [];
         this.getEmployees();
         if (nv.countries) {
           this.setSearchConfig(nv.countries);

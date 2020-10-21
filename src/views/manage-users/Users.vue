@@ -333,10 +333,12 @@ export default {
         this.addUser(formData).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
+            this.openSnackbar({ text: "Added User Sucessfully" });
             console.log("Add user success");
             this.getUsers();
             this.closeForm();
           } else {
+            this.openSnackbar({ text: data.message });
             console.log("Add user failed");
           }
         });
@@ -344,10 +346,12 @@ export default {
         this.editUser(formData).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
+            this.openSnackbar({ text: "Edited User Sucessfuly" });
             console.log("Edit user success");
             this.getUsers();
             this.closeForm();
           } else {
+            this.openSnackbar({ text: data.message });
             console.log("Edit user failed");
           }
         });
@@ -376,10 +380,12 @@ export default {
         }).then((data) => {
           this.closeLoaderDialog();
           if (data.ok) {
+            this.openSnackbar({ text: "Updated User Status" });
             console.log("Updated user status");
             this.getUsers();
             this.closeForm();
           } else {
+            this.openSnackbar({ text: data.message });
             console.log("Failed to Update user status");
           }
         });
@@ -388,18 +394,18 @@ export default {
     userPasswordReset(data) {
       if (window.confirm("Do you really want to Reset User Password")) {
         this.openLoaderDialog();
-        this.resetPassword({ username: data.credentials.username }).then(
-          (data) => {
-            this.closeLoaderDialog();
-            if (data.ok) {
-              console.log("Failed to Reset Password");
-              this.getUsers();
-              this.closeForm();
-            } else {
-              console.log("Failed to Reset Password");
-            }
+        this.resetPassword({ _id: data._id }).then((data) => {
+          this.closeLoaderDialog();
+          if (data.ok) {
+            this.openSnackbar({ text: "Sucessfully Reset Password" });
+            console.log("Sucessfully Reset Password");
+            this.getUsers();
+            this.closeForm();
+          } else {
+            this.openSnackbar({ text: data.message });
+            console.log("Failed to Reset Password");
           }
-        );
+        });
       }
     },
   },
