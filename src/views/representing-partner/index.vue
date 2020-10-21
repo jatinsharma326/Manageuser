@@ -23,7 +23,7 @@
       <div v-for="user in partnerList" :key="user._id" class="card-element">
         <InformationCard :expandCard="true">
           <template v-slot:topLeft>
-            {{ user.business_type.join(", ") }}
+            {{ user.business_types.join(", ") }}
           </template>
           <template v-slot:mainContent>
             {{ user.name }}
@@ -113,8 +113,8 @@
         </div>
       </template>
       <template v-slot:modalSubtitle>
-        <div v-if="selectedPartnerInfo.business_type">
-          {{ selectedPartnerInfo.business_type.join("/ ") }}
+        <div v-if="selectedPartnerInfo.business_types">
+          {{ selectedPartnerInfo.business_types.join("/ ") }}
         </div>
       </template>
       <template v-slot:modalContent>
@@ -165,68 +165,68 @@ export default {
     PartnerEmployees,
   },
   created() {
-    // this.getPartners();
+    this.getPartners();
     this.setSearchConfig();
   },
   data: () => ({
     partnerList: [
-      {
-        _id: "5f8579099618e43f60826225",
-        name: "Allied Partners",
-        proprietor_info: "Info 1",
-        business_type: ["FIT", "GIT"],
-        countries: ["United States", "Egypt"],
-        emergency_contacts: [
-          {
-            country: "United States",
-            contacts: ["123456789", "987654321"],
-          },
-        ],
-        logo: "",
-        record: {
-          created_on: "2020-10-13T09:53:13.958Z",
-          updated_on: "2020-10-13T11:01:45.456Z",
-          active: false,
-        },
-      },
-      {
-        _id: "5f857a9ad8a96c2e4ca6e7c5",
-        name: "Allied Partneras",
-        proprietor_info: "Info 1",
-        business_type: ["FIT", "GIT"],
-        countries: ["United States", "Egypt"],
-        emergency_contacts: [
-          {
-            country: "Egypt",
-            contacts: ["123456789", "987654321"],
-          },
-        ],
-        logo: "",
-        record: {
-          created_on: "2020-10-13T09:59:54.919Z",
-          updated_on: "2020-10-13T09:59:54.919Z",
-          active: true,
-        },
-      },
-      {
-        _id: "5f8582dc382e8941905682c8",
-        name: "Allied P",
-        proprietor_info: "Info 1",
-        business_type: ["FIT", "GIT"],
-        countries: ["United States", "Egypt"],
-        emergency_contacts: [
-          {
-            country: "Egypt",
-            contacts: ["123456789", "987654321"],
-          },
-        ],
-        logo: "",
-        record: {
-          created_on: "2020-10-13T10:35:08.048Z",
-          updated_on: "2020-10-13T10:35:08.048Z",
-          active: true,
-        },
-      },
+      // {
+      //   _id: "5f8579099618e43f60826225",
+      //   name: "Allied Partners",
+      //   proprietor_info: "Info 1",
+      //   business_types: ["FIT", "GIT"],
+      //   countries: ["United States", "Egypt"],
+      //   emergency_contacts: [
+      //     {
+      //       country: "United States",
+      //       contacts: ["123456789", "987654321"],
+      //     },
+      //   ],
+      //   logo: "",
+      //   record: {
+      //     created_on: "2020-10-13T09:53:13.958Z",
+      //     updated_on: "2020-10-13T11:01:45.456Z",
+      //     active: false,
+      //   },
+      // },
+      // {
+      //   _id: "5f857a9ad8a96c2e4ca6e7c5",
+      //   name: "Allied Partneras",
+      //   proprietor_info: "Info 1",
+      //   business_types: ["FIT", "GIT"],
+      //   countries: ["United States", "Egypt"],
+      //   emergency_contacts: [
+      //     {
+      //       country: "Egypt",
+      //       contacts: ["123456789", "987654321"],
+      //     },
+      //   ],
+      //   logo: "",
+      //   record: {
+      //     created_on: "2020-10-13T09:59:54.919Z",
+      //     updated_on: "2020-10-13T09:59:54.919Z",
+      //     active: true,
+      //   },
+      // },
+      // {
+      //   _id: "5f8582dc382e8941905682c8",
+      //   name: "Allied P",
+      //   proprietor_info: "Info 1",
+      //   business_types: ["FIT", "GIT"],
+      //   countries: ["United States", "Egypt"],
+      //   emergency_contacts: [
+      //     {
+      //       country: "Egypt",
+      //       contacts: ["123456789", "987654321"],
+      //     },
+      //   ],
+      //   logo: "",
+      //   record: {
+      //     created_on: "2020-10-13T10:35:08.048Z",
+      //     updated_on: "2020-10-13T10:35:08.048Z",
+      //     active: true,
+      //   },
+      // },
     ],
     search_text: "",
     name: "Representing Partner",
@@ -258,6 +258,7 @@ export default {
         key: "countries",
         width: "half",
         multi: true,
+        isListInStore: true,
         listVariable: "countries",
         validations: {
           required,
@@ -266,9 +267,10 @@ export default {
       {
         name: "Business Type",
         type: "Dropdown",
-        key: "business_type",
+        key: "business_types",
         width: "half",
         multi: true,
+        isListInStore: true,
         listVariable: "businessType",
         validations: {
           required,
@@ -328,7 +330,11 @@ export default {
       // this.getPartners();
     },
     async formOutput(data) {
+      console.log("Before Cleaning", data);
+      var tempFile = data.logo;
       var formData = JSON.parse(JSON.stringify(data));
+      formData.logo = tempFile;
+      console.log("After Cleaning", formData);
       var tempArray = [];
       var tempObj = {};
 
@@ -455,7 +461,7 @@ export default {
     updatedPageNo(page) {
       // console.log("Page", page);
       // console.log("Page Number", this.pageNo);
-      // this.getPartners()
+      this.getPartners();
     },
   },
 };
