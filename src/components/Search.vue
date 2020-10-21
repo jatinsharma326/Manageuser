@@ -2,7 +2,7 @@
   <div class="">
     <v-text-field
       label="Search"
-      filled
+      outlined
       class="search-bar"
       @input="performBasicSearch()"
       v-model="queryString"
@@ -10,7 +10,7 @@
     >
       <template v-slot:append>
         <v-badge dot overlap :value="areFiltersApplied">
-          <v-icon @click="toggleAdvanceSearchSection()">{{
+          <v-icon color="tertiary" @click="toggleAdvanceSearchSection()">{{
             appendIcon
           }}</v-icon>
         </v-badge>
@@ -18,7 +18,7 @@
     </v-text-field>
     <v-expand-transition v-if="isAdvanceSearch">
       <div v-show="menu">
-        <v-card elevation="0">
+        <v-card class="advance-search-card" outlined elevation="0">
           <div class="filters-container">
             <template v-for="(filter, filterIndex) in filterConfig">
               <div
@@ -116,7 +116,7 @@ export default {
           delete this.filterObject[key];
         }
       }
-
+      this.areFiltersApplied = true;
       if (Object.keys(this.filterObject).length) this.areFiltersApplied = true;
       this.toggleAdvanceSearchSection = false;
       this.$emit("filterObject", this.filterObject);
@@ -157,3 +157,17 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.search-bar {
+  .v-text-field__details {
+    display: none;
+  }
+  .v-input__slot {
+    margin-bottom: 0;
+  }
+}
+.advance-search-card {
+  padding: 16px;
+  border-color: #9e9e9e;
+}
+</style>
