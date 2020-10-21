@@ -1,0 +1,19 @@
+name: Build GD UI and Deploy
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build GD UI
+        run: |
+          npm install
+          npm run build
+      - name: SCP Files to GD server
+        uses: lbejiuk/scp_action@v1
+        with:
+          public_key: ${{ secrets.SSH_KEY }}
+          ssh_username: ${{ secrets.USERNAME }}
+          ssh_host: ${{ secrets.HOST }}
+          source: 'dist/'
+          target: '~/global-destination-backend/web-app/'
