@@ -89,6 +89,7 @@ export default {
               key: "countries",
               width: "half",
               multi: true,
+              isListInStore: true,
               listVariable: "countries",
               validations: {
                 required,
@@ -100,6 +101,7 @@ export default {
               key: "representing_partner_ids",
               width: "half",
               multi: true,
+              isListInStore: true,
               listVariable: "partners",
               validations: {
                 required,
