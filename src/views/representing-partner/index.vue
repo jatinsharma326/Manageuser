@@ -1,7 +1,11 @@
 <template>
   <div class="partnersWrapper">
     <!-- <Users v-bind="{ ...ele.props }"></Users> -->
-    <v-row class="px-6" justify="center" align="center">
+    <v-row
+      class="px-6 managepartners-search-bar"
+      justify="center"
+      align="center"
+    >
       <v-col cols="12" sm="8" md="6">
         <!-- @queryString="queryString" -->
         <Search
@@ -36,11 +40,17 @@
             {{ user.countries.join(", ") }}
           </template>
           <template v-slot:actionButtons>
-            <template v-if="userType == ADMIN">
-              <v-btn @click="disablePartner(user)" color="error" text>
+            <template>
+              <v-btn
+                v-if="userType == ADMIN || userType == MANAGEMENT"
+                @click="disablePartner(user)"
+                color="error"
+                text
+              >
                 {{ user.record.active ? "Disable" : "Enable" }}
               </v-btn>
               <v-btn
+                v-if="userType == ADMIN || userType == MANAGEMENT"
                 @click="openInputForm(true, user)"
                 color="secondary lighten-2"
                 text
@@ -94,8 +104,8 @@
     </div>
 
     <ViewMoreModal
-      @closeModal="employeesModal = false"
-      :toggleModal="employeesModal"
+      @closeModal="viewMoreModal = false"
+      :toggleModal="viewMoreModal"
     >
       <template v-slot:modalTitle>
         <div v-if="selectedPartnerInfo.name">
@@ -123,7 +133,10 @@
       :isEditMode="isEditMode"
     ></UserForm>
 
-    <div class="floating-button">
+    <div
+      v-if="userType == ADMIN || userType == MANAGEMENT"
+      class="floating-button"
+    >
       <v-btn @click="openInputForm()" color="primary" dark fab>
         <v-icon>mdi-plus</v-icon>
       </v-btn>
@@ -132,6 +145,7 @@
 </template>
 
 <script>
+import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 import {
   required,
   email,
@@ -140,22 +154,15 @@ import {
   alpha,
 } from "vuelidate/lib/validators";
 import { mapActions, mapGetters, mapMutations } from "vuex";
-// import moment from "moment-timezone";
 import helpers from "../../components/helpers";
-import InformationCard from "../../components/InformationCard.vue";
-import Search from "../../components/Search.vue";
-import UserForm from "../../components/Form";
 import PartnerEmployees from "./PartnerEmployees";
 import ViewMoreModal from "../../components/ViewMoreModal";
 
 export default {
   name: "Partners",
+  mixins: [defaultCRUDMixin],
   components: {
-    InformationCard,
-    Search,
-    UserForm,
     PartnerEmployees,
-    ViewMoreModal,
   },
   created() {
     // this.getPartners();
@@ -288,35 +295,16 @@ export default {
         keyToGroup: "countries",
       },
     ],
-    pageSize: 20,
-    pageNo: 1,
-    totalCount: 0,
-    fetchCount: 0,
-    toggleForm: false,
-    isEditMode: false,
-    rowToEdit: {},
-    employeesModal: false,
     selectedPartnerInfo: {},
     placeholder: "Search Partners",
-    selectedSearchConfig: [],
-    filter: {},
   }),
-  computed: {
-    ...mapGetters([
-      "REMOTE_SALES_AGENT",
-      "SALES_AGENT",
-      "MANAGEMENT",
-      "ADMIN",
-      "userType",
-    ]),
-  },
+  computed: {},
   methods: {
     ...mapActions("PartnerManagement", [
       "getPartnerList",
       "addPartner",
       "editPartner",
     ]),
-    ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
     getPartners() {
       this.openLoaderDialog();
       this.getPartnerList({
@@ -394,21 +382,12 @@ export default {
         });
       }
     },
-    openInputForm(mode = false, data = {}) {
-      this.isEditMode = mode;
-      if (this.isEditMode) {
-        this.rowToEdit = {
-          ...data,
-          _id: data._id,
-          updated_on: data.record.updated_on,
-        };
-      }
-      this.toggleForm = true;
-    },
-    closeForm() {
-      this.rowToEdit = {};
-      this.isEditMode = false;
-      this.toggleForm = false;
+    getEditRowObject(data) {
+      return {
+        ...data,
+        _id: data._id,
+        updated_on: data.record.updated_on,
+      };
     },
     disablePartner(data) {
       if (
@@ -437,7 +416,7 @@ export default {
     openEmployeeModal(userData) {
       this.selectedPartnerInfo = { ...userData };
       // console.log(this.selectedPartnerInfo);
-      this.employeesModal = true;
+      this.viewMoreModal = true;
     },
     setSearchConfig() {
       /*
@@ -476,6 +455,7 @@ export default {
     updatedPageNo(page) {
       // console.log("Page", page);
       // console.log("Page Number", this.pageNo);
+      // this.getPartners()
     },
   },
 };
@@ -487,6 +467,9 @@ export default {
 }
 .card-image img {
   max-width: 100%;
+}
+.managepartners-search-bar {
+  margin-top: 12px;
 }
 </style>
 

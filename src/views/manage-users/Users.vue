@@ -1,6 +1,6 @@
 <template>
   <div class="usersComponentWrapper">
-    <v-row class="px-6" justify="center" align="center">
+    <v-row class="px-6 manageusers-search-bar " justify="center" align="center">
       <v-col cols="12" sm="8" md="6">
         <Search @queryString="queryString" :placeholder="placeholder"></Search>
       </v-col>
@@ -156,7 +156,7 @@
       :isEditMode="isEditMode"
     ></UserForm>
 
-    <div class="floating-button">
+    <div v-if="userType == ADMIN" class="floating-button">
       <v-btn @click="openInputForm()" color="primary" dark fab>
         <v-icon>mdi-plus</v-icon>
       </v-btn>
@@ -165,132 +165,110 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from "vuex";
-// import moment from "moment-timezone";
+import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 import helpers from "../../components/helpers";
-import InformationCard from "../../components/InformationCard.vue";
-import Search from "../../components/Search.vue";
-import UserForm from "../../components/Form";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "Users",
-  components: {
-    InformationCard,
-    Search,
-    UserForm,
-  },
+  mixins: [defaultCRUDMixin],
   data: () => ({
     userList: [
-      // {
-      //   _id: "5f86e229249b154d40536494",
-      //   record: {
-      //     created_on: "2020-10-14T11:34:01.617Z",
-      //     updated_on: "2020-10-14T11:34:01.617Z",
-      //     active: true,
-      //   },
-      //   credentials: {
-      //     username: "pocketwala.ali@gmail.com",
-      //   },
-      //   type: 30,
-      //   owner: "5f758a8d90d2426336f37c44",
-      //   usr_data: {
-      //     name: "Aliasgar Pocketwala",
-      //     dob: "2020-09-30T18:30:00.000Z",
-      //     address: "Mazgaon",
-      //     phone_numbers: ["9768835921"],
-      //     email: "pocketwala.ali@gmail.com",
-      //     designation: "SS",
-      //     doj: "2020-09-30T18:30:00.000Z",
-      //     doe: "2020-09-30T18:30:00.000Z",
-      //     representing_partner_ids: [],
-      //     countries: ["USA"],
-      //     no_of_leaves: 26,
-      //   },
-      // },
-      // {
-      //   _id: "5f86f00568c8a450285d6f93",
-      //   record: {
-      //     created_on: "2020-10-14T12:33:09.032Z",
-      //     updated_on: "2020-10-14T12:33:09.032Z",
-      //     active: true,
-      //   },
-      //   credentials: {
-      //     username: "skypunch@gmail.com",
-      //   },
-      //   type: 30,
-      //   owner: "5f758a8d90d2426336f37c44",
-      //   usr_data: {
-      //     name: "Aliasgar Pocketwala",
-      //     dob: "2020-09-30T18:30:00.000Z",
-      //     address: "Mazgaon",
-      //     phone_numbers: ["9768835921"],
-      //     email: "skypunch@gmail.com",
-      //     designation: "SS",
-      //     doj: "2020-09-30T18:30:00.000Z",
-      //     doe: "2020-09-30T18:30:00.000Z",
-      //     representing_partner_ids: [
-      //       {
-      //         text: "Allied Partneras",
-      //         value: "5f857a9ad8a96c2e4ca6e7c5",
-      //       },
-      //     ],
-      //     countries: ["United States"],
-      //     no_of_leaves: 26,
-      //   },
-      // },
-      // {
-      //   _id: "5f899e04c0f5464a64a301ab",
-      //   record: {
-      //     created_on: "2020-10-16T13:20:04.748Z",
-      //     updated_on: "2020-10-16T13:20:04.748Z",
-      //     active: true,
-      //   },
-      //   credentials: {
-      //     username: "hsuhhuhu@huhhu.com",
-      //   },
-      //   type: 30,
-      //   owner: "5f758a8d90d2426336f37c44",
-      //   usr_data: {
-      //     name: "Huzefa",
-      //     dob: "2020-09-30T18:30:00.000Z",
-      //     address: "bbhbhbh ghjgjgjhgjhg hgjhgjhgjh",
-      //     phone_numbers: ["1111111111111111"],
-      //     email: "hsuhhuhu@huhhu.com",
-      //     designation: "uuhhuhuhhhuuu",
-      //     doj: "2020-09-30T18:30:00.000Z",
-      //     representing_partner_ids: [
-      //       {
-      //         text: "Allied Partneras",
-      //         value: "5f857a9ad8a96c2e4ca6e7c5",
-      //       },
-      //     ],
-      //     countries: ["Australia"],
-      //     doe: null,
-      //     no_of_leaves: 26,
-      //   },
-      // },
+      {
+        _id: "5f86e229249b154d40536494",
+        record: {
+          created_on: "2020-10-14T11:34:01.617Z",
+          updated_on: "2020-10-14T11:34:01.617Z",
+          active: true,
+        },
+        credentials: {
+          username: "pocketwala.ali@gmail.com",
+        },
+        type: 30,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Aliasgar Pocketwala",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "Mazgaon",
+          phone_numbers: ["9768835921"],
+          email: "pocketwala.ali@gmail.com",
+          designation: "SS",
+          doj: "2020-09-30T18:30:00.000Z",
+          doe: "2020-09-30T18:30:00.000Z",
+          representing_partner_ids: [],
+          countries: ["USA"],
+          no_of_leaves: 26,
+        },
+      },
+      {
+        _id: "5f86f00568c8a450285d6f93",
+        record: {
+          created_on: "2020-10-14T12:33:09.032Z",
+          updated_on: "2020-10-14T12:33:09.032Z",
+          active: true,
+        },
+        credentials: {
+          username: "skypunch@gmail.com",
+        },
+        type: 30,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Aliasgar Pocketwala",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "Mazgaon",
+          phone_numbers: ["9768835921"],
+          email: "skypunch@gmail.com",
+          designation: "SS",
+          doj: "2020-09-30T18:30:00.000Z",
+          doe: "2020-09-30T18:30:00.000Z",
+          representing_partner_ids: [
+            {
+              text: "Allied Partneras",
+              value: "5f857a9ad8a96c2e4ca6e7c5",
+            },
+          ],
+          countries: ["United States"],
+          no_of_leaves: 26,
+        },
+      },
+      {
+        _id: "5f899e04c0f5464a64a301ab",
+        record: {
+          created_on: "2020-10-16T13:20:04.748Z",
+          updated_on: "2020-10-16T13:20:04.748Z",
+          active: true,
+        },
+        credentials: {
+          username: "hsuhhuhu@huhhu.com",
+        },
+        type: 30,
+        owner: "5f758a8d90d2426336f37c44",
+        usr_data: {
+          name: "Huzefa",
+          dob: "2020-09-30T18:30:00.000Z",
+          address: "bbhbhbh ghjgjgjhgjhg hgjhgjhgjh",
+          phone_numbers: ["1111111111111111"],
+          email: "hsuhhuhu@huhhu.com",
+          designation: "uuhhuhuhhhuuu",
+          doj: "2020-09-30T18:30:00.000Z",
+          representing_partner_ids: [
+            {
+              text: "Allied Partneras",
+              value: "5f857a9ad8a96c2e4ca6e7c5",
+            },
+          ],
+          countries: ["Australia"],
+          doe: null,
+          no_of_leaves: 26,
+        },
+      },
     ],
     search_text: "",
-    pageSize: 20,
-    pageNo: 1,
-    totalCount: 0,
-    fetchCount: 0,
-    toggleForm: false,
-    isEditMode: false,
-    rowToEdit: {},
   }),
   created() {
-    this.getUsers();
+    // this.getUsers();
   },
-  computed: {
-    ...mapGetters([
-      "REMOTE_SALES_AGENT",
-      "SALES_AGENT",
-      "MANAGEMENT",
-      "ADMIN",
-      "userType",
-    ]),
-  },
+
   methods: {
     ...mapActions("UserManagement", [
       "getUserList",
@@ -298,7 +276,7 @@ export default {
       "editUser",
       "resetPassword",
     ]),
-    ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
+
     getUsers() {
       this.openLoaderDialog();
       this.getUserList({
@@ -316,9 +294,9 @@ export default {
         this.fetchCount = data.fetchCount;
       });
     },
-    // getFormattedDate(date) {
-    //   return helpers.getFormattedDate(date, "DD/MM/YYYY");
-    // },
+    getFormattedDate(date) {
+      return helpers.getFormattedDate(date, "DD/MM/YYYY");
+    },
     // getISODate(date) {
     //   return helpers.getISODate(date);
     // },
@@ -373,21 +351,13 @@ export default {
         });
       }
     },
-    openInputForm(mode = false, data = {}) {
-      this.isEditMode = mode;
-      if (this.isEditMode) {
-        this.rowToEdit = {
-          ...data.usr_data,
-          _id: data._id,
-          updated_on: data.record.updated_on,
-        };
-      }
-      this.toggleForm = true;
-    },
-    closeForm() {
-      this.rowToEdit = {};
-      this.isEditMode = false;
-      this.toggleForm = false;
+
+    getEditRowObject(data) {
+      return {
+        ...data.usr_data,
+        _id: data._id,
+        updated_on: data.record.updated_on,
+      };
     },
     disableUser(data) {
       if (
@@ -444,5 +414,8 @@ export default {
 .date-container {
   display: flex;
   justify-content: space-between;
+}
+.manageusers-search-bar {
+  margin-top: 12px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="partnerEmployeesWrapper">
-    <v-row class="px-6" justify="center" align="center">
+    <v-row class="px-6 employee-search-bar" justify="center" align="center">
       <v-col cols="12" sm="8" md="6">
         <Search
           @queryString="queryString"
@@ -12,83 +12,84 @@
       </v-col>
     </v-row>
 
-    <div
-      v-for="(country, countryIndex) in partnerInfo.countries"
-      :key="country + '__' + countryIndex"
-      class="card-wrapper"
-    >
-      <div class="country-title">{{ country }}</div>
-      <div v-for="user in employeesList" :key="user._id" class="card-element">
-        <InformationCard v-if="country == user.country" :expandCard="true">
-          <template v-slot:mainContent>
-            {{ user.name }}
-          </template>
-          <template v-slot:mainContentSubtitle>
-            {{ user.designation }}
-          </template>
-          <template v-slot:moreInfo>
-            {{ user.country }}
-          </template>
-          <template v-slot:actionButtons>
-            <template v-if="userType == ADMIN">
-              <v-btn @click="deleteEmployee(user)" color="error" text>
-                Delete
-              </v-btn>
-              <v-btn
-                @click="openInputForm(true, user)"
-                color="secondary lighten-2"
-                text
-              >
-                Edit
-              </v-btn>
-            </template>
-          </template>
-          <template v-slot:expandCardContent>
-            <v-list>
-              <v-list-item
-                v-for="(number, index) in user.mobile_number"
-                :key="user._id + '+' + index"
-              >
-                <v-list-item-icon>
-                  <v-icon v-if="index == 0" color="indigo">
-                    mdi-phone
-                  </v-icon>
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title>{{ number }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-divider inset></v-divider>
-
-              <v-list-item
-                v-for="(email, index) in user.email_id"
-                :key="user._id + '+' + index + 'Email'"
-              >
-                <v-list-item-icon>
-                  <v-icon v-if="index == 0" color="indigo">
-                    mdi-email
-                  </v-icon>
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title>{{ email }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </template>
-        </InformationCard>
+    <template v-for="(country, countryIndex) in partnerInfo.countries">
+      <div
+        :key="country + '__' + countryIndex + '__tilte'"
+        class="country-title"
+      >
+        {{ country }}
       </div>
-    </div>
+      <div :key="country + '__' + countryIndex" class="card-wrapper">
+        <template v-for="user in employeesList">
+          <div
+            v-if="country == user.country"
+            class="card-element"
+            :key="user._id"
+          >
+            <InformationCard :expandCard="true">
+              <template v-slot:mainContent>
+                {{ user.name }}
+              </template>
+              <template v-slot:mainContentSubtitle>
+                {{ user.designation }}
+              </template>
+              <template v-slot:moreInfo>
+                {{ user.country }}
+              </template>
+              <template v-slot:actionButtons>
+                <template v-if="userType == ADMIN || userType == MANAGEMENT">
+                  <v-btn @click="deleteEmployee(user)" color="error" text>
+                    Delete
+                  </v-btn>
+                  <v-btn
+                    @click="openInputForm(true, user)"
+                    color="secondary lighten-2"
+                    text
+                  >
+                    Edit
+                  </v-btn>
+                </template>
+              </template>
+              <template v-slot:expandCardContent>
+                <v-list>
+                  <v-list-item
+                    v-for="(number, index) in user.mobile_number"
+                    :key="user._id + '+' + index"
+                  >
+                    <v-list-item-icon>
+                      <v-icon v-if="index == 0" color="indigo">
+                        mdi-phone
+                      </v-icon>
+                    </v-list-item-icon>
 
-    <div class="text-center">
-      <v-pagination
-        @input="updatedPageNo"
-        v-model="pageNo"
-        :length="Math.ceil(fetchCount / pageSize)"
-      ></v-pagination>
-    </div>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ number }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                  <v-divider inset></v-divider>
+
+                  <v-list-item
+                    v-for="(email, index) in user.email_id"
+                    :key="user._id + '+' + index + 'Email'"
+                  >
+                    <v-list-item-icon>
+                      <v-icon v-if="index == 0" color="indigo">
+                        mdi-email
+                      </v-icon>
+                    </v-list-item-icon>
+
+                    <v-list-item-content>
+                      <v-list-item-title>{{ email }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </template>
+            </InformationCard>
+          </div>
+        </template>
+      </div>
+    </template>
 
     <UserForm
       @formOutput="formOutput"
@@ -100,7 +101,10 @@
       :isEditMode="isEditMode"
     ></UserForm>
 
-    <div class="floating-button">
+    <div
+      v-if="userType == ADMIN || userType == MANAGEMENT"
+      class="floating-button"
+    >
       <v-btn @click="openInputForm()" color="primary" dark fab>
         <v-icon>mdi-plus</v-icon>
       </v-btn>
@@ -109,6 +113,7 @@
 </template>
 
 <script>
+import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 import {
   required,
   email,
@@ -117,19 +122,10 @@ import {
   alpha,
 } from "vuelidate/lib/validators";
 import { mapActions, mapGetters, mapMutations } from "vuex";
-import InformationCard from "../../components/InformationCard.vue";
-import Search from "../../components/Search.vue";
-import UserForm from "../../components/Form";
-
-// import helpers from "../../components/helpers";
 
 export default {
   name: "PartnerEmployee",
-  components: {
-    InformationCard,
-    Search,
-    UserForm,
-  },
+  mixins: [defaultCRUDMixin],
   created() {
     // this.getEmployees();
     console.log("Partner Info", this.partnerInfo);
@@ -251,25 +247,7 @@ export default {
         },
       },
     ],
-    pageSize: 20,
-    pageNo: 1,
-    totalCount: 0,
-    fetchCount: 0,
-    toggleForm: false,
-    isEditMode: false,
-    rowToEdit: {},
-    selectedSearchConfig: [],
-    filter: {},
   }),
-  computed: {
-    ...mapGetters([
-      "REMOTE_SALES_AGENT",
-      "SALES_AGENT",
-      "MANAGEMENT",
-      "ADMIN",
-      "userType",
-    ]),
-  },
   methods: {
     ...mapActions("PartnerManagement", [
       "getPartnerEmployeesList",
@@ -277,7 +255,6 @@ export default {
       "editPartnerEmployees",
       "deletePartnerEmployees",
     ]),
-    ...mapMutations(["openLoaderDialog", "closeLoaderDialog"]),
     getEmployees() {
       this.openLoaderDialog();
       this.getPartnerEmployeesList({
@@ -432,26 +409,14 @@ export default {
         });
       }
     },
-    openInputForm(mode = false, data = {}) {
-      this.isEditMode = mode;
-      if (this.isEditMode) {
-        this.rowToEdit = {
-          ...data,
-          _id: data._id,
-          updated_on: data.record.updated_on,
-        };
-      }
-      this.toggleForm = true;
+    getEditRowObject(data) {
+      return {
+        ...data,
+        _id: data._id,
+        updated_on: data.record.updated_on,
+      };
     },
-    closeForm() {
-      this.rowToEdit = {};
-      this.isEditMode = false;
-      this.toggleForm = false;
-    },
-    updatedPageNo(page) {
-      // console.log("Page", page);
-      // console.log("Page Number", this.pageNo);
-    },
+    // Implement the delete API
     deleteEmployee(user) {
       console.log("Delete User");
     },
@@ -476,5 +441,17 @@ export default {
 .partnerEmployeesWrapper {
   background-color: white;
   height: 100%;
+
+  .country-title {
+    margin-left: 10px;
+    margin-top: 14px;
+    font-size: 20px;
+    font-weight: 600;
+    color: $tertiary;
+  }
+  .employee-search-bar {
+    margin-top: 14px;
+    width: 100%;
+  }
 }
 </style>
