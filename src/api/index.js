@@ -1,8 +1,8 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
 const BASE_URL = isBuildVersion
-  ? "http://192.168.1.157:1401"
-  : "http://192.168.1.157:1401";
+  ? "https://globaldestinations.tk"
+  : "https://globaldestinations.tk";
 // : // : "https://4fe85f9c.ngrok.io";
 
 export default {
