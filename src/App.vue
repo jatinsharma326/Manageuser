@@ -213,9 +213,9 @@ export default {
     settings() {
       console.log("Clicked Settings Icon");
     },
-    logoutUser() {
+    async logoutUser() {
       console.log("User Logged Out");
-      this.logout();
+      await this.logout();
       if (this.currentRoute != "Dashboard") this.$router.push({ path: "/" });
       localStorage.clear();
       this.resetState();
