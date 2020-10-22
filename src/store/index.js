@@ -158,6 +158,9 @@ export default new Vuex.Store({
     loginFail: (s, p) => {
       s.messages.loginFailed = p;
     },
+    logoutFail: (s, p) => {
+      console.log("logged out");
+    },
     resetState(state) {
       const initial = initialState();
       Object.keys(initial).forEach((key) => {
@@ -338,15 +341,18 @@ export default new Vuex.Store({
           return { ok: false };
         });
     },
-    logout: ({ commit, state }, payload) => {
+    logout: ({ commit, state }) => {
       let fail = (msg) => commit("logoutFail", msg);
-      // let { username, password } = payload;
       return axios
-        .post(constants.LOGOUT, {
-          headers: {
-            Authorization: state.authToken,
-          },
-        })
+        .post(
+          constants.LOGOUT,
+          {},
+          {
+            headers: {
+              Authorization: state.authToken,
+            },
+          }
+        )
         .then((response) => {
           let data = response.data;
           if (!data.ok) {
