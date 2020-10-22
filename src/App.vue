@@ -45,7 +45,7 @@
       <!-- <span class="mr-2 body-1 font-weight-medium">
         Taher is god
       </span> -->
-      <v-btn large icon @click="settings">
+      <v-btn large icon @click="openPortal(settingsRoute)">
         <v-icon color="primary">mdi-cog</v-icon>
       </v-btn>
       <v-btn large icon @click="logoutUser">
@@ -106,6 +106,10 @@ export default {
     localSnackbarState: false,
     currentRoute: "",
     title: "TITLE",
+    settingsRoute: {
+      title: "Settings",
+      route: "/settings",
+    },
     routeItems: [
       {
         icon: "data_usage",
@@ -183,9 +187,14 @@ export default {
     ],
   }),
   created() {
-    this.currentRoute =
-      this.routeItems.find((e) => e.route == "/" + helpers.getCurrentRoute())
-        .title || "Dashboard";
+    console.log(helpers.getCurrentRoute());
+    if (helpers.getCurrentRoute() != "settings") {
+      this.currentRoute =
+        this.routeItems.find((e) => e.route == "/" + helpers.getCurrentRoute())
+          .title || "Dashboard";
+    } else {
+      this.currentRoute = this.settingsRoute.title;
+    }
     this.title = this.title.split("/")[0] + " / " + this.currentRoute;
     this.getCountries();
     this.getPartnerList();
@@ -209,9 +218,6 @@ export default {
     ]),
     toggleNav() {
       this.navigationToggle = !this.navigationToggle;
-    },
-    settings() {
-      console.log("Clicked Settings Icon");
     },
     async logoutUser() {
       console.log("User Logged Out");
