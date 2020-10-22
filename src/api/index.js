@@ -24,4 +24,7 @@ export default {
   MANAGE_USERS: BASE_URL + "Mortals/v0.1/",
   MANAGE_PARTNER: BASE_URL + "Partners/v0.1/",
   MANAGE_PARTNER_EMPLOYEES: BASE_URL + "RepEmployees/v0.1/",
+
+  GLOBAL_SETTINGS: BASE_URL + "Admin/v0.1/global-settings",
+  GLOBAL_SETTINGS_POLICIES: BASE_URL + "Admin/v0.1/policies",
 };
