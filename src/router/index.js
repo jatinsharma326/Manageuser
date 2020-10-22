@@ -16,6 +16,12 @@ const routes = [
     component: () => import("../views/representing-partner"),
     meta: { policy: [10, 20, 30, 40] },
   },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: () => import("../views/settings"),
+    meta: { policy: [10, 20, 30, 40] },
+  },
 ];
 
 const router = new VueRouter({
