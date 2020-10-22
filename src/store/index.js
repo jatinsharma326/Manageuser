@@ -14,6 +14,7 @@ let apiErrorFunction = ({ err, commit, reject }) => {
   if (err.message == "Network Error") {
     commit("openSnackbar", { text: "Network Error" });
     console.error("Network Error");
+    commit("closeLoaderDialog");
   } else if (err.response.status == 401) {
     localStorage.clear();
     commit("resetState");
@@ -339,7 +340,7 @@ export default new Vuex.Store({
     },
     logout: ({ commit, state }, payload) => {
       let fail = (msg) => commit("logoutFail", msg);
-      let { username, password } = payload;
+      // let { username, password } = payload;
       return axios
         .post(constants.LOGOUT, {
           headers: {
