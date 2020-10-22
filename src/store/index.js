@@ -232,7 +232,7 @@ export default new Vuex.Store({
             Authorization: state.authToken,
           },
           onDownloadProgress: (progressEvent) => {
-            console.log(progressEvent);
+            // console.log(progressEvent);
             // console.log((progressEvent.loaded * 100)/progressEvent.total);
           },
         })
