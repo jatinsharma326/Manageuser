@@ -36,7 +36,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load Partner List");
+						fail(data.message || "Failed to load All Leaves List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -47,8 +47,31 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load Partner List");
+					fail(err.toString() || "Failed to All Leaves List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
+		updateStatus: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "put",
+					data: payload,
+					url: constants.ALL_SALES_LEAVES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to edit Leave");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to edit Leave");
+					return {
+						ok: false,
+						message: err.message,
+					};
 				});
 		},
 		/* addPartner: ({ commit, dispatch }, payload) => {
@@ -74,29 +97,7 @@ export default {
 					};
 				});
 		}, */
-		/* editPartner: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "put",
-					data: payload,
-					url: constants.MANAGE_PARTNER,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Partner");
-					return data;
-				})
-				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner");
-					return {
-						ok: false,
-						message: err.message,
-					};
-				});
-		}, */
+
 		/* getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
