@@ -1,564 +1,521 @@
 <template>
-  <v-dialog v-model="form" width="600px" persistent>
-    <div class="form-wrapper">
-      <div class="headline">
-        <div class="">{{ isEditMode ? "Edit " : "Add " }}{{ name }}</div>
-      </div>
-      <div v-show="showError" id="error-container" class="error-container">
-        {{ errorText }}
-      </div>
-      <div class="form-input">
-        <template v-for="(config, index) in inputConfig">
-          <v-text-field
-            v-if="config.type == 'String'"
-            :label="config.name"
-            :key="config.name + '__' + index"
-            v-model="formElements[config.key]"
-            class="form-item"
-          ></v-text-field>
+	<v-dialog v-model="form" width="600px" persistent>
+		<div class="form-wrapper">
+			<div class="headline">
+				<div class="">{{ isEditMode ? "Edit " : "Add " }}{{ name }}</div>
+			</div>
+			<div v-show="showError" id="error-container" class="error-container">
+				{{ errorText }}
+			</div>
+			<div class="form-input">
+				<template v-for="(config, index) in inputConfig">
+					<v-text-field
+						v-if="config.type == 'String'"
+						:label="config.name"
+						:key="config.name + '__' + index"
+						v-model="formElements[config.key]"
+						class="form-item"
+					></v-text-field>
 
-          <template v-if="config.type == 'Dropdown'">
-            <v-autocomplete
-              :key="config.name + '__' + index"
-              :label="config.name"
-              v-model="formElements[config.key]"
-              chips
-              clearable
-              :items="getItems(config)"
-              :multiple="config.multi"
-              class="form-item"
-            ></v-autocomplete>
-          </template>
+					<template v-if="config.type == 'Dropdown'">
+						<v-autocomplete
+							:key="config.name + '__' + index"
+							:label="config.name"
+							v-model="formElements[config.key]"
+							chips
+							clearable
+							:items="getItems(config)"
+							:multiple="config.multi"
+							class="form-item"
+						></v-autocomplete>
+					</template>
 
-          <template v-if="config.type == 'Date'">
-            <div
-              :key="config.name + '__' + index"
-              class="date-picker form-item"
-            >
-              <v-menu
-                :ref="config.key"
-                v-model="dateMenuRef[config.key]"
-                :key="config.name + '__' + index"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="formElements[config.key]"
-                    :label="config.name"
-                    prepend-icon="mdi-calendar"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="formElements[config.key]"
-                  no-title
-                  scrollable
-                >
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    text
-                    color="primary"
-                    @click="dateMenuRef[config.key] = false"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn
-                    @click="dateMenuRef[config.key] = false"
-                    text
-                    color="primary"
-                  >
-                    OK
-                  </v-btn>
-                </v-date-picker>
-              </v-menu>
-            </div>
-          </template>
+					<template v-if="config.type == 'Date'">
+						<div :key="config.name + '__' + index" class="date-picker form-item">
+							<v-menu
+								:ref="config.key"
+								v-model="dateMenuRef[config.key]"
+								:key="config.name + '__' + index"
+								:close-on-content-click="false"
+								transition="scale-transition"
+								offset-y
+								min-width="290px"
+							>
+								<template v-slot:activator="{ on, attrs }">
+									<v-text-field
+										v-model="formElements[config.key]"
+										:label="config.name"
+										prepend-icon="mdi-calendar"
+										readonly
+										v-bind="attrs"
+										v-on="on"
+									></v-text-field>
+								</template>
+								<v-date-picker v-model="formElements[config.key]" no-title scrollable>
+									<v-spacer></v-spacer>
 
-          <template v-if="config.type == 'MultiInput'">
-            <template v-for="(input, mulIndex) in formElements[config.key]">
-              <div
-                :key="config.name + '__' + index + '__' + mulIndex"
-                class="multi-input-field form-item"
-              >
-                <v-text-field
-                  :value="formElements[config.key][mulIndex].input"
-                  :label="config.name"
-                  @blur="
-                    updateMultiInputObject(
-                      $event.target.value,
-                      config,
-                      mulIndex
-                    )
-                  "
-                ></v-text-field>
-              </div>
-            </template>
-            <div
-              :key="config.name + '__' + index + '__buttons'"
-              class="multi-input-buttons"
-            >
-              <v-btn
-                @click="removeMultiInputField(config)"
-                :key="config.name + '__' + index + '__remove'"
-                depressed
-                color="error"
-                small
-                text
-                :disabled="formElements[config.key].length == 1"
-                >Remove</v-btn
-              >
-              <v-btn
-                @click="addMultiInputField(config)"
-                :key="config.name + '__' + index + '__add'"
-                depressed
-                color="primary"
-                small
-                class="ml-2"
-                >Add</v-btn
-              >
-            </div>
-          </template>
+									<v-btn text color="primary" @click="formElements[config.key] = null">
+										Clear
+									</v-btn>
+									<v-btn text color="primary" @click="dateMenuRef[config.key] = false">
+										Cancel
+									</v-btn>
+									<v-btn @click="dateMenuRef[config.key] = false" text color="primary">
+										OK
+									</v-btn>
+								</v-date-picker>
+							</v-menu>
+						</div>
+					</template>
 
-          <template
-            v-if="
-              config.type == 'MultiInputWithGroupKey' &&
-                formElements[config.key]
-            "
-          >
-            <template v-for="(row, rowIndex) in formElements[config.key]">
-              Enter {{ config.name }} for {{ row.groupKey }}
-              <template v-for="(input, mulIndex) in row.input">
-                <div
-                  :key="
-                    config.name +
-                      '__' +
-                      index +
-                      '__' +
-                      mulIndex +
-                      '__' +
-                      rowIndex +
-                      '__' +
-                      row.groupKey
-                  "
-                  class="multi-input-field form-item"
-                >
-                  <v-text-field
-                    :value="
-                      formElements[config.key][rowIndex].input[mulIndex].input
-                    "
-                    :label="config.name"
-                    @blur="
-                      updateMultiInputWithGroupKey(
-                        $event.target.value,
-                        config,
-                        rowIndex,
-                        mulIndex
-                      )
-                    "
-                  ></v-text-field>
-                </div>
-              </template>
-              <div
-                :key="config.name + '__' + index + '__buttons__' + row.groupKey"
-                class="multi-input-buttons"
-              >
-                <v-btn
-                  @click="removeMultiInputWithGroupKeyField(config, rowIndex)"
-                  :key="config.name + '__' + index + '__remove'"
-                  depressed
-                  color="error"
-                  small
-                  text
-                  :disabled="
-                    formElements[config.key][rowIndex].input.length == 1
-                  "
-                  >Remove</v-btn
-                >
-                <v-btn
-                  @click="addMultiInputWithGroupKeyField(config, rowIndex)"
-                  :key="config.name + '__' + index + '__add'"
-                  depressed
-                  color="primary"
-                  small
-                  class="ml-2"
-                  >Add</v-btn
-                >
-              </div>
-            </template>
-          </template>
+					<template v-if="config.type == 'MultiInput'">
+						<template v-for="(input, mulIndex) in formElements[config.key]">
+							<div
+								:key="config.name + '__' + index + '__' + mulIndex"
+								class="multi-input-field form-item"
+							>
+								<v-text-field
+									:value="formElements[config.key][mulIndex].input"
+									:label="config.name"
+									@blur="updateMultiInputObject($event.target.value, config, mulIndex)"
+								></v-text-field>
+							</div>
+						</template>
+						<div :key="config.name + '__' + index + '__buttons'" class="multi-input-buttons">
+							<v-btn
+								@click="removeMultiInputField(config)"
+								:key="config.name + '__' + index + '__remove'"
+								depressed
+								color="error"
+								small
+								text
+								:disabled="formElements[config.key].length == 1"
+								>Remove</v-btn
+							>
+							<v-btn
+								@click="addMultiInputField(config)"
+								:key="config.name + '__' + index + '__add'"
+								depressed
+								color="primary"
+								small
+								class="ml-2"
+								>Add</v-btn
+							>
+						</div>
+					</template>
 
-          <template v-if="config.type == 'FilePicker'">
-            <v-file-input
-              v-model="formElements[config.key]"
-              :key="config.name + '__' + index"
-              :accept="config.acceptRules"
-              :rules="config.rules"
-              :label="config.name"
-            ></v-file-input>
-          </template>
-        </template>
-      </div>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="error" text @click="closeForm()">
-          Cancel
-        </v-btn>
-        <v-btn color="primary" text @click="formValidation">
-          Submit
-        </v-btn>
-      </v-card-actions>
-    </div>
-  </v-dialog>
+					<template v-if="config.type == 'MultiInputWithGroupKey' && formElements[config.key]">
+						<template v-for="(row, rowIndex) in formElements[config.key]">
+							Enter {{ config.name }} for {{ row.groupKey }}
+							<template v-for="(input, mulIndex) in row.input">
+								<div
+									:key="
+										config.name +
+											'__' +
+											index +
+											'__' +
+											mulIndex +
+											'__' +
+											rowIndex +
+											'__' +
+											row.groupKey
+									"
+									class="multi-input-field form-item"
+								>
+									<v-text-field
+										:value="formElements[config.key][rowIndex].input[mulIndex].input"
+										:label="config.name"
+										@blur="
+											updateMultiInputWithGroupKey(
+												$event.target.value,
+												config,
+												rowIndex,
+												mulIndex
+											)
+										"
+									></v-text-field>
+								</div>
+							</template>
+							<div
+								:key="config.name + '__' + index + '__buttons__' + row.groupKey"
+								class="multi-input-buttons"
+							>
+								<v-btn
+									@click="removeMultiInputWithGroupKeyField(config, rowIndex)"
+									:key="config.name + '__' + index + '__remove'"
+									depressed
+									color="error"
+									small
+									text
+									:disabled="formElements[config.key][rowIndex].input.length == 1"
+									>Remove</v-btn
+								>
+								<v-btn
+									@click="addMultiInputWithGroupKeyField(config, rowIndex)"
+									:key="config.name + '__' + index + '__add'"
+									depressed
+									color="primary"
+									small
+									class="ml-2"
+									>Add</v-btn
+								>
+							</div>
+						</template>
+					</template>
+
+					<template v-if="config.type == 'FilePicker'">
+						<v-file-input
+							v-model="formElements[config.key]"
+							:key="config.name + '__' + index"
+							:accept="config.acceptRules"
+							:rules="config.rules"
+							:label="config.name"
+						></v-file-input>
+					</template>
+				</template>
+			</div>
+			<v-card-actions>
+				<v-spacer></v-spacer>
+				<v-btn color="error" text @click="closeForm()">
+					Cancel
+				</v-btn>
+				<v-btn color="primary" text @click="formValidation">
+					Submit
+				</v-btn>
+			</v-card-actions>
+		</div>
+	</v-dialog>
 </template>
 
 <script>
-import {
-  required,
-  email,
-  minLength,
-  numeric,
-  alpha,
-} from "vuelidate/lib/validators";
-import { mapGetters } from "vuex";
-// import moment from "moment-timezone";
-import helpers from "./helpers";
-export default {
-  name: "Form",
-  components: {},
-  data: () => ({
-    form: false,
-    showError: false,
-    errorText: false,
-    formElements: {},
-    dateMenuRef: {},
-    watcherList: [],
-    errorMessages: {
-      required: {
-        type: "normal",
-        msg: (name) => `${name} is a Required Field`,
-      },
-      alpha: { type: "normal", msg: (name) => `${name} can only be Alphabets` },
-      numeric: { type: "normal", msg: (name) => `${name} can only be Numbers` },
-      minLength: {
-        type: "conditional",
-        msg: (name, condition) =>
-          `${name} needs to have a minimum of length of ${condition}`,
-        conditionKey: "min",
-      },
-      maxLength: {
-        type: "conditional",
-        msg: (name, condition) =>
-          `${name} needs to have a minimum of length of ${condition}`,
-        conditionKey: "max",
-      },
-      email: { type: "normal", msg: (name) => `${name} is not a valid email` },
-    },
-  }),
-  created() {
-    this.initialiseFormElements();
-  },
-  mounted() {},
-  computed: {
-    ...mapGetters(["countries", "partners", "zone", "businessType"]),
-  },
-  methods: {
-    // ...mapActions("UserManagement", ["getUserList"]),
-    formValidation() {
-      this.showError = false;
-      this.errorText = false;
-      this.$v.$touch();
-      if (this.$v.$invalid) {
-        for (let config of this.inputConfig) {
-          // console.log(config.name, this.$v.formElements);
-          if (
-            this.$v.formElements[config.key] &&
-            this.$v.formElements[config.key].$invalid
-          ) {
-            // console.log(config);
-            // console.log(this.$v.formElements[config.key]);
-            for (let param in this.$v.formElements[config.key].$params) {
-              if (
-                param != "$each" &&
-                !this.$v.formElements[config.key][param]
-              ) {
-                if (this.errorMessages[param].type == "conditional") {
-                  this.errorText = this.errorMessages[param].msg(
-                    config.name,
-                    this.$v.formElements[config.key].$params[param][
-                      this.errorMessages[param].conditionKey
-                    ]
-                  );
-                } else {
-                  this.errorText = this.errorMessages[param].msg(config.name);
-                  // console.log(this.errorText);
-                }
-              }
-            }
-            if (!this.errorText) {
-              this.errorText = config.name + " is incorrect";
-            }
-            this.showError = true;
-            break;
-          }
-        }
-        this.$vuetify.goTo("#error-container", {
-          duration: 300,
-        });
-        return false;
-      } else {
-        if (!this.isEditMode) {
-          this.$emit("formOutput", this.formElements);
-        } else {
-          this.$emit("formOutput", {
-            ...this.formElements,
-            _id: this.formData._id,
-            updated_on: this.formData.updated_on,
-          });
-        }
-        return true;
-      }
-    },
-    getItems(config) {
-      if (config.isListInStore) {
-        return this[config.listVariable];
-      } else {
-        return config.listItems;
-      }
-    },
-    updateMultiInputObject(value, config, mulIndex) {
-      this.formElements[config.key][mulIndex].input = value;
-    },
-    updateMultiInputWithGroupKey(value, config, rowIndex, mulIndex) {
-      this.formElements[config.key][rowIndex].input[mulIndex].input = value;
-    },
-    removeMultiInputWithGroupKeyField(config, rowIndex) {
-      if (this.formElements[config.key][rowIndex].input.length > 1) {
-        this.formElements[config.key][rowIndex].input.pop({ input: "" });
-      }
-    },
-    addMultiInputWithGroupKeyField(config, rowIndex) {
-      this.formElements[config.key][rowIndex].input.push({ input: "" });
-    },
-    removeMultiInputField(config) {
-      if (this.formElements[config.key].length > 1) {
-        this.formElements[config.key].pop({ input: "" });
-      }
-    },
-    addMultiInputField(config) {
-      this.formElements[config.key].push({ input: "" });
-    },
-    closeForm() {
-      this.$emit("closeForm");
-    },
-    initialiseFormElements() {
-      if (this.watcherList.length) {
-        for (let i of this.watcherList) {
-          i();
-        }
-      }
+	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
+	import { mapGetters } from "vuex";
+	// import moment from "moment-timezone";
+	import helpers from "./helpers";
+	export default {
+		name: "Form",
+		components: {},
+		data: () => ({
+			form: false,
+			showError: false,
+			errorText: false,
+			formElements: {},
+			dateMenuRef: {},
+			watcherList: [],
+			errorMessages: {
+				required: {
+					type: "normal",
+					msg: (name) => `${name} is a Required Field`,
+				},
+				alpha: { type: "normal", msg: (name) => `${name} can only be Alphabets` },
+				numeric: { type: "normal", msg: (name) => `${name} can only be Numbers` },
+				minLength: {
+					type: "conditional",
+					msg: (name, condition) => `${name} needs to have a minimum of length of ${condition}`,
+					conditionKey: "min",
+				},
+				maxLength: {
+					type: "conditional",
+					msg: (name, condition) => `${name} needs to have a minimum of length of ${condition}`,
+					conditionKey: "max",
+				},
+				email: { type: "normal", msg: (name) => `${name} is not a valid email` },
+			},
+		}),
+		created() {
+			this.initialiseFormElements();
+			console.log("Form Data", this.formData);
+		},
+		mounted() {},
+		computed: {
+			...mapGetters(["countries", "partners", "zone", "businessType"]),
+		},
+		methods: {
+			// ...mapActions("UserManagement", ["getUserList"]),
+			formValidation() {
+				this.showError = false;
+				this.errorText = false;
+				this.$v.$touch();
+				if (this.$v.$invalid) {
+					for (let config of this.inputConfig) {
+						// console.log(config.name, this.$v.formElements);
+						if (this.$v.formElements[config.key] && this.$v.formElements[config.key].$invalid) {
+							// console.log(config);
+							// console.log(this.$v.formElements[config.key]);
+							for (let param in this.$v.formElements[config.key].$params) {
+								if (param != "$each" && !this.$v.formElements[config.key][param]) {
+									if (this.errorMessages[param].type == "conditional") {
+										this.errorText = this.errorMessages[param].msg(
+											config.name,
+											this.$v.formElements[config.key].$params[param][
+												this.errorMessages[param].conditionKey
+											]
+										);
+									} else {
+										this.errorText = this.errorMessages[param].msg(config.name);
+										// console.log(this.errorText);
+									}
+								}
+							}
+							if (!this.errorText) {
+								this.errorText = config.name + " is incorrect";
+							}
+							this.showError = true;
+							break;
+						}
+					}
+					this.$vuetify.goTo("#error-container", {
+						duration: 300,
+					});
+					return false;
+				} else {
+					if (!this.isEditMode) {
+						this.$emit("formOutput", this.formElements);
+					} else {
+						this.$emit("formOutput", {
+							...this.formElements,
+							_id: this.formData._id,
+							updated_on: this.formData.updated_on,
+						});
+					}
+					return true;
+				}
+			},
+			getItems(config) {
+				if (config.isListInStore) {
+					return this[config.listVariable];
+				} else {
+					return config.listItems;
+				}
+			},
+			updateMultiInputObject(value, config, mulIndex) {
+				this.formElements[config.key][mulIndex].input = value;
+			},
+			updateMultiInputWithGroupKey(value, config, rowIndex, mulIndex) {
+				this.formElements[config.key][rowIndex].input[mulIndex].input = value;
+			},
+			removeMultiInputWithGroupKeyField(config, rowIndex) {
+				if (this.formElements[config.key][rowIndex].input.length > 1) {
+					this.formElements[config.key][rowIndex].input.pop({ input: "" });
+				}
+			},
+			addMultiInputWithGroupKeyField(config, rowIndex) {
+				this.formElements[config.key][rowIndex].input.push({ input: "" });
+			},
+			removeMultiInputField(config) {
+				if (this.formElements[config.key].length > 1) {
+					this.formElements[config.key].pop({ input: "" });
+				}
+			},
+			addMultiInputField(config) {
+				this.formElements[config.key].push({ input: "" });
+			},
+			closeForm() {
+				this.$emit("closeForm");
+			},
+			initialiseFormElements() {
+				if (this.watcherList.length) {
+					for (let i of this.watcherList) {
+						i();
+					}
+				}
 
-      for (let i of this.inputConfig) {
-        if (!this.isEditMode) {
-          // This will initialize the form when add user button is clicked
-          if (i.type == "MultiInput") {
-            this.$set(this.formElements, i.key, [{ input: "" }]);
-          } else if (i.type == "MultiInputWithGroupKey") {
-            this.$set(this.formElements, i.key, null);
-          } else {
-            this.$set(this.formElements, i.key, null);
-          }
+				for (let i of this.inputConfig) {
+					if (!this.isEditMode) {
+						// This will initialize the form when add user button is clicked
+						if (i.type == "MultiInput") {
+							this.$set(this.formElements, i.key, [{ input: "" }]);
+						} else if (i.type == "MultiInputWithGroupKey") {
+							this.$set(this.formElements, i.key, null);
+						} else {
+							this.$set(this.formElements, i.key, null);
+						}
 
-          if (i.type == "Date") {
-            this.$set(this.dateMenuRef, i.key, false);
-          }
-        } else {
-          // This will initialize the form when Edit user button is clicked
-          if (i.type == "MultiInput") {
-            if (this.formData[i.key]) {
-              this.$set(
-                this.formElements,
-                i.key,
-                this.formData[i.key].map((e) => ({
-                  input: e,
-                }))
-              );
-            } else {
-              this.$set(this.formElements, i.key, [{ input: "" }]);
-            }
-          } else if (i.type == "MultiInputWithGroupKey") {
-            if (this.formData[i.key]) {
-              let tempObj = this.formData[i.key].map((e) => ({
-                groupKey: e.country,
-                input: e.contacts.map((f) => ({ input: f })),
-              }));
-              let tempObjRefForLoop = JSON.parse(JSON.stringify(tempObj));
-              for (let j of this.formData[i.keyToGroup]) {
-                let found = true;
-                for (let k of tempObjRefForLoop) {
-                  if (j == k.groupKey) {
-                    found = false;
-                  }
-                }
-                if (found) {
-                  tempObj.push({
-                    groupKey: j,
-                    input: [{ input: "" }],
-                  });
-                }
-              }
-              this.$set(this.formElements, i.key, tempObj);
-            }
-          } else if (i.type == "Date") {
-            this.$set(
-              this.formElements,
-              i.key,
-              helpers.getFormattedDate(this.formData[i.key], "YYYY-MM-DD")
-            );
-          } else if (i.type == "FilePicker") {
-            if (this.formData[i.key]) {
-              let extn = helpers.base64MimeType(this.formData[i.key]);
-              let fileObj = helpers.dataURLtoFile(
-                this.formData[i.key],
-                "logo." + extn
-              );
+						if (i.type == "Date") {
+							this.$set(this.dateMenuRef, i.key, false);
+						}
+					} else {
+						// This will initialize the form when Edit user button is clicked
+						if (i.type == "MultiInput") {
+							if (this.formData[i.key]) {
+								this.$set(
+									this.formElements,
+									i.key,
+									this.formData[i.key].map((e) => ({
+										input: e,
+									}))
+								);
+							} else {
+								this.$set(this.formElements, i.key, [{ input: "" }]);
+							}
+						} else if (i.type == "MultiInputWithGroupKey") {
+							if (this.formData[i.key]) {
+								let tempObj = this.formData[i.key].map((e) => ({
+									groupKey: e.country,
+									input: e.contacts.map((f) => ({ input: f })),
+								}));
+								let tempObjRefForLoop = JSON.parse(JSON.stringify(tempObj));
+								for (let j of this.formData[i.keyToGroup]) {
+									let found = true;
+									for (let k of tempObjRefForLoop) {
+										if (j == k.groupKey) {
+											found = false;
+										}
+									}
+									if (found) {
+										tempObj.push({
+											groupKey: j,
+											input: [{ input: "" }],
+										});
+									}
+								}
+								this.$set(this.formElements, i.key, tempObj);
+							}
+						} else if (i.type == "Date") {
+							console.log("Date output", this.formData[i.key]);
+							if (this.formData[i.key]) {
+								this.$set(
+									this.formElements,
+									i.key,
+									helpers.getFormattedDate(this.formData[i.key], "YYYY-MM-DD")
+								);
+							} else {
+								this.$set(this.formElements, i.key, null);
+							}
+						} else if (i.type == "FilePicker") {
+							if (this.formData[i.key]) {
+								let extn = helpers.base64MimeType(this.formData[i.key]);
+								let fileObj = helpers.dataURLtoFile(this.formData[i.key], "logo." + extn);
 
-              this.$set(this.formElements, i.key, fileObj);
-            } else {
-              this.$set(this.formElements, i.key, null);
-            }
-          } else {
-            this.$set(this.formElements, i.key, this.formData[i.key]);
-          }
+								this.$set(this.formElements, i.key, fileObj);
+							} else {
+								this.$set(this.formElements, i.key, null);
+							}
+						} else {
+							this.$set(this.formElements, i.key, this.formData[i.key]);
+						}
 
-          // console.log(this.formElements);
+						// console.log(this.formElements);
 
-          if (i.type == "Date") {
-            this.$set(this.dateMenuRef, i.key, false);
-          }
-        }
-      }
+						if (i.type == "Date") {
+							this.$set(this.dateMenuRef, i.key, false);
+						}
+					}
+				}
 
-      // Initialise watchers
-      if (this.keysToWatch && this.keysToWatch.length > 0) {
-        // create watchers here
-        for (let watchKey of this.keysToWatch) {
-          // console.log(watchKey);
-          this.watcherList.push(
-            this.$watch(
-              `formElements.${watchKey}`,
-              this.keyUpdated.bind(this, watchKey)
-            )
-          );
-        }
-      }
-    },
-    keyUpdated(watchKey, nv, ov) {
-      for (let i of this.inputConfig) {
-        if (i.type == "MultiInputWithGroupKey" && watchKey == i.keyToGroup) {
-          if (!ov || !ov.length) {
-            this.formElements[i.key] = nv.map((e) => ({
-              groupKey: e,
-              input: [{ input: "" }],
-            }));
-          } else {
-            if (!nv.length) {
-              this.formElements[i.key] = null;
-            } else {
-              let tempObj = [];
-              // console.log(nv, this.formElements[i.key]);
-              for (let k of this.formElements[i.key]) {
-                if (ov.includes(k.groupKey) && nv.includes(k.groupKey)) {
-                  tempObj.push(k);
-                }
-              }
-              for (let j of nv) {
-                if (!ov.includes(j)) {
-                  tempObj.push({
-                    groupKey: j,
-                    input: [{ input: "" }],
-                  });
-                }
-              }
-              this.formElements[i.key] = tempObj;
-            }
-          }
-          // console.log(this.formElements[i.key]);
-        }
-      }
-    },
-  },
-  validations() {
-    let tempObj = {};
-    for (let i of this.inputConfig) {
-      if (i.validations) {
-        tempObj[i.key] = i.validations;
-      }
-    }
-    return { formElements: tempObj };
-  },
-  props: {
-    name: { required: true, type: String },
-    inputConfig: { required: true, type: Array },
-    keysToWatch: { required: false, type: Array, default: () => [] },
-    toggleForm: { required: true, type: Boolean, default: false },
-    formData: { required: true, type: Object },
-    isEditMode: { required: true, type: Boolean, default: false },
-  },
-  watch: {
-    toggleForm(nv, ov) {
-      this.form = nv;
-      this.initialiseFormElements();
-    },
-  },
-};
+				// Initialise watchers
+				if (this.keysToWatch && this.keysToWatch.length > 0) {
+					// create watchers here
+					for (let watchKey of this.keysToWatch) {
+						// console.log(watchKey);
+						this.watcherList.push(
+							this.$watch(`formElements.${watchKey}`, this.keyUpdated.bind(this, watchKey))
+						);
+					}
+				}
+			},
+			keyUpdated(watchKey, nv, ov) {
+				for (let i of this.inputConfig) {
+					if (i.type == "MultiInputWithGroupKey" && watchKey == i.keyToGroup) {
+						if (!ov || !ov.length) {
+							this.formElements[i.key] = nv.map((e) => ({
+								groupKey: e,
+								input: [{ input: "" }],
+							}));
+						} else {
+							if (!nv.length) {
+								this.formElements[i.key] = null;
+							} else {
+								let tempObj = [];
+								// console.log(nv, this.formElements[i.key]);
+								for (let k of this.formElements[i.key]) {
+									if (ov.includes(k.groupKey) && nv.includes(k.groupKey)) {
+										tempObj.push(k);
+									}
+								}
+								for (let j of nv) {
+									if (!ov.includes(j)) {
+										tempObj.push({
+											groupKey: j,
+											input: [{ input: "" }],
+										});
+									}
+								}
+								this.formElements[i.key] = tempObj;
+							}
+						}
+						// console.log(this.formElements[i.key]);
+					}
+				}
+			},
+		},
+		validations() {
+			let tempObj = {};
+			for (let i of this.inputConfig) {
+				if (i.validations) {
+					tempObj[i.key] = i.validations;
+				}
+			}
+			return { formElements: tempObj };
+		},
+		props: {
+			name: { required: true, type: String },
+			inputConfig: { required: true, type: Array },
+			keysToWatch: { required: false, type: Array, default: () => [] },
+			toggleForm: { required: true, type: Boolean, default: false },
+			formData: { required: true, type: Object },
+			isEditMode: { required: true, type: Boolean, default: false },
+		},
+		watch: {
+			toggleForm(nv, ov) {
+				this.form = nv;
+				this.initialiseFormElements();
+			},
+		},
+	};
 </script>
 
 <style lang="scss" scoped>
-.error-container {
-  margin-top: 8px;
-  margin-bottom: 16px;
-  // width: 300px;
-  background: #ff5d5d1a 0% 0% no-repeat padding-box;
-  border-radius: 5px;
-  color: $error;
-  padding: 10px 37px;
-}
-.form-wrapper {
-  padding: 20px 30px;
-  background: white;
+	.error-container {
+		margin-top: 8px;
+		margin-bottom: 16px;
+		// width: 300px;
+		background: #ff5d5d1a 0% 0% no-repeat padding-box;
+		border-radius: 5px;
+		color: $error;
+		padding: 10px 37px;
+	}
+	.form-wrapper {
+		padding: 20px 30px;
+		background: white;
 
-  .headline {
-    font-size: 32px;
-    font-weight: 700;
-  }
+		.headline {
+			font-size: 32px;
+			font-weight: 700;
+		}
 
-  .form-item {
-    padding: 5px;
-  }
+		.form-item {
+			padding: 5px;
+		}
 
-  .form-input {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-  .date-picker {
-    flex-basis: 50%;
-    @include media-breakpoint-up(xs) {
-      flex-basis: 100%;
-    }
-  }
-  .multi-input-field {
-    flex-basis: 100%;
-  }
-  .multi-input-buttons {
-    flex-basis: 100%;
-    display: flex;
-    justify-content: flex-end;
-  }
-}
+		.form-input {
+			display: flex;
+			justify-content: flex-start;
+			flex-wrap: wrap;
+		}
+		.date-picker {
+			flex-basis: 50%;
+			@include media-breakpoint-up(xs) {
+				flex-basis: 100%;
+			}
+		}
+		.multi-input-field {
+			flex-basis: 100%;
+		}
+		.multi-input-buttons {
+			flex-basis: 100%;
+			display: flex;
+			justify-content: flex-end;
+		}
+	}
 </style>

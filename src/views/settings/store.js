@@ -130,52 +130,29 @@ export default {
           fail(err.toString() || "Failed to Download Core Data File");
         });
     },
-    // addPartner: ({ commit, dispatch }, payload) => {
-    //   let fail = (msg) => commit("failure", msg);
-    //   return dispatch(
-    //     "apiCall",
-    //     {
-    //       method: "post",
-    //       data: payload,
-    //       url: constants.MANAGE_PARTNER,
-    //     },
-    //     { root: true }
-    //   )
-    //     .then((data) => {
-    //       if (!data.ok) fail(data.message || "Failed to add Partner");
-    //       return data;
-    //     })
-    //     .catch((err) => {
-    //       fail(err.toString() || "Failed to add Partner");
-    //       return {
-    //         ok: false,
-    //         message: err.message,
-    //       };
-    //     });
-    // },
-    // editPartner: ({ commit, dispatch }, payload) => {
-    //   let fail = (msg) => commit("failure", msg);
-    //   return dispatch(
-    //     "apiCall",
-    //     {
-    //       method: "put",
-    //       data: payload,
-    //       url: constants.MANAGE_PARTNER,
-    //     },
-    //     { root: true }
-    //   )
-    //     .then((data) => {
-    //       if (!data.ok) fail(data.message || "Failed to edit Partner");
-    //       return data;
-    //     })
-    //     .catch((err) => {
-    //       fail(err.toString() || "Failed to edit Partner");
-    //       return {
-    //         ok: false,
-    //         message: err.message,
-    //       };
-    //     });
-    // },
+    updateGlobalSettings: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch(
+        "apiCall",
+        {
+          method: "put",
+          data: payload,
+          url: constants.GLOBAL_SETTINGS,
+        },
+        { root: true }
+      )
+        .then((data) => {
+          if (!data.ok) fail(data.message || "Failed to edit Settings");
+          return data;
+        })
+        .catch((err) => {
+          fail(err.toString() || "Failed to edit Settings");
+          return {
+            ok: false,
+            message: err.message,
+          };
+        });
+    },
   },
   getters: {},
 };
