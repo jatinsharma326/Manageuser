@@ -19,6 +19,7 @@ export default {
   ALL_PARTNERS: BASE_URL + "Global/v0.1/representing-partners",
   ALL_ZONE: BASE_URL + "Global/v0.1/zones",
   ALL_BUSINESS_TYPE: BASE_URL + "Global/v0.1/business-types",
+  ALL_CURRENCIES: BASE_URL + "Global/v0.1/currencies",
 
   //API ENDPOINT FOR MANAGE USER DATA
   MANAGE_USERS: BASE_URL + "Mortals/v0.1/",
