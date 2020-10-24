@@ -35,29 +35,12 @@
 
 			<v-toolbar-title>{{ title }}</v-toolbar-title>
 			<v-spacer></v-spacer>
-			<!-- <span class="mr-2 body-1 font-weight-medium">
-        Taher is god
-      </span> -->
 			<v-btn large icon @click="openPortal(settingsRoute)">
 				<v-icon color="primary">mdi-cog</v-icon>
 			</v-btn>
 			<v-btn large icon @click="logoutUser">
 				<v-icon color="primary">mdi-logout</v-icon>
 			</v-btn>
-
-			<!-- <v-menu transition="slide-x-transition" open-on-click bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <v-icon color="secondaryFontColor" v-on="on"
-            >keyboard_arrow_down</v-icon
-          >
-        </template>
-
-        <v-list>
-          <v-list-item @click="logoutUser">
-            <v-list-item-title>Logout</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu> -->
 		</v-app-bar>
 
 		<v-main>
@@ -156,21 +139,20 @@
 				{
 					icon: "search",
 					title: "Manage Leaves",
-					route: "/follow-up",
+					route: "/leaves",
 					highlight: "#00a0ff",
 					iconColor: "#00a0ff",
 				},
 				{
 					icon: "search",
 					title: "Set Targets",
-					route: "/follow-up",
+					route: "/targets",
 					highlight: "#00a0ff",
 					iconColor: "#00a0ff",
 				},
 			],
 		}),
 		async created() {
-			console.log(helpers.getCurrentRoute());
 			if (helpers.getCurrentRoute() != "settings") {
 				this.currentRoute =
 					this.routeItems.find((e) => e.route == "/" + helpers.getCurrentRoute()).title || "Dashboard";
