@@ -62,6 +62,7 @@ const initialState = () => ({
   partners: [],
   zone: [],
   businessType: [],
+  allCurrencies: [],
 });
 
 export default new Vuex.Store({
@@ -156,6 +157,9 @@ export default new Vuex.Store({
     },
     setBusinessTypes(state, data) {
       state.businessType = data;
+    },
+    setAllCurrencies(state, data) {
+      state.allCurrencies = data;
     },
     loginFail: (s, p) => {
       s.messages.loginFailed = p;
@@ -456,6 +460,26 @@ export default new Vuex.Store({
           return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
         });
     },
+    getAllCurrencies: ({ commit, dispatch }, payload) => {
+      let fail = (msg) => commit("failure", msg);
+      return dispatch("apiCall", {
+        method: "get",
+        params: payload,
+        url: constants.ALL_CURRENCIES,
+      })
+        .then((data) => {
+          if (data.ok) {
+            commit("setAllCurrencies", data.data);
+          } else {
+            fail(err.toString() || "Failed to fetch Business Type List");
+          }
+        })
+        .catch((err) => {
+          console.log("Yo ", err);
+          fail(err.toString() || "Failed to fetch Business Type List");
+          return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+        });
+    },
   },
 
   getters: {
@@ -478,6 +502,7 @@ export default new Vuex.Store({
     partners: (state) => state.partners,
     zone: (state) => state.zone,
     businessType: (state) => state.businessType,
+    allCurrencies: (state) => state.allCurrencies,
   },
 });
 
