@@ -295,7 +295,6 @@
 				this.getUsers();
 			},
 			formOutput(data) {
-				console.log(data);
 				var formData = { ...data };
 				formData.type = this.type;
 				formData.dob = helpers.getISODate(formData.dob);
