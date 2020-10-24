@@ -67,10 +67,11 @@
 											v-on="on"
 										></v-text-field>
 									</template>
-									<v-date-picker
-										v-model="filterObject[filter.key]"
-										@input="pickerMenu = false"
-									></v-date-picker>
+									<v-date-picker v-model="filterObject[filter.key]" @input="pickerMenu = false">
+										<v-btn text color="primary" @click="filterObject[filter.key] = null">
+											Clear
+										</v-btn></v-date-picker
+									>
 								</v-menu>
 							</div>
 						</template>
@@ -134,6 +135,8 @@
 			performAdvanceSearch() {
 				for (let key in this.filterObject) {
 					if (this.filterObject[key] == "") {
+						delete this.filterObject[key];
+					} else if (this.filterObject[key] == null) {
 						delete this.filterObject[key];
 					}
 				}

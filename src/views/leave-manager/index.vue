@@ -12,17 +12,22 @@
 			</v-col>
 		</v-row>
 		<div class="leaves-table">
-			<v-data-table :headers="headers" :items="leavesList" sort-by="" class="elevation-1">
-				<template v-slot:item.doa="{ item }">
+			<v-data-table :headers="headers" :expanded.sync="expanded" show-expand :items="leavesList" item-key="_id">
+				<template v-slot:[`item.serial_number`]="{ item }">{{}}</template>
+				<template v-slot:[`item.doa`]="{ item }">
 					{{ getFormattedDate(item.doa, "MMMM Do YYYY dddd") }}
 				</template>
-				<template v-slot:item.date_from="{ item }">
+				<template v-slot:[`item.date_from`]="{ item }">
 					{{ getFormattedDate(item.date_from, "MMMM Do YYYY dddd") }}
 				</template>
-				<template v-slot:item.date_to="{ item }">
+				<template v-slot:[`item.date_to`]="{ item }">
 					{{ getFormattedDate(item.date_to, "MMMM Do YYYY dddd") }}
 				</template>
-				<template v-slot:item.actions="{ item }">
+				<template v-slot:expanded-item="{ headers, item }">
+					<div class="expandable-section-title">Purpose Of Leave</div>
+					<div class="expandable-section-content">Here is where the purpose of leave will go</div>
+				</template>
+				<template v-slot:[`item.actions`]="{ item }">
 					<template v-if="item.status != 'REJECTED' && isDateBefore(item.date_from)">
 						<v-menu bottom left>
 							<template v-slot:activator="{ on, attrs }">
@@ -32,7 +37,7 @@
 							</template>
 
 							<v-list>
-								<v-list-item v-if="item.status == 'ACCEPTED'" @click="acceptAction(item)"
+								<v-list-item v-if="item.status != 'ACCEPTED'" @click="acceptAction(item)"
 									>Accept</v-list-item
 								>
 								<v-list-item @click="rejectAction(item)">Reject</v-list-item>
@@ -55,21 +60,23 @@
 	export default {
 		name: "LeaveManager",
 		mixins: [defaultCRUDMixin],
-		created() {
+		async created() {
 			this.getData();
+			await this.getUsers();
+			this.setSearchConfig(this.userList);
 			/* if (this.partnerInfo.countries) {
-				this.setSearchConfig(this.partnerInfo.countries);
 				this.setInputConfig(this.partnerInfo.countries);
 			} */
 		},
 		data: () => ({
+			expanded: [],
 			leavesList: [],
 			countriesWithEmployee: [],
 			headers: [
+				{ text: "Sr. No.", value: "serial_number" },
 				{
 					text: "Applicant",
 					align: "start",
-					sortable: false,
 					value: "name",
 				},
 				{ text: "Date of Application", value: "doa" },
@@ -78,10 +85,13 @@
 				{ text: "No of Days", value: "no_of_days" },
 				{ text: "Pending Leaves", value: "pending_leaves" },
 				{ text: "Status", value: "status" },
+				{ text: "Purpose", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
 			search_text: "",
 			placeholder: "Search Leaves",
+			userList: [],
+			serialNumber: 0,
 		}),
 		methods: {
 			...mapActions("LeaveManager", [
@@ -90,6 +100,28 @@
 				/* "addPartnerEmployees",
 				"deletePartnerEmployees", */
 			]),
+			...mapActions("UserManagement", ["getUserList"]),
+			async getUsers() {
+				try {
+					let salesAgents = await this.getUserList({
+						filter: {
+							type: "sales_agent",
+						},
+					});
+					let remoteSalesAgents = await this.getUserList({
+						filter: {
+							type: "remote_sales_agent",
+						},
+					});
+					console.log("salesAgents", salesAgents);
+					let userList = [];
+					userList.push(...salesAgents.list);
+					userList.push(...remoteSalesAgents.list);
+					this.userList = userList.map((e) => e.usr_data.name);
+				} catch (e) {
+					console.log(e);
+				}
+			},
 			isDateBefore(date) {
 				if (moment().isBefore(date)) {
 					return true;
@@ -109,9 +141,8 @@
 					this.leavesList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
-					console.log(this.leavesList);
-					for (let listItem of this.leavesList) {
-					}
+					/* for (let listItem of this.leavesList) {
+					} */
 				});
 			},
 			acceptAction(leave) {
@@ -154,172 +185,61 @@
 			},
 			advanceSearch(filterObject) {
 				// make changes here to the filterObject
-				this.filter = { ...filterObject };
+				var filterData = JSON.parse(JSON.stringify(filterObject));
+				if (filterData.doa) {
+					filterData.doa = helpers.getISODate(filterData.doa);
+				}
+				if (filterData.date_from) {
+					filterData.date_from = helpers.getISODate(filterData.date_from);
+				}
+				if (filterData.date_to) {
+					filterData.date_to = helpers.getISODate(filterData.date_to);
+				}
+				console.log(filterObject);
+				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();
 			},
-			// setSearchConfig(countries = []) {
-			// 	/*
-			// 	 * Name of Employee - Text field - string or number - can this be empty
-			// 	 * Designation of Employee - Text field - string or number - can this be empty
-			// 	 * Countries - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-			// 	 */
-			// 	this.selectedSearchConfig = [
-			// 		{
-			// 			name: "Employee Name",
-			// 			key: "name",
-			// 			type: "text",
-			// 			inputType: "textfield",
-			// 			defaultValue: "",
-			// 		},
-			// 		{
-			// 			name: "Designation",
-			// 			key: "designation",
-			// 			type: "text",
-			// 			inputType: "textfield",
-			// 			defaultValue: "",
-			// 		},
-			// 		{
-			// 			name: "Country",
-			// 			key: "country",
-			// 			multi: false,
-			// 			inputType: "dropdown",
-			// 			defaultValue: [],
-			// 			isListInStore: false,
-			// 			listItems: countries,
-			// 		},
-			// 	];
-			// },
-			/* setInputConfig(countries = []) {
-				this.inputConfig = [
+			setSearchConfig(teamMember = []) {
+				this.selectedSearchConfig = [
 					{
-						name: "Employee Name",
-						type: "String",
+						name: "Name of Applicant",
 						key: "name",
-						width: "half",
-						validations: {
-							required,
-							minLength: minLength(1),
-						},
-					},
-					{
-						name: "Designation",
-						type: "String",
-						key: "designation",
-						width: "full",
-						validations: {
-							required,
-							minLength: minLength(1),
-						},
-					},
-					{
-						name: "Country",
-						type: "Dropdown",
-						key: "country",
-						width: "half",
-						multi: false,
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
 						isListInStore: false,
-						listItems: countries,
-						validations: {
-							required,
-						},
+						listItems: teamMember,
 					},
 					{
-						name: "Contact Info",
-						type: "MultiInput",
-						key: "phone_numbers",
-						width: "half",
-						validations: {
-							required,
-							minLength: minLength(1),
-							$each: {
-								input: {
-									required,
-								},
-							},
-						},
+						name: "Date of Applicantion",
+						key: "doa",
+						inputType: "datePicker",
+						defaultValue: null,
 					},
 					{
-						name: "Email",
-						type: "MultiInput",
-						key: "email_ids",
-						width: "half",
-						validations: {
-							required,
-							minLength: minLength(1),
-							$each: {
-								input: {
-									email,
-									required,
-								},
-							},
-						},
+						name: "Date From",
+						key: "date_from",
+						inputType: "datePicker",
+						defaultValue: null,
+					},
+					{
+						name: "Date To",
+						key: "date_to",
+						inputType: "datePicker",
+						defaultValue: null,
+					},
+					{
+						name: "Leave Status",
+						key: "status",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: ["PENDING", "ACCEPTED", "REJECTED"],
 					},
 				];
-			}, */
-			// formOutput(data) {
-			// 	var formData = JSON.parse(JSON.stringify(data));
-			// 	// var tempArray = [];
-			// 	// var tempObj = {};
-			// 	formData.phone_numbers = data.phone_numbers.map((data) => data.input);
-			// 	formData.email_ids = data.email_ids.map((data) => data.input);
-			// 	console.log("Before API call FormData Object", formData);
-
-			// 	this.openLoaderDialog();
-			// 	if (!this.isEditMode) {
-			// 		formData.representing_partner_id = this.partnerInfo._id;
-			// 		this.addPartnerEmployees(formData).then((data) => {
-			// 			this.closeLoaderDialog();
-			// 			if (data.ok) {
-			// 				this.openSnackbar({ text: "Sucessfully Added Employee Info" });
-			// 				console.log("Add Partner Employee success");
-			// 				this.getData();
-			// 				this.closeForm();
-			// 			} else {
-			// 				this.openSnackbar({ text: data.message });
-			// 				console.log("Add Partner Employee failed");
-			// 			}
-			// 		});
-			// 	} else {
-			// 		this.editPartnerEmployees(formData).then((data) => {
-			// 			this.closeLoaderDialog();
-			// 			if (data.ok) {
-			// 				this.openSnackbar({ text: "Sucessfully Edited Employee Info" });
-			// 				console.log("Edit Partner Employee success");
-			// 				this.getData();
-			// 				this.closeForm();
-			// 			} else {
-			// 				this.openSnackbar({ text: data.message });
-			// 				console.log("Edit Partner Employee failed");
-			// 			}
-			// 		});
-			// 	}
-			// },
-			// getEditRowObject(data) {
-			// 	return {
-			// 		...data,
-			// 		_id: data._id,
-			// 		updated_on: data.record.updated_on,
-			// 	};
-			// },
-			// // Implement the delete API
-			// deleteEmployee(user) {
-			// 	console.log(user);
-			// 	if (window.confirm("Do you really want to Delete the Partner Employee?")) {
-			// 		this.openLoaderDialog();
-			// 		this.deletePartnerEmployees({
-			// 			_id: user._id,
-			// 		}).then((data) => {
-			// 			this.closeLoaderDialog();
-			// 			if (data.ok) {
-			// 				this.openSnackbar({ text: "Sucessfully Deleted Employee" });
-			// 				this.getData();
-			// 			} else {
-			// 				this.openSnackbar({ text: data.message });
-			// 			}
-			// 		});
-			// 	}
-			// },
+			},
 		},
 		watch: {},
 		props: {},
