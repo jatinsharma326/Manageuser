@@ -1,6 +1,6 @@
 <template>
 	<div class="authWrapper">
-		<div class="auth-page-title">Global Destinations Version (1.1.3)</div>
+		<div class="auth-page-title">Global Destinations Version (1.1.4)</div>
 		<div class="auth-input-wrapper">
 			<div class="form-title">Login</div>
 			<div class="auth-form">
