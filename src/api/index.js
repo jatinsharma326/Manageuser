@@ -1,6 +1,7 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
 const BASE_URL = isBuildVersion ? "https://globaldestinations.tk/" : "https://globaldestinations.tk/";
+// const BASE_URL = isBuildVersion ? "http://ec2-44-240-74-95.us-west-2.compute.amazonaws.com/" : "http://ec2-44-240-74-95.us-west-2.compute.amazonaws.com/";
 // : // : "https://4fe85f9c.ngrok.io";
 
 export default {
@@ -28,4 +29,5 @@ export default {
 	GLOBAL_SETTINGS_POLICIES: BASE_URL + "Admin/v0.1/policies",
 
 	ALL_SALES_LEAVES: BASE_URL + "Leaves/v0.1/all-sales-leaves",
+	SALES_LEAVES: BASE_URL + "Leaves/v0.1/sales-leaves",
 };
