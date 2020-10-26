@@ -1,7 +1,7 @@
 <template>
 	<div class="leavesManagerWrapper">
-		<!-- <adminLeaves></adminLeaves> -->
-		<salesLeaves></salesLeaves>
+		<adminLeaves v-if="userType == ADMIN || userType == MANAGEMENT"></adminLeaves>
+		<salesLeaves v-else></salesLeaves>
 	</div>
 </template>
 
@@ -17,6 +17,9 @@
 		},
 		data: () => ({}),
 		methods: {},
+		computed: {
+			...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType"]),
+		},
 		watch: {},
 		props: {},
 	};
