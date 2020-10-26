@@ -11,8 +11,16 @@
 				></Search>
 			</v-col>
 		</v-row>
+
 		<div class="leaves-table">
-			<v-data-table :headers="headers" :expanded.sync="expanded" show-expand :items="leavesList" item-key="_id">
+			<v-data-table
+				hide-default-footer
+				:headers="headers"
+				:expanded.sync="expanded"
+				show-expand
+				:items="leavesList"
+				item-key="_id"
+			>
 				<template v-slot:[`item.serial_number`]="{ item }">{{ item.serial_number }}</template>
 				<template v-slot:[`item.doa`]="{ item }">
 					{{ getFormattedDate(item.doa, "MMMM Do YYYY dddd") }}
@@ -23,10 +31,10 @@
 				<template v-slot:[`item.date_to`]="{ item }">
 					{{ getFormattedDate(item.date_to, "MMMM Do YYYY dddd") }}
 				</template>
-				<template v-slot:expanded-item="{ headers }">
-					<td :colspan="headers.length">
+				<template v-slot:expanded-item="{ headers, item }">
+					<td class="expandable-section" :colspan="headers.length">
 						<div class="expandable-section-title">Purpose Of Leave</div>
-						<div class="expandable-section-content">Here is where the purpose of leave will go</div>
+						<div class="expandable-section-content">{{ item.purpose_of_leave }}</div>
 					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
@@ -48,6 +56,14 @@
 					</template>
 				</template>
 			</v-data-table>
+		</div>
+
+		<div class="text-center">
+			<v-pagination
+				@input="updatedPageNo"
+				v-model="pageNo"
+				:length="Math.ceil(fetchCount / pageSize)"
+			></v-pagination>
 		</div>
 	</div>
 </template>
@@ -71,10 +87,9 @@
 			expanded: [],
 			leavesList: [],
 			headers: [
-				{ text: "Sr. No.", value: "serial_number", width: 100 },
+				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{
 					text: "Applicant",
-					align: "start",
 					value: "name",
 					width: 150,
 				},
@@ -93,12 +108,7 @@
 			serialNumber: 0,
 		}),
 		methods: {
-			...mapActions("LeaveManager", [
-				"getAllLeaves",
-				"updateStatus",
-				/* "addPartnerEmployees",
-				"deletePartnerEmployees", */
-			]),
+			...mapActions("LeaveManager", ["getAllLeaves", "updateStatus"]),
 			...mapActions("UserManagement", ["getUserList"]),
 			async getUsers() {
 				try {
@@ -141,8 +151,6 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 					this.leavesList = this.leavesList.map((d, index) => ({ ...d, serial_number: index + 1 }));
-					/* for (let listItem of this.leavesList) {
-					} */
 				});
 			},
 			acceptAction(leave) {
@@ -240,6 +248,9 @@
 					},
 				];
 			},
+			updatedPageNo(page) {
+				this.getData();
+			},
 		},
 		watch: {},
 		props: {},
@@ -252,7 +263,17 @@
 	}
 	.leaves-table {
 		margin: 10px;
+		padding: 10px;
 		border: 1px solid $primary;
 		border-radius: 5px;
+	}
+	.expandable-section {
+		background-color: white;
+		.expandable-section-title {
+			font-size: 16px;
+			font-weight: 600;
+		}
+		// .expandable-section-content {
+		// }
 	}
 </style>
