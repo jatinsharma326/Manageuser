@@ -1,6 +1,6 @@
 <template>
 	<div class="adminLeaveManagerWrapper">
-		<v-row class="px-6 employee-search-bar" justify="center" align="center">
+		<v-row class="px-6 leaves-search-bar" justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
 				<Search
 					@queryString="queryString"
@@ -13,7 +13,7 @@
 		</v-row>
 		<div class="leaves-table">
 			<v-data-table :headers="headers" :expanded.sync="expanded" show-expand :items="leavesList" item-key="_id">
-				<!-- <template v-slot:[`item.serial_number`]="{ item }">{{}}</template> -->
+				<template v-slot:[`item.serial_number`]="{ item }">{{ item.serial_number }}</template>
 				<template v-slot:[`item.doa`]="{ item }">
 					{{ getFormattedDate(item.doa, "MMMM Do YYYY dddd") }}
 				</template>
@@ -55,7 +55,7 @@
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import helpers from "../../components/helpers";
-	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
+	// import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import moment from "moment-timezone";
 
@@ -70,20 +70,20 @@
 		data: () => ({
 			expanded: [],
 			leavesList: [],
-			countriesWithEmployee: [],
 			headers: [
-				{ text: "Sr. No.", value: "serial_number" },
+				{ text: "Sr. No.", value: "serial_number", width: 100 },
 				{
 					text: "Applicant",
 					align: "start",
 					value: "name",
+					width: 150,
 				},
-				{ text: "Date of Application", value: "doa" },
-				{ text: "Date From", value: "date_from" },
-				{ text: "Date To", value: "date_to" },
-				{ text: "No of Days", value: "no_of_days" },
-				{ text: "Pending Leaves", value: "pending_leaves" },
-				{ text: "Status", value: "status" },
+				{ text: "Date of Application", value: "doa", width: 200 },
+				{ text: "Date From", value: "date_from", width: 150 },
+				{ text: "Date To", value: "date_to", width: 150 },
+				{ text: "No of Days", value: "no_of_days", width: 150 },
+				{ text: "Pending Leaves", value: "pending_leaves", width: 150 },
+				{ text: "Status", value: "status", width: 150 },
 				{ text: "Purpose", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
@@ -140,6 +140,7 @@
 					this.leavesList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+					this.leavesList = this.leavesList.map((d, index) => ({ ...d, serial_number: index + 1 }));
 					/* for (let listItem of this.leavesList) {
 					} */
 				});
@@ -244,4 +245,14 @@
 		props: {},
 	};
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.leaves-search-bar {
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+	.leaves-table {
+		margin: 10px;
+		border: 1px solid $primary;
+		border-radius: 5px;
+	}
+</style>
