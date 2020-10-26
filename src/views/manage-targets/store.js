@@ -16,14 +16,14 @@ export default {
 		},
 	},
 	actions: {
-		getGlobalSettings: ({ commit, dispatch }) => {
+		getTargets: ({ commit, dispatch }) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: {},
-					url: constants.GLOBAL_SETTINGS,
+					url: constants.FINANCIAL_YEAR,
 				},
 				{ root: true }
 			)
@@ -31,74 +31,138 @@ export default {
 					if (data.ok) {
 						return {
 							ok: true,
-							totalPaidLeaves: data.data.total_paid_leaves,
-							activeCurrencies: data.data.active_currencies,
-							policies: data.data.policies,
+							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load Admin Settings");
+						fail(data.message || "Failed to load Targets");
 						return {
 							ok: false,
-							totalPaidLeaves: 0,
-							activeCurrecies: [],
-							policies: false,
+							list: [],
 						};
 					}
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load Admin Settings");
+					fail(err.toString() || "Failed to load Targets");
 					return {
 						ok: false,
-						totalPaidLeaves: 0,
-						activeCurrecies: [],
-						policies: false,
+						list: [],
 					};
 				});
 		},
-		addLeave: ({ commit, dispatch }, payload) => {
+		addTargetYear: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.SALES_LEAVES,
+					url: constants.FINANCIAL_YEAR,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add Leave Entry");
+					if (!data.ok) fail(data.message || "Failed to add target year");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add Leave Entry");
+					fail(err.toString() || "Failed to add target year");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		updateGlobalSettings: ({ commit, dispatch }, payload) => {
+		editTargetYear: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.GLOBAL_SETTINGS,
+					url: constants.FINANCIAL_YEAR,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Settings");
+					if (!data.ok) fail(data.message || "Failed to edit Target year");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit Settings");
+					fail(err.toString() || "Failed to edit target year");
 					return {
 						ok: false,
 						message: err.message,
+					};
+				});
+		},
+		getActiveCountries: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.ACTIVE_COUNTRIES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					console.log(data);
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to fetch Product List");
+						return {
+							ok: false,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to fetch Product List");
+					return {
+						ok: false,
+						list: [],
+					};
+				});
+		},
+		getTargetsForYear: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.FINANCIAL_YEAR_TARGETS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					console.log(data);
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load Targets");
+						return {
+							ok: false,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load Targets");
+					return {
+						ok: false,
+						list: [],
 					};
 				});
 		},
