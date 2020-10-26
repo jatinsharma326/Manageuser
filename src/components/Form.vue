@@ -487,7 +487,7 @@
 			inputConfig: { required: true, type: Array },
 			keysToWatch: { required: false, type: Array, default: () => [] },
 			toggleForm: { required: true, type: Boolean, default: false },
-			formData: { required: true, type: Object },
+			formData: { required: false, type: Object },
 			isEditMode: { required: true, type: Boolean, default: false },
 		},
 		watch: {
