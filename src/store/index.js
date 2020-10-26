@@ -326,7 +326,7 @@ export default new Vuex.Store({
 							userData: data.mortal.userData,
 							dataObj: data,
 						});
-					} else if (data.mortal.type === state.SALES_AGENT) {
+					} else if (data.mortal.type === state.REMOTE_SALES_AGENT) {
 						commit("typeFourtyLogin", {
 							token: data.token,
 							userData: data.mortal.userData,
