@@ -6,6 +6,7 @@
 </template>
 
 <script>
+	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import adminLeaves from "./AdminLeaves";
 	import salesLeaves from "./SalesLeave";
 	export default {
