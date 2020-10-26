@@ -25,9 +25,18 @@ export default {
 	MANAGE_PARTNER: BASE_URL + "Partners/v0.1/",
 	MANAGE_PARTNER_EMPLOYEES: BASE_URL + "RepEmployees/v0.1/",
 
+	// GLOBAL SETTINGS END POINT
 	GLOBAL_SETTINGS: BASE_URL + "Admin/v0.1/global-settings",
 	GLOBAL_SETTINGS_POLICIES: BASE_URL + "Admin/v0.1/policies",
 
+	// MANAGE LEAVES END POINT
 	ALL_SALES_LEAVES: BASE_URL + "Leaves/v0.1/all-sales-leaves",
 	SALES_LEAVES: BASE_URL + "Leaves/v0.1/sales-leaves",
+
+	// MANAGE TARGETS ENDPOINTS
+	FINANCIAL_YEAR: BASE_URL + "FinancialYears/v0.1/",
+	FINANCIAL_YEAR_TARGETS: BASE_URL + "FinancialYears/v0.1/targets",
+
+	// GET ACTIVE PRODUCTS LIST
+	ACTIVE_COUNTRIES: BASE_URL + "Partners/v0.1/product-list",
 };
