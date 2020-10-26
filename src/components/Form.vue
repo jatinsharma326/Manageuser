@@ -15,7 +15,17 @@
 						:key="config.name + '__' + index"
 						v-model="formElements[config.key]"
 						class="form-item"
+						:class="checkWidth(config.width)"
 					></v-text-field>
+
+					<v-textarea
+						v-if="config.type == 'TextArea'"
+						:label="config.name"
+						:key="config.name + '__' + index"
+						v-model="formElements[config.key]"
+						class="form-item"
+						:class="checkWidth(config.width)"
+					></v-textarea>
 
 					<template v-if="config.type == 'Dropdown'">
 						<v-autocomplete
@@ -27,11 +37,16 @@
 							:items="getItems(config)"
 							:multiple="config.multi"
 							class="form-item"
+							:class="checkWidth(config.width)"
 						></v-autocomplete>
 					</template>
 
 					<template v-if="config.type == 'Date'">
-						<div :key="config.name + '__' + index" class="date-picker form-item">
+						<div
+							:key="config.name + '__' + index"
+							class="date-picker form-item"
+							:class="checkWidth(config.width)"
+						>
 							<v-menu
 								:ref="config.key"
 								v-model="dateMenuRef[config.key]"
@@ -73,6 +88,7 @@
 							<div
 								:key="config.name + '__' + index + '__' + mulIndex"
 								class="multi-input-field form-item"
+								:class="checkWidth(config.width)"
 							>
 								<v-text-field
 									:value="formElements[config.key][mulIndex].input"
@@ -121,6 +137,7 @@
 											row.groupKey
 									"
 									class="multi-input-field form-item"
+									:class="checkWidth(config.width)"
 								>
 									<v-text-field
 										:value="formElements[config.key][rowIndex].input[mulIndex].input"
@@ -170,6 +187,8 @@
 							:accept="config.acceptRules"
 							:rules="config.rules"
 							:label="config.name"
+							class="form-item"
+							:class="checkWidth(config.width)"
 						></v-file-input>
 					</template>
 				</template>
@@ -232,6 +251,11 @@
 		},
 		methods: {
 			// ...mapActions("UserManagement", ["getUserList"]),
+			checkWidth(width) {
+				if (width) {
+					return width;
+				}
+			},
 			formValidation() {
 				this.showError = false;
 				this.errorText = false;
@@ -488,6 +512,28 @@
 	.form-wrapper {
 		padding: 20px 30px;
 		background: white;
+
+		.oneFourth {
+			flex: 0 0 25% !important;
+			@include custom-max(475px) {
+				flex: 0 0 100% !important;
+			}
+		}
+		.oneThird {
+			flex: 0 0 33.33% !important;
+			@include custom-max(475px) {
+				flex: 0 0 100% !important;
+			}
+		}
+		.half {
+			flex: 0 0 50% !important;
+			@include custom-max(475px) {
+				flex: 0 0 100% !important;
+			}
+		}
+		.full {
+			flex: 0 0 100% !important;
+		}
 
 		.headline {
 			font-size: 32px;
