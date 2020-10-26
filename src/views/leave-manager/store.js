@@ -133,30 +133,29 @@ export default {
 					};
 				});
 		},
-
-		/* editPartnerEmployees: ({ commit, dispatch }, payload) => {
+		editLeave: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
+					url: constants.SALES_LEAVES,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Partner Employee");
+					if (!data.ok) fail(data.message || "Failed to edit Leave entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner Employee");
+					fail(err.toString() || "Failed to edit Leave Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
-		}, */
+		},
 		deleteLeave: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
