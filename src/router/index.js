@@ -28,6 +28,12 @@ const routes = [
 		component: () => import("../views/leave-manager"),
 		meta: { policy: [10, 20, 30, 40] },
 	},
+	{
+		path: "/targets",
+		name: "Manage Targets",
+		component: () => import("../views/manage-targets"),
+		meta: { policy: [10, 20] },
+	},
 ];
 
 const router = new VueRouter({

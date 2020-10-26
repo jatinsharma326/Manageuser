@@ -8,7 +8,7 @@ import UserManagement from "../views/manage-users/store";
 import PartnerManagement from "../views/representing-partner/store";
 import Settings from "../views/settings/store";
 import LeaveManager from "../views/leave-manager/store";
-import YearlyTargets from "../views/yearly-targets/store";
+import ManageTargets from "../views/manage-targets/store";
 
 Vue.use(Vuex);
 
@@ -73,7 +73,7 @@ export default new Vuex.Store({
 		PartnerManagement,
 		Settings,
 		LeaveManager,
-		YearlyTargets,
+		ManageTargets,
 	},
 
 	state: initialState(),
