@@ -51,6 +51,42 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
+		getSalesLeaves: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.SALES_LEAVES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					console.log("single user leaves", data);
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load Leaves List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load Leaves List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
 		updateStatus: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -74,88 +110,30 @@ export default {
 					};
 				});
 		},
-		/* addPartner: ({ commit, dispatch }, payload) => {
+		addLeave: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.MANAGE_PARTNER,
+					url: constants.SALES_LEAVES,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add Partner");
+					if (!data.ok) fail(data.message || "Failed to add Leave Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add Partner");
+					fail(err.toString() || "Failed to add Leave Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
-		}, */
+		},
 
-		/* getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "get",
-					params: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (data.ok) {
-						return {
-							ok: true,
-							totalCount: data.totalCount,
-							fetchCount: data.fetchCount,
-							list: data.data,
-						};
-					} else {
-						fail(data.message || "Failed to Load Partner Employees List");
-						return {
-							ok: false,
-							totalCount: data.totalCount,
-							fetchCount: 0,
-							list: [],
-						};
-					}
-				})
-				.catch((err) => {
-					console.log("Yo ", err);
-					fail(err.toString() || "Failed to Load Partner Employees List");
-					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
-				});
-		}, */
-		/* addPartnerEmployees: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "post",
-					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add Partner Employees");
-					return data;
-				})
-				.catch((err) => {
-					fail(err.toString() || "Failed to add Partner Employees");
-					return {
-						ok: false,
-						message: err.message,
-					};
-				});
-		}, */
 		/* editPartnerEmployees: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -179,29 +157,29 @@ export default {
 					};
 				});
 		}, */
-		/* deletePartnerEmployees: ({ commit, dispatch }, payload) => {
+		deleteLeave: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "delete",
 					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
+					url: constants.SALES_LEAVES,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to Delete Partner Employee");
+					if (!data.ok) fail(data.message || "Failed to Delete Leave");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner Employee");
+					fail(err.toString() || "Failed to Delete Leave");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
-		}, */
+		},
 	},
 	getters: {
 		// masterData: (state) => state.masterData,
