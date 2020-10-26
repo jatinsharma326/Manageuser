@@ -19,7 +19,7 @@
 					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
-					<template v-if="item.status != 'REJECTED' && isDateBefore(item.date_from)">
+					<template v-if="item.status == 'PENDING' && isDateBefore(item.date_from)">
 						<v-menu bottom left>
 							<template v-slot:activator="{ on, attrs }">
 								<v-btn icon v-bind="attrs" v-on="on">
@@ -28,26 +28,183 @@
 							</template>
 
 							<v-list>
-								<v-list-item v-if="item.status != 'ACCEPTED'" @click="acceptAction(item)"
-									>Accept</v-list-item
-								>
-								<v-list-item @click="rejectAction(item)">Reject</v-list-item>
+								<v-list-item @click="openInputForm(true, item)">Edit</v-list-item>
+								<v-list-item @click="deleteLeaveEntry(item)">Delete</v-list-item>
 							</v-list>
 						</v-menu>
 					</template>
 				</template>
 			</v-data-table>
 		</div>
+
+		<UserForm
+			@formOutput="formOutput"
+			@closeForm="closeForm"
+			:name="name"
+			:inputConfig="inputConfig"
+			:toggleForm="toggleForm"
+			:formData="rowToEdit"
+			:isEditMode="isEditMode"
+		></UserForm>
+
+		<div class="floating-button">
+			<v-btn @click="openInputForm()" color="primary" dark fab>
+				<v-icon>mdi-plus</v-icon>
+			</v-btn>
+		</div>
 	</div>
 </template>
 
 <script>
+	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
+	import { mapActions, mapGetters, mapMutations } from "vuex";
+	import helpers from "../../components/helpers";
+
 	export default {
 		name: "SalesLeaveManager",
-		created() {},
+		mixins: [defaultCRUDMixin],
+		created() {
+			this.getData();
+		},
 		components: {},
-		data: () => ({}),
-		methods: {},
+		data: () => ({
+			expanded: [],
+			name: "Leave",
+			leavesList: [],
+			inputConfig: [
+				{
+					name: "From",
+					type: "Date",
+					key: "date_from",
+					width: "half",
+					validations: {
+						required,
+					},
+				},
+				{
+					name: "To",
+					type: "Date",
+					key: "date_to",
+					width: "half",
+					validations: {
+						required,
+					},
+				},
+				{
+					name: "No of Days",
+					type: "String",
+					key: "no_of_days",
+					width: "full",
+					validations: {
+						required,
+						minLength: minLength(1),
+					},
+				},
+				{
+					name: "Purpose of Leaves",
+					type: "TextArea",
+					key: "purpose_of_leave",
+					width: "full",
+					validations: {
+						required,
+						minLength: minLength(1),
+					},
+				},
+			],
+			headers: [
+				{ text: "Sr. No.", value: "serial_number" },
+				{ text: "Date of Application", align: "start", value: "doa" },
+				{ text: "Date From", value: "date_from" },
+				{ text: "Date To", value: "date_to" },
+				{ text: "No of Days", value: "no_of_days" },
+				{ text: "Status", value: "status" },
+				{ text: "Purpose", value: "data-table-expand" },
+				{ text: "", value: "actions" },
+			],
+		}),
+		methods: {
+			...mapActions("LeaveManager", [
+				"getSalesLeaves",
+				"updateStatus",
+				"addLeave",
+				"deleteLeave",
+				// "editLeave"
+			]),
+			getData() {
+				// this.openLoaderDialog();
+				this.getSalesLeaves({
+					// filter: this.filter,
+					// pageSize: this.pageSize,
+					// pageNo: this.pageNo,
+				}).then((data) => {
+					// this.closeLoaderDialog();
+					this.leavesList = data.list;
+					this.totalCount = data.totalCount;
+					this.fetchCount = data.fetchCount;
+				});
+			},
+			formOutput(data) {
+				var formData = JSON.parse(JSON.stringify(data));
+				formData.date_from = helpers.getISODate(formData.date_from);
+				formData.date_to = helpers.getISODate(formData.date_to);
+				formData.no_of_days = Number(formData.no_of_days);
+				console.log("Before API call FormData Object", formData);
+
+				this.openLoaderDialog();
+				if (!this.isEditMode) {
+					this.addLeave(formData).then((data) => {
+						this.closeLoaderDialog();
+						if (data.ok) {
+							this.openSnackbar({ text: "Sucessfully Added a Leave Entry" });
+							console.log("Sucessfully Added a Leave Entry");
+							this.getData();
+							this.closeForm();
+						} else {
+							this.openSnackbar({ text: data.message });
+							console.log("Failed to add a Leave Entry");
+						}
+					});
+				} else {
+					this.editLeave(formData).then((data) => {
+						this.closeLoaderDialog();
+						if (data.ok) {
+							this.openSnackbar({ text: "Sucessfully edited the Leave entry" });
+							console.log("Sucessfully edited the Leave entry");
+							this.getData();
+							this.closeForm();
+						} else {
+							this.openSnackbar({ text: data.message });
+							console.log("Failed to edit the Leave entry");
+						}
+					});
+				}
+			},
+			getEditRowObject(data) {
+				return {
+					...data,
+					_id: data._id,
+					updated_on: data.record.updated_on,
+				};
+			},
+			deleteLeaveEntry(user) {
+				console.log("Delete", user);
+				if (window.confirm("Do you really want to Delete the Leave Entry?")) {
+					this.openLoaderDialog();
+					this.deleteLeave({
+						_id: user._id,
+					}).then((data) => {
+						this.closeLoaderDialog();
+						if (data.ok) {
+							this.openSnackbar({ text: "Sucessfully Deleted Leave" });
+							this.getEmployees();
+						} else {
+							this.openSnackbar({ text: data.message });
+						}
+					});
+				}
+			},
+		},
 		watch: {},
 		props: {},
 	};
