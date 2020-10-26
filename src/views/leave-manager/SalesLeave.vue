@@ -1,7 +1,18 @@
 <template>
 	<div class="salesLeavesManagerWrapper">
+		<div class="leaves-title-section">
+			<div class="leaves-title">Recent Leave Application</div>
+			<div class="pending-leave">Leaves Pending</div>
+		</div>
 		<div class="leaves-table">
-			<v-data-table :headers="headers" :expanded.sync="expanded" show-expand :items="leavesList" item-key="_id">
+			<v-data-table
+				hide-default-footer
+				:headers="headers"
+				:expanded.sync="expanded"
+				show-expand
+				:items="leavesList"
+				item-key="_id"
+			>
 				<!-- <template v-slot:[`item.serial_number`]="{ item }">{{}}</template> -->
 				<template v-slot:[`item.doa`]="{ item }">
 					{{ getFormattedDate(item.doa, "MMMM Do YYYY dddd") }}
@@ -60,6 +71,7 @@
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
+	import moment from "moment-timezone";
 
 	export default {
 		name: "SalesLeaveManager",
@@ -113,36 +125,34 @@
 				},
 			],
 			headers: [
-				{ text: "Sr. No.", value: "serial_number" },
-				{ text: "Date of Application", align: "start", value: "doa" },
-				{ text: "Date From", value: "date_from" },
-				{ text: "Date To", value: "date_to" },
-				{ text: "No of Days", value: "no_of_days" },
-				{ text: "Status", value: "status" },
+				{ text: "Sr. No.", value: "serial_number", width: 100 },
+				{ text: "Date of Application", align: "start", value: "doa", width: 200 },
+				{ text: "Date From", value: "date_from", width: 150 },
+				{ text: "Date To", value: "date_to", width: 150 },
+				{ text: "No of Days", value: "no_of_days", width: 150 },
+				{ text: "Status", value: "status", width: 150 },
 				{ text: "Purpose", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
 		}),
 		methods: {
-			...mapActions("LeaveManager", [
-				"getSalesLeaves",
-				"updateStatus",
-				"addLeave",
-				"deleteLeave",
-				// "editLeave"
-			]),
+			...mapActions("LeaveManager", ["getSalesLeaves", "updateStatus", "addLeave", "deleteLeave", "editLeave"]),
 			getData() {
-				// this.openLoaderDialog();
-				this.getSalesLeaves({
-					// filter: this.filter,
-					// pageSize: this.pageSize,
-					// pageNo: this.pageNo,
-				}).then((data) => {
-					// this.closeLoaderDialog();
+				this.openLoaderDialog();
+				this.getSalesLeaves().then((data) => {
+					this.closeLoaderDialog();
 					this.leavesList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+					this.leavesList = this.leavesList.map((d, index) => ({ ...d, serial_number: index + 1 }));
 				});
+			},
+			isDateBefore(date) {
+				if (moment().isBefore(date)) {
+					return true;
+				} else {
+					return false;
+				}
 			},
 			formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
@@ -209,4 +219,30 @@
 		props: {},
 	};
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+	.leaves-title-section {
+		display: flex;
+		justify-content: space-between;
+
+		margin: 20px;
+		.leaves-title {
+			font-size: 20px;
+			font-weight: 600;
+		}
+	}
+	.leaves-table {
+		margin: 10px;
+		padding: 10px;
+		border: 1px solid $primary;
+		border-radius: 5px;
+	}
+	.expandable-section {
+		background-color: white;
+		.expandable-section-title {
+			font-size: 16px;
+			font-weight: 600;
+		}
+		// .expandable-section-content {
+		// }
+	}
+</style>
