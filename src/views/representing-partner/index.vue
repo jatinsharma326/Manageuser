@@ -222,22 +222,10 @@
 					name: "Proprietor Info",
 					type: "String",
 					key: "proprietor_info",
-					width: "full",
+					width: "half",
 					validations: {
 						required,
 						minLength: minLength(1),
-					},
-				},
-				{
-					name: "Countries",
-					type: "Dropdown",
-					key: "countries",
-					width: "half",
-					multi: true,
-					isListInStore: true,
-					listVariable: "countries",
-					validations: {
-						required,
 					},
 				},
 				{
@@ -262,6 +250,18 @@
 						(value) =>
 							!value || value.size <= 100000 || "Partner logo should be less than or equal to 100 kb!",
 					],
+				},
+				{
+					name: "Countries",
+					type: "Dropdown",
+					key: "countries",
+					width: "full",
+					multi: true,
+					isListInStore: true,
+					listVariable: "countries",
+					validations: {
+						required,
+					},
 				},
 				{
 					name: "Emergency Numbers",
