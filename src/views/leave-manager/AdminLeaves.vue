@@ -194,6 +194,11 @@
 			advanceSearch(filterObject) {
 				// make changes here to the filterObject
 				var filterData = JSON.parse(JSON.stringify(filterObject));
+
+				// if (filterData.name) {
+				// 	filterData.name = filterData.name.join("|");
+				// }
+				// console.log(filterData.name);
 				if (filterData.doa) {
 					filterData.doa = helpers.getISODate(filterData.doa);
 				}
@@ -203,7 +208,6 @@
 				if (filterData.date_to) {
 					filterData.date_to = helpers.getISODate(filterData.date_to);
 				}
-				console.log(filterObject);
 				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();
