@@ -311,7 +311,7 @@
 						name: "Designation",
 						type: "String",
 						key: "designation",
-						width: "full",
+						width: "half",
 						validations: {
 							required,
 							minLength: minLength(1),
@@ -321,7 +321,7 @@
 						name: "Country",
 						type: "Dropdown",
 						key: "country",
-						width: "half",
+						width: "full",
 						multi: false,
 						isListInStore: false,
 						listItems: countries,
@@ -407,6 +407,7 @@
 					updated_on: data.record.updated_on,
 				};
 			},
+
 			// Implement the delete API
 			deleteEmployee(user) {
 				console.log(user);
