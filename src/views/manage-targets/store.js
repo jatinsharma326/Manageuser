@@ -96,6 +96,29 @@ export default {
 					};
 				});
 		},
+		deleteTargetYear: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "delete",
+					data: payload,
+					url: constants.FINANCIAL_YEAR,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to Delete Target Year");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to Delete Target Year");
+					return {
+						ok: false,
+						message: err.message,
+					};
+				});
+		},
 		getActiveCountries: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -112,7 +135,7 @@ export default {
 					if (data.ok) {
 						return {
 							ok: true,
-							list: data.data,
+							list: data.countries,
 						};
 					} else {
 						fail(data.message || "Failed to fetch Product List");
@@ -163,6 +186,75 @@ export default {
 					return {
 						ok: false,
 						list: [],
+					};
+				});
+		},
+		addTargetForYear: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "post",
+					data: payload,
+					url: constants.FINANCIAL_YEAR_TARGETS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to add target");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to add target");
+					return {
+						ok: false,
+						message: err.message,
+					};
+				});
+		},
+		editTargetForYear: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "put",
+					data: payload,
+					url: constants.FINANCIAL_YEAR_TARGETS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to edit Target");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to edit Target");
+					return {
+						ok: false,
+						message: err.message,
+					};
+				});
+		},
+		deleteTargetForYear: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "delete",
+					data: payload,
+					url: constants.FINANCIAL_YEAR_TARGETS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to Delete Target Row");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to Delete Target Year Row");
+					return {
+						ok: false,
+						message: err.message,
 					};
 				});
 		},
