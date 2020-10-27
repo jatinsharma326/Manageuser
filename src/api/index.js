@@ -38,5 +38,5 @@ export default {
 	FINANCIAL_YEAR_TARGETS: BASE_URL + "FinancialYears/v0.1/targets",
 
 	// GET ACTIVE PRODUCTS LIST
-	ACTIVE_COUNTRIES: BASE_URL + "Partners/v0.1/product-list",
+	ACTIVE_COUNTRIES: BASE_URL + "Partners/v0.1/active-countries",
 };
