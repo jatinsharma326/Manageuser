@@ -18,6 +18,16 @@
 						:class="checkWidth(config.width)"
 					></v-text-field>
 
+					<v-text-field
+						v-if="config.type == 'Number'"
+						:label="config.name"
+						:key="config.name + '__' + index"
+						v-model="formElements[config.key]"
+						class="form-item"
+						type="number"
+						:class="checkWidth(config.width)"
+					></v-text-field>
+
 					<v-textarea
 						v-if="config.type == 'TextArea'"
 						:label="config.name"
