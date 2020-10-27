@@ -11,7 +11,7 @@
 					</template>
 					<template v-slot:actionButtons>
 						<template>
-							<v-btn @click="disablePartner(target)" color="error" text>
+							<v-btn @click="deleteYear(target)" color="error" text>
 								Delete
 							</v-btn>
 							<v-btn @click="openInputForm(true, target)" color="secondary lighten-2" text>
@@ -205,24 +205,33 @@
 		},
 		computed: {},
 		methods: {
-			...mapActions("ManageTargets", ["getTargets", "addTargetYear", "editTargetYear"]),
+			...mapActions("ManageTargets", ["getTargets", "addTargetYear", "editTargetYear", "deleteTargetYear"]),
 			getYearlyTargets() {
 				this.openLoaderDialog();
 				this.getTargets({
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
-				}).then((data) => {
-					this.closeLoaderDialog();
-					this.targetList = data.list;
-				});
+				})
+					.then((data) => {
+						this.closeLoaderDialog();
+						this.targetList = data.list;
+					})
+					.catch((data) => {
+						this.closeLoaderDialog();
+					});
 			},
-			async formOutput(data) {
+			formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
+				console.log("formData", formData);
+
+				if (!formData.reference_year) {
+					delete formData.reference_year;
+				}
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addPartner(formData).then((data) => {
+					this.addTargetYear(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Target" });
@@ -230,10 +239,12 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
+							this.getYearlyTargets();
+							this.closeForm();
 						}
 					});
 				} else {
-					this.editPartner(formData).then((data) => {
+					this.editTargetYear(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Target" });
@@ -241,6 +252,8 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
+							this.getYearlyTargets();
+							this.closeForm();
 						}
 					});
 				}
@@ -252,27 +265,20 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			disablePartner(data) {
-				if (
-					window.confirm(
-						"Do you really want to " + (data.record.active ? "Disable the User?" : "Enable the User?")
-					)
-				) {
+			deleteYear(target) {
+				console.log("Delete", target);
+				if (window.confirm("Do you really want to Delete the Year?")) {
 					this.openLoaderDialog();
-					this.editPartner({
-						_id: data._id,
-						active: !data.record.active,
-						updated_on: data.record.updated_on,
+					this.deleteTargetYear({
+						_id: target._id,
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
-							console.log("Updated Partner status");
+							this.openSnackbar({ text: "Sucessfully deleted the Year" });
 							this.getYearlyTargets();
-							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update Partner status");
+							this.getYearlyTargets();
 						}
 					});
 				}
