@@ -159,7 +159,8 @@
 			} else {
 				this.currentRoute = this.settingsRoute.title;
 			}
-			this.title = this.title.split("/")[0] + " / " + this.currentRoute;
+			// this.title = this.title.split("/")[0] + " / " + this.currentRoute;
+			this.title = this.currentRoute;
 			let promises = [];
 			promises.push(this.getCountries());
 			promises.push(this.getPartnerList());
@@ -191,8 +192,9 @@
 			},
 			openPortal(item) {
 				if (item.title !== this.currentRoute) {
-					this.title = this.title.split("/")[0] + "/" + item.title;
+					// this.title = this.title.split("/")[0] + "/" + item.title;
 					this.currentRoute = item.title;
+					this.title = item.title;
 					if (item.hasOwnProperty("prop")) {
 						this.$router.push({
 							name: item.route,
