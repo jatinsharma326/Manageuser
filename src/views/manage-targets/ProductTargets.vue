@@ -13,8 +13,12 @@
 						<v-toolbar-title>Product Wise Targets</v-toolbar-title>
 						<v-divider class="mx-4" inset vertical></v-divider>
 						<v-spacer></v-spacer>
-						<v-btn @click="discardChange" color="error" text> Discard Changes </v-btn>
-						<v-btn @click="saveChanges" color="primary" outlined> Save Changes </v-btn>
+						<v-btn v-if="targetsHaveUpdated" @click="discardChange" color="error" text>
+							Discard Changes
+						</v-btn>
+						<v-btn v-if="targetsHaveUpdated" @click="saveChanges" color="primary" outlined>
+							Save Changes
+						</v-btn>
 					</v-toolbar>
 				</template>
 				<template v-slot:[`item.target`]="props">
@@ -54,6 +58,11 @@
 						</template>
 					</v-edit-dialog>
 				</template>
+				<template v-slot:[`item.action`]="{ item }">
+					<v-icon small @click="deleteTarget(item)">
+						mdi-delete
+					</v-icon>
+				</template>
 			</v-data-table>
 		</div>
 
@@ -83,9 +92,13 @@
 	export default {
 		name: "SalesLeaveManager",
 		mixins: [defaultCRUDMixin],
-		created() {
+		async created() {
 			this.getData();
-			this.getCurrencyList();
+			let promises = [];
+			promises.push(this.getCurrencyList());
+			promises.push(this.getCountryList());
+			await Promise.all(promises);
+			this.setInputConfig(this.countriesList, this.currencyList);
 		},
 		components: {},
 		data: () => ({
@@ -102,14 +115,21 @@
 			initialTargetList: [],
 			currencyList: [],
 			countriesList: [],
+			targetsHaveUpdated: false,
 		}),
 		methods: {
-			...mapActions("ManageTargets", ["getTargetsForYear", "getActiveCountries"]),
+			...mapActions("ManageTargets", [
+				"getTargetsForYear",
+				"addTargetForYear",
+				"editTargetForYear",
+				"deleteTargetForYear",
+				"getActiveCountries",
+			]),
 			...mapActions("Settings", ["getGlobalSettings"]),
 			getCurrencyList() {
-				this.openLoaderDialog();
-				this.getGlobalSettings().then((data) => {
-					this.closeLoaderDialog();
+				// this.openLoaderDialog();
+				return this.getGlobalSettings().then((data) => {
+					// this.closeLoaderDialog();
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetch Currency list" });
 					}
@@ -120,9 +140,10 @@
 			},
 			getData() {
 				this.openLoaderDialog();
+				this.resetValues();
 				this.getTargetsForYear({
 					filter: {
-						year: this.targetYear.year,
+						financial_year_id: this.targetYear._id,
 					},
 				}).then((data) => {
 					this.closeLoaderDialog();
@@ -134,24 +155,38 @@
 						...d,
 						serial_number: index + 1,
 					}));
-					this.initialTargetList = data.list;
+
+					this.initialTargetList = JSON.parse(JSON.stringify(this.productTargetList));
 				});
 			},
 			getCountryList() {
-				this.openLoaderDialog();
-				this.getActiveCountries().then((data) => {
+				// this.openLoaderDialog();
+				return this.getActiveCountries().then((data) => {
 					console.log("countries List", data);
-					this.closeLoaderDialog();
+					// this.closeLoaderDialog();
 					this.countriesList = data.list;
 				});
 			},
 			saveChanges() {
-				// Edit API call here
+				this.openLoaderDialog();
+				this.editTargetForYear({
+					data: this.productTargetList,
+					financial_year_id: this.targetYear._id,
+				}).then((data) => {
+					this.closeLoaderDialog();
+					if (data.ok) {
+						this.openSnackbar({ text: "Sucessfully edited the Target Entries" });
+						this.getData();
+					} else {
+						this.openSnackbar({ text: data.message });
+						this.getData();
+					}
+				});
 			},
 			discardChange() {
-				this.productTargetList = this.initialTargetList;
+				this.productTargetList = JSON.parse(JSON.stringify(this.initialTargetList));
 			},
-			setInputConfig(countries = []) {
+			setInputConfig(countries = [], currencyList = []) {
 				this.inputConfig = [
 					{
 						name: "Country",
@@ -167,22 +202,22 @@
 					},
 					{
 						name: "Target",
-						type: "String",
+						type: "Number",
 						key: "target",
-						width: "half",
+						width: "full",
 						validations: {
 							required,
 							minLength: minLength(1),
 						},
 					},
 					{
-						name: "Country",
+						name: "Currency",
 						type: "Dropdown",
-						key: "country",
-						width: "half",
+						key: "currency",
+						width: "full",
 						multi: false,
 						isListInStore: false,
-						listItems: countries,
+						listItems: currencyList,
 						validations: {
 							required,
 						},
@@ -191,38 +226,30 @@
 			},
 			formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				formData.date_from = helpers.getISODate(formData.date_from);
-				formData.date_to = helpers.getISODate(formData.date_to);
-				formData.no_of_days = Number(formData.no_of_days);
+				formData.financial_year_id = this.targetYear._id;
+				formData.target = Number(formData.target);
 				console.log("Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addLeave(formData).then((data) => {
-						this.closeLoaderDialog();
-						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Added a Leave Entry" });
-							console.log("Sucessfully Added a Leave Entry");
+					this.addTargetForYear(formData)
+						.then((data) => {
+							this.closeLoaderDialog();
+							if (data.ok) {
+								this.openSnackbar({ text: "Sucessfully Added a target entry" });
+								this.getData();
+								this.closeForm();
+							} else {
+								this.openSnackbar({ text: data.message });
+								this.getData();
+								this.closeForm();
+							}
+						})
+						.catch((data) => {
+							this.closeLoaderDialog();
 							this.getData();
 							this.closeForm();
-						} else {
-							this.openSnackbar({ text: data.message });
-							console.log("Failed to add a Leave Entry");
-						}
-					});
-				} else {
-					this.editLeave(formData).then((data) => {
-						this.closeLoaderDialog();
-						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully edited the Leave entry" });
-							console.log("Sucessfully edited the Leave entry");
-							this.getData();
-							this.closeForm();
-						} else {
-							this.openSnackbar({ text: data.message });
-							console.log("Failed to edit the Leave entry");
-						}
-					});
+						});
 				}
 			},
 			getEditRowObject(data) {
@@ -232,25 +259,50 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			deleteLeaveEntry(user) {
-				console.log("Delete", user);
-				if (window.confirm("Do you really want to Delete the Leave Entry?")) {
+			deleteTarget(target) {
+				console.log("Delete", target);
+				if (window.confirm("Do you really want to Delete the target row")) {
 					this.openLoaderDialog();
-					this.deleteLeave({
-						_id: user._id,
+					this.deleteTargetForYear({
+						_id: target._id,
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Deleted Leave" });
-							this.getEmployees();
+							this.openSnackbar({ text: "Sucessfully Deleted the Target row" });
+							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
+							this.getData();
 						}
 					});
 				}
 			},
+			resetValues() {
+				this.productTargetList = [];
+				this.initialTargetList = [];
+				this.targetsHaveUpdated = false;
+			},
 		},
-		watch: {},
+		watch: {
+			productTargetList: {
+				deep: true,
+				handler(nv, ov) {
+					console.log("Handler", nv, ov);
+					if (ov.length) {
+						this.targetsHaveUpdated = true;
+					} else {
+						this.targetsHaveUpdated = false;
+					}
+				},
+			},
+			targetYear: {
+				deep: true,
+				handler(nv, ov) {
+					this.resetValues();
+					this.getData();
+				},
+			},
+		},
 		props: {
 			targetYear: {
 				type: Object,
