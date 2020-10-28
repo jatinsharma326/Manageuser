@@ -122,7 +122,6 @@
 							type: "remote_sales_agent",
 						},
 					});
-					console.log("salesAgents", salesAgents);
 					let userList = [];
 					userList.push(...salesAgents.list);
 					userList.push(...remoteSalesAgents.list);
@@ -158,6 +157,7 @@
 				this.updateStatus({
 					_id: leave._id,
 					status: "ACCEPTED",
+					no_of_days: leave.no_of_days,
 					updated_on: leave.record.updated_on,
 					pending_leaves: leave.pending_leaves,
 				}).then((data) => {
@@ -175,6 +175,7 @@
 				this.updateStatus({
 					_id: leave._id,
 					status: "REJECTED",
+					no_of_days: leave.no_of_days,
 					updated_on: leave.record.updated_on,
 					pending_leaves: leave.pending_leaves,
 				}).then((data) => {
@@ -195,10 +196,13 @@
 				// make changes here to the filterObject
 				var filterData = JSON.parse(JSON.stringify(filterObject));
 
-				// if (filterData.name) {
-				// 	filterData.name = filterData.name.join("|");
-				// }
-				// console.log(filterData.name);
+				if (filterData.name.length <= 1) {
+					filterData.name = filterData.name.toString();
+					delete filterData.names;
+				} else {
+					filterData.names = filterData.name;
+					delete filterData.name;
+				}
 				if (filterData.doa) {
 					filterData.doa = helpers.getISODate(filterData.doa);
 				}
@@ -208,6 +212,7 @@
 				if (filterData.date_to) {
 					filterData.date_to = helpers.getISODate(filterData.date_to);
 				}
+				console.log("Test Console Advance Search Output", filterData);
 				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();
