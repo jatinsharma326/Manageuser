@@ -7,6 +7,7 @@
 				:headers="headers"
 				:items="productTargetList"
 				mobile-breakpoint="300"
+				hide-default-footer
 			>
 				<template v-slot:top>
 					<v-toolbar flat>
@@ -59,7 +60,7 @@
 					</v-edit-dialog>
 				</template>
 				<template v-slot:[`item.action`]="{ item }">
-					<v-icon small @click="deleteTarget(item)">
+					<v-icon color="error" small @click="deleteTarget(item)">
 						mdi-delete
 					</v-icon>
 				</template>
@@ -105,7 +106,7 @@
 			name: "ProductTargets",
 			inputConfig: [],
 			headers: [
-				{ text: "Sr. No.", value: "serial_number", width: 100 },
+				{ text: "Sr. No.", value: "serial_number", width: 60 },
 				{ text: "Product", align: "start", value: "country", width: 200 },
 				{ text: "Target", value: "target", width: 150 },
 				{ text: "Currency", value: "currency", width: 150 },
@@ -168,9 +169,20 @@
 				});
 			},
 			saveChanges() {
+				let targetList = JSON.parse(JSON.stringify(this.productTargetList));
+				for (let listItem of targetList) {
+					if (!listItem.target) {
+						listItem.target = 0;
+					}
+					listItem.target = Number(listItem.target);
+
+					if (listItem.serial_number) {
+						delete listItem.serial_number;
+					}
+				}
 				this.openLoaderDialog();
 				this.editTargetForYear({
-					data: this.productTargetList,
+					data: targetList,
 					financial_year_id: this.targetYear._id,
 				}).then((data) => {
 					this.closeLoaderDialog();
