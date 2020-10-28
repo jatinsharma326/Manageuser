@@ -171,12 +171,14 @@ export default {
 						return {
 							ok: true,
 							list: data.data,
+							fetchCount: data.fetchCount,
 						};
 					} else {
 						fail(data.message || "Failed to load Targets");
 						return {
 							ok: false,
 							list: [],
+							fetchCount: 0,
 						};
 					}
 				})
@@ -186,6 +188,7 @@ export default {
 					return {
 						ok: false,
 						list: [],
+						fetchCount: 0,
 					};
 				});
 		},
