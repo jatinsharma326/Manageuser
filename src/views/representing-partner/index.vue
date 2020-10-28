@@ -399,7 +399,7 @@
 			disablePartner(data) {
 				if (
 					window.confirm(
-						"Do you really want to " + (data.record.active ? "Disable the User?" : "Enable the User?")
+						"Do you really want to " + (data.record.active ? "Disable the Partner?" : "Enable the Partner?")
 					)
 				) {
 					this.openLoaderDialog();
