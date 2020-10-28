@@ -196,13 +196,13 @@
 				// make changes here to the filterObject
 				var filterData = JSON.parse(JSON.stringify(filterObject));
 
-				if (filterData.name.length <= 1) {
-					filterData.name = filterData.name.toString();
-					delete filterData.names;
-				} else {
-					filterData.names = filterData.name;
-					delete filterData.name;
-				}
+				// if (filterData.name.length <= 1) {
+				// 	filterData.name = filterData.name.toString();
+				// 	delete filterData.names;
+				// } else {
+				// 	filterData.names = filterData.name;
+				// 	delete filterData.name;
+				// }
 				if (filterData.doa) {
 					filterData.doa = helpers.getISODate(filterData.doa);
 				}
@@ -221,7 +221,7 @@
 				this.selectedSearchConfig = [
 					{
 						name: "Name of Applicant",
-						key: "name",
+						key: "names",
 						multi: true,
 						inputType: "dropdown",
 						defaultValue: [],
@@ -248,7 +248,7 @@
 					},
 					{
 						name: "Leave Status",
-						key: "status",
+						key: "statuses",
 						multi: true,
 						inputType: "dropdown",
 						defaultValue: [],
