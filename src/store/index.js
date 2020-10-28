@@ -9,6 +9,7 @@ import PartnerManagement from "../views/representing-partner/store";
 import Settings from "../views/settings/store";
 import LeaveManager from "../views/leave-manager/store";
 import ManageTargets from "../views/manage-targets/store";
+import ManageAgents from "../views/manage-agents/store";
 
 Vue.use(Vuex);
 
@@ -74,6 +75,7 @@ export default new Vuex.Store({
 		Settings,
 		LeaveManager,
 		ManageTargets,
+		ManageAgents,
 	},
 
 	state: initialState(),
