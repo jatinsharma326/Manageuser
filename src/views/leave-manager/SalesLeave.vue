@@ -2,7 +2,7 @@
 	<div class="salesLeavesManagerWrapper">
 		<div class="leaves-title-section">
 			<div class="leaves-title">Recent Leave Application</div>
-			<div class="pending-leave">Leaves Pending</div>
+			<div class="pending-leave">Leaves Pending : {{ pendingLeaves }}</div>
 		</div>
 		<div class="leaves-table">
 			<v-data-table
@@ -23,10 +23,10 @@
 				<template v-slot:[`item.date_to`]="{ item }">
 					{{ getFormattedDate(item.date_to, "MMMM Do YYYY dddd") }}
 				</template>
-				<template v-slot:expanded-item="{ headers }">
-					<td :colspan="headers.length">
+				<template v-slot:expanded-item="{ headers, item }">
+					<td class="expandable-section table-expanded-background " :colspan="headers.length">
 						<div class="expandable-section-title">Purpose Of Leave</div>
-						<div class="expandable-section-content">Here is where the purpose of leave will go</div>
+						<div class="expandable-section-content">{{ item.purpose_of_leave }}</div>
 					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
@@ -77,6 +77,7 @@
 		name: "SalesLeaveManager",
 		mixins: [defaultCRUDMixin],
 		created() {
+			this.fetchPendingLeaves();
 			this.getData();
 		},
 		components: {},
@@ -84,6 +85,7 @@
 			expanded: [],
 			name: "Leave",
 			leavesList: [],
+			pendingLeaves: 0,
 			inputConfig: [
 				{
 					name: "From",
@@ -114,7 +116,7 @@
 					},
 				},
 				{
-					name: "Purpose of Leaves",
+					name: "Purpose of Leave",
 					type: "TextArea",
 					key: "purpose_of_leave",
 					width: "full",
@@ -127,16 +129,23 @@
 			headers: [
 				{ text: "Sr. No.", value: "serial_number", width: 100 },
 				{ text: "Date of Application", align: "start", value: "doa", width: 200 },
-				{ text: "Date From", value: "date_from", width: 150 },
-				{ text: "Date To", value: "date_to", width: 150 },
+				{ text: "Date From", value: "date_from", width: 200 },
+				{ text: "Date To", value: "date_to", width: 200 },
 				{ text: "No of Days", value: "no_of_days", width: 150 },
 				{ text: "Status", value: "status", width: 150 },
-				{ text: "Purpose", value: "data-table-expand" },
+				// { text: "Purpose", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
 		}),
 		methods: {
-			...mapActions("LeaveManager", ["getSalesLeaves", "updateStatus", "addLeave", "deleteLeave", "editLeave"]),
+			...mapActions("LeaveManager", [
+				"getSalesLeaves",
+				"getPendingLeaves",
+				"updateStatus",
+				"addLeave",
+				"deleteLeave",
+				"editLeave",
+			]),
 			getData() {
 				this.openLoaderDialog();
 				this.getSalesLeaves().then((data) => {
@@ -145,6 +154,11 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 					this.leavesList = this.leavesList.map((d, index) => ({ ...d, serial_number: index + 1 }));
+				});
+			},
+			fetchPendingLeaves() {
+				this.getPendingLeaves().then((data) => {
+					this.pendingLeaves = data.pendingLeaves;
 				});
 			},
 			isDateBefore(date) {
@@ -167,12 +181,13 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added a Leave Entry" });
-							console.log("Sucessfully Added a Leave Entry");
+							this.fetchPendingLeaves();
 							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to add a Leave Entry");
+							this.fetchPendingLeaves();
+							this.getData();
 						}
 					});
 				} else {
@@ -180,12 +195,13 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully edited the Leave entry" });
-							console.log("Sucessfully edited the Leave entry");
+							this.fetchPendingLeaves();
 							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to edit the Leave entry");
+							this.fetchPendingLeaves();
+							this.getData();
 						}
 					});
 				}
@@ -197,19 +213,21 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			deleteLeaveEntry(user) {
-				console.log("Delete", user);
+			deleteLeaveEntry(leave) {
 				if (window.confirm("Do you really want to Delete the Leave Entry?")) {
 					this.openLoaderDialog();
 					this.deleteLeave({
-						_id: user._id,
+						_id: leave._id,
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Deleted Leave" });
-							this.getEmployees();
+							this.fetchPendingLeaves();
+							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
+							this.fetchPendingLeaves();
+							this.getData();
 						}
 					});
 				}
@@ -237,7 +255,7 @@
 		border-radius: 5px;
 	}
 	.expandable-section {
-		background-color: white;
+		padding: 1em !important;
 		.expandable-section-title {
 			font-size: 16px;
 			font-weight: 600;
