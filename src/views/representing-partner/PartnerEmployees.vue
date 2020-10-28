@@ -1,5 +1,5 @@
 <template>
-	<div class="partnerEmployeesWrapper primary-background-color">
+	<div class="partnerEmployeesWrapper">
 		<v-row class="px-6 employee-search-bar" justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
 				<Search
@@ -35,7 +35,7 @@
 										<v-btn @click="deleteEmployee(user)" color="error" text>
 											Delete
 										</v-btn>
-										<v-btn @click="openInputForm(true, user)" color="secondary lighten-2" text>
+										<v-btn @click="openInputForm(true, user)" color="secondary" text>
 											Edit
 										</v-btn>
 									</template>
@@ -47,7 +47,7 @@
 											:key="user._id + '+' + index"
 										>
 											<v-list-item-icon>
-												<v-icon v-if="index == 0" color="indigo">
+												<v-icon v-if="index == 0" color="secondary">
 													mdi-phone
 												</v-icon>
 											</v-list-item-icon>
@@ -64,7 +64,7 @@
 											:key="user._id + '+' + index + 'Email'"
 										>
 											<v-list-item-icon>
-												<v-icon v-if="index == 0" color="indigo">
+												<v-icon v-if="index == 0" color="secondary">
 													mdi-email
 												</v-icon>
 											</v-list-item-icon>
@@ -166,7 +166,7 @@
 			name: "Representing Partner Employees",
 			inputConfig: [
 				{
-					name: "Employee Name",
+					name: "Employee Name*",
 					type: "String",
 					key: "name",
 					width: "half",
@@ -176,7 +176,7 @@
 					},
 				},
 				{
-					name: "Designation",
+					name: "Designation*",
 					type: "String",
 					key: "designation",
 					width: "full",
@@ -186,7 +186,7 @@
 					},
 				},
 				{
-					name: "Country",
+					name: "Country*",
 					type: "Dropdown",
 					key: "country",
 					width: "half",
@@ -199,7 +199,7 @@
 					},
 				},
 				{
-					name: "Contact Info",
+					name: "Contact Info*",
 					type: "MultiInput",
 					key: "phone_numbers",
 					width: "half",
@@ -214,9 +214,9 @@
 					},
 				},
 				{
-					name: "Email",
+					name: "Email*",
 					type: "MultiInput",
-					key: "email_id",
+					key: "email_ids",
 					width: "half",
 					validations: {
 						required,
@@ -298,7 +298,7 @@
 			setInputConfig(countries = []) {
 				this.inputConfig = [
 					{
-						name: "Employee Name",
+						name: "Employee Name*",
 						type: "String",
 						key: "name",
 						width: "half",
@@ -308,7 +308,7 @@
 						},
 					},
 					{
-						name: "Designation",
+						name: "Designation*",
 						type: "String",
 						key: "designation",
 						width: "half",
@@ -318,7 +318,7 @@
 						},
 					},
 					{
-						name: "Country",
+						name: "Country*",
 						type: "Dropdown",
 						key: "country",
 						width: "full",
@@ -330,7 +330,7 @@
 						},
 					},
 					{
-						name: "Contact Info",
+						name: "Contact Info*",
 						type: "MultiInput",
 						key: "phone_numbers",
 						width: "half",
@@ -345,7 +345,7 @@
 						},
 					},
 					{
-						name: "Email",
+						name: "Email*",
 						type: "MultiInput",
 						key: "email_ids",
 						width: "half",
@@ -449,7 +449,7 @@
 </script>
 <style lang="scss" scoped>
 	.partnerEmployeesWrapper {
-		background-color: white;
+		// background-color: white;
 		height: 100%;
 
 		.country-title {
@@ -460,7 +460,7 @@
 			color: $tertiary;
 		}
 		.employee-search-bar {
-			margin-top: 14px;
+			padding-top: 14px;
 			width: 100%;
 		}
 	}

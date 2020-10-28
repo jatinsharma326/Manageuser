@@ -35,7 +35,7 @@
 						placeholder: "Search Sales Team",
 						inputConfig: [
 							{
-								name: "Full Name",
+								name: "Full Name*",
 								type: "String",
 								key: "name",
 								width: "half",
@@ -45,7 +45,7 @@
 								},
 							},
 							{
-								name: "Designation",
+								name: "Designation*",
 								type: "String",
 								key: "designation",
 								width: "half",
@@ -55,7 +55,7 @@
 								},
 							},
 							{
-								name: "Email",
+								name: "Email*",
 								type: "String",
 								key: "email",
 								width: "full",
@@ -66,7 +66,7 @@
 								},
 							},
 							{
-								name: "Address",
+								name: "Address*",
 								type: "String",
 								key: "address",
 								width: "full",
@@ -76,7 +76,7 @@
 								},
 							},
 							{
-								name: "Countries",
+								name: "Countries*",
 								type: "Dropdown",
 								key: "countries",
 								width: "half",
@@ -88,7 +88,7 @@
 								},
 							},
 							{
-								name: "Partners",
+								name: "Partners*",
 								type: "Dropdown",
 								key: "representing_partner_ids",
 								width: "half",
@@ -100,7 +100,7 @@
 								},
 							},
 							{
-								name: "Contact Numbers",
+								name: "Contact Numbers*",
 								type: "MultiInput",
 								key: "phone_numbers",
 								width: "half",
@@ -116,7 +116,7 @@
 								},
 							},
 							{
-								name: "DOB",
+								name: "DOB*",
 								type: "Date",
 								key: "dob",
 								width: "oneThird",
@@ -125,7 +125,7 @@
 								},
 							},
 							{
-								name: "DOJ",
+								name: "DOJ*",
 								type: "Date",
 								key: "doj",
 								width: "oneThird",
@@ -152,28 +152,30 @@
 						placeholder: "Search Remote Sales Team",
 						inputConfig: [
 							{
-								name: "Full Name",
+								name: "Full Name*",
 								type: "String",
 								key: "name",
+								width: "half",
 								validations: {
 									required,
-									alpha,
 									minLength: minLength(4),
 								},
 							},
 							{
-								name: "Designation",
+								name: "Designation*",
 								type: "String",
 								key: "designation",
+								width: "half",
 								validations: {
 									required,
 									minLength: minLength(1),
 								},
 							},
 							{
-								name: "Email",
+								name: "Email*",
 								type: "String",
 								key: "email",
+								width: "half",
 								validations: {
 									required,
 									email,
@@ -181,29 +183,32 @@
 								},
 							},
 							{
-								name: "Address",
+								name: "Address*",
 								type: "String",
 								key: "address",
+								width: "half",
 								validations: {
 									required,
 									minLength: minLength(10),
 								},
 							},
 							{
-								name: "Zone",
-								key: "zone",
-								multi: false,
-								listVariable: "zone",
+								name: "Zone*",
 								type: "Dropdown",
 								key: "zone",
+								width: "half",
+								multi: false,
+								isListInStore: true,
+								listVariable: "zone",
 								validations: {
 									required,
 								},
 							},
 							{
-								name: "Contact Numbers",
+								name: "Contact Numbers*",
 								type: "MultiInput",
 								key: "phone_numbers",
+								width: "half",
 								validations: {
 									required,
 									minLength: minLength(1),
@@ -216,17 +221,19 @@
 								},
 							},
 							{
-								name: "DOB",
+								name: "DOB*",
 								type: "Date",
 								key: "dob",
+								width: "oneThird",
 								validations: {
 									required,
 								},
 							},
 							{
-								name: "DOJ",
+								name: "DOJ*",
 								type: "Date",
 								key: "doj",
+								width: "oneThird",
 								validations: {
 									required,
 								},
@@ -235,6 +242,7 @@
 								name: "DOE",
 								type: "Date",
 								key: "doe",
+								width: "oneThird",
 							},
 						],
 					},
@@ -249,28 +257,30 @@
 						placeholder: "Search Management Team",
 						inputConfig: [
 							{
-								name: "Full Name",
+								name: "Full Name*",
 								type: "String",
 								key: "name",
+								width: "half",
 								validations: {
 									required,
-									alpha,
 									minLength: minLength(4),
 								},
 							},
 							{
-								name: "Designation",
+								name: "Designation*",
 								type: "String",
 								key: "designation",
+								width: "half",
 								validations: {
 									required,
 									minLength: minLength(1),
 								},
 							},
 							{
-								name: "Email",
+								name: "Email*",
 								type: "String",
 								key: "email",
+								width: "half",
 								validations: {
 									required,
 									email,
@@ -278,18 +288,20 @@
 								},
 							},
 							{
-								name: "Address",
+								name: "Address*",
 								type: "String",
 								key: "address",
+								width: "half",
 								validations: {
 									required,
 									minLength: minLength(10),
 								},
 							},
 							{
-								name: "Contact Numbers",
+								name: "Contact Numbers*",
 								type: "MultiInput",
 								key: "phone_numbers",
+								width: "half",
 								validations: {
 									required,
 									minLength: minLength(1),
@@ -302,17 +314,19 @@
 								},
 							},
 							{
-								name: "DOB",
+								name: "DOB*",
 								type: "Date",
 								key: "dob",
+								width: "oneThird",
 								validations: {
 									required,
 								},
 							},
 							{
-								name: "DOJ",
+								name: "DOJ*",
 								type: "Date",
 								key: "doj",
+								width: "oneThird",
 								validations: {
 									required,
 								},
@@ -321,6 +335,7 @@
 								name: "DOE",
 								type: "Date",
 								key: "doe",
+								width: "oneThird",
 							},
 						],
 					},
