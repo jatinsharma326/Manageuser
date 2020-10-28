@@ -1,31 +1,37 @@
 <template>
 	<div class="viewMoreModalWrapper">
-		<v-dialog v-model="modal" fullscreen hide-overlay transition="dialog-bottom-transition" persistent>
+		<v-dialog
+			overlay-color="white"
+			class="dialog-bg"
+			v-model="modal"
+			fullscreen
+			hide-overlay
+			transition="dialog-bottom-transition"
+			persistent
+		>
 			<div class="toolbarWrapper">
-				<div>
-					<v-toolbar color="primary">
-						<v-btn color="accent" icon @click="closeModal">
-							<v-icon>mdi-close</v-icon>
-						</v-btn>
-						<div class="titleWrapperContainer">
-							<v-toolbar-title>
-								<div class="modalTitleWrapper">
-									<slot name="modalTitle"></slot>
-								</div>
-							</v-toolbar-title>
-							<div class="modalSubtitle">
-								<slot name="modalSubtitle"></slot>
+				<v-toolbar color="primary">
+					<v-btn color="accent" icon @click="closeModal">
+						<v-icon>mdi-close</v-icon>
+					</v-btn>
+					<div class="titleWrapperContainer">
+						<v-toolbar-title>
+							<div class="modalTitleWrapper">
+								<slot name="modalTitle"></slot>
 							</div>
+						</v-toolbar-title>
+						<div class="modalSubtitle">
+							<slot name="modalSubtitle"></slot>
 						</div>
-						<v-spacer></v-spacer>
-						<v-toolbar-items>
-							<slot name="toolbarActions"></slot>
-						</v-toolbar-items>
-					</v-toolbar>
-
-					<div class="modalContent">
-						<slot name="modalContent"></slot>
 					</div>
+					<v-spacer></v-spacer>
+					<v-toolbar-items>
+						<slot name="toolbarActions"></slot>
+					</v-toolbar-items>
+				</v-toolbar>
+
+				<div class="modalContent ">
+					<slot name="modalContent"></slot>
 				</div>
 			</div>
 		</v-dialog>
@@ -65,15 +71,19 @@
 
 			.modalTitleWrapper {
 				color: white;
-				line-height: 1;
+				line-height: 26px;
 			}
 
 			.modalSubtitle {
 				font-size: 14px;
 				color: $secondaryFontColor;
 				margin-left: 6px;
-				line-height: 1;
+				line-height: 26px;
 			}
+		}
+
+		.modalContent {
+			height: calc(100% - 56px);
 		}
 	}
 </style>
