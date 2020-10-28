@@ -32,7 +32,7 @@
 					{{ getFormattedDate(item.date_to, "MMMM Do YYYY dddd") }}
 				</template>
 				<template v-slot:expanded-item="{ headers, item }">
-					<td class="expandable-section" :colspan="headers.length">
+					<td class="expandable-section table-expanded-background " :colspan="headers.length">
 						<div class="expandable-section-title">Purpose Of Leave</div>
 						<div class="expandable-section-content">{{ item.purpose_of_leave }}</div>
 					</td>
@@ -99,7 +99,7 @@
 				{ text: "No of Days", value: "no_of_days", width: 150 },
 				{ text: "Pending Leaves", value: "pending_leaves", width: 150 },
 				{ text: "Status", value: "status", width: 150 },
-				{ text: "Purpose", value: "data-table-expand" },
+				// { text: "Purpose", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
 			search_text: "",
@@ -277,7 +277,7 @@
 		border-radius: 5px;
 	}
 	.expandable-section {
-		background-color: white;
+		padding: 1em;
 		.expandable-section-title {
 			font-size: 16px;
 			font-weight: 600;
