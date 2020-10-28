@@ -1,6 +1,9 @@
 <template>
 	<div class="authWrapper">
-		<div class="auth-page-title">Global Destinations Version (1.1.5)</div>
+		<div class="auth-page-title">
+			Global Destinations CRM <br />
+			V 1.1.6
+		</div>
 		<div class="auth-input-wrapper">
 			<div class="form-title">Login</div>
 			<div class="auth-form">
