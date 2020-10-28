@@ -32,13 +32,13 @@
               ><v-icon>mdi-information-outline</v-icon></v-btn
             > -->
 						<template v-if="userType == ADMIN">
-							<v-btn @click="userPasswordReset(user)" color="orange lighten-2" text>
+							<v-btn @click="userPasswordReset(user)" color="orange " text>
 								Reset
 							</v-btn>
 							<v-btn @click="disableUser(user)" color="error" text>
 								{{ user.record.active ? "Disable" : "Enable" }}
 							</v-btn>
-							<v-btn @click="openInputForm(true, user)" color="primary lighten-2" text>
+							<v-btn @click="openInputForm(true, user)" color="secondary" text>
 								Edit
 							</v-btn>
 						</template>
@@ -50,7 +50,7 @@
 								:key="user._id + '+' + index"
 							>
 								<v-list-item-icon>
-									<v-icon v-if="index == 0" color="indigo">
+									<v-icon v-if="index == 0" color="secondary">
 										mdi-phone
 									</v-icon>
 								</v-list-item-icon>
@@ -64,7 +64,7 @@
 
 							<v-list-item>
 								<v-list-item-icon>
-									<v-icon color="indigo">
+									<v-icon color="secondary">
 										mdi-email
 									</v-icon>
 								</v-list-item-icon>
@@ -82,7 +82,7 @@
 									:key="user._id + '+' + index + '+' + partner.value"
 								>
 									<v-list-item-icon>
-										<v-icon v-if="index == 0" color="indigo">
+										<v-icon v-if="index == 0" color="secondary">
 											mdi-account
 										</v-icon>
 									</v-list-item-icon>
@@ -96,7 +96,7 @@
 
 							<v-list-item>
 								<v-list-item-icon>
-									<v-icon color="indigo">
+									<v-icon color="secondary">
 										mdi-map-marker
 									</v-icon>
 								</v-list-item-icon>
@@ -295,17 +295,14 @@
 				this.getUsers();
 			},
 			formOutput(data) {
-				var formData = { ...data };
+				var formData = JSON.parse(JSON.stringify(data));
 				formData.type = this.type;
 				formData.dob = helpers.getISODate(formData.dob);
 				formData.doj = helpers.getISODate(formData.doj);
 				if (formData.doe) {
 					formData.doe = helpers.getISODate(formData.dob);
-				} else {
-					delete formData.doe;
 				}
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
-				console.log(formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -405,6 +402,6 @@
 		justify-content: space-between;
 	}
 	.manageusers-search-bar {
-		margin-top: 12px;
+		padding-top: 12px;
 	}
 </style>
