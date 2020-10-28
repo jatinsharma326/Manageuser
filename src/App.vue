@@ -95,7 +95,7 @@
 				{
 					icon: "file_copy",
 					title: "Travel Agents",
-					route: "/extracted-data",
+					route: "/manage-agents",
 					highlight: false,
 				},
 				{

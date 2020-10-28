@@ -11,6 +11,12 @@ const routes = [
 		meta: { policy: [10, 20, 30, 40] },
 	},
 	{
+		path: "/manage-agents",
+		name: "Manage Agents",
+		component: () => import("../views/manage-agents"),
+		meta: { policy: [10, 20, 30, 40] },
+	},
+	{
 		path: "/regions-and-partners",
 		name: "Regions and Partners",
 		component: () => import("../views/representing-partner"),
