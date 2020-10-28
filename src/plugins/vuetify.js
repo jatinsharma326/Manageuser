@@ -7,13 +7,13 @@ export default new Vuetify({
 	theme: {
 		themes: {
 			light: {
-				primary: "#00887a", // Green
+				primary: "#00887a", // Primary Green (Mainly for header and navbar)
 				primaryFontColor: "#2B4266", // font navy blue, font color on the overview screen
-				secondary: "#77a6f7", // dark navy blue, this is the selected state of the link
+				secondary: "#77a6f7", // light purple,
 				secondaryFontColor: "#112d32", // font gray, font color on the master screen for the muted text
 				tertiary: "#355280", // light navy blue, this is for the expanded state of the menu item
-				tertiaryFontColor: "#333333", // Gaurav modi black
-				accent: "#f3d250", // neon blue
+				tertiaryFontColor: "#ececec", // light gray,
+				accent: "#f3d250", // yellow , this is the selected state of the link
 				error: "#FF5D5D", // red
 			},
 			// light: {
