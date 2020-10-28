@@ -70,7 +70,7 @@
 										></v-text-field>
 									</template>
 									<v-date-picker v-model="filterObject[filter.key]" @input="pickerMenu = false">
-										<v-btn text color="primary" @click="filterObject[filter.key] = null">
+										<v-btn text color="primary" @click="clearDate(filter.key)">
 											Clear
 										</v-btn></v-date-picker
 									>
@@ -127,6 +127,10 @@
 					console.log(this.queryString);
 					this.$emit("queryString", this.queryString);
 				}, 500);
+			},
+			clearDate(key) {
+				this.filterObject[key] = null;
+				this.dateMenuRef[key] = false;
 			},
 			clearFilters() {
 				this.initialiseFilterElements();
