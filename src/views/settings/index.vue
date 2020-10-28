@@ -167,8 +167,6 @@
 					this.currencyValue = this.activeCurrencies.map(function(active) {
 						return active.currency_type;
 					});
-					console.log("selected Currency", this.currencyValue);
-					console.log("active Currencies", this.activeCurrencies);
 				});
 			},
 			uploadFile() {
@@ -193,17 +191,15 @@
 				return formData;
 			},
 			editAdminSettings() {
-				console.log(this.totalPaidLeaves);
 				for (let currency of this.activeCurrencies) {
 					if (!currency.conversion_to_usd) {
 						currency.conversion_to_usd = 1;
 					}
 					currency.conversion_to_usd = Number(currency.conversion_to_usd);
 				}
-				console.log(this.activeCurrencies);
+
 				//   updateGlobalSettings
 				this.openLoaderDialog();
-
 				this.updateGlobalSettings({
 					total_paid_leaves: this.totalPaidLeaves,
 					active_currencies: this.activeCurrencies,
@@ -211,21 +207,13 @@
 					this.closeLoaderDialog();
 					if (data.ok) {
 						this.openSnackbar({ text: "Settings Edited Sucessfully" });
-						console.log("Add user success");
 						this.getSettings();
 					} else {
 						this.openSnackbar({ text: data.message });
-						console.log("Edit settings failed");
+						this.getSettings();
 					}
 				});
 			},
-			// setCurrency(data) {
-			//   console.log("Output on Blur", data);
-			//   console.log("Value on Blur", this.currencyValue);
-			//   for (var active of this.activeCurrencies) {
-			//     console.log(active.currency_type);
-			//   }
-			// },
 			policiesCheck() {
 				if (this.policies) {
 					return "Select Replacement Policies";
@@ -242,15 +230,12 @@
 		},
 		watch: {
 			currencyValue(nv, ov) {
-				console.log("nv", nv);
 				let tempObj = [];
 				let found;
 				for (let value of nv) {
-					// console.log("nv val", value);
 					found = false;
 					// compare the active currencies with the selected currency and if they match sent found to true
 					for (let currency of this.activeCurrencies) {
-						//   console.log("currency", currency);
 						if (currency.currency_type == value) {
 							tempObj.push(currency);
 							found = true;
