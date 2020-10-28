@@ -14,10 +14,10 @@
 							<v-btn @click="deleteYear(target)" color="error" text>
 								Delete
 							</v-btn>
-							<v-btn @click="openInputForm(true, target)" color="secondary lighten-2" text>
+							<v-btn @click="openInputForm(true, target)" color="secondary" text>
 								Edit
 							</v-btn>
-							<v-btn @click="openTargetsModal(target)" color="primary lighten-2" text>
+							<v-btn @click="openTargetsModal(target)" color="primary" text>
 								View
 							</v-btn>
 						</template>
