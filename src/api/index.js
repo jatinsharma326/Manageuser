@@ -33,6 +33,9 @@ export default {
 	ALL_SALES_LEAVES: BASE_URL + "Leaves/v0.1/all-sales-leaves",
 	SALES_LEAVES: BASE_URL + "Leaves/v0.1/sales-leaves",
 
+	// GET CURRENT PENDING LEAVES
+	PENDING_LEAVES: BASE_URL + "Leaves/v0.1/pending-leaves",
+
 	// MANAGE TARGETS ENDPOINTS
 	FINANCIAL_YEAR: BASE_URL + "FinancialYears/v0.1/",
 	FINANCIAL_YEAR_TARGETS: BASE_URL + "FinancialYears/v0.1/targets",
