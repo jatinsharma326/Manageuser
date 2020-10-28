@@ -79,12 +79,12 @@
 								<v-date-picker v-model="formElements[config.key]" no-title scrollable>
 									<v-spacer></v-spacer>
 
-									<v-btn text color="primary" @click="formElements[config.key] = null">
+									<v-btn text color="primary" @click="clearDate(config.key)">
 										Clear
 									</v-btn>
-									<v-btn text color="primary" @click="dateMenuRef[config.key] = false">
+									<!-- <v-btn text color="primary" @click=" = false">
 										Cancel
-									</v-btn>
+									</v-btn> -->
 									<v-btn @click="dateMenuRef[config.key] = false" text color="primary">
 										OK
 									</v-btn>
@@ -253,7 +253,6 @@
 		}),
 		created() {
 			this.initialiseFormElements();
-			console.log("Form Data", this.formData);
 		},
 		mounted() {},
 		computed: {
@@ -266,16 +265,17 @@
 					return width;
 				}
 			},
+			clearDate(key) {
+				this.formElements[key] = null;
+				this.dateMenuRef[key] = false;
+			},
 			formValidation() {
 				this.showError = false;
 				this.errorText = false;
 				this.$v.$touch();
 				if (this.$v.$invalid) {
 					for (let config of this.inputConfig) {
-						// console.log(config.name, this.$v.formElements);
 						if (this.$v.formElements[config.key] && this.$v.formElements[config.key].$invalid) {
-							// console.log(config);
-							// console.log(this.$v.formElements[config.key]);
 							for (let param in this.$v.formElements[config.key].$params) {
 								if (param != "$each" && !this.$v.formElements[config.key][param]) {
 									if (this.errorMessages[param].type == "conditional") {
@@ -287,7 +287,6 @@
 										);
 									} else {
 										this.errorText = this.errorMessages[param].msg(config.name);
-										// console.log(this.errorText);
 									}
 								}
 							}
@@ -371,7 +370,7 @@
 					} else {
 						// This will initialize the form when Edit user button is clicked
 						if (i.type == "MultiInput") {
-							if (this.formData[i.key]) {
+							if (this.formData[i.key] && this.formData[i.key].length) {
 								this.$set(
 									this.formElements,
 									i.key,
@@ -406,7 +405,6 @@
 								this.$set(this.formElements, i.key, tempObj);
 							}
 						} else if (i.type == "Date") {
-							console.log("Date output", this.formData[i.key]);
 							if (this.formData[i.key]) {
 								this.$set(
 									this.formElements,
@@ -429,8 +427,6 @@
 							this.$set(this.formElements, i.key, this.formData[i.key]);
 						}
 
-						// console.log(this.formElements);
-
 						if (i.type == "Date") {
 							this.$set(this.dateMenuRef, i.key, false);
 						}
@@ -441,7 +437,6 @@
 				if (this.keysToWatch && this.keysToWatch.length > 0) {
 					// create watchers here
 					for (let watchKey of this.keysToWatch) {
-						// console.log(watchKey);
 						this.watcherList.push(
 							this.$watch(`formElements.${watchKey}`, this.keyUpdated.bind(this, watchKey))
 						);
@@ -461,7 +456,6 @@
 								this.formElements[i.key] = null;
 							} else {
 								let tempObj = [];
-								// console.log(nv, this.formElements[i.key]);
 								for (let k of this.formElements[i.key]) {
 									if (ov.includes(k.groupKey) && nv.includes(k.groupKey)) {
 										tempObj.push(k);
@@ -478,7 +472,6 @@
 								this.formElements[i.key] = tempObj;
 							}
 						}
-						// console.log(this.formElements[i.key]);
 					}
 				}
 			},
@@ -548,6 +541,7 @@
 		.headline {
 			font-size: 32px;
 			font-weight: 700;
+			margin-bottom: 14px;
 		}
 
 		.form-item {
