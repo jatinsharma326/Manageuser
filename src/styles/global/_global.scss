@@ -41,6 +41,15 @@ body {
 	color: $secondaryFontColor;
 }
 
+// Calculating height to give content height
+.tabItemWrapper .v-window-item {
+	height: 100%;
+}
+
+.tertiary-font-color {
+	color: $tertiaryFontColor;
+}
+
 .primary-background-color {
 	background-color: $background;
 }
