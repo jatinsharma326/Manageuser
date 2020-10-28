@@ -64,7 +64,7 @@
 							>
 								<v-list-item-icon>
 									<v-icon color="secondary">
-										grade.grade
+										{{ grade.grade }}
 									</v-icon>
 								</v-list-item-icon>
 
@@ -137,15 +137,15 @@
 			companyInfo,
 		},
 		created() {
-			this.getCompanies();
-			this.setSearchConfig();
+			// this.getCompanies();
+			// this.setSearchConfig();
 		},
 		data: () => ({
 			companyList: [
 				{
 					_id: "5f857918e43f60826225",
 					name: "Thomas Cook",
-					business_types: [FIT, GIT, MICE, ADHOC, LUXURY],
+					business_types: ["FIT", "GIT", "MICE", "ADHOC", "LUXURY"],
 					website: "thomascook.in",
 					grading: [
 						{
@@ -164,7 +164,7 @@
 				{
 					_id: "5f857918e43f76087225",
 					name: "SOTC",
-					business_types: [FIT, LUXURY],
+					business_types: ["FIT", "LUXURY"],
 					website: "sotc.com",
 					grading: [
 						{
