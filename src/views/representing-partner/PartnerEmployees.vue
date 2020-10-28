@@ -1,5 +1,5 @@
 <template>
-	<div class="partnerEmployeesWrapper">
+	<div class="partnerEmployeesWrapper primary-background-color">
 		<v-row class="px-6 employee-search-bar" justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
 				<Search

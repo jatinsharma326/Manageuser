@@ -1,5 +1,5 @@
 <template>
-	<div class="usersComponentWrapper">
+	<div class="usersComponentWrapper primary-background-color">
 		<v-row class="px-6 manageusers-search-bar " justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
 				<Search @queryString="queryString" :placeholder="placeholder"></Search>
@@ -397,6 +397,9 @@
 </script>
 
 <style lang="scss" scopped>
+	.usersComponentWrapper {
+		height: 100%;
+	}
 	.date-container {
 		display: flex;
 		justify-content: space-between;

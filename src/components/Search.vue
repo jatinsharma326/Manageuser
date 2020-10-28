@@ -10,7 +10,9 @@
 		>
 			<template v-slot:append>
 				<v-badge dot overlap :value="areFiltersApplied">
-					<v-icon color="tertiary" @click="toggleAdvanceSearchSection()">{{ appendIcon }}</v-icon>
+					<v-icon color="secondaryFontColor" @click.stop="toggleAdvanceSearchSection()">{{
+						appendIcon
+					}}</v-icon>
 				</v-badge>
 			</template>
 		</v-text-field>

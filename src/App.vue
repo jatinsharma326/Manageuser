@@ -28,18 +28,20 @@
 			</v-list>
 		</v-navigation-drawer>
 
-		<v-app-bar color="white" app fixed>
+		<v-app-bar color="primary" app fixed>
 			<v-btn fab small icon tile x-large>
-				<v-icon color="black" @click="toggleNav">mdi-menu</v-icon>
+				<v-icon color="white" @click="toggleNav">mdi-menu</v-icon>
 			</v-btn>
 
-			<v-toolbar-title>{{ title }}</v-toolbar-title>
+			<v-toolbar-title
+				><span style="color:white">{{ title }}</span></v-toolbar-title
+			>
 			<v-spacer></v-spacer>
 			<v-btn large icon @click="openPortal(settingsRoute)">
-				<v-icon color="primary">mdi-cog</v-icon>
+				<v-icon color="white">mdi-cog</v-icon>
 			</v-btn>
 			<v-btn large icon @click="logoutUser">
-				<v-icon color="primary">mdi-logout</v-icon>
+				<v-icon color="white">mdi-logout</v-icon>
 			</v-btn>
 		</v-app-bar>
 

@@ -1,5 +1,5 @@
 <template>
-	<div class="partnersWrapper">
+	<div class="partnersWrapper primary-background-color">
 		<!-- <Users v-bind="{ ...ele.props }"></Users> -->
 		<v-row class="px-6 managepartners-search-bar" justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
@@ -48,12 +48,12 @@
 							<v-btn
 								v-if="userType == ADMIN || userType == MANAGEMENT"
 								@click="openInputForm(true, user)"
-								color="secondary lighten-2"
+								color="secondaryFontColor"
 								text
 							>
 								Edit
 							</v-btn>
-							<v-btn @click="openEmployeeModal(user)" color="primary lighten-2" text>
+							<v-btn @click="openEmployeeModal(user)" color="primary" text>
 								View
 							</v-btn>
 						</template>
@@ -443,6 +443,9 @@
 <style lang="scss" scopped>
 	.partnersWrapper {
 		padding: 20px 5px;
+		height: 100%;
+		// display: flex;
+		// flex-direction: column;
 	}
 	.card-image img {
 		max-width: 100%;

@@ -38,7 +38,11 @@ body {
 }
 
 .color-secondary {
-	color: $secondary;
+	color: $secondaryFontColor;
+}
+
+.primary-background-color {
+	background-color: $background;
 }
 
 .fw-600 {
