@@ -48,7 +48,7 @@
 							<v-btn
 								v-if="userType == ADMIN || userType == MANAGEMENT"
 								@click="openInputForm(true, user)"
-								color="secondaryFontColor"
+								color="secondary"
 								text
 							>
 								Edit
@@ -66,7 +66,7 @@
 								two-line
 							>
 								<v-list-item-icon>
-									<v-icon color="indigo">
+									<v-icon color="secondary">
 										mdi-phone
 									</v-icon>
 								</v-list-item-icon>
@@ -76,6 +76,21 @@
 									<v-list-item-subtitle>{{ contact.country }}</v-list-item-subtitle>
 								</v-list-item-content>
 								<!-- <v-divider inset></v-divider> -->
+							</v-list-item>
+
+							<v-list-item
+								v-for="(email, index) in user.email_ids"
+								:key="user._id + '+' + index + 'Email'"
+							>
+								<v-list-item-icon>
+									<v-icon v-if="index == 0" color="secondary">
+										mdi-email
+									</v-icon>
+								</v-list-item-icon>
+
+								<v-list-item-content>
+									<v-list-item-title>{{ email }}</v-list-item-title>
+								</v-list-item-content>
 							</v-list-item>
 						</v-list>
 					</template>
@@ -98,7 +113,7 @@
 				</div>
 			</template>
 			<template v-slot:modalSubtitle>
-				<div v-if="selectedPartnerInfo.business_types">
+				<div class="tertiary-font-color" v-if="selectedPartnerInfo.business_types">
 					{{ selectedPartnerInfo.business_types.join("/ ") }}
 				</div>
 			</template>
@@ -209,7 +224,7 @@
 			keysToWatch: ["countries"],
 			inputConfig: [
 				{
-					name: "Partner Name",
+					name: "Partner Name*",
 					type: "String",
 					key: "name",
 					width: "half",
@@ -219,7 +234,7 @@
 					},
 				},
 				{
-					name: "Proprietor Info",
+					name: "Proprietor Info*",
 					type: "String",
 					key: "proprietor_info",
 					width: "half",
@@ -229,7 +244,7 @@
 					},
 				},
 				{
-					name: "Business Type",
+					name: "Business Type*",
 					type: "Dropdown",
 					key: "business_types",
 					width: "half",
@@ -252,7 +267,20 @@
 					],
 				},
 				{
-					name: "Countries",
+					name: "Email",
+					type: "MultiInput",
+					key: "email_ids",
+					width: "full",
+					validations: {
+						$each: {
+							input: {
+								email,
+							},
+						},
+					},
+				},
+				{
+					name: "Countries*",
 					type: "Dropdown",
 					key: "countries",
 					width: "full",
@@ -302,6 +330,7 @@
 			async formOutput(data) {
 				var tempFile = data.logo;
 				var formData = JSON.parse(JSON.stringify(data));
+				formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
 				formData.logo = tempFile;
 				var tempArray = [];
 				var tempObj = {};
