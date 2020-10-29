@@ -229,7 +229,7 @@
 						listItems: teamMember,
 					},
 					{
-						name: "Date of Applicantion",
+						name: "Date of Application",
 						key: "doa",
 						inputType: "datePicker",
 						defaultValue: null,
