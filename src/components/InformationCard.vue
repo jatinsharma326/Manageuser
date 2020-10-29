@@ -1,6 +1,10 @@
 <template>
 	<div class="informationCardWrapper">
-		<v-card :class="{ 'remove-bottom-border-radius': show }" class="information-card" min-width="300px">
+		<v-card
+			:class="{ 'remove-bottom-border-radius': show, 'disabled-card': isCardDisabled }"
+			class="information-card"
+			min-width="300px"
+		>
 			<div class="top-content-wrapper">
 				<div class="subtitle color-secondary fw-600 text-uppercase">
 					<slot name="topLeft"></slot>
@@ -72,6 +76,11 @@
 				type: Boolean,
 				default: false,
 			},
+			isCardDisabled: {
+				required: false,
+				type: Boolean,
+				default: false,
+			},
 		},
 	};
 </script>
@@ -119,6 +128,9 @@
 		&.remove-bottom-border-radius {
 			border-bottom-right-radius: 0px !important;
 			border-bottom-left-radius: 0px !important;
+		}
+		&.disabled-card {
+			background-color: #eee;
 		}
 
 		.top-content-wrapper {
