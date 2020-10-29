@@ -8,7 +8,7 @@
 
 		<div class="card-wrapper">
 			<div v-for="user in userList" :key="user._id" class="card-element">
-				<InformationCard :expandCard="true">
+				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
 					<template v-slot:topLeft>
 						{{ user.usr_data.designation }}
 					</template>
@@ -38,7 +38,7 @@
 							<v-btn @click="disableUser(user)" color="error" text>
 								{{ user.record.active ? "Disable" : "Enable" }}
 							</v-btn>
-							<v-btn @click="openInputForm(true, user)" color="secondary" text>
+							<v-btn v-if="user.record.active" @click="openInputForm(true, user)" color="secondary" text>
 								Edit
 							</v-btn>
 						</template>
@@ -253,7 +253,9 @@
 		created() {
 			this.getUsers();
 		},
-
+		computed: {
+			...mapGetters(["partners"]),
+		},
 		methods: {
 			...mapActions("UserManagement", ["getUserList", "addUser", "editUser", "resetPassword"]),
 
@@ -296,6 +298,7 @@
 			},
 			formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
+				console.log("Test Console User form", data);
 				formData.type = this.type;
 				formData.dob = helpers.getISODate(formData.dob);
 				formData.doj = helpers.getISODate(formData.doj);
@@ -303,7 +306,16 @@
 					formData.doe = helpers.getISODate(formData.dob);
 				}
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
-
+				if (formData.representing_partner_ids) {
+					formData.representing_partner_ids = formData.representing_partner_ids.filter((id) => {
+						for (let partner of this.partners) {
+							if (partner.value == id) {
+								return true;
+							}
+						}
+					});
+				}
+				console.log("Test Console User form After", formData);
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addUser(formData).then((data) => {
