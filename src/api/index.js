@@ -42,4 +42,7 @@ export default {
 
 	// GET ACTIVE PRODUCTS LIST
 	ACTIVE_COUNTRIES: BASE_URL + "Partners/v0.1/active-countries",
+
+	// TRAVEL AGENTS ENDPOINT
+	TRAVEL_AGENT: BASE_URL + "Companies/v0.1/",
 };
