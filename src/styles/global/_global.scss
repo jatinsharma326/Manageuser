@@ -8,18 +8,24 @@
 //   }
 // }
 body {
-	font-family: "Poppins", sans-serif !important;
+	font-family: "Montserrat", sans-serif;
 }
 .v-application {
-	font-family: "Poppins", sans-serif !important;
+	font-family: "Montserrat", sans-serif;
 }
+// body {
+// 	font-family: "Poppins", sans-serif !important;
+// }
+// .v-application {
+// 	font-family: "Poppins", sans-serif !important;
+// }
 .card-wrapper {
 	display: grid;
 	grid-gap: 0;
 	grid-template-columns: 33.33% 33.33% 33.33%;
 	grid-template-rows: max-content;
 
-	@include custom-max(1000px) {
+	@include custom-max(1050px) {
 		grid-template-columns: 50% 50%;
 	}
 	@include custom-max(767px) {
@@ -60,4 +66,9 @@ body {
 
 .fw-600 {
 	font-weight: 600;
+}
+
+// Done mainly for Representing partner Employees Modal (On Card Expansion)
+.v-dialog {
+	background-color: white;
 }
