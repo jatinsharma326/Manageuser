@@ -17,7 +17,7 @@
 
 		<div class="card-wrapper">
 			<div v-for="user in partnerList" :key="user._id" class="card-element">
-				<InformationCard :expandCard="true">
+				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
 					<template v-slot:topLeft>
 						{{ user.business_types.join(", ") }}
 					</template>
@@ -46,7 +46,7 @@
 								{{ user.record.active ? "Disable" : "Enable" }}
 							</v-btn>
 							<v-btn
-								v-if="userType == ADMIN || userType == MANAGEMENT"
+								v-if="(userType == ADMIN || userType == MANAGEMENT) && user.record.active"
 								@click="openInputForm(true, user)"
 								color="secondary"
 								text
