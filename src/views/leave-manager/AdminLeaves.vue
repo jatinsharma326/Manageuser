@@ -277,7 +277,7 @@
 		border-radius: 5px;
 	}
 	.expandable-section {
-		padding: 1em;
+		padding: 1em !important;
 		.expandable-section-title {
 			font-size: 16px;
 			font-weight: 600;
