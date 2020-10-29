@@ -23,7 +23,7 @@ export default {
 				{
 					method: "get",
 					params: payload,
-					url: constants.MANAGE_PARTNER,
+					url: constants.TRAVEL_AGENT,
 				},
 				{ root: true }
 			)
@@ -36,7 +36,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load Partner List");
+						fail(data.message || "Failed to load Target Agent List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -47,7 +47,7 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load Partner List");
+					fail(err.toString() || "Failed to load Target Agent List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
@@ -58,16 +58,16 @@ export default {
 				{
 					method: "post",
 					data: payload,
-					url: constants.MANAGE_PARTNER,
+					url: constants.TRAVEL_AGENT,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add Partner");
+					if (!data.ok) fail(data.message || "Failed to add Target Agent");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add Partner");
+					fail(err.toString() || "Failed to add Target Agent");
 					return {
 						ok: false,
 						message: err.message,
@@ -81,22 +81,23 @@ export default {
 				{
 					method: "put",
 					data: payload,
-					url: constants.MANAGE_PARTNER,
+					url: constants.TRAVEL_AGENT,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Partner");
+					if (!data.ok) fail(data.message || "Failed to edit Target Agent");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner");
+					fail(err.toString() || "Failed to edit Target Agent");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
+
 		getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -202,8 +203,5 @@ export default {
 				});
 		},
 	},
-	getters: {
-		// masterData: (state) => state.masterData,
-		// masterDataCount: (state) => state.masterDataCount,
-	},
+	getters: {},
 };
