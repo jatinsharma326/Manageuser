@@ -1,7 +1,7 @@
 <template>
-	<div class="partnersWrapper primary-background-color">
+	<div class="agentsWrapper primary-background-color">
 		<!-- <Users v-bind="{ ...ele.props }"></Users> -->
-		<v-row class="px-6 managepartners-search-bar" justify="center" align="center">
+		<v-row class="px-6 manageagents-search-bar" justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
 				<!-- @queryString="queryString" -->
 				<Search
@@ -34,6 +34,7 @@
 					</template>
 					<template v-slot:actionButtons>
 						<template>
+							<v-btn icon color="secondary" text><v-icon>mdi-information-outline</v-icon></v-btn>
 							<v-btn
 								v-if="userType == ADMIN || userType == MANAGEMENT"
 								@click="disableCompany(company)"
@@ -50,7 +51,7 @@
 							>
 								Edit
 							</v-btn>
-							<v-btn @click="openEmployeeModal(company)" color="primary" text>
+							<v-btn @click="openInformationModal(company)" color="primary" text>
 								View
 							</v-btn>
 						</template>
@@ -103,7 +104,7 @@
 				</div>
 			</template>
 			<template v-slot:modalContent>
-				<companyInfo :partnerInfo="selectedCompanyInfo"></companyInfo>
+				<companyInfo :companyInfo="selectedCompanyInfo"></companyInfo>
 			</template>
 		</ViewMoreModal>
 
@@ -201,6 +202,11 @@
 						},
 					],
 					business_types: ["FIT", "MICE"],
+					record: {
+						active: true,
+						created_on: "date",
+						updated_on: "date",
+					},
 				},
 			],
 			search_text: "",
@@ -377,7 +383,7 @@
 					});
 				}
 			},
-			openEmployeeModal(userData) {
+			openInformationModal(userData) {
 				this.selectedCompanyInfo = { ...userData };
 				// console.log(this.selectedCompanyInfo);
 				this.viewMoreModal = true;
@@ -426,7 +432,7 @@
 </script>
 
 <style lang="scss" scopped>
-	.partnersWrapper {
+	.agentsWrapper {
 		padding: 20px 5px;
 		height: 100%;
 		// display: flex;
@@ -435,7 +441,7 @@
 	.card-image img {
 		max-width: 100%;
 	}
-	.managepartners-search-bar {
+	.manageagents-search-bar {
 		margin-top: 12px;
 	}
 	.big-grade {
@@ -464,7 +470,7 @@
 </style>
 
 <style lang="scss">
-	.partnersWrapper .v-list-item__title,
+	.agentsWrapper .v-list-item__title,
 	.v-list-item__subtitle {
 		white-space: normal;
 	}
