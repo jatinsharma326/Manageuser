@@ -2,7 +2,6 @@
 	<div class="viewMoreModalWrapper">
 		<v-dialog
 			overlay-color="white"
-			class="dialog-bg"
 			v-model="modal"
 			fullscreen
 			hide-overlay
