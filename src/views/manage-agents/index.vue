@@ -28,7 +28,7 @@
 						{{ company.website }}
 					</template>
 					<template v-slot:mainContentRight>
-						<div class="grade">
+						<div class="big-grade">
 							{{ company.admin_grade }}
 						</div>
 					</template>
@@ -57,22 +57,26 @@
 					</template>
 					<template v-slot:expandCardContent>
 						<v-list>
-							<v-list-item
-								v-for="(grade, index) in company.grading"
-								:key="company._id + '+' + index"
-								two-line
-							>
-								<v-list-item-icon>
-									<v-icon color="secondary">
-										{{ grade.grade }}
-									</v-icon>
-								</v-list-item-icon>
+							<template v-for="(grade, index) in company.grading">
+								<v-list-item :key="company._id + '+' + index">
+									<v-list-item-icon class="smallGradeWrapper">
+										<div class="small-grade">
+											{{ grade.grade }}
+										</div>
+									</v-list-item-icon>
 
-								<v-list-item-content>
-									<v-list-item-title>{{ grade.product }}</v-list-item-title>
-								</v-list-item-content>
-								<!-- <v-divider inset></v-divider> -->
-							</v-list-item>
+									<v-list-item-content>
+										<v-list-item-title
+											>{{ grade.product }} {{ index
+											}}{{ company.grading.length }}</v-list-item-title
+										>
+									</v-list-item-content>
+								</v-list-item>
+								<v-divider
+									v-if="index + 1 != company.grading.length"
+									:key="company._id + '+' + index + 'divider'"
+								></v-divider>
+							</template>
 						</v-list>
 					</template>
 				</InformationCard>
@@ -154,7 +158,7 @@
 						},
 					],
 					admin_grade: "A",
-					blacklist: "false",
+					blacklist: false,
 					record: {
 						active: true,
 						created_on: "date",
@@ -177,12 +181,26 @@
 						},
 					],
 					admin_grade: "B",
-					blacklist: "false",
+					blacklist: false,
 					record: {
 						active: true,
 						created_on: "date",
 						updated_on: "date",
 					},
+				},
+				{
+					_id: "5f9985ac96e9d514f0e4df55",
+					updated_on: "2020-10-28T14:52:28.603Z",
+					name: "Thomas Cook New",
+					blacklist: false,
+					admin_grade: "A",
+					grading: [
+						{
+							country: "Algeria",
+							grade: "A",
+						},
+					],
+					business_types: ["FIT", "MICE"],
 				},
 			],
 			search_text: "",
@@ -419,6 +437,29 @@
 	}
 	.managepartners-search-bar {
 		margin-top: 12px;
+	}
+	.big-grade {
+		font-size: 32px;
+		font-weight: 300;
+		color: white;
+		display: inline-flex;
+		padding: 10px 22px;
+		border-radius: 4px;
+		box-shadow: 5px 5px 10px #adbacf, -5px -5px 10px #f9ffff;
+		background: linear-gradient(145deg, #7fb2ff, #6b95de);
+	}
+	.small-grade {
+		font-size: 20px;
+		font-weight: 300;
+		color: white;
+		display: inline-flex;
+		padding: 10px 16px;
+		border-radius: 4px;
+		box-shadow: 5px 5px 10px #adbacf, -5px -5px 10px #f9ffff;
+		background: linear-gradient(145deg, #7fb2ff, #6b95de);
+	}
+	.smallGradeWrapper {
+		margin: 10px 16px 10px 0 !important;
 	}
 </style>
 
