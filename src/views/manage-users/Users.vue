@@ -21,16 +21,7 @@
 					<template v-slot:mainContentSubtitle>
 						{{ getMainContentSubtitle(user) }}
 					</template>
-					<!-- <template v-slot:mainContentRight>
-            Grade/ Logo
-          </template>
-          <template v-slot:moreInfo>
-            More Information Goes here. More Information Goes here.
-          </template> -->
 					<template v-slot:actionButtons>
-						<!-- <v-btn icon color="primary lighten-2" text
-              ><v-icon>mdi-information-outline</v-icon></v-btn
-            > -->
 						<template v-if="userType == ADMIN">
 							<v-btn @click="userPasswordReset(user)" color="orange " text>
 								Reset
