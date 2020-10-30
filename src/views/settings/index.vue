@@ -197,7 +197,7 @@
 					}
 					currency.conversion_to_usd = Number(currency.conversion_to_usd);
 				}
-
+				this.totalPaidLeaves = Number(this.totalPaidLeaves);
 				//   updateGlobalSettings
 				this.openLoaderDialog();
 				this.updateGlobalSettings({
