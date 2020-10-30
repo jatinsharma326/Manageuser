@@ -294,6 +294,7 @@
 				{
 					name: "Emergency Numbers",
 					type: "MultiInputWithGroupKey",
+					multi: true,
 					key: "emergency_contacts",
 					width: "half",
 					keyToGroup: "countries",
@@ -461,8 +462,6 @@
 				];
 			},
 			updatedPageNo(page) {
-				// console.log("Page", page);
-				// console.log("Page Number", this.pageNo);
 				this.getPartners();
 			},
 		},
@@ -473,8 +472,6 @@
 	.partnersWrapper {
 		padding: 20px 5px;
 		height: 100%;
-		// display: flex;
-		// flex-direction: column;
 	}
 	.card-image img {
 		max-width: 100%;
