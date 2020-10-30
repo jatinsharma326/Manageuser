@@ -82,9 +82,6 @@
 									<v-btn text color="primary" @click="clearDate(config.key)">
 										Clear
 									</v-btn>
-									<!-- <v-btn text color="primary" @click=" = false">
-										Cancel
-									</v-btn> -->
 									<v-btn @click="dateMenuRef[config.key] = false" text color="primary">
 										OK
 									</v-btn>
@@ -132,7 +129,9 @@
 
 					<template v-if="config.type == 'MultiInputWithGroupKey' && formElements[config.key]">
 						<template v-for="(row, rowIndex) in formElements[config.key]">
-							Enter {{ config.name }} for {{ row.groupKey }}
+							<div :key="config.name + '__' + index + '__' + rowIndex" class="input-with-group-key-title">
+								Enter {{ config.name }} for {{ row.groupKey }}
+							</div>
 							<template v-for="(input, mulIndex) in row.input">
 								<div
 									:key="
@@ -164,6 +163,7 @@
 								</div>
 							</template>
 							<div
+								v-if="config.multi"
 								:key="config.name + '__' + index + '__buttons__' + row.groupKey"
 								class="multi-input-buttons"
 							>
@@ -200,6 +200,16 @@
 							class="form-item"
 							:class="checkWidth(config.width)"
 						></v-file-input>
+					</template>
+
+					<template v-if="config.type == 'Switch'">
+						<v-switch
+							v-model="formElements[config.key]"
+							:key="config.name + '__' + index"
+							:label="config.name"
+							class="form-item"
+							inset
+						></v-switch>
 					</template>
 				</template>
 			</div>
@@ -423,6 +433,12 @@
 							} else {
 								this.$set(this.formElements, i.key, null);
 							}
+						} else if (i.type == "Switch") {
+							if (this.formData[i.key]) {
+								this.$set(this.formElements, i.key, this.formData[i.key]);
+							} else {
+								this.$set(this.formElements, i.key, false);
+							}
 						} else {
 							this.$set(this.formElements, i.key, this.formData[i.key]);
 						}
@@ -515,6 +531,10 @@
 	.form-wrapper {
 		padding: 20px 30px;
 		background: white;
+
+		.input-with-group-key-title {
+			flex: 0 0 100%;
+		}
 
 		.oneFourth {
 			flex: 0 0 25% !important;
