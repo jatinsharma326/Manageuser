@@ -16,6 +16,38 @@ export default {
 		},
 	},
 	actions: {
+		getChangelogsList: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.CHANGELOGS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load Target Agent List");
+						return {
+							ok: false,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load Target Agent List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
+
 		getCompaniesList: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -98,7 +130,89 @@ export default {
 				});
 		},
 
-		getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
+		getAddressList: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.TRAVEL_AGENT_ADDRESS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to Load Address List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to Load Address List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
+		addAddress: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "post",
+					data: payload,
+					url: constants.TRAVEL_AGENT_ADDRESS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to add Address");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to add Address");
+					return {
+						ok: false,
+						message: err.message,
+					};
+				});
+		},
+		editAddress: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "put",
+					data: payload,
+					url: constants.TRAVEL_AGENT_ADDRESS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to edit Address");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to edit Address");
+					return {
+						ok: false,
+						message: err.message,
+					};
+				});
+		},
+
+		getCompanyEmployeeList: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
@@ -118,7 +232,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to Load Partner Employees List");
+						fail(data.message || "Failed to Load Travel Agent Employee List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -129,11 +243,11 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to Load Partner Employees List");
+					fail(err.toString() || "Failed to Load Travel Agent Employee List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		addPartnerEmployees: ({ commit, dispatch }, payload) => {
+		addCompanyEmployee: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
@@ -145,18 +259,18 @@ export default {
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add Partner Employees");
+					if (!data.ok) fail(data.message || "Failed to add Travel Agent Employee");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add Partner Employees");
+					fail(err.toString() || "Failed to add Travel Agent Employee");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		editPartnerEmployees: ({ commit, dispatch }, payload) => {
+		editCompanyEmployee: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
@@ -168,18 +282,100 @@ export default {
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Partner Employee");
+					if (!data.ok) fail(data.message || "Failed to edit Travel Agent Employee");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner Employee");
+					fail(err.toString() || "Failed to edit Travel Agent Employee");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		deletePartnerEmployees: ({ commit, dispatch }, payload) => {
+
+		getFamTripList: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.MANAGE_PARTNER_EMPLOYEES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to Load Travel Agent Employee List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to Load Travel Agent Employee List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
+		addFamTrip: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "post",
+					data: payload,
+					url: constants.MANAGE_PARTNER_EMPLOYEES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to add Travel Agent Employee");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to add Travel Agent Employee");
+					return {
+						ok: false,
+						message: err.message,
+					};
+				});
+		},
+		editFamTrip: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "put",
+					data: payload,
+					url: constants.MANAGE_PARTNER_EMPLOYEES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to edit Travel Agent Employee");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to edit Travel Agent Employee");
+					return {
+						ok: false,
+						message: err.message,
+					};
+				});
+		},
+		deleteFamTrip: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
@@ -191,11 +387,11 @@ export default {
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to Delete Partner Employee");
+					if (!data.ok) fail(data.message || "Failed to Delete Fam Trip");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner Employee");
+					fail(err.toString() || "Failed to Delete Fam Trip");
 					return {
 						ok: false,
 						message: err.message,
