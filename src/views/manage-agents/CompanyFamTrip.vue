@@ -1,9 +1,7 @@
 <template>
 	<div class="partnersWrapper primary-background-color">
-		<!-- <Users v-bind="{ ...ele.props }"></Users> -->
-		<v-row class="px-6 managepartners-search-bar" justify="center" align="center">
+		<!-- <v-row class="px-6 managepartners-search-bar" justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
-				<!-- @queryString="queryString" -->
 				<Search
 					@queryString="queryString"
 					@filterObject="advanceSearch"
@@ -75,7 +73,6 @@
 									<v-list-item-title>{{ contact.contacts.join(", ") }}</v-list-item-title>
 									<v-list-item-subtitle>{{ contact.country }}</v-list-item-subtitle>
 								</v-list-item-content>
-								<!-- <v-divider inset></v-divider> -->
 							</v-list-item>
 
 							<v-list-item
@@ -137,11 +134,12 @@
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
-		</div>
+		</div> -->
 	</div>
 </template>
 
 <script>
+	/*
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
@@ -427,11 +425,6 @@
 				this.viewMoreModal = true;
 			},
 			setSearchConfig() {
-				/*
-				 * Name of Partner - Text field - string or number - can this be empty?
-				 * Business Type - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-				 * Countries - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-				 */
 				this.selectedSearchConfig = [
 					{
 						name: "Partner Name",
@@ -466,27 +459,27 @@
 				this.getPartners();
 			},
 		},
-	};
+	};*/
 </script>
 
 <style lang="scss" scopped>
-	.partnersWrapper {
-		padding: 20px 5px;
-		height: 100%;
-		// display: flex;
-		// flex-direction: column;
-	}
-	.card-image img {
-		max-width: 100%;
-	}
-	.managepartners-search-bar {
-		margin-top: 12px;
-	}
+	// .partnersWrapper {
+	// 	padding: 20px 5px;
+	// 	height: 100%;
+	// 	// display: flex;
+	// 	// flex-direction: column;
+	// }
+	// .card-image img {
+	// 	max-width: 100%;
+	// }
+	// .managepartners-search-bar {
+	// 	margin-top: 12px;
+	// }
 </style>
 
 <style lang="scss">
-	.partnersWrapper .v-list-item__title,
-	.v-list-item__subtitle {
-		white-space: normal;
-	}
+	// .partnersWrapper .v-list-item__title,
+	// .v-list-item__subtitle {
+	// 	white-space: normal;
+	// }
 </style>
