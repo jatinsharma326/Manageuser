@@ -112,7 +112,7 @@
 			@formOutput="formOutput"
 			@closeForm="closeForm"
 			:name="name"
-			:inputConfig="inputConfig"
+			:inputConfig="userType == ADMIN ? adminInputConfig : salesInputConfig"
 			:keysToWatch="keysToWatch"
 			:toggleForm="toggleForm"
 			:formData="rowToEdit"
@@ -142,8 +142,8 @@
 			companyInfo,
 		},
 		created() {
-			// this.getCompanies();
-			// this.setSearchConfig();
+			this.getCompanies();
+			this.setSearchConfig();
 		},
 		data: () => ({
 			companyList: [
@@ -212,7 +212,68 @@
 			search_text: "",
 			name: "Travel Agents",
 			keysToWatch: ["product"],
-			inputConfig: [
+			adminInputConfig: [
+				{
+					name: "Company Name*",
+					type: "String",
+					key: "name",
+					width: "half",
+					validations: {
+						required,
+						minLength: minLength(1),
+					},
+				},
+				{
+					name: "Website Info",
+					type: "String",
+					key: "website",
+					width: "half",
+				},
+				{
+					name: "Admin Grade",
+					type: "String",
+					key: "name",
+					width: "half",
+				},
+				{
+					name: "Defaulter?",
+					type: "Switch",
+					key: "blacklist",
+					width: "half",
+				},
+				{
+					name: "Business Type*",
+					type: "Dropdown",
+					key: "business_types",
+					width: "full",
+					multi: true,
+					isListInStore: true,
+					listVariable: "businessType",
+					validations: {
+						required,
+					},
+				},
+				{
+					name: "Countries*",
+					type: "Dropdown",
+					key: "product",
+					width: "full",
+					multi: true,
+					isListInStore: true,
+					listVariable: "countries",
+					validations: {
+						required,
+					},
+				},
+				{
+					name: "Grade",
+					type: "MultiInputWithGroupKey",
+					key: "grading",
+					width: "full",
+					keyToGroup: "product",
+				},
+			],
+			salesInputConfig: [
 				{
 					name: "Company Name*",
 					type: "String",
@@ -242,9 +303,9 @@
 					},
 				},
 				{
-					name: "Admin Grade",
-					type: "String",
-					key: "name",
+					name: "Defaulter?",
+					type: "Switch",
+					key: "blacklist",
 					width: "half",
 				},
 				{
@@ -260,10 +321,10 @@
 					},
 				},
 				{
-					name: "Grade for the selected country",
+					name: "Grade",
 					type: "MultiInputWithGroupKey",
-					key: "grade",
-					width: "half",
+					key: "grading",
+					width: "full",
 					keyToGroup: "product",
 				},
 			],
@@ -296,44 +357,43 @@
 				this.getCompanies();
 			},
 			async formOutput(data) {
-				var tempFile = data.logo;
 				var formData = JSON.parse(JSON.stringify(data));
 				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
-				formData.logo = tempFile;
 				var tempArray = [];
 				var tempObj = {};
+				console.log("Before API call FormData Object", formData);
 
 				// loop over the emergency contacts objects to convert it into theh backend format
 
-				// for (let contact of formData.emergency_contacts) {
-				// 	tempObj = {};
-				// 	for (let num of contact.input) {
-				// 		if (num.input != "") {
-				// 			tempObj["country"] = contact.groupKey;
-				// 			if (!tempObj["contacts"]) tempObj["contacts"] = [];
-				// 			tempObj["contacts"].push(num.input);
-				// 		}
-				// 	}
-				// 	if (Object.keys(tempObj).length) {
-				// 		tempArray.push(tempObj);
-				// 	}
-				// }
-				// formData.emergency_contacts = tempArray;
+				for (let grade of formData.grading) {
+					tempObj = {};
+					for (let alpha of grade.input) {
+						if (alpha.input != "") {
+							tempObj["product"] = grade.groupKey;
+							tempObj["grade"] = alpha.input;
+							// if (!tempObj["contacts"]) tempObj["contacts"] = [];
+							// tempObj["contacts"].push(alpha.input);
+						}
+					}
+					if (Object.keys(tempObj).length) {
+						tempArray.push(tempObj);
+					}
+				}
+				formData.grading = tempArray;
+				formData.admin_grade = "A";
 
 				console.log("Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addCompany(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Company" });
-							console.log("Add Company success");
 							this.getCompanies();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add Company failed");
+							this.getCompanies();
 						}
 					});
 				} else {
