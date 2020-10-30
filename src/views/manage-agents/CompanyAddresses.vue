@@ -1,9 +1,7 @@
 <template>
-	<div class="companyAddressWrapper primary-background-color">
-		<!-- <Users v-bind="{ ...ele.props }"></Users> -->
+	<div class="companyAddressWrapper">
 		<v-row class="px-6 companyaddress-search-bar" justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
-				<!-- @queryString="queryString" -->
 				<Search
 					@queryString="queryString"
 					@filterObject="advanceSearch"
@@ -17,7 +15,7 @@
 
 		<div class="card-wrapper">
 			<div v-for="address in addressList" :key="address._id" class="card-element">
-				<InformationCard :expandCard="true" :isCardDisabled="!address.record.active">
+				<InformationCard :expandCard="false" :isCardDisabled="!address.record.active">
 					<template v-slot:topLeft>
 						{{ address.branch_name }}
 					</template>
@@ -32,17 +30,18 @@
 					</template>
 					<template v-slot:actionButtons>
 						<template>
+							<v-btn icon color="secondary" text><v-icon>mdi-information-outline</v-icon></v-btn>
 							<v-btn
 								v-if="userType == ADMIN || userType == MANAGEMENT"
-								@click="disablePartner(user)"
+								@click="disablePartner(address)"
 								color="error"
 								text
 							>
-								{{ user.record.active ? "Disable" : "Enable" }}
+								{{ address.record.active ? "Disable" : "Enable" }}
 							</v-btn>
 							<v-btn
-								v-if="(userType == ADMIN || userType == MANAGEMENT) && user.record.active"
-								@click="openInputForm(true, user)"
+								v-if="(userType == ADMIN || userType == MANAGEMENT) && address.record.active"
+								@click="openInputForm(true, address)"
 								color="secondary"
 								text
 							>
@@ -62,12 +61,12 @@
 			></v-pagination>
 		</div>
 
+		<!-- :keysToWatch="keysToWatch" -->
 		<UserForm
 			@formOutput="formOutput"
 			@closeForm="closeForm"
 			:name="name"
 			:inputConfig="inputConfig"
-			:keysToWatch="keysToWatch"
 			:toggleForm="toggleForm"
 			:formData="rowToEdit"
 			:isEditMode="isEditMode"
@@ -90,11 +89,11 @@
 	import ViewMoreModal from "../../components/ViewMoreModal";
 
 	export default {
-		name: "Partners",
+		name: "CompanyAddress",
 		mixins: [defaultCRUDMixin],
 		components: {},
 		created() {
-			// this.getPartners();
+			// this.getAddresses();
 			// this.setSearchConfig();
 		},
 		data: () => ({
@@ -183,10 +182,10 @@
 		}),
 		computed: {},
 		methods: {
-			...mapActions("PartnerManagement", ["getaddressList", "addPartner", "editPartner"]),
-			getPartners() {
+			...mapActions("ManageAgents", ["getAddressList", "addAddress", "editAddress"]),
+			getAddresses() {
 				this.openLoaderDialog();
-				this.getaddressList({
+				this.getAddressList({
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
@@ -199,71 +198,69 @@
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
-				this.getPartners();
+				this.getAddresses();
 			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				this.pageNo = 1;
-				this.getPartners();
+				this.getAddresses();
 			},
 			async formOutput(data) {
 				var tempFile = data.logo;
 				var formData = JSON.parse(JSON.stringify(data));
-				formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
-				formData.logo = tempFile;
-				var tempArray = [];
-				var tempObj = {};
+				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
+				// formData.logo = tempFile;
+				// var tempArray = [];
+				// var tempObj = {};
 
-				// loop over the emergency contacts objects to convert it into theh backend format
-				for (let contact of formData.emergency_contacts) {
-					tempObj = {};
-					for (let num of contact.input) {
-						if (num.input != "") {
-							tempObj["country"] = contact.groupKey;
-							if (!tempObj["contacts"]) tempObj["contacts"] = [];
-							tempObj["contacts"].push(num.input);
-						}
-					}
-					if (Object.keys(tempObj).length) {
-						tempArray.push(tempObj);
-					}
-				}
-				formData.emergency_contacts = tempArray;
+				// // loop over the emergency contacts objects to convert it into theh backend format
+				// for (let contact of formData.emergency_contacts) {
+				// 	tempObj = {};
+				// 	for (let num of contact.input) {
+				// 		if (num.input != "") {
+				// 			tempObj["country"] = contact.groupKey;
+				// 			if (!tempObj["contacts"]) tempObj["contacts"] = [];
+				// 			tempObj["contacts"].push(num.input);
+				// 		}
+				// 	}
+				// 	if (Object.keys(tempObj).length) {
+				// 		tempArray.push(tempObj);
+				// 	}
+				// }
+				// formData.emergency_contacts = tempArray;
 
-				// remove logo key if it's empty
-				if (formData.logo) {
-					formData.logo = await helpers.toBase64(formData.logo);
-				} else {
-					delete formData.logo;
-				}
+				// // remove logo key if it's empty
+				// if (formData.logo) {
+				// 	formData.logo = await helpers.toBase64(formData.logo);
+				// } else {
+				// 	delete formData.logo;
+				// }
 
 				console.log("Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addPartner(formData).then((data) => {
+					this.addAddress(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Added Partner" });
-							console.log("Add Partner success");
-							this.getPartners();
+							this.openSnackbar({ text: "Sucessfully Added Address" });
+							this.getAddresses();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add Partner failed");
+							this.getAddresses();
 						}
 					});
 				} else {
-					this.editPartner(formData).then((data) => {
+					this.editAddress(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Edited Partner" });
-							console.log("Edit Partner success");
-							this.getPartners();
+							this.openSnackbar({ text: "Sucessfully Edited Address" });
+							this.getAddresses();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit Partner failed");
+							this.getAddresses();
 						}
 					});
 				}
@@ -278,37 +275,36 @@
 			disablePartner(data) {
 				if (
 					window.confirm(
-						"Do you really want to " + (data.record.active ? "Disable the Partner?" : "Enable the Partner?")
+						"Do you really want to " + (data.record.active ? "Disable the Address?" : "Enable the Address?")
 					)
 				) {
 					this.openLoaderDialog();
-					this.editPartner({
+					this.editAddress({
 						_id: data._id,
 						active: !data.record.active,
 						updated_on: data.record.updated_on,
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
-							console.log("Updated Partner status");
-							this.getPartners();
+							this.openSnackbar({ text: "Sucessfully Updated Address Status" });
+							this.getAddresses();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update Partner status");
+							this.getAddresses();
 						}
 					});
 				}
 			},
 			setSearchConfig() {
 				/*
-				 * Name of Partner - Text field - string or number - can this be empty?
+				 * Name of Address - Text field - string or number - can this be empty?
 				 * Business Type - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
 				 * Countries - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
 				 */
 				this.selectedSearchConfig = [
 					{
-						name: "Partner Name",
+						name: "Address Name",
 						key: "name",
 						type: "text",
 						inputType: "textfield",
@@ -335,9 +331,7 @@
 				];
 			},
 			updatedPageNo(page) {
-				// console.log("Page", page);
-				// console.log("Page Number", this.pageNo);
-				this.getPartners();
+				this.getAddresses();
 			},
 		},
 	};
