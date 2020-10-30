@@ -45,4 +45,10 @@ export default {
 
 	// TRAVEL AGENTS ENDPOINT
 	TRAVEL_AGENT: BASE_URL + "Companies/v0.1/",
+
+	// TRAVEL AGENTS ADDRESS
+	TRAVEL_AGENT_ADDRESS: BASE_URL + "Address/v0.1/",
+
+	// TRAVEL AGENTS ADDRESS
+	CHANGELOGS: BASE_URL + "Changelogs/v0.1/",
 };
