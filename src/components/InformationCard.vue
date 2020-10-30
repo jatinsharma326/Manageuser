@@ -111,11 +111,10 @@
 	}
 
 	.main-content {
-		font-size: 32px;
+		font-size: 24px;
+		line-height: 1.2;
 		font-weight: 500;
-		@include custom-max(475px) {
-			font-size: 24px;
-		}
+		margin-bottom: 5px;
 	}
 
 	.information-card {
