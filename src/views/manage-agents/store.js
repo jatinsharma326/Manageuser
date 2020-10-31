@@ -34,7 +34,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load Target Agent List");
+						fail(data.message || "Failed to load ChangeLogs List");
 						return {
 							ok: false,
 							list: [],
@@ -43,7 +43,7 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load Target Agent List");
+					fail(err.toString() || "Failed to load ChangeLogs List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
