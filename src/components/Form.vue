@@ -370,10 +370,11 @@
 							this.$set(this.formElements, i.key, [{ input: "" }]);
 						} else if (i.type == "MultiInputWithGroupKey") {
 							this.$set(this.formElements, i.key, null);
+						} else if (i.type == "Switch") {
+							this.$set(this.formElements, i.key, false);
 						} else {
 							this.$set(this.formElements, i.key, null);
 						}
-
 						if (i.type == "Date") {
 							this.$set(this.dateMenuRef, i.key, false);
 						}
@@ -392,12 +393,36 @@
 								this.$set(this.formElements, i.key, [{ input: "" }]);
 							}
 						} else if (i.type == "MultiInputWithGroupKey") {
+							// formData object -> {
+							// 	_id: "5f857a9ad8a96c2e4ca6e7c5",
+							// 	name: "Allied T Pro Inc.",
+							// 	proprietor_info: "Sanya Hamilton",
+							// 	business_types: ["FIT", "GIT", "MICE", "ADHOC", "LUXURY"],
+							// 	countries: ["United States", "Canada"],
+							// 	emergency_contacts: [{ country: "United States", contacts: ["+1 310 663 9484"] }],
+							// 	logo: "base64 String here",
+							// 	record: {
+							// 		created_on: "2020-10-13T09:59:54.919Z",
+							// 		updated_on: "2020-10-29T07:44:40.388Z",
+							// 		active: true,
+							// 	},
+							// 	email_ids: ["sanya.hamilton@atptravel.com"],
+							// 	updated_on: "2020-10-29T07:44:40.388Z",
+							// };
 							if (this.formData[i.key]) {
+								console.log("Test Console ", this.formData[i.key]);
 								let tempObj = this.formData[i.key].map((e) => ({
-									groupKey: e.country,
-									input: e.contacts.map((f) => ({ input: f })),
+									groupKey: e[i.keyforGrouped],
+									input: i.multi
+										? e[i.keyBeingGrouped].map((f) => ({ input: f }))
+										: [{ input: e[i.keyBeingGrouped] }],
 								}));
 								let tempObjRefForLoop = JSON.parse(JSON.stringify(tempObj));
+								console.log("Test Console Temp Obj", tempObjRefForLoop);
+								// tempObj Output -> [
+								// 	{ groupKey: "United States", input: [{ input: "+1 310 663 9484" }] },
+								// 	{ groupKey: "Canada", input: [{ input: "" }] },
+								// ];
 								for (let j of this.formData[i.keyToGroup]) {
 									let found = true;
 									for (let k of tempObjRefForLoop) {
