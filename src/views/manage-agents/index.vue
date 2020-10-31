@@ -17,7 +17,11 @@
 
 		<div class="card-wrapper">
 			<div v-for="company in companyList" :key="company._id" class="card-element">
-				<InformationCard :expandCard="true">
+				<InformationCard
+					:expandCard="true"
+					:isCardDisabled="!company.record.active"
+					:isDefaulter="company.defaulter"
+				>
 					<template v-slot:topLeft>
 						{{ company.business_types.join(", ") }}
 					</template>
@@ -34,7 +38,9 @@
 					</template>
 					<template v-slot:actionButtons>
 						<template>
-							<v-btn icon color="secondary" text><v-icon>mdi-information-outline</v-icon></v-btn>
+							<v-btn @click="openChangelogsModal(company)" icon color="secondary" text
+								><v-icon>mdi-information-outline</v-icon></v-btn
+							>
 							<v-btn
 								v-if="userType == ADMIN || userType == MANAGEMENT"
 								@click="disableCompany(company)"
@@ -68,7 +74,7 @@
 
 									<v-list-item-content>
 										<v-list-item-title
-											>{{ grade.product }} {{ index
+											>{{ grade.country }} {{ index
 											}}{{ company.grading.length }}</v-list-item-title
 										>
 									</v-list-item-content>
@@ -92,6 +98,35 @@
 			></v-pagination>
 		</div>
 
+		<div class="changelogModalWrapper">
+			<v-row justify="center">
+				<v-dialog v-model="changelogModal" width="600px">
+					<v-card>
+						<v-card-title>
+							<span class="headline">Changelogs</span>
+						</v-card-title>
+						<v-timeline dense>
+							<v-timeline-item
+								v-for="(log, index) in changelogsList"
+								:key="index"
+								:icon="getLogIcon(log.mutation_type)"
+								fill-dot
+							>
+								{{ getLogType(log.mutation_type) }} by {{ log.name }} on
+								{{ getFormattedDate(log.record.created_on, "MMMM Do YYYY, dddd") }}
+							</v-timeline-item>
+						</v-timeline>
+						<v-card-actions>
+							<v-spacer></v-spacer>
+							<v-btn color="error" text @click="changelogModal = false">
+								Close
+							</v-btn>
+						</v-card-actions>
+					</v-card>
+				</v-dialog>
+			</v-row>
+		</div>
+
 		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
 			<template v-slot:modalTitle>
 				<div v-if="selectedCompanyInfo.name">
@@ -112,18 +147,46 @@
 			@formOutput="formOutput"
 			@closeForm="closeForm"
 			:name="name"
-			:inputConfig="userType == ADMIN ? adminInputConfig : salesInputConfig"
+			:inputConfig="userType == ADMIN || userType == MANAGEMENT ? adminInputConfig : salesInputConfig"
 			:keysToWatch="keysToWatch"
 			:toggleForm="toggleForm"
 			:formData="rowToEdit"
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div class="floating-button">
+		<!-- <div class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
-		</div>
+			<v-speed-dial
+				v-model="fab"
+				bottom="bottom"
+				right="right"
+				direction="top"
+				open-on-hover="hover"
+				transition="scale-transition"
+			>
+				<template v-slot:activator>
+					<v-btn v-model="fab" color="blue darken-2" dark fab>
+						<v-icon v-if="fab">
+							mdi-close
+						</v-icon>
+						<v-icon v-else>
+							mdi-account-circle
+						</v-icon>
+					</v-btn>
+				</template>
+				<v-btn fab dark small color="green">
+					<v-icon>mdi-pencil</v-icon>
+				</v-btn>
+				<v-btn fab dark small color="indigo">
+					<v-icon>mdi-plus</v-icon>
+				</v-btn>
+				<v-btn fab dark small color="red">
+					<v-icon>mdi-delete</v-icon>
+				</v-btn>
+			</v-speed-dial>
+		</div> -->
 	</div>
 </template>
 
@@ -147,71 +210,73 @@
 		},
 		data: () => ({
 			companyList: [
-				{
-					_id: "5f857918e43f60826225",
-					name: "Thomas Cook",
-					business_types: ["FIT", "GIT", "MICE", "ADHOC", "LUXURY"],
-					website: "thomascook.in",
-					grading: [
-						{
-							product: "United State",
-							grade: "A",
-						},
-					],
-					admin_grade: "A",
-					blacklist: false,
-					record: {
-						active: true,
-						created_on: "date",
-						updated_on: "date",
-					},
-				},
-				{
-					_id: "5f857918e43f76087225",
-					name: "SOTC",
-					business_types: ["FIT", "LUXURY"],
-					website: "sotc.com",
-					grading: [
-						{
-							product: "Vietnam",
-							grade: "C",
-						},
-						{
-							product: "Afghanistan",
-							grade: "C",
-						},
-					],
-					admin_grade: "B",
-					blacklist: false,
-					record: {
-						active: true,
-						created_on: "date",
-						updated_on: "date",
-					},
-				},
-				{
-					_id: "5f9985ac96e9d514f0e4df55",
-					updated_on: "2020-10-28T14:52:28.603Z",
-					name: "Thomas Cook New",
-					blacklist: false,
-					admin_grade: "A",
-					grading: [
-						{
-							country: "Algeria",
-							grade: "A",
-						},
-					],
-					business_types: ["FIT", "MICE"],
-					record: {
-						active: true,
-						created_on: "date",
-						updated_on: "date",
-					},
-				},
+				// {
+				// 	_id: "5f857918e43f60826225",
+				// 	name: "Thomas Cook",
+				// 	business_types: ["FIT", "GIT", "MICE", "ADHOC", "LUXURY"],
+				// 	website: "thomascook.in",
+				// 	grading: [
+				// 		{
+				// 			country: "United State",
+				// 			grade: "A",
+				// 		},
+				// 	],
+				// 	admin_grade: "A",
+				// 	blacklist: false,
+				// 	record: {
+				// 		active: true,
+				// 		created_on: "date",
+				// 		updated_on: "date",
+				// 	},
+				// },
+				// {
+				// 	_id: "5f857918e43f76087225",
+				// 	name: "SOTC",
+				// 	business_types: ["FIT", "LUXURY"],
+				// 	website: "sotc.com",
+				// 	grading: [
+				// 		{
+				// 			country: "Vietnam",
+				// 			grade: "C",
+				// 		},
+				// 		{
+				// 			country: "Afghanistan",
+				// 			grade: "C",
+				// 		},
+				// 	],
+				// 	admin_grade: "B",
+				// 	blacklist: false,
+				// 	record: {
+				// 		active: true,
+				// 		created_on: "date",
+				// 		updated_on: "date",
+				// 	},
+				// },
+				// {
+				// 	_id: "5f9985ac96e9d514f0e4df55",
+				// 	updated_on: "2020-10-28T14:52:28.603Z",
+				// 	name: "Thomas Cook New",
+				// 	blacklist: false,
+				// 	admin_grade: "A",
+				// 	grading: [
+				// 		{
+				// 			country: "Algeria",
+				// 			grade: "A",
+				// 		},
+				// 	],
+				// 	business_types: ["FIT", "MICE"],
+				// 	record: {
+				// 		active: true,
+				// 		created_on: "date",
+				// 		updated_on: "date",
+				// 	},
+				// },
 			],
+			changelogModal: false,
+			changelogsList: [],
 			search_text: "",
 			name: "Travel Agents",
-			keysToWatch: ["product"],
+			keysToWatch: ["countries"],
 			adminInputConfig: [
 				{
 					name: "Company Name*",
@@ -232,13 +297,13 @@
 				{
 					name: "Admin Grade",
 					type: "String",
-					key: "name",
+					key: "admin_grade",
 					width: "half",
 				},
 				{
 					name: "Defaulter?",
 					type: "Switch",
-					key: "blacklist",
+					key: "defaulter",
 					width: "half",
 				},
 				{
@@ -256,7 +321,7 @@
 				{
 					name: "Countries*",
 					type: "Dropdown",
-					key: "product",
+					key: "countries",
 					width: "full",
 					multi: true,
 					isListInStore: true,
@@ -270,7 +335,9 @@
 					type: "MultiInputWithGroupKey",
 					key: "grading",
 					width: "full",
-					keyToGroup: "product",
+					keyToGroup: "countries",
+					keyforGrouped: "country",
+					keyBeingGrouped: "grade",
 				},
 			],
 			salesInputConfig: [
@@ -305,13 +372,13 @@
 				{
 					name: "Defaulter?",
 					type: "Switch",
-					key: "blacklist",
+					key: "defaulter",
 					width: "half",
 				},
 				{
 					name: "Countries*",
 					type: "Dropdown",
-					key: "product",
+					key: "countries",
 					width: "full",
 					multi: true,
 					isListInStore: true,
@@ -325,7 +392,9 @@
 					type: "MultiInputWithGroupKey",
 					key: "grading",
 					width: "full",
-					keyToGroup: "product",
+					keyToGroup: "countries",
+					keyforGrouped: "country",
+					keyBeingGrouped: "grade",
 				},
 			],
 			selectedCompanyInfo: {},
@@ -333,7 +402,7 @@
 		}),
 		computed: {},
 		methods: {
-			...mapActions("ManageAgents", ["getCompaniesList", "addCompany", "editCompany"]),
+			...mapActions("ManageAgents", ["getChangelogsList", "getCompaniesList", "addCompany", "editCompany"]),
 			getCompanies() {
 				this.openLoaderDialog();
 				this.getCompaniesList({
@@ -346,6 +415,42 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 				});
+			},
+			openChangelogsModal(company) {
+				this.getChangelogs(company);
+				this.changelogModal = true;
+			},
+			getChangelogs(company) {
+				this.openLoaderDialog();
+				this.filter.ref_id = company._id;
+				this.getChangelogsList({
+					filter: this.filter,
+				}).then((data) => {
+					this.closeLoaderDialog();
+					this.changelogsList = data.list;
+				});
+			},
+			getLogIcon(mutation_type) {
+				if (mutation_type == "insert") {
+					return "mdi-plus";
+				} else if (mutation_type == "update") {
+					return "mdi-pencil-outline";
+				} else if (mutation_type == "disable") {
+					return "mdi-eye-minus";
+				} else if (mutation_type == "enable") {
+					return "mdi-eye-check";
+				}
+			},
+			getLogType(mutation_type) {
+				if (mutation_type == "insert") {
+					return "Created";
+				} else if (mutation_type == "update") {
+					return "Updated";
+				} else if (mutation_type == "disable") {
+					return "Disabled";
+				} else if (mutation_type == "enable") {
+					return "Enabled";
+				}
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
@@ -369,7 +474,7 @@
 					tempObj = {};
 					for (let alpha of grade.input) {
 						if (alpha.input != "") {
-							tempObj["product"] = grade.groupKey;
+							tempObj["country"] = grade.groupKey;
 							tempObj["grade"] = alpha.input;
 							// if (!tempObj["contacts"]) tempObj["contacts"] = [];
 							// tempObj["contacts"].push(alpha.input);
@@ -429,6 +534,7 @@
 						_id: data._id,
 						active: !data.record.active,
 						updated_on: data.record.updated_on,
+						status: data.record.active ? "disabled" : "enabled",
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
