@@ -1,7 +1,11 @@
 <template>
 	<div class="informationCardWrapper">
 		<v-card
-			:class="{ 'remove-bottom-border-radius': show, 'disabled-card': isCardDisabled }"
+			:class="{
+				'remove-bottom-border-radius': show,
+				'disabled-card': isCardDisabled,
+				'defaulted-card': isDefaulter,
+			}"
 			class="information-card"
 			min-width="300px"
 		>
@@ -81,6 +85,11 @@
 				type: Boolean,
 				default: false,
 			},
+			isDefaulter: {
+				required: false,
+				type: Boolean,
+				default: false,
+			},
 		},
 	};
 </script>
@@ -130,6 +139,9 @@
 		}
 		&.disabled-card {
 			background-color: #eee;
+		}
+		&.defaulted-card {
+			background-color: #ffecec;
 		}
 
 		.top-content-wrapper {
