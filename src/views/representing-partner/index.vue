@@ -298,6 +298,8 @@
 					key: "emergency_contacts",
 					width: "half",
 					keyToGroup: "countries",
+					keyforGrouped: "country",
+					keyBeingGrouped: "contacts",
 				},
 			],
 			selectedPartnerInfo: {},
@@ -408,6 +410,7 @@
 						_id: data._id,
 						active: !data.record.active,
 						updated_on: data.record.updated_on,
+						status: data.record.active ? "disabled" : "enabled",
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {

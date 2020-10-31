@@ -283,7 +283,7 @@
 						_id: data._id,
 						active: !data.record.active,
 						updated_on: data.record.updated_on,
-						disable: true,
+						status: data.record.active ? "disabled" : "enabled",
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
