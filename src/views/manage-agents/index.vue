@@ -101,7 +101,7 @@
 		<ChangeLogModal
 			@closeModal="toggleChangelogModal = false"
 			:toggleChangelogModal="toggleChangelogModal"
-			:companyInfo="selectedCompanyInfo"
+			:selectedInfo="selectedCompanyInfo"
 		></ChangeLogModal>
 
 		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
