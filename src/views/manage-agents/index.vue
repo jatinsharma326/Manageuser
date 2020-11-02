@@ -98,34 +98,11 @@
 			></v-pagination>
 		</div>
 
-		<div class="changelogModalWrapper">
-			<v-row justify="center">
-				<v-dialog v-model="changelogModal" width="600px">
-					<v-card>
-						<v-card-title>
-							<span class="headline">Changelogs</span>
-						</v-card-title>
-						<v-timeline dense>
-							<v-timeline-item
-								v-for="(log, index) in changelogsList"
-								:key="index"
-								:icon="getLogIcon(log.mutation_type)"
-								fill-dot
-							>
-								{{ getLogType(log.mutation_type) }} by {{ log.name }} on
-								{{ getFormattedDate(log.record.created_on, "MMMM Do YYYY, dddd") }}
-							</v-timeline-item>
-						</v-timeline>
-						<v-card-actions>
-							<v-spacer></v-spacer>
-							<v-btn color="error" text @click="changelogModal = false">
-								Close
-							</v-btn>
-						</v-card-actions>
-					</v-card>
-				</v-dialog>
-			</v-row>
-		</div>
+		<ChangeLogModal
+			@closeModal="toggleChangelogModal = false"
+			:toggleChangelogModal="toggleChangelogModal"
+			:companyInfo="selectedCompanyInfo"
+		></ChangeLogModal>
 
 		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
 			<template v-slot:modalTitle>
@@ -192,17 +169,20 @@
 
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import inputFormMixin from "../../mixins/inputFormMixin";
+	import searchMixin from "../../mixins/searchMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
-	import { mapActions, mapGetters, mapMutations } from "vuex";
-	import helpers from "../../components/helpers";
+	import { mapActions } from "vuex";
 	import companyInfo from "./CompanyInfo";
 	import ViewMoreModal from "../../components/ViewMoreModal";
+	import ChangeLogModal from "../../components/ChangeLog";
 
 	export default {
 		name: "ManageAgents",
-		mixins: [defaultCRUDMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
 		components: {
 			companyInfo,
+			ChangeLogModal,
 		},
 		created() {
 			this.getCompanies();
@@ -272,7 +252,7 @@
 				// 	},
 				// },
 			],
-			changelogModal: false,
+			toggleChangelogModal: false,
 			changelogsList: [],
 			search_text: "",
 			name: "Travel Agents",
@@ -417,9 +397,11 @@
 				});
 			},
 			openChangelogsModal(company) {
-				this.getChangelogs(company);
-				this.changelogModal = true;
+				// this.getChangelogs(company);
+				this.selectedCompanyInfo = { ...company };
+				this.toggleChangelogModal = true;
 			},
+			/*
 			getChangelogs(company) {
 				this.openLoaderDialog();
 				this.filter.ref_id = company._id;
@@ -452,6 +434,7 @@
 					return "Enabled";
 				}
 			},
+			*/
 			queryString(data) {
 				this.filter["search_text"] = data;
 				this.getCompanies();
