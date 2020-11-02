@@ -70,14 +70,15 @@
 
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import helperMixin from "../../mixins/helperMixins";
+	import searchMixin from "../../mixins/searchMixin";
 	import helpers from "../../components/helpers";
-	// import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import moment from "moment-timezone";
 
 	export default {
 		name: "AdminLeaveManager",
-		mixins: [defaultCRUDMixin],
+		mixins: [defaultCRUDMixin, helperMixin, searchMixin],
 		async created() {
 			this.getData();
 			await this.getUsers();
