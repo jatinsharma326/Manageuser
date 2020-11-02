@@ -102,12 +102,14 @@
 
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import inputFormMixin from "../../mixins/inputFormMixin";
+	import searchMixin from "../../mixins/searchMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
 		name: "PartnerEmployee",
-		mixins: [defaultCRUDMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
 		created() {
 			this.getEmployees();
 			if (this.partnerInfo.countries) {
