@@ -6,11 +6,13 @@
 </template>
 
 <script>
-	import { mapActions, mapGetters, mapMutations } from "vuex";
+	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	// import { mapActions, mapGetters, mapMutations } from "vuex";
 	import adminLeaves from "./AdminLeaves";
 	import salesLeaves from "./SalesLeave";
 	export default {
 		name: "LeaveManager",
+		mixins: [defaultCRUDMixin],
 		created() {},
 		components: {
 			adminLeaves,
@@ -19,7 +21,7 @@
 		data: () => ({}),
 		methods: {},
 		computed: {
-			...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType"]),
+			// ...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType"]),
 		},
 		watch: {},
 		props: {},
