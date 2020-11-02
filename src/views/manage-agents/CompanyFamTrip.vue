@@ -91,7 +91,7 @@
 
 	export default {
 		name: "FamTrip",
-		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, helperMixin],
 		components: {},
 		created() {
 			// this.getFamTrips();
