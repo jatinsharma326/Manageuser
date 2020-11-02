@@ -39,7 +39,7 @@
 		mixins: [helperMixin],
 		components: {},
 		created() {
-			this.getChangelogs(this.companyInfo);
+			this.getChangelogs(this.selectedInfo);
 		},
 		data: () => ({
 			modal: false,
@@ -60,11 +60,11 @@
 			},
 			loadMoreLogs() {
 				this.pageSize = this.pageSize + 20;
-				this.getChangelogs(this.companyInfo);
+				this.getChangelogs(this.selectedInfo);
 			},
-			getChangelogs(company) {
+			getChangelogs(info) {
 				this.openLoaderDialog();
-				this.filter.ref_id = company._id;
+				this.filter.ref_id = info._id;
 				this.getChangelogsList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -103,9 +103,9 @@
 			toggleChangelogModal(nv, ov) {
 				this.modal = nv;
 				this.changelogsList = [];
-				this.getChangelogs(this.companyInfo);
+				this.getChangelogs(this.selectedInfo);
 			},
-			// companyInfo: {
+			// selectedInfo: {
 			// 	deep: true,
 			// 	handler(nv, ov) {
 			// 		this.changelogsList = [];
@@ -119,7 +119,7 @@
 		},
 		props: {
 			toggleChangelogModal: { required: true, default: false },
-			companyInfo: { required: true, type: Object },
+			selectedInfo: { required: true, type: Object },
 		},
 	};
 </script>
