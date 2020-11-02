@@ -110,20 +110,7 @@
 		mounted() {},
 		data: () => ({
 			totalPaidLeaves: 0,
-			activeCurrencies: [
-				//   {
-				//     currency_type: "USD",
-				//     conversion_to_usd: 1,
-				//   },
-				//   {
-				//     currency_type: "INR",
-				//     conversion_to_usd: 75,
-				//   },
-				//   {
-				//     currency_type: "AED",
-				//     conversion_to_usd: 3.3,
-				//   },
-			],
+			activeCurrencies: [],
 			policies: false,
 			file: null,
 			showProgress: false,
@@ -136,14 +123,6 @@
 				},
 				{ text: "Conversion to USD", value: "conversion_to_usd" },
 			],
-			// currencies: [
-			// 	{ text: "USD", value: "USD" },
-			// 	{ text: "NZR", value: "NZR" },
-			// 	{ text: "INR", value: "INR" },
-			// 	{ text: "AED", value: "AED" },
-			// 	{ text: "EUR", value: "EUR" },
-			// 	{ text: "BAT", value: "BAT" },
-			// ],
 			currencyValue: [],
 		}),
 		methods: {
