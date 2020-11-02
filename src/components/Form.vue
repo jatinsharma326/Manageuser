@@ -51,6 +51,31 @@
 						></v-autocomplete>
 					</template>
 
+					<template v-if="config.type == 'DropdownWithMoreInfo'">
+						<v-autocomplete
+							:key="config.name + '__' + index"
+							:label="config.name"
+							v-model="formElements[config.key]"
+							chips
+							clearable
+							:items="getItems(config)"
+							item-text="branch_name"
+							item-value="_id"
+							:multiple="config.multi"
+							class="form-item"
+							:class="checkWidth(config.width)"
+						>
+							<template v-slot:[`item`]="{ item }">
+								<v-list-item-content>
+									<v-list-item-title v-text="config.titleContent(item)"></v-list-item-title>
+									<v-list-item-subtitle
+										v-text="config.subtitleContent ? config.subtitleContent(item) : ''"
+									></v-list-item-subtitle>
+								</v-list-item-content>
+							</template>
+						</v-autocomplete>
+					</template>
+
 					<template v-if="config.type == 'Date'">
 						<div
 							:key="config.name + '__' + index"
@@ -537,6 +562,9 @@
 		watch: {
 			toggleForm(nv, ov) {
 				this.form = nv;
+				this.initialiseFormElements();
+			},
+			inputConfig() {
 				this.initialiseFormElements();
 			},
 		},
