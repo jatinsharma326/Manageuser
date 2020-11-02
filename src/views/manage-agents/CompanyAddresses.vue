@@ -23,14 +23,15 @@
 						{{ address.zone }}
 					</template>
 					<template v-slot:moreInfo>
-						{{ address.address }}
-						{{ address.state }}
-						{{ address.city }}
-						{{ address.pincode }}
+						{{ address.address }}<br />
+						{{ address.state }}<br />
+						{{ address.city }} - {{ address.pincode }}
 					</template>
 					<template v-slot:actionButtons>
 						<template>
-							<v-btn icon color="secondary" text><v-icon>mdi-information-outline</v-icon></v-btn>
+							<v-btn @click="openChangelogsModal(address)" icon color="secondary" text
+								><v-icon>mdi-information-outline</v-icon></v-btn
+							>
 							<v-btn
 								v-if="userType == ADMIN || userType == MANAGEMENT"
 								@click="disablePartner(address)"
@@ -61,6 +62,12 @@
 			></v-pagination>
 		</div>
 
+		<ChangeLogModal
+			@closeModal="toggleChangelogModal = false"
+			:toggleChangelogModal="toggleChangelogModal"
+			:selectedInfo="selectedCardInfo"
+		></ChangeLogModal>
+
 		<!-- :keysToWatch="keysToWatch" -->
 		<UserForm
 			@formOutput="formOutput"
@@ -87,36 +94,38 @@
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
+	import ChangeLogModal from "../../components/ChangeLog";
 
 	import ViewMoreModal from "../../components/ViewMoreModal";
 
 	export default {
 		name: "CompanyAddress",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
-		components: {},
+		components: { ChangeLogModal },
 		created() {
-			// this.getAddresses();
+			this.getAddresses();
 			// this.setSearchConfig();
 		},
 		data: () => ({
 			addressList: [
-				{
-					_id: "5f9a990d4667e23dac5fc70d",
-					record: {
-						created_on: "2020-10-29T10:27:25.734Z",
-						updated_on: "2020-10-29T10:27:25.734Z",
-						active: true,
-					},
-					zone: "EAST",
-					branch_name: "Dadar",
-					address: "Dadar Mumbai",
-					city: "Mumbai",
-					state: "Maharashtra",
-					pincode: "400008",
-					company_id: "5f9985ac96e9d514f0e4df55",
-				},
+				// {
+				// 	_id: "5f9a990d4667e23dac5fc70d",
+				// 	record: {
+				// 		created_on: "2020-10-29T10:27:25.734Z",
+				// 		updated_on: "2020-10-29T10:27:25.734Z",
+				// 		active: true,
+				// 	},
+				// 	zone: "EAST",
+				// 	branch_name: "Dadar",
+				// 	address: "Dadar Mumbai",
+				// 	city: "Mumbai",
+				// 	state: "Maharashtra",
+				// 	pincode: "400008",
+				// 	company_id: "5f9985ac96e9d514f0e4df55",
+				// },
 			],
-			search_text: "",
+			toggleChangelogModal: false,
+			selectedCardInfo: {},
 			name: "Branch Address",
 			inputConfig: [
 				{
@@ -166,17 +175,19 @@
 					width: "half",
 					validations: {
 						required,
-						minLength: minLength(1),
+						numeric,
 					},
 				},
 				{
 					name: "Zone*",
-					type: "String",
+					type: "Dropdown",
 					key: "zone",
 					width: "half",
+					multi: false,
+					isListInStore: true,
+					listVariable: "zone",
 					validations: {
 						required,
-						minLength: minLength(1),
 					},
 				},
 			],
@@ -197,6 +208,11 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 				});
+			},
+			openChangelogsModal(info) {
+				// this.getChangelogs(info);
+				this.selectedCardInfo = { ...info };
+				this.toggleChangelogModal = true;
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
@@ -237,6 +253,7 @@
 				// } else {
 				// 	delete formData.logo;
 				// }
+				formData.company_id = this.companyInfo._id;
 
 				console.log("Before API call FormData Object", formData);
 
@@ -336,6 +353,9 @@
 			updatedPageNo(page) {
 				this.getAddresses();
 			},
+		},
+		props: {
+			companyInfo: { required: true, type: Object },
 		},
 	};
 </script>
