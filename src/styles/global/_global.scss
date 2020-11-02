@@ -7,18 +7,27 @@
 //     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 //   }
 // }
+
+// This is to give a background color to everything in the system (It specefically fixes when Expansion cards are expanded at the end of a page, they leave a white background as the actual container doesnt expand)
+body {
+	background-color: #00887a13;
+}
+
+// To change the Font color throughout the application body doesnt do anything Every font changes because of  .v-application
 body {
 	font-family: "Montserrat", sans-serif;
 }
 .v-application {
 	font-family: "Montserrat", sans-serif;
 }
+
 // body {
 // 	font-family: "Poppins", sans-serif !important;
 // }
 // .v-application {
 // 	font-family: "Poppins", sans-serif !important;
 // }
+
 .card-wrapper {
 	display: grid;
 	grid-gap: 0;
