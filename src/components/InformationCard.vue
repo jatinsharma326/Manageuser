@@ -137,13 +137,14 @@
 			border-bottom-right-radius: 0px !important;
 			border-bottom-left-radius: 0px !important;
 		}
-		&.disabled-card {
-			background-color: #eee;
-		}
+
 		&.defaulted-card {
 			background-color: #ffecec;
 		}
 
+		&.disabled-card {
+			background-color: #eee;
+		}
 		.top-content-wrapper {
 			display: flex;
 			justify-content: space-between;
