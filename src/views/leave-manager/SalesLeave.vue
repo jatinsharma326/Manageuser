@@ -68,6 +68,8 @@
 
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import helperMixin from "../../mixins/helperMixins";
+	import inputFormMixin from "../../mixins/inputFormMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
@@ -75,7 +77,7 @@
 
 	export default {
 		name: "SalesLeaveManager",
-		mixins: [defaultCRUDMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin],
 		created() {
 			this.fetchPendingLeaves();
 			this.getData();
@@ -88,7 +90,7 @@
 			pendingLeaves: 0,
 			inputConfig: [
 				{
-					name: "From",
+					name: "From*",
 					type: "Date",
 					key: "date_from",
 					width: "half",
@@ -97,7 +99,7 @@
 					},
 				},
 				{
-					name: "To",
+					name: "To*",
 					type: "Date",
 					key: "date_to",
 					width: "half",
@@ -106,7 +108,7 @@
 					},
 				},
 				{
-					name: "No of Days",
+					name: "No of Days*",
 					type: "String",
 					key: "no_of_days",
 					width: "full",
@@ -116,7 +118,7 @@
 					},
 				},
 				{
-					name: "Purpose of Leave",
+					name: "Purpose of Leave*",
 					type: "TextArea",
 					key: "purpose_of_leave",
 					width: "full",
