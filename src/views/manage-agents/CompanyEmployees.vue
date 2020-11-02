@@ -26,7 +26,7 @@
 						{{ employee.name }}
 					</template>
 					<template v-slot:mainContentSubtitle>
-						{{ employee.designation }} - {{ employee.branch_name }}
+						{{ employee.designation }} - {{ employee.company_address_id }}
 					</template>
 					<template v-slot:actionButtons>
 						<template>
@@ -146,121 +146,50 @@
 		name: "CompanyEmployee",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, helperMixin],
 		components: {},
-		created() {
-			// this.getCompanyEmployees();
-			// this.setSearchConfig();
+		async created() {
+			this.getCompanyEmployees();
+			await this.getAddresses();
+			this.setInputConfig(this.addressList);
 		},
 		data: () => ({
+			dataCalled: false,
 			employeeList: [
-				{
-					_id: "5f9030204c38c0313714",
-					name: "Sachin Tendulkar",
-					designation: "SS",
-					business_types: ["FIT", "MICE"],
-					branch_name: "Mazgaon",
-					zone: "EAST",
-					address: "Dadar Mumbai",
-					city: "Mumbai",
-					state: "Maharashtra",
-					pincode: "400008",
-					phone_numbers: ["98291898212", "7693321300"],
-					email_ids: ["eassa@tese.com", "fasda@fcsa.in"],
-					dob: "2020-09-30T18:30:00.000Z",
-					record: {
-						created_on: "2020-10-21T10:52:50.445Z",
-						updated_on: "2020-10-21T10:52:50.445Z",
-						active: true,
-					},
-				},
+				// {
+				// 	_id: "5f9030204c38c0313714",
+				// 	name: "Sachin Tendulkar",
+				// 	designation: "SS",
+				// 	business_types: ["FIT", "MICE"],
+				// 	branch_name: "Mazgaon",
+				// 	zone: "EAST",
+				// 	address: "Dadar Mumbai",
+				// 	city: "Mumbai",
+				// 	state: "Maharashtra",
+				// 	pincode: "400008",
+				// 	phone_numbers: ["98291898212", "7693321300"],
+				// 	email_ids: ["eassa@tese.com", "fasda@fcsa.in"],
+				// 	dob: "2020-09-30T18:30:00.000Z",
+				// 	record: {
+				// 		created_on: "2020-10-21T10:52:50.445Z",
+				// 		updated_on: "2020-10-21T10:52:50.445Z",
+				// 		active: true,
+				// 	},
+				// },
 			],
 			search_text: "",
 			name: "Travel Agent Employee",
 			// keysToWatch: ["countries"],
-			inputConfig: [
-				{
-					name: "Employee Name*",
-					type: "String",
-					key: "name",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "Designation",
-					type: "String",
-					key: "designation",
-					width: "half",
-				},
-				{
-					name: "Business Type*",
-					type: "Dropdown",
-					key: "business_types",
-					width: "half",
-					multi: true,
-					isListInStore: true,
-					listVariable: "businessType",
-					validations: {
-						required,
-					},
-				},
-				{
-					name: "Branch Name*",
-					type: "Dropdown",
-					key: "branch_name",
-					width: "half",
-					multi: true,
-					isListInStore: true,
-					listVariable: "businessType",
-					validations: {
-						required,
-					},
-				},
-				{
-					name: "Email",
-					type: "MultiInput",
-					key: "email_ids",
-					width: "full",
-					validations: {
-						$each: {
-							input: {
-								email,
-							},
-						},
-					},
-				},
-				{
-					name: "Contact Numbers*",
-					type: "MultiInput",
-					key: "phone_numbers",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-						$each: {
-							input: {
-								required,
-								minLength: minLength(8),
-							},
-						},
-					},
-				},
-				{
-					name: "DOB*",
-					type: "Date",
-					key: "dob",
-					width: "oneThird",
-					validations: {
-						required,
-					},
-				},
-			],
+			addressList: [],
+			inputConfig: [],
 			placeholder: "Search Travel Agent Employees",
 		}),
 		computed: {},
 		methods: {
-			...mapActions("ManageAgents", ["getCompanyEmployeeList", "addCompanyEmployee", "editCompanyEmployee"]),
+			...mapActions("ManageAgents", [
+				"getAddressList",
+				"getCompanyEmployeeList",
+				"addCompanyEmployee",
+				"editCompanyEmployee",
+			]),
 			getCompanyEmployees() {
 				this.openLoaderDialog();
 				this.getCompanyEmployeeList({
@@ -274,6 +203,102 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
+			getAddresses() {
+				return this.getAddressList({
+					filter: {},
+				}).then((data) => {
+					this.addressList = data.list;
+				});
+			},
+			setInputConfig(addressList = []) {
+				this.inputConfig = [
+					{
+						name: "Employee Name*",
+						type: "String",
+						key: "name",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Designation",
+						type: "String",
+						key: "designation",
+						width: "half",
+					},
+					{
+						name: "Business Type*",
+						type: "Dropdown",
+						key: "business_types",
+						width: "half",
+						multi: true,
+						isListInStore: true,
+						listVariable: "businessType",
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Branch Name*",
+						type: "DropdownWithMoreInfo",
+						isCustom: true,
+						subtitleContent: (item) => {
+							return item.address + " " + item.state + " " + item.city + " " + item.pincode;
+						},
+						titleContent: (item) => {
+							return item.branch_name;
+						},
+						key: "company_address_id",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: addressList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Email",
+						type: "MultiInput",
+						key: "email_ids",
+						width: "full",
+						validations: {
+							$each: {
+								input: {
+									email,
+								},
+							},
+						},
+					},
+					{
+						name: "Contact Numbers*",
+						type: "MultiInput",
+						key: "phone_numbers",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+							$each: {
+								input: {
+									required,
+									minLength: minLength(8),
+								},
+							},
+						},
+					},
+					{
+						name: "DOB*",
+						type: "Date",
+						key: "dob",
+						width: "oneThird",
+						validations: {
+							required,
+						},
+					},
+				];
+			},
 			queryString(data) {
 				this.filter["search_text"] = data;
 				this.getCompanyEmployees();
@@ -284,37 +309,12 @@
 				this.getCompanyEmployees();
 			},
 			async formOutput(data) {
-				var tempFile = data.logo;
-				var formData = JSON.parse(JSON.stringify(data));
-				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
-				// formData.logo = tempFile;
-				// var tempArray = [];
-				// var tempObj = {};
+				// formData.company_address_id = formData.branch_name;
+				formData.company_id = this.companyInfo._id;
+				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
+				formData.email_ids = data.email_ids.map((data) => data.input);
 
-				// // loop over the emergency contacts objects to convert it into theh backend format
-				// for (let contact of formData.emergency_contacts) {
-				// 	tempObj = {};
-				// 	for (let num of contact.input) {
-				// 		if (num.input != "") {
-				// 			tempObj["country"] = contact.groupKey;
-				// 			if (!tempObj["contacts"]) tempObj["contacts"] = [];
-				// 			tempObj["contacts"].push(num.input);
-				// 		}
-				// 	}
-				// 	if (Object.keys(tempObj).length) {
-				// 		tempArray.push(tempObj);
-				// 	}
-				// }
-				// formData.emergency_contacts = tempArray;
-
-				// // remove logo key if it's empty
-				// if (formData.logo) {
-				// 	formData.logo = await helpers.toBase64(formData.logo);
-				// } else {
-				// 	delete formData.logo;
-				// }
-
-				console.log("Before API call FormData Object", formData);
+				// console.log("Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -409,6 +409,9 @@
 			updatedPageNo(page) {
 				this.getCompanyEmployees();
 			},
+		},
+		props: {
+			companyInfo: { required: true, type: Object },
 		},
 	};
 </script>
