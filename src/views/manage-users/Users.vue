@@ -142,12 +142,15 @@
 
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import helperMixin from "../../mixins/helperMixins";
+	import inputFormMixin from "../../mixins/inputFormMixin";
+	import searchMixin from "../../mixins/searchMixin";
 	import helpers from "../../components/helpers";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
 		name: "Users",
-		mixins: [defaultCRUDMixin],
+		mixins: [defaultCRUDMixin, helperMixin, inputFormMixin, searchMixin],
 		data: () => ({
 			userList: [
 				// {
@@ -239,7 +242,6 @@
 				//   },
 				// },
 			],
-			search_text: "",
 		}),
 		created() {
 			this.getUsers();
