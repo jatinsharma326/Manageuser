@@ -55,6 +55,7 @@
 
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import inputFormMixin from "../../mixins/inputFormMixin";
 	import { required } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
@@ -63,7 +64,7 @@
 
 	export default {
 		name: "ManageTargets",
-		mixins: [defaultCRUDMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin],
 		components: {
 			ProductTargets,
 		},
