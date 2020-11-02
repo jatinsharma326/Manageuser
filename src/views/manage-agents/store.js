@@ -32,6 +32,8 @@ export default {
 						return {
 							ok: true,
 							list: data.data,
+							fetchCount: data.fetchCount,
+							totalCount: data.totalCount,
 						};
 					} else {
 						fail(data.message || "Failed to load ChangeLogs List");
