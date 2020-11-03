@@ -16,14 +16,14 @@ export default {
 		},
 	},
 	actions: {
-		getAllLeaves: ({ commit, dispatch }, payload) => {
+		getSalesCall: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.ALL_SALES_LEAVES,
+					url: constants.SALES_CALLS,
 				},
 				{ root: true }
 			)
@@ -36,7 +36,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load All Leaves List");
+						fail(data.message || "Failed to load All SalesCalls List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -47,165 +47,73 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to All Leaves List");
+					fail(err.toString() || "Failed to All SalesCalls List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		getSalesLeaves: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "get",
-					params: payload,
-					url: constants.SALES_LEAVES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (data.ok) {
-						return {
-							ok: true,
-							totalCount: data.totalCount,
-							fetchCount: data.fetchCount,
-							list: data.data,
-						};
-					} else {
-						fail(data.message || "Failed to load Leaves List");
-						return {
-							ok: false,
-							totalCount: data.totalCount,
-							fetchCount: 0,
-							list: [],
-						};
-					}
-				})
-				.catch((err) => {
-					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load Leaves List");
-					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
-				});
-		},
-		getPendingLeaves: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "get",
-					params: payload,
-					url: constants.PENDING_LEAVES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					console.log("Test Console Pending Leaves", data);
-					if (data.ok) {
-						return {
-							ok: true,
-							pendingLeaves: data.pending_leaves,
-						};
-					} else {
-						fail(data.message || "Failed to load Leaves List");
-						return {
-							ok: false,
-							totalCount: data.totalCount,
-							fetchCount: 0,
-							list: [],
-						};
-					}
-				})
-				.catch((err) => {
-					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load Leaves List");
-					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
-				});
-		},
-		updateStatus: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "put",
-					data: payload,
-					url: constants.ALL_SALES_LEAVES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Leave");
-					return data;
-				})
-				.catch((err) => {
-					fail(err.toString() || "Failed to edit Leave");
-					return {
-						ok: false,
-						message: err.message,
-					};
-				});
-		},
-		addLeave: ({ commit, dispatch }, payload) => {
+		addSalesCall: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.SALES_LEAVES,
+					url: constants.SALES_CALLS,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add Leave Entry");
+					if (!data.ok) fail(data.message || "Failed to add SalesCall Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add Leave Entry");
+					fail(err.toString() || "Failed to add SalesCall Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		editLeave: ({ commit, dispatch }, payload) => {
+		editSalesCall: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.SALES_LEAVES,
+					url: constants.SALES_CALLS,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Leave entry");
+					if (!data.ok) fail(data.message || "Failed to edit SalesCall entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit Leave Entry");
+					fail(err.toString() || "Failed to edit SalesCall Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		deleteLeave: ({ commit, dispatch }, payload) => {
+		deleteSalesCall: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "delete",
 					data: payload,
-					url: constants.SALES_LEAVES,
+					url: constants.SALES_CALLS,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to Delete Leave");
+					if (!data.ok) fail(data.message || "Failed to Delete SalesCall");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to Delete Leave");
+					fail(err.toString() || "Failed to Delete SalesCall");
 					return {
 						ok: false,
 						message: err.message,
