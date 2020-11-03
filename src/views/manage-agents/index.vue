@@ -132,14 +132,7 @@
 		></UserForm>
 
 		<div class="floating-button">
-			<v-speed-dial
-				v-model="fab"
-				bottom="bottom"
-				right="right"
-				direction="top"
-				:open-on-hover="hover"
-				transition="scale-transition"
-			>
+			<v-speed-dial v-model="fab" direction="top" :open-on-hover="hover" transition="scale-transition">
 				<template v-slot:activator>
 					<v-btn v-model="fab" color="primary" dark fab>
 						<v-icon v-if="fab">
@@ -152,7 +145,7 @@
 				</template>
 				<v-tooltip left>
 					<template v-slot:activator="{ on, attrs }">
-						<v-btn @click="openInputForm()" color="primary" dark small fab v-bind="attrs" v-on="on">
+						<v-btn @click="openInputForm()" color="secondary" dark small fab v-bind="attrs" v-on="on">
 							<v-icon>mdi-plus</v-icon>
 						</v-btn>
 					</template>
@@ -160,7 +153,7 @@
 				</v-tooltip>
 				<v-tooltip left>
 					<template v-slot:activator="{ on, attrs }">
-						<v-btn fab dark small color="secondary" v-bind="attrs" v-on="on">
+						<v-btn fab dark small color="tertiary" v-bind="attrs" v-on="on">
 							<v-icon>mdi-upload</v-icon>
 						</v-btn>
 					</template>
@@ -193,6 +186,12 @@
 			this.setSearchConfig();
 		},
 		data: () => ({
+			name: "Travel Agents",
+			placeholder: "Search Companies",
+			toggleChangelogModal: false,
+			selectedCompanyInfo: {},
+			fab: false,
+			hover: false,
 			companyList: [
 				// {
 				// 	_id: "5f857918e43f60826225",
@@ -256,12 +255,6 @@
 				// 	},
 				// },
 			],
-			toggleChangelogModal: false,
-			changelogsList: [],
-			search_text: "",
-			fab: false,
-			hover: false,
-			name: "Travel Agents",
 			keysToWatch: ["countries"],
 			adminInputConfig: [
 				{
@@ -383,8 +376,6 @@
 					keyBeingGrouped: "grade",
 				},
 			],
-			selectedCompanyInfo: {},
-			placeholder: "Search Companies",
 		}),
 		computed: {},
 		methods: {
