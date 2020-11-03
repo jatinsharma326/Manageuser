@@ -1,45 +1,47 @@
 <template>
 	<div class="companyEmployeeWrapper">
-		<v-row class="px-6 companyemployee-search-bar" justify="center" align="center">
-			<v-col cols="12" sm="8" md="6">
-				<Search
-					@queryString="queryString"
-					@filterObject="advanceSearch"
-					@clearFilter="advanceSearch"
-					:placeholder="placeholder"
-					:isAdvanceSearch="true"
-					:filterConfig="selectedSearchConfig"
-				></Search>
-			</v-col>
-		</v-row>
+		<!-- <v-row class="companyemployee-search-bar" justify="center" align="center">
+			<v-col cols="12" sm="8" md="6"> -->
+		<div class="companyemployee-search-bar">
+			<Search
+				@queryString="queryString"
+				@filterObject="advanceSearch"
+				@clearFilter="advanceSearch"
+				:placeholder="placeholder"
+				:isAdvanceSearch="true"
+				:filterConfig="selectedSearchConfig"
+			></Search>
+		</div>
+		<!-- </v-col>
+		</v-row> -->
 
 		<div class="card-wrapper">
 			<div v-for="employee in employeeList" :key="employee._id" class="card-element">
 				<InformationCard :expandCard="true" :isCardDisabled="!employee.record.active">
 					<template v-slot:topLeft>
+						<!-- {{ employee.business_types }} -->
 						{{ employee.business_types.join(", ") }}
 					</template>
 					<template v-slot:topRight>
-						{{ employee.zone }}
+						{{ employee.company_address_data.zone }}
 					</template>
 					<template v-slot:mainContent>
 						{{ employee.name }}
 					</template>
 					<template v-slot:mainContentSubtitle>
-						{{ employee.designation }} - {{ employee.company_address_id }}
+						{{ employee.designation }} - {{ employee.company_address_data.branch_name }}
 					</template>
 					<template v-slot:actionButtons>
 						<template>
-							<v-btn
-								v-if="userType == ADMIN || userType == MANAGEMENT"
-								@click="disableEmployee(employee)"
-								color="error"
-								text
+							<v-btn @click="openChangelogsModal(employee)" icon color="secondary" text
+								><v-icon>mdi-information-outline</v-icon></v-btn
 							>
+							<!-- v-if="userType == ADMIN || userType == MANAGEMENT" -->
+							<v-btn @click="disableEmployee(employee)" color="error" text>
 								{{ employee.record.active ? "Disable" : "Enable" }}
 							</v-btn>
 							<v-btn
-								v-if="(userType == ADMIN || userType == MANAGEMENT) && employee.record.active"
+								v-if="employee.record.active"
 								@click="openInputForm(true, employee)"
 								color="secondary"
 								text
@@ -51,9 +53,8 @@
 					<template v-slot:expandCardContent>
 						<v-list>
 							<v-list-item
-								v-for="(contact, index) in employee.emergency_contacts"
+								v-for="(contact, index) in employee.phone_numbers"
 								:key="employee._id + '+' + index"
-								two-line
 							>
 								<v-list-item-icon>
 									<v-icon color="secondary">
@@ -62,8 +63,7 @@
 								</v-list-item-icon>
 
 								<v-list-item-content>
-									<v-list-item-title>{{ contact.contacts.join(", ") }}</v-list-item-title>
-									<v-list-item-subtitle>{{ contact.country }}</v-list-item-subtitle>
+									<v-list-item-title>{{ contact }}</v-list-item-title>
 								</v-list-item-content>
 							</v-list-item>
 
@@ -90,8 +90,10 @@
 
 								<v-list-item-content>
 									<v-list-item-title
-										>{{ employee.address }} {{ employee.state }} {{ employee.city }}
-										{{ employee.pincode }}</v-list-item-title
+										>{{ employee.company_address_data.address }}
+										{{ employee.company_address_data.state }}
+										{{ employee.company_address_data.city }}
+										{{ employee.company_address_data.pincode }}</v-list-item-title
 									>
 								</v-list-item-content>
 							</v-list-item>
@@ -114,7 +116,12 @@
 			></v-pagination>
 		</div>
 
-		<!-- :keysToWatch="keysToWatch" -->
+		<ChangeLogModal
+			@closeModal="toggleChangelogModal = false"
+			:toggleChangelogModal="toggleChangelogModal"
+			:selectedInfo="selectedCardInfo"
+		></ChangeLogModal>
+
 		<UserForm
 			@formOutput="formOutput"
 			@closeForm="closeForm"
@@ -141,17 +148,20 @@
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
+	import ChangeLogModal from "../../components/ChangeLog";
 
 	export default {
 		name: "CompanyEmployee",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, helperMixin],
-		components: {},
+		components: { ChangeLogModal },
 		async created() {
 			this.getCompanyEmployees();
 			await this.getAddresses();
 			this.setInputConfig(this.addressList);
 		},
 		data: () => ({
+			name: "Travel Agent Employee",
+			placeholder: "Search Travel Agent Employees",
 			dataCalled: false,
 			employeeList: [
 				// {
@@ -175,12 +185,10 @@
 				// 	},
 				// },
 			],
-			search_text: "",
-			name: "Travel Agent Employee",
-			// keysToWatch: ["countries"],
+			toggleChangelogModal: false,
+			selectedCardInfo: {},
 			addressList: [],
 			inputConfig: [],
-			placeholder: "Search Travel Agent Employees",
 		}),
 		computed: {},
 		methods: {
@@ -209,6 +217,10 @@
 				}).then((data) => {
 					this.addressList = data.list;
 				});
+			},
+			openChangelogsModal(info) {
+				this.selectedCardInfo = { ...info };
+				this.toggleChangelogModal = true;
 			},
 			setInputConfig(addressList = []) {
 				this.inputConfig = [
@@ -255,6 +267,8 @@
 						multi: false,
 						isListInStore: false,
 						listItems: addressList,
+						itemText: "branch_name",
+						itemValue: "_id",
 						validations: {
 							required,
 						},
@@ -310,11 +324,13 @@
 			},
 			async formOutput(data) {
 				// formData.company_address_id = formData.branch_name;
+				var formData = JSON.parse(JSON.stringify(data));
+
 				formData.company_id = this.companyInfo._id;
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
 				formData.email_ids = data.email_ids.map((data) => data.input);
 
-				// console.log("Before API call FormData Object", formData);
+				// console.log("Test Console Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -428,6 +444,8 @@
 	}
 	.companyemployee-search-bar {
 		margin-top: 12px;
+		display: flex;
+		justify-content: center;
 	}
 </style>
 
