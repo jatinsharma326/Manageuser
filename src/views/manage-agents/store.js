@@ -49,6 +49,39 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
+		getStatesList: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.ALL_STATES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+							fetchCount: data.fetchCount,
+							totalCount: data.totalCount,
+						};
+					} else {
+						fail(data.message || "Failed to load States List");
+						return {
+							ok: false,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load States List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
 
 		getCompaniesList: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
