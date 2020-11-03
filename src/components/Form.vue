@@ -554,10 +554,10 @@
 		props: {
 			name: { required: true, type: String },
 			inputConfig: { required: true, type: Array },
-			keysToWatch: { required: false, type: Array, default: () => [] },
-			toggleForm: { required: true, type: Boolean, default: false },
-			formData: { required: false, type: Object },
 			isEditMode: { required: true, type: Boolean, default: false },
+			toggleForm: { required: true, type: Boolean, default: false },
+			keysToWatch: { required: false, type: Array, default: () => [] },
+			formData: { required: false, type: Object },
 		},
 		watch: {
 			toggleForm(nv, ov) {
