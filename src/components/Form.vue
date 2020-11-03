@@ -59,8 +59,8 @@
 							chips
 							clearable
 							:items="getItems(config)"
-							item-text="branch_name"
-							item-value="_id"
+							:item-text="config.itemText"
+							:item-value="config.itemValue"
 							:multiple="config.multi"
 							class="form-item"
 							:class="checkWidth(config.width)"
