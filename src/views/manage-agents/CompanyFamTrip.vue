@@ -19,7 +19,7 @@
 			<div v-for="trip in tripList" :key="trip._id" class="card-element">
 				<InformationCard :expandCard="true">
 					<template v-slot:topLeft>
-						{{ trip.dot }}
+						{{ getFormattedDate(trip.date_of_travel) }}
 					</template>
 					<template v-slot:topRight>
 						{{ trip.no_of_days }}
@@ -28,28 +28,23 @@
 						{{ trip.country }}
 					</template>
 					<template v-slot:mainContentSubtitle>
-						{{ trip.representing_partner }}
+						{{ trip.partner_name }}
 					</template>
 					<template v-slot:actionButtons>
 						<template>
 							<v-btn @click="deleteEntry(trip)" color="error" text>
 								Delete
 							</v-btn>
-							<v-btn
-								v-if="(userType == ADMIN || userType == MANAGEMENT) && trip.record.active"
-								@click="openInputForm(true, trip)"
-								color="secondary"
-								text
-							>
+							<v-btn @click="openInputForm(true, trip)" color="secondary" text>
 								Edit
 							</v-btn>
 						</template>
 					</template>
 					<template v-slot:expandCardContent>
 						<v-list>
-							<v-list-item v-for="(passenger, index) in trip.passengers" :key="trip._id + '+' + index">
+							<v-list-item v-for="(employee, index) in trip.employee_names" :key="trip._id + '+' + index">
 								<v-list-item-content>
-									<v-list-item-title>{{ passenger }}</v-list-item-title>
+									<v-list-item-title>{{ employee }}</v-list-item-title>
 								</v-list-item-content>
 							</v-list-item>
 						</v-list>
@@ -140,6 +135,7 @@
 			...mapActions("ManageTargets", ["getActiveCountries"]),
 			getFamTrip() {
 				this.openLoaderDialog();
+				this.filter.company_id = this.companyInfo._id;
 				this.getFamTripList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -182,7 +178,7 @@
 						type: "DropdownWithMoreInfo",
 						isCustom: true,
 						subtitleContent: (item) => {
-							return item.designation + " - " + item.branch_name;
+							return item.designation + " - " + item.company_address_data.branch_name;
 						},
 						titleContent: (item) => {
 							return item.name;
@@ -240,6 +236,10 @@
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
+
+				formData.company_id = this.companyInfo._id;
+				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
+				formData.no_of_days = Number(formData.no_of_days);
 
 				console.log("Before API call FormData Object", formData);
 
