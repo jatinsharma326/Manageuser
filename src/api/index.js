@@ -52,6 +52,9 @@ export default {
 	// TRAVEL AGENTS EMPLOYEES
 	TRAVEL_AGENT_EMPLOYEES: BASE_URL + "TravelAgentEmployees/v0.1/",
 
+	// TRAVEL AGENTS EMPLOYEES
+	FAM_TRIP: BASE_URL + "TravelLogs/v0.1/",
+
 	// TRAVEL AGENTS ADDRESS
 	CHANGELOGS: BASE_URL + "Changelogs/v0.1/",
 };
