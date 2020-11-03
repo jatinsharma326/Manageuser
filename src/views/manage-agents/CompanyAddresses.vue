@@ -80,7 +80,7 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div v-if="userType == ADMIN || userType == MANAGEMENT" class="floating-button">
+		<div class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
@@ -101,9 +101,11 @@
 		name: "CompanyAddress",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
 		components: { ChangeLogModal },
-		created() {
+		async created() {
 			this.getAddresses();
-			// this.setSearchConfig();
+			await this.getStates();
+			this.setInputConfig(this.statesList);
+			this.setSearchConfig(this.statesList);
 		},
 		data: () => ({
 			name: "Branch Address",
@@ -127,76 +129,15 @@
 				// 	company_id: "5f9985ac96e9d514f0e4df55",
 				// },
 			],
-			inputConfig: [
-				{
-					name: "Branch Name*",
-					type: "String",
-					key: "branch_name",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "Address*",
-					type: "String",
-					key: "address",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "State*",
-					type: "String",
-					key: "state",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "City*",
-					type: "String",
-					key: "city",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "Pincode*",
-					type: "String",
-					key: "pincode",
-					width: "half",
-					validations: {
-						required,
-						numeric,
-					},
-				},
-				{
-					name: "Zone*",
-					type: "Dropdown",
-					key: "zone",
-					width: "half",
-					multi: false,
-					isListInStore: true,
-					listVariable: "zone",
-					validations: {
-						required,
-					},
-				},
-			],
+			statesList: [],
+			inputConfig: [],
 		}),
 		computed: {},
 		methods: {
-			...mapActions("ManageAgents", ["getAddressList", "addAddress", "editAddress"]),
+			...mapActions("ManageAgents", ["getStatesList", "getAddressList", "addAddress", "editAddress"]),
 			getAddresses() {
 				this.openLoaderDialog();
+				this.filter.company_id = this.companyInfo._id;
 				this.getAddressList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -208,10 +149,85 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
+			getStates() {
+				return this.getStatesList({
+					filter: {},
+				}).then((data) => {
+					this.statesList = data.list;
+				});
+			},
 			openChangelogsModal(info) {
 				// this.getChangelogs(info);
 				this.selectedCardInfo = { ...info };
 				this.toggleChangelogModal = true;
+			},
+			setInputConfig(statesList = []) {
+				this.inputConfig = [
+					{
+						name: "Branch Name*",
+						type: "String",
+						key: "branch_name",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Address*",
+						type: "String",
+						key: "address",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Zone*",
+						type: "Dropdown",
+						key: "zone",
+						width: "half",
+						multi: false,
+						isListInStore: true,
+						listVariable: "zone",
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "State*",
+						type: "Dropdown",
+						key: "state",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: statesList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "City*",
+						type: "String",
+						key: "city",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Pincode*",
+						type: "String",
+						key: "pincode",
+						width: "half",
+						validations: {
+							required,
+							numeric,
+						},
+					},
+				];
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
@@ -287,7 +303,7 @@
 					});
 				}
 			},
-			setSearchConfig() {
+			setSearchConfig(statesList = []) {
 				/*
 				 * Name of Address - Text field - string or number - can this be empty?
 				 * Business Type - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
@@ -295,29 +311,29 @@
 				 */
 				this.selectedSearchConfig = [
 					{
-						name: "Address Name",
-						key: "name",
+						name: "Branch Name",
+						key: "branch_name",
 						type: "text",
 						inputType: "textfield",
 						defaultValue: "",
 					},
 					{
-						name: "Business Type",
-						key: "business_types",
+						name: "Zone",
+						key: "zones",
 						multi: true,
 						inputType: "dropdown",
 						defaultValue: [],
 						isListInStore: true,
-						listVariable: "businessType",
+						listVariable: "zone",
 					},
 					{
-						name: "Countries",
-						key: "countries",
+						name: "State",
+						key: "states",
 						multi: true,
 						inputType: "dropdown",
 						defaultValue: [],
-						isListInStore: true,
-						listVariable: "countries",
+						isListInStore: false,
+						listItems: statesList,
 					},
 				];
 			},
