@@ -1,5 +1,5 @@
 <template>
-	<div class="">
+	<div class="searchWrapper">
 		<v-text-field
 			label="Search"
 			outlined
@@ -188,6 +188,15 @@
 	};
 </script>
 <style lang="scss">
+	.searchWrapper {
+		flex-basis: 50%;
+		@include custom-max(1000px) {
+			flex-basis: 70%;
+		}
+		@include custom-max(600px) {
+			flex-basis: 90%;
+		}
+	}
 	.search-bar {
 		.v-text-field__details {
 			display: none;
