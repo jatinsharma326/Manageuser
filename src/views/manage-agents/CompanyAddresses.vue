@@ -1,17 +1,19 @@
 <template>
 	<div class="companyAddressWrapper">
-		<v-row class="px-6 companyaddress-search-bar" justify="center" align="center">
-			<v-col cols="12" sm="8" md="6">
-				<Search
-					@queryString="queryString"
-					@filterObject="advanceSearch"
-					@clearFilter="advanceSearch"
-					:placeholder="placeholder"
-					:isAdvanceSearch="true"
-					:filterConfig="selectedSearchConfig"
-				></Search>
-			</v-col>
-		</v-row>
+		<!-- <v-row class="companyaddress-search-bar" justify="center" align="center">
+			<v-col cols="12" sm="8" md="6"> -->
+		<div class="companyaddress-search-bar">
+			<Search
+				@queryString="queryString"
+				@filterObject="advanceSearch"
+				@clearFilter="advanceSearch"
+				:placeholder="placeholder"
+				:isAdvanceSearch="true"
+				:filterConfig="selectedSearchConfig"
+			></Search>
+		</div>
+		<!-- </v-col>
+		</v-row> -->
 
 		<div class="card-wrapper">
 			<div v-for="address in addressList" :key="address._id" class="card-element">
@@ -68,7 +70,6 @@
 			:selectedInfo="selectedCardInfo"
 		></ChangeLogModal>
 
-		<!-- :keysToWatch="keysToWatch" -->
 		<UserForm
 			@formOutput="formOutput"
 			@closeForm="closeForm"
@@ -96,8 +97,6 @@
 	import helpers from "../../components/helpers";
 	import ChangeLogModal from "../../components/ChangeLog";
 
-	import ViewMoreModal from "../../components/ViewMoreModal";
-
 	export default {
 		name: "CompanyAddress",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
@@ -107,6 +106,10 @@
 			// this.setSearchConfig();
 		},
 		data: () => ({
+			name: "Branch Address",
+			placeholder: "Search Addresses",
+			toggleChangelogModal: false,
+			selectedCardInfo: {},
 			addressList: [
 				// {
 				// 	_id: "5f9a990d4667e23dac5fc70d",
@@ -124,9 +127,6 @@
 				// 	company_id: "5f9985ac96e9d514f0e4df55",
 				// },
 			],
-			toggleChangelogModal: false,
-			selectedCardInfo: {},
-			name: "Branch Address",
 			inputConfig: [
 				{
 					name: "Branch Name*",
@@ -191,7 +191,6 @@
 					},
 				},
 			],
-			placeholder: "Search Addresses",
 		}),
 		computed: {},
 		methods: {
@@ -224,38 +223,10 @@
 				this.getAddresses();
 			},
 			async formOutput(data) {
-				var tempFile = data.logo;
 				var formData = JSON.parse(JSON.stringify(data));
-				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
-				// formData.logo = tempFile;
-				// var tempArray = [];
-				// var tempObj = {};
-
-				// // loop over the emergency contacts objects to convert it into theh backend format
-				// for (let contact of formData.emergency_contacts) {
-				// 	tempObj = {};
-				// 	for (let num of contact.input) {
-				// 		if (num.input != "") {
-				// 			tempObj["country"] = contact.groupKey;
-				// 			if (!tempObj["contacts"]) tempObj["contacts"] = [];
-				// 			tempObj["contacts"].push(num.input);
-				// 		}
-				// 	}
-				// 	if (Object.keys(tempObj).length) {
-				// 		tempArray.push(tempObj);
-				// 	}
-				// }
-				// formData.emergency_contacts = tempArray;
-
-				// // remove logo key if it's empty
-				// if (formData.logo) {
-				// 	formData.logo = await helpers.toBase64(formData.logo);
-				// } else {
-				// 	delete formData.logo;
-				// }
 				formData.company_id = this.companyInfo._id;
 
-				console.log("Before API call FormData Object", formData);
+				// console.log("Test Console Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -372,6 +343,8 @@
 	}
 	.companyaddress-search-bar {
 		margin-top: 12px;
+		display: flex;
+		justify-content: center;
 	}
 </style>
 
