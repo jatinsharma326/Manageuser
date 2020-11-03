@@ -1,17 +1,19 @@
 <template>
 	<div class="famTripWrapper">
-		<v-row class="px-6 famtrip-search-bar" justify="center" align="center">
-			<v-col cols="12" sm="8" md="6">
-				<Search
-					@queryString="queryString"
-					@filterObject="advanceSearch"
-					@clearFilter="advanceSearch"
-					:placeholder="placeholder"
-					:isAdvanceSearch="true"
-					:filterConfig="selectedSearchConfig"
-				></Search>
-			</v-col>
-		</v-row>
+		<!-- <v-row class="famtrip-search-bar" justify="center" align="center">
+			<v-col cols="12" sm="8" md="6"> -->
+		<div class="famtrip-search-bar">
+			<Search
+				@queryString="queryString"
+				@filterObject="advanceSearch"
+				@clearFilter="advanceSearch"
+				:placeholder="placeholder"
+				:isAdvanceSearch="true"
+				:filterConfig="selectedSearchConfig"
+			></Search>
+		</div>
+		<!-- </v-col>
+		</v-row> -->
 
 		<div class="card-wrapper">
 			<div v-for="trip in tripList" :key="trip._id" class="card-element">
@@ -30,6 +32,9 @@
 					</template>
 					<template v-slot:actionButtons>
 						<template>
+							<v-btn @click="deleteEntry(trip)" color="error" text>
+								Delete
+							</v-btn>
 							<v-btn
 								v-if="(userType == ADMIN || userType == MANAGEMENT) && trip.record.active"
 								@click="openInputForm(true, trip)"
@@ -93,115 +98,46 @@
 		name: "FamTrip",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, helperMixin],
 		components: {},
-		created() {
-			// this.getFamTrips();
+		async created() {
+			this.getFamTrip();
+			await this.getEmployees();
+			await this.getCountryList();
+			this.setInputConfig(this.employeeList, this.countriesList);
 			// this.setSearchConfig();
 		},
 		data: () => ({
-			tripList: [
-				{
-					_id: "5f9030204c38c0313714",
-					dot: "2020-09-30T18:30:00.000Z",
-					no_of_days: "Sachin Tendulkar",
-					country: "SS",
-					passengers: ["Ali Pocketwala", "Rohan Dhamapurkar"],
-					representing_partner: "Allied T Pro",
-					admin_grade: "C",
-					record: {
-						created_on: "2020-10-21T10:52:50.445Z",
-						updated_on: "2020-10-21T10:52:50.445Z",
-						active: true,
-					},
-				},
-			],
-			search_text: "",
 			name: "Fam Trip Log",
-			// keysToWatch: ["countries"],
-			inputConfig: [
+			placeholder: "Search Fam Trip",
+			employeeList: [],
+			countriesList: [],
+			inputConfig: [],
+			tripList: [
 				// {
-				// 	name: "Employee Name*",
-				// 	type: "String",
-				// 	key: "name",
-				// 	width: "half",
-				// 	validations: {
-				// 		required,
-				// 		minLength: minLength(1),
-				// 	},
-				// },
-				// {
-				// 	name: "Designation",
-				// 	type: "String",
-				// 	key: "designation",
-				// 	width: "half",
-				// },
-				// {
-				// 	name: "Business Type*",
-				// 	type: "Dropdown",
-				// 	key: "business_types",
-				// 	width: "half",
-				// 	multi: true,
-				// 	isListInStore: true,
-				// 	listVariable: "businessType",
-				// 	validations: {
-				// 		required,
-				// 	},
-				// },
-				// {
-				// 	name: "Branch Name*",
-				// 	type: "Dropdown",
-				// 	key: "branch_name",
-				// 	width: "half",
-				// 	multi: true,
-				// 	isListInStore: true,
-				// 	listVariable: "businessType",
-				// 	validations: {
-				// 		required,
-				// 	},
-				// },
-				// {
-				// 	name: "Email",
-				// 	type: "MultiInput",
-				// 	key: "email_ids",
-				// 	width: "full",
-				// 	validations: {
-				// 		$each: {
-				// 			input: {
-				// 				email,
-				// 			},
-				// 		},
-				// 	},
-				// },
-				// {
-				// 	name: "Contact Numbers*",
-				// 	type: "MultiInput",
-				// 	key: "phone_numbers",
-				// 	width: "half",
-				// 	validations: {
-				// 		required,
-				// 		minLength: minLength(1),
-				// 		$each: {
-				// 			input: {
-				// 				required,
-				// 				minLength: minLength(8),
-				// 			},
-				// 		},
-				// 	},
-				// },
-				// {
-				// 	name: "DOB*",
-				// 	type: "Date",
-				// 	key: "dob",
-				// 	width: "oneThird",
-				// 	validations: {
-				// 		required,
+				// 	_id: "5f9030204c38c0313714",
+				// 	dot: "2020-09-30T18:30:00.000Z",
+				// 	no_of_days: "Sachin Tendulkar",
+				// 	country: "SS",
+				// 	passengers: ["Ali Pocketwala", "Rohan Dhamapurkar"],
+				// 	representing_partner: "Allied T Pro",
+				// 	admin_grade: "C",
+				// 	record: {
+				// 		created_on: "2020-10-21T10:52:50.445Z",
+				// 		updated_on: "2020-10-21T10:52:50.445Z",
+				// 		active: true,
 				// 	},
 				// },
 			],
-			placeholder: "Search Fam Trip",
 		}),
 		computed: {},
 		methods: {
-			...mapActions("ManageAgents", ["getFamTripList", "addFamTrip", "editFamTrip"]),
+			...mapActions("ManageAgents", [
+				"getFamTripList",
+				"getCompanyEmployeeList",
+				"addFamTrip",
+				"editFamTrip",
+				"deleteFamTrip",
+			]),
+			...mapActions("ManageTargets", ["getActiveCountries"]),
 			getFamTrip() {
 				this.openLoaderDialog();
 				this.getFamTripList({
@@ -215,6 +151,84 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
+			getEmployees() {
+				return this.getCompanyEmployeeList({
+					filter: {},
+				}).then((data) => {
+					this.employeeList = data.list;
+				});
+			},
+			getCountryList() {
+				return this.getActiveCountries().then((data) => {
+					this.countriesList = data.list;
+				});
+			},
+			setInputConfig(employeeList = [], countries = []) {
+				this.inputConfig = [
+					{
+						name: "Country",
+						type: "Dropdown",
+						key: "country",
+						width: "full",
+						multi: false,
+						isListInStore: false,
+						listItems: countries,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Travel Agents*",
+						type: "DropdownWithMoreInfo",
+						isCustom: true,
+						subtitleContent: (item) => {
+							return item.designation + " - " + item.branch_name;
+						},
+						titleContent: (item) => {
+							return item.name;
+						},
+						key: "travel_agent_ids",
+						width: "full",
+						multi: true,
+						isListInStore: false,
+						listItems: employeeList,
+						itemText: "name",
+						itemValue: "_id",
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Number of Days*",
+						type: "String",
+						key: "no_of_days",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Current Grade*",
+						type: "String",
+						key: "current_grade",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Date of Travel*",
+						type: "Date",
+						key: "date_of_travel",
+						width: "half",
+						validations: {
+							required,
+						},
+					},
+				];
+			},
 			queryString(data) {
 				this.filter["search_text"] = data;
 				this.getFamTrip();
@@ -225,35 +239,7 @@
 				this.getFamTrip();
 			},
 			async formOutput(data) {
-				var tempFile = data.logo;
 				var formData = JSON.parse(JSON.stringify(data));
-				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
-				// formData.logo = tempFile;
-				// var tempArray = [];
-				// var tempObj = {};
-
-				// // loop over the emergency contacts objects to convert it into theh backend format
-				// for (let contact of formData.emergency_contacts) {
-				// 	tempObj = {};
-				// 	for (let num of contact.input) {
-				// 		if (num.input != "") {
-				// 			tempObj["country"] = contact.groupKey;
-				// 			if (!tempObj["contacts"]) tempObj["contacts"] = [];
-				// 			tempObj["contacts"].push(num.input);
-				// 		}
-				// 	}
-				// 	if (Object.keys(tempObj).length) {
-				// 		tempArray.push(tempObj);
-				// 	}
-				// }
-				// formData.emergency_contacts = tempArray;
-
-				// // remove logo key if it's empty
-				// if (formData.logo) {
-				// 	formData.logo = await helpers.toBase64(formData.logo);
-				// } else {
-				// 	delete formData.logo;
-				// }
 
 				console.log("Before API call FormData Object", formData);
 
@@ -348,6 +334,26 @@
 			updatedPageNo(page) {
 				this.getFamTrip();
 			},
+			deleteEntry(entry) {
+				if (window.confirm("Do you really want to Delete the Fam Trip Entry?")) {
+					this.openLoaderDialog();
+					this.deleteFamTrip({
+						_id: entry._id,
+					}).then((data) => {
+						this.closeLoaderDialog();
+						if (data.ok) {
+							this.openSnackbar({ text: "Sucessfully Deleted the Entry" });
+							this.getFamTrip();
+						} else {
+							this.openSnackbar({ text: data.message });
+							this.getFamTrip();
+						}
+					});
+				}
+			},
+		},
+		props: {
+			companyInfo: { required: true, type: Object },
 		},
 	};
 </script>
@@ -364,6 +370,8 @@
 	}
 	.famtrip-search-bar {
 		margin-top: 12px;
+		display: flex;
+		justify-content: center;
 	}
 </style>
 
