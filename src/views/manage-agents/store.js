@@ -303,7 +303,7 @@ export default {
 				{
 					method: "get",
 					params: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
+					url: constants.FAM_TRIP,
 				},
 				{ root: true }
 			)
@@ -338,7 +338,7 @@ export default {
 				{
 					method: "post",
 					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
+					url: constants.FAM_TRIP,
 				},
 				{ root: true }
 			)
@@ -361,7 +361,7 @@ export default {
 				{
 					method: "put",
 					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
+					url: constants.FAM_TRIP,
 				},
 				{ root: true }
 			)
@@ -384,7 +384,7 @@ export default {
 				{
 					method: "delete",
 					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
+					url: constants.FAM_TRIP,
 				},
 				{ root: true }
 			)
