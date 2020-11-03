@@ -131,39 +131,43 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<!-- <div class="floating-button">
-			<v-btn @click="openInputForm()" color="primary" dark fab>
-				<v-icon>mdi-plus</v-icon>
-			</v-btn>
+		<div class="floating-button">
 			<v-speed-dial
 				v-model="fab"
 				bottom="bottom"
 				right="right"
 				direction="top"
-				open-on-hover="hover"
+				:open-on-hover="hover"
 				transition="scale-transition"
 			>
 				<template v-slot:activator>
-					<v-btn v-model="fab" color="blue darken-2" dark fab>
+					<v-btn v-model="fab" color="primary" dark fab>
 						<v-icon v-if="fab">
-							mdi-close
+							mdi-arrow-down-drop-circle
 						</v-icon>
 						<v-icon v-else>
-							mdi-account-circle
+							mdi-arrow-up-drop-circle
 						</v-icon>
 					</v-btn>
 				</template>
-				<v-btn fab dark small color="green">
-					<v-icon>mdi-pencil</v-icon>
-				</v-btn>
-				<v-btn fab dark small color="indigo">
-					<v-icon>mdi-plus</v-icon>
-				</v-btn>
-				<v-btn fab dark small color="red">
-					<v-icon>mdi-delete</v-icon>
-				</v-btn>
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn @click="openInputForm()" color="primary" dark small fab v-bind="attrs" v-on="on">
+							<v-icon>mdi-plus</v-icon>
+						</v-btn>
+					</template>
+					<span>Add</span>
+				</v-tooltip>
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn fab dark small color="secondary" v-bind="attrs" v-on="on">
+							<v-icon>mdi-upload</v-icon>
+						</v-btn>
+					</template>
+					<span>Upload Excel</span>
+				</v-tooltip>
 			</v-speed-dial>
-		</div> -->
+		</div>
 	</div>
 </template>
 
@@ -255,6 +259,8 @@
 			toggleChangelogModal: false,
 			changelogsList: [],
 			search_text: "",
+			fab: false,
+			hover: false,
 			name: "Travel Agents",
 			keysToWatch: ["countries"],
 			adminInputConfig: [
@@ -545,7 +551,7 @@
 				 */
 				this.selectedSearchConfig = [
 					{
-						name: "Partner Name",
+						name: "Company Name",
 						key: "name",
 						type: "text",
 						inputType: "textfield",
