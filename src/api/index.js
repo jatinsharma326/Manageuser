@@ -60,4 +60,7 @@ export default {
 
 	// TRAVEL AGENTS ADDRESS
 	CHANGELOGS: BASE_URL + "Changelogs/v0.1/",
+
+	// TRAVEL AGENTS ENDPOINT
+	SALES_CALLS: BASE_URL + "SalesCalls/v0.1/",
 };
