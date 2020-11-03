@@ -16,52 +16,85 @@
 	import { mapActions, mapGetters } from "vuex";
 	import callsList from "./callsList";
 	export default {
-		name: "ManageUsers",
-		components: { Users },
-		created() {
-			this.getPartnerList();
+		name: "ManageSalesCall",
+		components: { callsList },
+		async created() {
+			await this.getCompanies();
+			this.setConfig(this.companyList);
 		},
 		data: () => ({
 			tab: "",
-			tabConfig: [
-				{
-					name: "Sales Call",
-					id: "salesCall",
-					component: "Users",
-					props: {
-						name: "Sales Call",
-						type: "sales_call",
-						placeholder: "Search Sales Call",
-						inputConfig: [
-							{
-								name: "Date of Visit*",
-								type: "Date",
-								key: "dob",
-								width: "half",
-								validations: {
-									required,
-								},
-							},
-						],
-					},
-				},
-				{
-					name: "Remote Sales Team",
-					id: "allSalesCall",
-					component: "Users",
-					props: {
-						name: "All Sales Call",
-						type: "all_sales_call",
-						placeholder: "Search All Sales Call",
-					},
-				},
-			],
+			companyList: [],
+			tabConfig: [],
 		}),
 		computed: {
 			...mapGetters([]),
 		},
 		methods: {
-			...mapActions(["getPartnerList"]),
+			...mapActions("ManageAgents", ["getCompaniesList"]),
+			getCompanies() {
+				return this.getCompaniesList({
+					filter: {},
+				}).then((data) => {
+					this.companyList = data.list;
+				});
+			},
+			setConfig(companyList = []) {
+				this.tabConfig = [
+					{
+						name: "Sales Call",
+						id: "salesCall",
+						component: "Users",
+						props: {
+							name: "Sales Call",
+							type: "sales_call",
+							placeholder: "Search Sales Call",
+							inputConfig: [
+								{
+									name: "Date of Visit*",
+									type: "Date",
+									key: "dob",
+									width: "half",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "Company Name*",
+									type: "DropdownWithMoreInfo",
+									isCustom: true,
+									subtitleContent: (item) => {
+										return item.business_types.join(", ");
+									},
+									titleContent: (item) => {
+										return item.name;
+									},
+									key: "company_id",
+									width: "half",
+									multi: false,
+									isListInStore: false,
+									listItems: companyList,
+									itemText: "name",
+									itemValue: "_id",
+									validations: {
+										required,
+									},
+								},
+							],
+						},
+					},
+					{
+						name: "All Sales Call",
+						id: "allSalesCall",
+						component: "Users",
+						props: {
+							name: "All Sales Call",
+							type: "all_sales_call",
+							placeholder: "Search All Sales Call",
+						},
+					},
+				];
+			},
 		},
 	};
 </script>

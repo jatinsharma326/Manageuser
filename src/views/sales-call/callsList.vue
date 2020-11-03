@@ -14,10 +14,9 @@
 
 		<div class="leaves-table">
 			<v-data-table hide-default-footer :headers="headers" :items="callsList" item-key="_id">
-				<!-- <template v-slot:[`item.serial_number`]="{ item }">{{ item.serial_number }}</template> -->
-				<!-- <template v-slot:[`item.doa`]="{ item }">
-					{{ getFormattedDate(item.doa, "MMMM Do YYYY dddd") }}
-				</template> -->
+				<template v-slot:[`item.date_of_call`]="{ item }">
+					{{ getFormattedDate(item.date_of_call, "MMMM Do YYYY dddd") }}
+				</template>
 				<template v-slot:[`item.actions`]="{ item }">
 					<template v-if="type == 'sales_call'">
 						<v-menu bottom left>
@@ -36,13 +35,13 @@
 			</v-data-table>
 		</div>
 
-		<div class="text-center">
+		<!-- <div class="text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
-		</div>
+		</div> -->
 
 		<template v-if="type == 'sales_call'">
 			<UserForm
@@ -51,6 +50,7 @@
 				:name="name"
 				:type="type"
 				:inputConfig="inputConfig"
+				:keysToWatch="keysToWatch"
 				:toggleForm="toggleForm"
 				:formData="rowToEdit"
 				:isEditMode="isEditMode"
@@ -67,6 +67,7 @@
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import helperMixin from "../../mixins/helperMixins";
+	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
 	import helpers from "../../components/helpers";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
@@ -74,30 +75,54 @@
 
 	export default {
 		name: "SalesCallManager",
-		mixins: [defaultCRUDMixin, helperMixin, searchMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin],
 		// async created() {
 		// 	this.getData();
 		// 	await this.getUsers();
 		// 	this.setSearchConfig(this.userList);
 		// },
 		data: () => ({
-			callsList: [],
-			headers: [
-				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+			callsList: [
 				{
-					text: "Name",
-					value: "name",
-					width: 150,
+					_id: "5fa124ee6bff062f60d5fcc2",
+					date_of_call: "2020-10-30T18:30:00.000Z",
+					sr_no: "AUG20-0",
+					record: {
+						created_on: "2020-11-03T09:37:50.737Z",
+						updated_on: "2020-11-03T09:37:50.737Z",
+					},
+					mortal_id: "5fa1075dab44e634a4d90c83",
+					company_id: "5f9d03eb92bff8363cf43565",
+					company_address_id: "5f9d4f9ce639cb1de070195f",
+					company_address_data: {
+						branch_name: "Nagpada",
+						state: "Maharashtra",
+						city: "Mumbai",
+						pincode: "400008",
+						zone: "EAST",
+						address: "Dadar Mumbai",
+					},
+					company_data: {
+						name: "Thomas Cook",
+					},
+					mortal_data: {
+						name: "Aliasgar Pocketwala",
+					},
 				},
-				{ text: "Date of Visit", value: "doa", width: 200 },
-				{ text: "Company Name", value: "date_from", width: 150 },
-				{ text: "Branch Name", value: "date_to", width: 150 },
-				{ text: "City", value: "no_of_days", width: 150 },
-				{ text: "State", value: "pending_leaves", width: 150 },
-				{ text: "Address", value: "status", width: 150 },
+			],
+			headers: [
+				{ text: "Sr. No.", align: "start", value: "sr_no", width: 100 },
+				{ text: "Name", value: "mortal_data.name", width: 150 },
+				{ text: "Date of Visit", value: "date_of_call", width: 200 },
+				{ text: "Company Name", value: "company_data.name", width: 200 },
+				{ text: "Branch Name", value: "company_address_data.branch_name", width: 150 },
+				{ text: "City", value: "company_address_data.city", width: 150 },
+				{ text: "State", value: "company_address_data.state", width: 150 },
+				{ text: "Address", value: "company_address_data.address", width: 150 },
 				// { text: "Purpose", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
+			keysToWatch: ["name"],
 			// userList: [],
 			// serialNumber: 0,
 		}),
@@ -167,6 +192,46 @@
 			// 	this.pageNo = 1;
 			// 	this.getData();
 			// },
+			async formOutput(data) {
+				var formData = JSON.parse(JSON.stringify(data));
+				formData.company_id = this.companyInfo._id;
+
+				// console.log("Test Console Before API call FormData Object", formData);
+
+				this.openLoaderDialog();
+				if (!this.isEditMode) {
+					this.addAddress(formData).then((data) => {
+						this.closeLoaderDialog();
+						if (data.ok) {
+							this.openSnackbar({ text: "Sucessfully Added Address" });
+							this.getAddresses();
+							this.closeForm();
+						} else {
+							this.openSnackbar({ text: data.message });
+							this.getAddresses();
+						}
+					});
+				} else {
+					this.editAddress(formData).then((data) => {
+						this.closeLoaderDialog();
+						if (data.ok) {
+							this.openSnackbar({ text: "Sucessfully Edited Address" });
+							this.getAddresses();
+							this.closeForm();
+						} else {
+							this.openSnackbar({ text: data.message });
+							this.getAddresses();
+						}
+					});
+				}
+			},
+			getEditRowObject(data) {
+				return {
+					...data,
+					_id: data._id,
+					updated_on: data.record.updated_on,
+				};
+			},
 			// setSearchConfig(teamMember = []) {
 			// 	this.selectedSearchConfig = [
 			// 		{
