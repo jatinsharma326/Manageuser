@@ -39,7 +39,7 @@
 		mixins: [helperMixin],
 		components: {},
 		created() {
-			this.getChangelogs(this.selectedInfo);
+			// this.getChangelogs(this.selectedInfo);
 		},
 		data: () => ({
 			modal: false,
