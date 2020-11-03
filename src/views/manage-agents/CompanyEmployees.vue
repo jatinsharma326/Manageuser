@@ -132,7 +132,7 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div v-if="userType == ADMIN || userType == MANAGEMENT" class="floating-button">
+		<div class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
@@ -158,11 +158,15 @@
 			this.getCompanyEmployees();
 			await this.getAddresses();
 			this.setInputConfig(this.addressList);
+			await this.getStates();
+			this.setSearchConfig(this.statesList);
 		},
 		data: () => ({
 			name: "Travel Agent Employee",
 			placeholder: "Search Travel Agent Employees",
 			dataCalled: false,
+			toggleChangelogModal: false,
+			selectedCardInfo: {},
 			employeeList: [
 				// {
 				// 	_id: "5f9030204c38c0313714",
@@ -185,14 +189,14 @@
 				// 	},
 				// },
 			],
-			toggleChangelogModal: false,
-			selectedCardInfo: {},
 			addressList: [],
+			statesList: [],
 			inputConfig: [],
 		}),
 		computed: {},
 		methods: {
 			...mapActions("ManageAgents", [
+				"getStatesList",
 				"getAddressList",
 				"getCompanyEmployeeList",
 				"addCompanyEmployee",
@@ -200,6 +204,7 @@
 			]),
 			getCompanyEmployees() {
 				this.openLoaderDialog();
+				this.filter.company_id = this.companyInfo._id;
 				this.getCompanyEmployeeList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -216,6 +221,13 @@
 					filter: {},
 				}).then((data) => {
 					this.addressList = data.list;
+				});
+			},
+			getStates() {
+				return this.getStatesList({
+					filter: {},
+				}).then((data) => {
+					this.statesList = data.list;
 				});
 			},
 			openChangelogsModal(info) {
@@ -327,10 +339,12 @@
 				var formData = JSON.parse(JSON.stringify(data));
 
 				formData.company_id = this.companyInfo._id;
+				formData.dob = helpers.getISODate(formData.dob);
+				formData.company_id = this.companyInfo._id;
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
 				formData.email_ids = data.email_ids.map((data) => data.input);
 
-				// console.log("Test Console Before API call FormData Object", formData);
+				console.log("Test Console Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -393,10 +407,10 @@
 					});
 				}
 			},
-			setSearchConfig() {
+			setSearchConfig(statesList = []) {
 				this.selectedSearchConfig = [
 					{
-						name: "Partner Name",
+						name: "Employee Name",
 						key: "name",
 						type: "text",
 						inputType: "textfield",
@@ -412,13 +426,22 @@
 						listVariable: "businessType",
 					},
 					{
-						name: "Countries",
-						key: "countries",
+						name: "Zone",
+						key: "zones",
 						multi: true,
 						inputType: "dropdown",
 						defaultValue: [],
 						isListInStore: true,
-						listVariable: "countries",
+						listVariable: "zone",
+					},
+					{
+						name: "State",
+						key: "states",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: statesList,
 					},
 				];
 			},
