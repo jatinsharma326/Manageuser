@@ -19,7 +19,7 @@
 					></v-text-field>
 
 					<v-text-field
-						v-if="config.type == 'Number'"
+						v-else-if="config.type == 'Number'"
 						:label="config.name"
 						:key="config.name + '__' + index"
 						v-model="formElements[config.key]"
@@ -29,7 +29,7 @@
 					></v-text-field>
 
 					<v-textarea
-						v-if="config.type == 'TextArea'"
+						v-else-if="config.type == 'TextArea'"
 						:label="config.name"
 						:key="config.name + '__' + index"
 						v-model="formElements[config.key]"
@@ -37,7 +37,7 @@
 						:class="checkWidth(config.width)"
 					></v-textarea>
 
-					<template v-if="config.type == 'Dropdown'">
+					<template v-else-if="config.type == 'Dropdown'">
 						<v-autocomplete
 							:key="config.name + '__' + index"
 							:label="config.name"
@@ -51,7 +51,7 @@
 						></v-autocomplete>
 					</template>
 
-					<template v-if="config.type == 'DropdownWithMoreInfo'">
+					<template v-else-if="config.type == 'DropdownWithMoreInfo'">
 						<v-autocomplete
 							:key="config.name + '__' + index"
 							:label="config.name"
@@ -76,7 +76,32 @@
 						</v-autocomplete>
 					</template>
 
-					<template v-if="config.type == 'Date'">
+					<template v-else-if="config.type == 'AsyncDropdownWithMoreInfo'">
+						<v-autocomplete
+							:key="config.name + '__' + index"
+							:label="config.name"
+							v-model="formElements[config.key]"
+							chips
+							clearable
+							:items="getItems(config)"
+							:item-text="config.itemText"
+							:item-value="config.itemValue"
+							:multiple="config.multi"
+							class="form-item"
+							:class="checkWidth(config.width)"
+						>
+							<template v-slot:[`item`]="{ item }">
+								<v-list-item-content>
+									<v-list-item-title v-text="config.titleContent(item)"></v-list-item-title>
+									<v-list-item-subtitle
+										v-text="config.subtitleContent ? config.subtitleContent(item) : ''"
+									></v-list-item-subtitle>
+								</v-list-item-content>
+							</template>
+						</v-autocomplete>
+					</template>
+
+					<template v-else-if="config.type == 'Date'">
 						<div
 							:key="config.name + '__' + index"
 							class="date-picker form-item"
@@ -115,7 +140,7 @@
 						</div>
 					</template>
 
-					<template v-if="config.type == 'MultiInput'">
+					<template v-else-if="config.type == 'MultiInput'">
 						<template v-for="(input, mulIndex) in formElements[config.key]">
 							<div
 								:key="config.name + '__' + index + '__' + mulIndex"
@@ -152,7 +177,7 @@
 						</div>
 					</template>
 
-					<template v-if="config.type == 'MultiInputWithGroupKey' && formElements[config.key]">
+					<template v-else-if="config.type == 'MultiInputWithGroupKey' && formElements[config.key]">
 						<template v-for="(row, rowIndex) in formElements[config.key]">
 							<div :key="config.name + '__' + index + '__' + rowIndex" class="input-with-group-key-title">
 								Enter {{ config.name }} for {{ row.groupKey }}
@@ -215,7 +240,7 @@
 						</template>
 					</template>
 
-					<template v-if="config.type == 'FilePicker'">
+					<template v-else-if="config.type == 'FilePicker'">
 						<v-file-input
 							v-model="formElements[config.key]"
 							:key="config.name + '__' + index"
@@ -227,7 +252,7 @@
 						></v-file-input>
 					</template>
 
-					<template v-if="config.type == 'Switch'">
+					<template v-else-if="config.type == 'Switch'">
 						<v-switch
 							v-model="formElements[config.key]"
 							:key="config.name + '__' + index"
@@ -538,6 +563,11 @@
 								this.formElements[i.key] = tempObj;
 							}
 						}
+					}
+					if (i.type == "DropdownWithMoreInfo") {
+						console.log("Test Console Key Updated config", i);
+						console.log("Test Console Key Updated new value", nv);
+						console.log("Test Console Key Updated old value", ov);
 					}
 				}
 			},
