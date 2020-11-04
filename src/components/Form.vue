@@ -83,7 +83,7 @@
 							v-model="formElements[config.key]"
 							chips
 							clearable
-							:items="getItems(config)"
+							:items="asyncList[config.key]"
 							:item-text="config.itemText"
 							:item-value="config.itemValue"
 							:multiple="config.multi"
@@ -290,6 +290,7 @@
 			errorText: false,
 			formElements: {},
 			dateMenuRef: {},
+			asyncList: {},
 			watcherList: [],
 			errorMessages: {
 				required: {
@@ -425,6 +426,9 @@
 						} else {
 							this.$set(this.formElements, i.key, null);
 						}
+						if (i.type == "AsyncDropdownWithMoreInfo") {
+							this.$set(this.asyncList, i.key, []);
+						}
 						if (i.type == "Date") {
 							this.$set(this.dateMenuRef, i.key, false);
 						}
@@ -518,6 +522,12 @@
 							this.$set(this.formElements, i.key, this.formData[i.key]);
 						}
 
+						if (i.type == "AsyncDropdownWithMoreInfo") {
+							i.apiCall(this.formData[i.triggerKey]).then((data) => {
+								this.$set(this.asyncList, i.key, data);
+							});
+						}
+
 						if (i.type == "Date") {
 							this.$set(this.dateMenuRef, i.key, false);
 						}
@@ -563,11 +573,12 @@
 								this.formElements[i.key] = tempObj;
 							}
 						}
-					}
-					if (i.type == "DropdownWithMoreInfo") {
-						console.log("Test Console Key Updated config", i);
-						console.log("Test Console Key Updated new value", nv);
-						console.log("Test Console Key Updated old value", ov);
+					} else if (i.type == "AsyncDropdownWithMoreInfo" && watchKey == i.triggerKey) {
+						if (nv) {
+							i.apiCall(nv).then((data) => {
+								this.asyncList[i.key] = data;
+							});
+						}
 					}
 				}
 			},
