@@ -120,7 +120,7 @@
 	}
 
 	.main-content {
-		font-size: 24px;
+		font-size: 20px;
 		line-height: 1.2;
 		font-weight: 500;
 		margin-bottom: 5px;
