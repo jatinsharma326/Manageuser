@@ -31,7 +31,7 @@
 			...mapGetters([]),
 		},
 		methods: {
-			...mapActions("ManageAgents", ["getCompaniesList"]),
+			...mapActions("ManageAgents", ["getCompaniesList", "getAddressList"]),
 			getCompanies() {
 				return this.getCompaniesList({
 					filter: {},
@@ -53,12 +53,24 @@
 								{
 									name: "Date of Visit*",
 									type: "Date",
-									key: "dob",
+									key: "date_of_call",
 									width: "half",
 									validations: {
 										required,
 									},
 								},
+								// {
+								// 	name: "Company Name*",
+								// 	type: "Dropdown",
+								// 	key: "company_id",
+								// 	width: "half",
+								// 	multi: false,
+								// 	isListInStore: false,
+								// 	listItems: companyList,
+								// 	validations: {
+								// 		required,
+								// 	},
+								// },
 								{
 									name: "Company Name*",
 									type: "DropdownWithMoreInfo",
@@ -69,12 +81,52 @@
 									titleContent: (item) => {
 										return item.name;
 									},
+									apiCall: (company_id) => {
+										// return function getAddresses() {
+										return this.getAddressList({
+											filter: {
+												company_id: company_id,
+											},
+										}).then((data) => {
+											return {
+												data,
+											};
+										});
+										// };
+									},
 									key: "company_id",
 									width: "half",
 									multi: false,
 									isListInStore: false,
 									listItems: companyList,
 									itemText: "name",
+									itemValue: "_id",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "Branch Name*",
+									type: "AsyncDropdownWithMoreInfo",
+									triggerKey: "company_id",
+									subtitleContent: (item) => {
+										return item.address + " " + item.state + " " + item.city + " " + item.pincode;
+									},
+									titleContent: (item) => {
+										return item.branch_name;
+									},
+									apiCall: (company_id) => {
+										return this.getAddressList({
+											filter: {
+												company_id: company_id,
+											},
+										}).then((data) => {
+											return data.list;
+										});
+									},
+									key: "company_address_id",
+									width: "half",
+									itemText: "branch_name",
 									itemValue: "_id",
 									validations: {
 										required,
