@@ -12,7 +12,7 @@
 					<div class="stepper-section">
 						<v-stepper v-model="step" alt-labels flat>
 							<v-stepper-header>
-								<v-stepper-step :step="1">Select & Preview</v-stepper-step>
+								<v-stepper-step :step="1">Select</v-stepper-step>
 
 								<v-divider></v-divider>
 
@@ -29,11 +29,11 @@
 										<div v-if="!previewMode && !uploadMode" class="dropzone-container">
 											<div class="file-selection-area">
 												<input
-													accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-													@change="loadExcelFile"
-													class="upload-file-selector"
 													type="file"
+													accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+													class="upload-file-selector"
 													ref="upload-file-selector"
+													@change="loadExcelFile"
 												/>
 												<button
 													@click.stop="triggerFileUpload"
