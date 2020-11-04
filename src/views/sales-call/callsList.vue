@@ -1,16 +1,19 @@
 <template>
 	<div class="callsListWrapper">
-		<!-- <v-row class="px-6 leaves-search-bar" justify="center" align="center">
+		<v-row class="px-6 salescall-search-bar" justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
+				<!-- <div class="companyaddress-search-bar"> -->
 				<Search
 					@queryString="queryString"
 					@filterObject="advanceSearch"
+					@clearFilter="advanceSearch"
 					:placeholder="placeholder"
 					:isAdvanceSearch="true"
 					:filterConfig="selectedSearchConfig"
 				></Search>
+				<!-- </div> -->
 			</v-col>
-		</v-row> -->
+		</v-row>
 
 		<div class="leaves-table">
 			<v-data-table hide-default-footer :headers="headers" :items="callsList" item-key="_id">
@@ -35,13 +38,13 @@
 			</v-data-table>
 		</div>
 
-		<!-- <div class="text-center">
+		<div class="text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
-		</div> -->
+		</div>
 
 		<template v-if="type == 'sales_call'">
 			<UserForm
@@ -76,11 +79,11 @@
 	export default {
 		name: "SalesCallManager",
 		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin],
-		// async created() {
-		// 	this.getData();
-		// 	await this.getUsers();
-		// 	this.setSearchConfig(this.userList);
-		// },
+		async created() {
+			this.getData();
+			// 	await this.getUsers();
+			// 	this.setSearchConfig(this.userList);
+		},
 		data: () => ({
 			callsList: [
 				{
@@ -122,33 +125,14 @@
 				// { text: "Purpose", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
-			keysToWatch: ["name"],
+			keysToWatch: ["company_id"],
 			// userList: [],
 			// serialNumber: 0,
 		}),
 		methods: {
 			// ...mapActions("LeaveManager", ["getAllLeaves", "updateStatus"]),
-			// ...mapActions("UserManagement", ["getUserList"]),
-			// async getUsers() {
-			// 	try {
-			// 		let salesAgents = await this.getUserList({
-			// 			filter: {
-			// 				type: "sales_agent",
-			// 			},
-			// 		});
-			// 		let remoteSalesAgents = await this.getUserList({
-			// 			filter: {
-			// 				type: "remote_sales_agent",
-			// 			},
-			// 		});
-			// 		let userList = [];
-			// 		userList.push(...salesAgents.list);
-			// 		userList.push(...remoteSalesAgents.list);
-			// 		this.userList = userList.map((e) => e.usr_data.name);
-			// 	} catch (e) {
-			// 		console.log(e);
-			// 	}
-			// },
+			...mapActions("SalesCall", ["getSalesCall", "addSalesCall", "editSalesCall", "deleteSalesCall"]),
+
 			// isDateBefore(date) {
 			// 	if (moment().isBefore(date)) {
 			// 		return true;
@@ -156,71 +140,69 @@
 			// 		return false;
 			// 	}
 			// },
-			// getData() {
-			// 	this.openLoaderDialog();
-			// 	// this.filter.representing_partner_id = this.partnerInfo._id;
-			// 	this.getAllLeaves({
-			// 		filter: this.filter,
-			// 		pageSize: this.pageSize,
-			// 		pageNo: this.pageNo,
-			// 	}).then((data) => {
-			// 		this.closeLoaderDialog();
-			// 		this.callsList = data.list;
-			// 		this.totalCount = data.totalCount;
-			// 		this.fetchCount = data.fetchCount;
-			// 		this.callsList = this.callsList.map((d, index) => ({ ...d, serial_number: index + 1 }));
-			// 	});
-			// },
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
-			// advanceSearch(filterObject) {
-			// 	// make changes here to the filterObject
-			// 	var filterData = JSON.parse(JSON.stringify(filterObject));
-			// 	if (filterData.doa) {
-			// 		filterData.doa = helpers.getISODate(filterData.doa);
-			// 	}
-			// 	if (filterData.date_from) {
-			// 		filterData.date_from = helpers.getISODate(filterData.date_from);
-			// 	}
-			// 	if (filterData.date_to) {
-			// 		filterData.date_to = helpers.getISODate(filterData.date_to);
-			// 	}
-			// 	console.log("Test Console Advance Search Output", filterData);
-			// 	this.filter = { ...filterData };
-			// 	this.pageNo = 1;
-			// 	this.getData();
-			// },
+			getData() {
+				this.openLoaderDialog();
+				// this.filter.representing_partner_id = this.partnerInfo._id;
+				this.getSalesCall({
+					filter: this.filter,
+					pageSize: this.pageSize,
+					pageNo: this.pageNo,
+				}).then((data) => {
+					this.closeLoaderDialog();
+					this.callsList = data.list;
+					this.totalCount = data.totalCount;
+					this.fetchCount = data.fetchCount;
+				});
+			},
+			queryString(data) {
+				this.filter["search_text"] = data;
+				this.getData();
+			},
+			advanceSearch(filterObject) {
+				// make changes here to the filterObject
+				var filterData = JSON.parse(JSON.stringify(filterObject));
+				if (filterData.date_of_call) {
+					filterData.date_of_call = helpers.getISODate(filterData.date_of_call);
+				}
+				console.log("Test Console Advance Search Output", filterData);
+				this.filter = { ...filterData };
+				this.pageNo = 1;
+				this.getData();
+			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				formData.company_id = this.companyInfo._id;
+				// formData.company_id = this.companyInfo._id;
+				if (formData.date_of_call) {
+					formData.date_of_call = helpers.getISODate(formData.date_of_call);
+				}
+				formData.month = 9;
+				formData.year = 2020;
 
-				// console.log("Test Console Before API call FormData Object", formData);
+				console.log("Test Console Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addAddress(formData).then((data) => {
+					this.addSalesCall(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Added Address" });
-							this.getAddresses();
+							this.openSnackbar({ text: "Sucessfully Added Sales Call Entry" });
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getAddresses();
+							this.getData();
 						}
 					});
 				} else {
-					this.editAddress(formData).then((data) => {
+					this.editSalesCall(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Edited Address" });
-							this.getAddresses();
+							this.openSnackbar({ text: "Sucessfully Edited Sales Call Entry" });
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getAddresses();
+							this.getData();
 						}
 					});
 				}
@@ -272,9 +254,9 @@
 			// 		},
 			// 	];
 			// },
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
+			updatedPageNo(page) {
+				this.getData();
+			},
 		},
 		watch: {},
 		props: {
@@ -286,7 +268,7 @@
 	};
 </script>
 <style lang="scss" scoped>
-	.leaves-search-bar {
+	.salescall-search-bar {
 		margin-top: 20px;
 		margin-bottom: 20px;
 	}
