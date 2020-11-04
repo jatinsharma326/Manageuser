@@ -176,7 +176,6 @@
 					{
 						name: "Travel Agents*",
 						type: "DropdownWithMoreInfo",
-						isCustom: true,
 						subtitleContent: (item) => {
 							return item.designation + " - " + item.company_address_data.branch_name;
 						},

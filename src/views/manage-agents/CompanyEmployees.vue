@@ -267,7 +267,6 @@
 					{
 						name: "Branch Name*",
 						type: "DropdownWithMoreInfo",
-						isCustom: true,
 						subtitleContent: (item) => {
 							return item.address + " " + item.state + " " + item.city + " " + item.pincode;
 						},
