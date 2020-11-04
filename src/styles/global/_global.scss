@@ -85,3 +85,24 @@ body {
 .v-list-item__title {
 	white-space: normal;
 }
+
+.big-grade {
+	font-size: 22px;
+	font-weight: 300;
+	color: white;
+	display: inline-flex;
+	padding: 10px 18px;
+	border-radius: 4px;
+	box-shadow: 5px 5px 10px #adbacf, -5px -5px 10px #f9ffff;
+	background: linear-gradient(145deg, #7fb2ff, #6b95de);
+}
+.small-grade {
+	font-size: 16px;
+	font-weight: 300;
+	color: white;
+	display: inline-flex;
+	padding: 8px 14px;
+	border-radius: 4px;
+	box-shadow: 5px 5px 10px #adbacf, -5px -5px 10px #f9ffff;
+	background: linear-gradient(145deg, #7fb2ff, #6b95de);
+}
