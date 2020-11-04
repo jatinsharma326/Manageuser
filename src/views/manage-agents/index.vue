@@ -63,7 +63,7 @@
 						</template>
 					</template>
 					<template v-slot:expandCardContent>
-						<v-list>
+						<v-list class="gradeListWrapper">
 							<template v-for="(grade, index) in company.grading">
 								<v-list-item :key="company._id + '+' + index">
 									<v-list-item-icon class="smallGradeWrapper">
@@ -73,10 +73,7 @@
 									</v-list-item-icon>
 
 									<v-list-item-content>
-										<v-list-item-title
-											>{{ grade.country }} {{ index
-											}}{{ company.grading.length }}</v-list-item-title
-										>
+										<v-list-item-title>{{ grade.country }} </v-list-item-title>
 									</v-list-item-content>
 								</v-list-item>
 								<v-divider
@@ -590,28 +587,11 @@
 	.manageagents-search-bar {
 		margin-top: 12px;
 	}
-	.big-grade {
-		font-size: 32px;
-		font-weight: 300;
-		color: white;
-		display: inline-flex;
-		padding: 10px 22px;
-		border-radius: 4px;
-		box-shadow: 5px 5px 10px #adbacf, -5px -5px 10px #f9ffff;
-		background: linear-gradient(145deg, #7fb2ff, #6b95de);
-	}
-	.small-grade {
-		font-size: 20px;
-		font-weight: 300;
-		color: white;
-		display: inline-flex;
-		padding: 10px 16px;
-		border-radius: 4px;
-		box-shadow: 5px 5px 10px #adbacf, -5px -5px 10px #f9ffff;
-		background: linear-gradient(145deg, #7fb2ff, #6b95de);
-	}
 	.smallGradeWrapper {
 		margin: 10px 16px 10px 0 !important;
+	}
+	.gradeListWrapper {
+		padding: 0;
 	}
 </style>
 
