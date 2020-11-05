@@ -41,6 +41,7 @@
 		<div class="text-center">
 			<v-pagination
 				@input="updatedPageNo"
+				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
