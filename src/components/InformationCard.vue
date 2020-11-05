@@ -173,10 +173,9 @@
 	}
 </style>
 <style lang="scss">
-	// .information-card {
-	//   height: 100%;
-	//   display: flex;
-	//   flex-direction: column;
-	//   justify-content: space-between;
-	// }
+	.informationCardWrapper {
+		.v-btn {
+			padding: 0 12px !important;
+		}
+	}
 </style>
