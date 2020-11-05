@@ -34,10 +34,19 @@ let apiErrorFunction = ({ err, commit, reject }) => {
 			text: "Request Failed, please try again",
 		});
 	}
+	let errMsg = "";
+	try {
+		errMsg = err.response.data.message;
+		if (typeof errMsg == "object") {
+			errMsg = errMsg[Object.keys(errMsg)[0]];
+		}
+	} catch (e) {
+		console.log(e);
+	}
 	reject({
 		ok: false,
 		err,
-		message: err.response.data.message || "Request Failed, please try again",
+		message: errMsg || "Request Failed, please try again",
 	});
 };
 
@@ -89,7 +98,7 @@ export default new Vuex.Store({
 		closeLoaderDialog(s) {
 			s.loaderDialog = false;
 		},
-		openSnackbar(s, { text = "", time = 3000 } = {}) {
+		openSnackbar(s, { text = "", time = 5000 } = {}) {
 			s.snackbarTime = time;
 			s.snackbarText = text;
 			s.snackbarState = true;
