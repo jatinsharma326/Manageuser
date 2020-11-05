@@ -13,7 +13,15 @@ const searchMixins = {
 		filter: {},
 		search_text: "",
 	}),
-	computed: {},
+	computed: {
+		isPaginationRequired: function() {
+			if (this.fetchCount / this.pageSize <= 1) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+	},
 	methods: {},
 };
 
