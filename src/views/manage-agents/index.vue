@@ -101,6 +101,8 @@
 			:selectedInfo="selectedCompanyInfo"
 		></ChangeLogModal>
 
+		<UploadModal @closeModal="toggleUploadModal(false)" :toggleModal="uploadModal"> </UploadModal>
+
 		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
 			<template v-slot:modalTitle>
 				<div v-if="selectedCompanyInfo.name">
@@ -150,7 +152,15 @@
 				</v-tooltip>
 				<v-tooltip left>
 					<template v-slot:activator="{ on, attrs }">
-						<v-btn fab dark small color="tertiary" v-bind="attrs" v-on="on">
+						<v-btn
+							fab
+							dark
+							small
+							color="tertiary"
+							@click="toggleUploadModal(true)"
+							v-bind="attrs"
+							v-on="on"
+						>
 							<v-icon>mdi-upload</v-icon>
 						</v-btn>
 					</template>
@@ -170,6 +180,7 @@
 	import companyInfo from "./CompanyInfo";
 	import ViewMoreModal from "../../components/ViewMoreModal";
 	import ChangeLogModal from "../../components/ChangeLog";
+	import UploadModal from "../../components/UploadModal";
 
 	export default {
 		name: "ManageAgents",
@@ -177,6 +188,7 @@
 		components: {
 			companyInfo,
 			ChangeLogModal,
+			UploadModal,
 		},
 		created() {
 			this.getCompanies();
@@ -189,6 +201,7 @@
 			selectedCompanyInfo: {},
 			fab: false,
 			hover: false,
+			uploadModal: false,
 			companyList: [
 				// {
 				// 	_id: "5f857918e43f60826225",
@@ -443,7 +456,12 @@
 				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
 				var tempArray = [];
 				var tempObj = {};
-				console.log("Before API call FormData Object", formData);
+				if (!formData.admin_grade || formData.admin_grade === null) {
+					formData.admin_grade = "-";
+				}
+				if (formData.website === null) {
+					formData.website = "";
+				}
 
 				// loop over the emergency contacts objects to convert it into theh backend format
 
@@ -462,7 +480,7 @@
 					}
 				}
 				formData.grading = tempArray;
-				formData.admin_grade = "A";
+				// formData.admin_grade = "A";
 
 				console.log("Before API call FormData Object", formData);
 				this.openLoaderDialog();
@@ -530,6 +548,9 @@
 				this.selectedCompanyInfo = { ...userData };
 				// console.log(this.selectedCompanyInfo);
 				this.viewMoreModal = true;
+			},
+			toggleUploadModal(value) {
+				this.uploadModal = value;
 			},
 			setSearchConfig() {
 				/*
