@@ -448,6 +448,22 @@
 				this.getCompanyEmployees();
 			},
 		},
+		watch: {
+			companyInfo: {
+				deep: true,
+				handler(nv, ov) {
+					this.filter = {};
+					this.employeeList = [];
+					this.pageNo = 1;
+					console.log("Company Info changed");
+					this.getCompanyEmployees();
+					// if (nv.countries) {
+					// 	this.setSearchConfig(nv.countries);
+					// 	this.setInputConfig(this.partnerInfo.countries);
+					// }
+				},
+			},
+		},
 		props: {
 			companyInfo: { required: true, type: Object },
 		},
