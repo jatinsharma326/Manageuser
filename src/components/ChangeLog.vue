@@ -103,7 +103,7 @@
 			toggleChangelogModal(nv, ov) {
 				this.modal = nv;
 				this.changelogsList = [];
-				this.getChangelogs(this.selectedInfo);
+				if (nv) this.getChangelogs(this.selectedInfo);
 			},
 			// selectedInfo: {
 			// 	deep: true,
