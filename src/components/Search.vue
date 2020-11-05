@@ -47,6 +47,18 @@
 								></v-autocomplete>
 							</div>
 							<div
+								v-if="filter.inputType == 'switch'"
+								:key="filter.key + '__' + filterIndex"
+								class="form-item"
+							>
+								<v-switch
+									v-model="filterObject[filter.key]"
+									:label="filter.name"
+									class="form-item"
+									inset
+								></v-switch>
+							</div>
+							<div
 								v-if="filter.inputType == 'datePicker'"
 								:key="filter.key + '__' + filterIndex"
 								class="form-item"
