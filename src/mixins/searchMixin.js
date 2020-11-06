@@ -15,11 +15,7 @@ const searchMixins = {
 	}),
 	computed: {
 		isPaginationRequired: function() {
-			if (this.fetchCount / this.pageSize <= 1) {
-				return false;
-			} else {
-				return true;
-			}
+			return !(this.fetchCount / this.pageSize <= 1);
 		},
 	},
 	methods: {},
