@@ -50,6 +50,7 @@
 							name: "Sales Team",
 							type: "sales_agent",
 							placeholder: "Search Sales Team",
+							activeCountriesList: activeCountriesList,
 							inputConfig: [
 								{
 									name: "Full Name*",
