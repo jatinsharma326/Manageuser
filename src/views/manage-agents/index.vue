@@ -193,6 +193,7 @@
 		},
 		async created() {
 			this.getCompanies();
+			this.setSearchConfig();
 			await this.getCountryList();
 			this.setInputConfig(this.activeCountriesList);
 		},
