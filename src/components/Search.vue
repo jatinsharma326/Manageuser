@@ -146,6 +146,7 @@
 				this.dateMenuRef[key] = false;
 			},
 			clearFilters() {
+				this.queryString = "";
 				this.initialiseFilterElements();
 				this.areFiltersApplied = false;
 				this.toggleAdvanceSearchSection();
@@ -162,6 +163,7 @@
 				this.areFiltersApplied = true;
 				if (Object.keys(this.filterObject).length) this.areFiltersApplied = true;
 				this.toggleAdvanceSearchSection();
+				if (this.queryString != "") this.filterObject.search_text = this.queryString;
 				this.$emit("filterObject", this.filterObject);
 			},
 			toggleAdvanceSearchSection() {
