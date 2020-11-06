@@ -631,19 +631,19 @@
 		}
 
 		.oneFourth {
-			flex: 0 0 25% !important;
+			flex: 0 0 23% !important;
 			@include custom-max(475px) {
 				flex: 0 0 100% !important;
 			}
 		}
 		.oneThird {
-			flex: 0 0 33.33% !important;
+			flex: 0 0 30% !important;
 			@include custom-max(475px) {
 				flex: 0 0 100% !important;
 			}
 		}
 		.half {
-			flex: 0 0 50% !important;
+			flex: 0 0 46% !important;
 			@include custom-max(475px) {
 				flex: 0 0 100% !important;
 			}
