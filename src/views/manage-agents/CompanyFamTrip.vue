@@ -153,7 +153,10 @@
 			},
 			getEmployees() {
 				return this.getCompanyEmployeeList({
-					filter: {},
+					filter: {
+						company_id: this.companyInfo._id,
+						active: true,
+					},
 				}).then((data) => {
 					this.employeeList = data.list;
 				});

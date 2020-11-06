@@ -216,7 +216,10 @@
 			},
 			getAddresses() {
 				return this.getAddressList({
-					filter: {},
+					filter: {
+						company_id: this.companyInfo._id,
+						active: true,
+					},
 				}).then((data) => {
 					this.addressList = data.list;
 				});
