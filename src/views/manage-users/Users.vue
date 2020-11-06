@@ -317,6 +317,12 @@
 				if (formData.doe) {
 					formData.doe = helpers.getISODate(formData.dob);
 				}
+
+				if (formData.countries) {
+					formData.countries = formData.countries.filter(
+						(e) => !!this.activeCountriesList.find((f) => f == e)
+					);
+				}
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
 				if (formData.representing_partner_ids) {
 					formData.representing_partner_ids = formData.representing_partner_ids.filter((id) => {
@@ -328,6 +334,7 @@
 					});
 				}
 				console.log("Test Console User form After", formData);
+
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addUser(formData).then((data) => {
@@ -423,6 +430,7 @@
 			type: { required: true, type: String },
 			placeholder: { required: true, type: String },
 			inputConfig: { required: true, type: Array },
+			activeCountriesList: { required: false, type: Array },
 		},
 	};
 </script>
