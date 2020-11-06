@@ -42,12 +42,13 @@
 							:key="config.name + '__' + index"
 							:label="config.name"
 							v-model="formElements[config.key]"
-							chips
-							clearable
 							:items="getItems(config)"
 							:multiple="config.multi"
 							class="form-item"
 							:class="checkWidth(config.width)"
+							chips
+							clearable
+							deletable-chips
 						></v-autocomplete>
 					</template>
 
@@ -56,14 +57,15 @@
 							:key="config.name + '__' + index"
 							:label="config.name"
 							v-model="formElements[config.key]"
-							chips
-							clearable
 							:items="getItems(config)"
 							:item-text="config.itemText"
 							:item-value="config.itemValue"
 							:multiple="config.multi"
 							class="form-item"
 							:class="checkWidth(config.width)"
+							chips
+							clearable
+							deletable-chips
 						>
 							<template v-slot:[`item`]="{ item }">
 								<v-list-item-content>
@@ -81,14 +83,15 @@
 							:key="config.name + '__' + index"
 							:label="config.name"
 							v-model="formElements[config.key]"
-							chips
-							clearable
 							:items="asyncList[config.key]"
 							:item-text="config.itemText"
 							:item-value="config.itemValue"
 							:multiple="config.multi"
 							class="form-item"
 							:class="checkWidth(config.width)"
+							chips
+							clearable
+							deletable-chips
 						>
 							<template v-slot:[`item`]="{ item }">
 								<v-list-item-content>

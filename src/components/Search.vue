@@ -40,10 +40,11 @@
 								<v-autocomplete
 									:label="filter.name"
 									v-model="filterObject[filter.key]"
-									chips
-									clearable
 									:items="getItems(filter, 'test')"
 									:multiple="filter.multi"
+									chips
+									clearable
+									deletable-chips
 								></v-autocomplete>
 							</div>
 							<div
