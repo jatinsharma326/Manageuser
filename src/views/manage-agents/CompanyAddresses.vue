@@ -19,7 +19,9 @@
 			<div v-for="address in addressList" :key="address._id" class="card-element">
 				<InformationCard :expandCard="false" :isCardDisabled="!address.record.active">
 					<template v-slot:topLeft>
-						{{ address.branch_name }}
+						<span class="branch-name">
+							{{ address.branch_name }}
+						</span>
 					</template>
 					<template v-slot:topRight>
 						{{ address.zone }}
@@ -43,7 +45,7 @@
 								{{ address.record.active ? "Disable" : "Enable" }}
 							</v-btn>
 							<v-btn
-								v-if="(userType == ADMIN || userType == MANAGEMENT) && address.record.active"
+								v-if="userType == ADMIN || userType == MANAGEMENT"
 								@click="openInputForm(true, address)"
 								color="secondary"
 								text
@@ -383,6 +385,10 @@
 		height: 100%;
 		// display: flex;
 		// flex-direction: column;
+
+		.branch-name {
+			text-transform: none;
+		}
 	}
 	.card-image img {
 		max-width: 100%;
