@@ -318,7 +318,7 @@
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				console.log("Test Console formData output", formData);
+
 				formData.countries = formData.countries.filter((e) => !!this.activeCountriesList.find((f) => f == e));
 				var tempArray = [];
 				var tempObj = {};
@@ -329,7 +329,7 @@
 					formData.website = "";
 				}
 
-				// loop over the emergency contacts objects to convert it into theh backend format
+				// loop over the Grading objects to convert it into theh backend format
 
 				for (let grade of formData.grading) {
 					tempObj = {};
@@ -338,8 +338,6 @@
 							if (alpha.input != "") {
 								tempObj["country"] = grade.groupKey;
 								tempObj["grade"] = alpha.input;
-								// if (!tempObj["contacts"]) tempObj["contacts"] = [];
-								// tempObj["contacts"].push(alpha.input);
 							}
 						}
 					}
@@ -348,10 +346,8 @@
 					}
 				}
 				formData.grading = tempArray;
-				// formData.admin_grade = "A";
 
-				console.log("Before API call FormData Object", formData);
-				/*this.openLoaderDialog();
+				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addCompany(formData).then((data) => {
 						this.closeLoaderDialog();
@@ -377,7 +373,7 @@
 							console.log("Edit Company failed");
 						}
 					});
-				}*/
+				}
 			},
 			getEditRowObject(data) {
 				return {
