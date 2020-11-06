@@ -21,14 +21,17 @@
 					<template v-slot:topLeft>
 						{{ getFormattedDate(trip.date_of_travel) }}
 					</template>
-					<template v-slot:topRight>
-						{{ trip.no_of_days }}
-					</template>
+					<template v-slot:topRight> {{ trip.no_of_days }} Days</template>
 					<template v-slot:mainContent>
 						{{ trip.country }}
 					</template>
 					<template v-slot:mainContentSubtitle>
 						{{ trip.partner_name }}
+					</template>
+					<template v-slot:mainContentRight>
+						<div class="big-grade">
+							{{ trip.current_grade }}
+						</div>
 					</template>
 					<template v-slot:actionButtons>
 						<template>
