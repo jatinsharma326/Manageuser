@@ -102,7 +102,17 @@
 			:selectedInfo="selectedCompanyInfo"
 		></ChangeLogModal>
 
-		<UploadModal @closeModal="toggleUploadModal(false)" :toggleModal="uploadModal"> </UploadModal>
+		<UploadModal
+			accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+			@closeModal="toggleUploadModal(false)"
+			:toggleModal="uploadModal"
+			title="Bulk Upload Travel Agents"
+			:uploadFunction="uploadFileFunc"
+			:downloadSampleFunc="downloadSampleFileFunc"
+			:process_id="process_id"
+			:showDownloadSampleButton="true"
+		>
+		</UploadModal>
 
 		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
 			<template v-slot:modalTitle>
@@ -166,6 +176,14 @@
 						</v-btn>
 					</template>
 					<span>Upload Excel</span>
+				</v-tooltip>
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn fab dark small color="error" @click="toggleUploadModal(true)" v-bind="attrs" v-on="on">
+							<v-icon>mdi-math-log</v-icon>
+						</v-btn>
+					</template>
+					<span>Show Logs</span>
 				</v-tooltip>
 			</v-speed-dial>
 		</div>
@@ -273,10 +291,19 @@
 			activeCountriesList: [],
 			adminInputConfig: [],
 			salesInputConfig: [],
+			process_id: "",
 		}),
 		computed: {},
 		methods: {
-			...mapActions("ManageAgents", ["getChangelogsList", "getCompaniesList", "addCompany", "editCompany"]),
+			...mapActions("ManageAgents", [
+				"getChangelogsList",
+				"getCompaniesList",
+				"addCompany",
+				"editCompany",
+				"spawnProcess",
+				"uploadTravelAgents",
+				"downloadSample",
+			]),
 			...mapActions("ManageTargets", ["getActiveCountries"]),
 			getCountryList() {
 				return this.getActiveCountries().then((data) => {
@@ -415,7 +442,20 @@
 				this.viewMoreModal = true;
 			},
 			toggleUploadModal(value) {
+				// if (value) {
+				// 	this.openLoaderDialog();
+				// 	this.spawnProcess().then((data) => {
+				// 		this.closeLoaderDialog();
+				// 		if (data.ok) {
+				// 			this.process_id = data.process_id;
+				// 			this.uploadModal = value;
+				// 		} else {
+				// 			this.openSnackbar({ text: "Another Upload Process is running. Please try again later" });
+				// 		}
+				// 	});
+				// } else {
 				this.uploadModal = value;
+				// }
 			},
 			setSearchConfig() {
 				/*
@@ -580,9 +620,21 @@
 				];
 			},
 			updatedPageNo(page) {
-				// console.log("Page", page);
-				// console.log("Page Number", this.pageNo);
 				this.getCompanies();
+			},
+			uploadFileFunc(formData) {
+				return this.uploadTravelAgents(formData);
+			},
+			// Huzefa to check
+			downloadSampleFileFunc(formData) {
+				return new Promise((res, rej) => {
+					const link = document.createElement("a");
+					link.href = "https://global-destinations-bucket.s3-us-west-2.amazonaws.com/travelAgents.xlsx";
+					link.setAttribute("download", "sample.xlsx"); //or any other extension
+					document.body.appendChild(link);
+					link.click();
+					res();
+				});
 			},
 		},
 	};
