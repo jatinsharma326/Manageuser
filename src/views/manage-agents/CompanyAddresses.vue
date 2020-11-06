@@ -222,7 +222,7 @@
 					},
 					{
 						name: "Pincode*",
-						type: "String",
+						type: "Number",
 						key: "pincode",
 						width: "half",
 						validations: {
