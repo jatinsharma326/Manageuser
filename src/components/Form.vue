@@ -411,6 +411,7 @@
 				this.$emit("closeForm");
 			},
 			initialiseFormElements() {
+				this.showError = false;
 				if (this.watcherList.length) {
 					for (let i of this.watcherList) {
 						i();
