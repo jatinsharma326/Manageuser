@@ -191,9 +191,10 @@
 			ChangeLogModal,
 			UploadModal,
 		},
-		created() {
+		async created() {
 			this.getCompanies();
-			this.setSearchConfig();
+			await this.getCountryList();
+			this.setInputConfig(this.activeCountriesList);
 		},
 		data: () => ({
 			name: "Travel Agents",
@@ -268,130 +269,19 @@
 				// },
 			],
 			keysToWatch: ["countries"],
-			adminInputConfig: [
-				{
-					name: "Company Name*",
-					type: "String",
-					key: "name",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "Website Info",
-					type: "String",
-					key: "website",
-					width: "half",
-				},
-				{
-					name: "Admin Grade",
-					type: "String",
-					key: "admin_grade",
-					width: "half",
-				},
-				{
-					name: "Defaulter?",
-					type: "Switch",
-					key: "defaulter",
-					width: "half",
-				},
-				{
-					name: "Business Type*",
-					type: "Dropdown",
-					key: "business_types",
-					width: "full",
-					multi: true,
-					isListInStore: true,
-					listVariable: "businessType",
-					validations: {
-						required,
-					},
-				},
-				{
-					name: "Countries*",
-					type: "Dropdown",
-					key: "countries",
-					width: "full",
-					multi: true,
-					isListInStore: true,
-					listVariable: "countries",
-					validations: {
-						required,
-					},
-				},
-				{
-					name: "Grade",
-					type: "MultiInputWithGroupKey",
-					key: "grading",
-					width: "full",
-					keyToGroup: "countries",
-					keyforGrouped: "country",
-					keyBeingGrouped: "grade",
-				},
-			],
-			salesInputConfig: [
-				{
-					name: "Company Name*",
-					type: "String",
-					key: "name",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "Website Info*",
-					type: "String",
-					key: "website",
-					width: "half",
-				},
-				{
-					name: "Business Type*",
-					type: "Dropdown",
-					key: "business_types",
-					width: "half",
-					multi: true,
-					isListInStore: true,
-					listVariable: "businessType",
-					validations: {
-						required,
-					},
-				},
-				{
-					name: "Defaulter?",
-					type: "Switch",
-					key: "defaulter",
-					width: "half",
-				},
-				{
-					name: "Countries*",
-					type: "Dropdown",
-					key: "countries",
-					width: "full",
-					multi: true,
-					isListInStore: true,
-					listVariable: "countries",
-					validations: {
-						required,
-					},
-				},
-				{
-					name: "Grade",
-					type: "MultiInputWithGroupKey",
-					key: "grading",
-					width: "full",
-					keyToGroup: "countries",
-					keyforGrouped: "country",
-					keyBeingGrouped: "grade",
-				},
-			],
+			activeCountriesList: [],
+			adminInputConfig: [],
+			salesInputConfig: [],
 		}),
 		computed: {},
 		methods: {
 			...mapActions("ManageAgents", ["getChangelogsList", "getCompaniesList", "addCompany", "editCompany"]),
+			...mapActions("ManageTargets", ["getActiveCountries"]),
+			getCountryList() {
+				return this.getActiveCountries().then((data) => {
+					this.activeCountriesList = data.list;
+				});
+			},
 			getCompanies() {
 				this.openLoaderDialog();
 				this.filter.active = this.activeState;
@@ -411,40 +301,6 @@
 				this.selectedCompanyInfo = { ...company };
 				this.toggleChangelogModal = true;
 			},
-			/*
-			getChangelogs(company) {
-				this.openLoaderDialog();
-				this.filter.ref_id = company._id;
-				this.getChangelogsList({
-					filter: this.filter,
-				}).then((data) => {
-					this.closeLoaderDialog();
-					this.changelogsList = data.list;
-				});
-			},
-			getLogIcon(mutation_type) {
-				if (mutation_type == "insert") {
-					return "mdi-plus";
-				} else if (mutation_type == "update") {
-					return "mdi-pencil-outline";
-				} else if (mutation_type == "disable") {
-					return "mdi-eye-minus";
-				} else if (mutation_type == "enable") {
-					return "mdi-eye-check";
-				}
-			},
-			getLogType(mutation_type) {
-				if (mutation_type == "insert") {
-					return "Created";
-				} else if (mutation_type == "update") {
-					return "Updated";
-				} else if (mutation_type == "disable") {
-					return "Disabled";
-				} else if (mutation_type == "enable") {
-					return "Enabled";
-				}
-			},
-			*/
 			queryString(data) {
 				this.filter["search_text"] = data;
 				this.getCompanies();
@@ -462,7 +318,8 @@
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
+				console.log("Test Console formData output", formData);
+				formData.countries = formData.countries.filter((e) => !!this.activeCountriesList.find((f) => f == e));
 				var tempArray = [];
 				var tempObj = {};
 				if (!formData.admin_grade || formData.admin_grade === null) {
@@ -476,12 +333,14 @@
 
 				for (let grade of formData.grading) {
 					tempObj = {};
-					for (let alpha of grade.input) {
-						if (alpha.input != "") {
-							tempObj["country"] = grade.groupKey;
-							tempObj["grade"] = alpha.input;
-							// if (!tempObj["contacts"]) tempObj["contacts"] = [];
-							// tempObj["contacts"].push(alpha.input);
+					if (formData.countries.find((f) => f == grade.groupKey)) {
+						for (let alpha of grade.input) {
+							if (alpha.input != "") {
+								tempObj["country"] = grade.groupKey;
+								tempObj["grade"] = alpha.input;
+								// if (!tempObj["contacts"]) tempObj["contacts"] = [];
+								// tempObj["contacts"].push(alpha.input);
+							}
 						}
 					}
 					if (Object.keys(tempObj).length) {
@@ -492,7 +351,7 @@
 				// formData.admin_grade = "A";
 
 				console.log("Before API call FormData Object", formData);
-				this.openLoaderDialog();
+				/*this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addCompany(formData).then((data) => {
 						this.closeLoaderDialog();
@@ -518,7 +377,7 @@
 							console.log("Edit Company failed");
 						}
 					});
-				}
+				}*/
 			},
 			getEditRowObject(data) {
 				return {
@@ -598,6 +457,128 @@
 						key: "active",
 						inputType: "switch",
 						defaultValue: false,
+					},
+				];
+			},
+			setInputConfig(activeCountriesList = []) {
+				this.adminInputConfig = [
+					{
+						name: "Company Name*",
+						type: "String",
+						key: "name",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Website Info",
+						type: "String",
+						key: "website",
+						width: "half",
+					},
+					{
+						name: "Admin Grade",
+						type: "String",
+						key: "admin_grade",
+						width: "half",
+					},
+					{
+						name: "Defaulter?",
+						type: "Switch",
+						key: "defaulter",
+						width: "half",
+					},
+					{
+						name: "Business Type*",
+						type: "Dropdown",
+						key: "business_types",
+						width: "full",
+						multi: true,
+						isListInStore: true,
+						listVariable: "businessType",
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Countries*",
+						type: "Dropdown",
+						key: "countries",
+						width: "full",
+						multi: true,
+						isListInStore: false,
+						listItems: activeCountriesList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Grade",
+						type: "MultiInputWithGroupKey",
+						key: "grading",
+						width: "full",
+						keyToGroup: "countries",
+						keyforGrouped: "country",
+						keyBeingGrouped: "grade",
+					},
+				];
+				this.salesInputConfig = [
+					{
+						name: "Company Name*",
+						type: "String",
+						key: "name",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Website Info*",
+						type: "String",
+						key: "website",
+						width: "half",
+					},
+					{
+						name: "Business Type*",
+						type: "Dropdown",
+						key: "business_types",
+						width: "half",
+						multi: true,
+						isListInStore: true,
+						listVariable: "businessType",
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Defaulter?",
+						type: "Switch",
+						key: "defaulter",
+						width: "half",
+					},
+					{
+						name: "Countries*",
+						type: "Dropdown",
+						key: "countries",
+						width: "full",
+						multi: true,
+						isListInStore: false,
+						listItems: activeCountriesList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Grade",
+						type: "MultiInputWithGroupKey",
+						key: "grading",
+						width: "full",
+						keyToGroup: "countries",
+						keyforGrouped: "country",
+						keyBeingGrouped: "grade",
 					},
 				];
 			},
