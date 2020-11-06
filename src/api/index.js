@@ -61,6 +61,10 @@ export default {
 	// TRAVEL AGENTS ADDRESS
 	CHANGELOGS: BASE_URL + "Changelogs/v0.1/",
 
+	// Bulk Upload End Points for Travel Agents
+	SPAWN_PROCESS: BASE_URL + "BulkUpload/v0.1/spawn-bulk-upload-travel-agents",
+	UPLOAD_TRAVEL_AGENT_FILE: BASE_URL + "BulkUpload/v0.1/travel-agents",
+
 	// TRAVEL AGENTS ENDPOINT
 	SALES_CALLS: BASE_URL + "SalesCalls/v0.1/",
 };
