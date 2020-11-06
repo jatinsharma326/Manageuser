@@ -113,6 +113,7 @@
 			placeholder: "Search Addresses",
 			toggleChangelogModal: false,
 			selectedCardInfo: {},
+			activeState: true,
 			addressList: [
 				// {
 				// 	_id: "5f9a990d4667e23dac5fc70d",
@@ -139,6 +140,7 @@
 			getAddresses() {
 				this.openLoaderDialog();
 				this.filter.company_id = this.companyInfo._id;
+				this.filter.active = this.activeState;
 				this.getAddressList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -236,6 +238,11 @@
 			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
+				if (this.filter.active) {
+					this.activeState = false;
+				} else {
+					this.activeState = true;
+				}
 				this.pageNo = 1;
 				this.getAddresses();
 			},
@@ -335,6 +342,12 @@
 						defaultValue: [],
 						isListInStore: false,
 						listItems: statesList,
+					},
+					{
+						name: "Show Disabled Users",
+						key: "active",
+						inputType: "switch",
+						defaultValue: false,
 					},
 				];
 			},

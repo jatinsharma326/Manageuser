@@ -203,6 +203,7 @@
 			fab: false,
 			hover: false,
 			uploadModal: false,
+			activeState: true,
 			companyList: [
 				// {
 				// 	_id: "5f857918e43f60826225",
@@ -393,6 +394,7 @@
 			...mapActions("ManageAgents", ["getChangelogsList", "getCompaniesList", "addCompany", "editCompany"]),
 			getCompanies() {
 				this.openLoaderDialog();
+				this.filter.active = this.activeState;
 				this.getCompaniesList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -449,6 +451,12 @@
 			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
+				if (this.filter.active) {
+					this.activeState = false;
+				} else {
+					this.activeState = true;
+				}
+				// console.log("Test Console advance search filter obj", this.filter);
 				this.pageNo = 1;
 				this.getCompanies();
 			},
@@ -584,6 +592,12 @@
 						defaultValue: [],
 						isListInStore: true,
 						listVariable: "countries",
+					},
+					{
+						name: "Show Disabled Users",
+						key: "active",
+						inputType: "switch",
+						defaultValue: false,
 					},
 				];
 			},

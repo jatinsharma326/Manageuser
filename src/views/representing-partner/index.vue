@@ -163,6 +163,11 @@
 			this.setSearchConfig();
 		},
 		data: () => ({
+			name: "Representing Partner",
+			placeholder: "Search Partners",
+			selectedPartnerInfo: {},
+			activeState: true,
+			keysToWatch: ["countries"],
 			partnerList: [
 				// {
 				//   _id: "5f8579099618e43f60826225",
@@ -222,9 +227,6 @@
 				//   },
 				// },
 			],
-			search_text: "",
-			name: "Representing Partner",
-			keysToWatch: ["countries"],
 			inputConfig: [
 				{
 					name: "Partner Name*",
@@ -305,14 +307,13 @@
 					keyBeingGrouped: "contacts",
 				},
 			],
-			selectedPartnerInfo: {},
-			placeholder: "Search Partners",
 		}),
 		computed: {},
 		methods: {
 			...mapActions("PartnerManagement", ["getPartnerList", "addPartner", "editPartner"]),
 			getPartners() {
 				this.openLoaderDialog();
+				this.filter.active = this.activeState;
 				this.getPartnerList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -330,6 +331,11 @@
 			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
+				if (this.filter.active) {
+					this.activeState = false;
+				} else {
+					this.activeState = true;
+				}
 				this.pageNo = 1;
 				this.getPartners();
 			},
@@ -464,6 +470,12 @@
 						defaultValue: [],
 						isListInStore: true,
 						listVariable: "countries",
+					},
+					{
+						name: "Show Disabled Users",
+						key: "active",
+						inputType: "switch",
+						defaultValue: false,
 					},
 				];
 			},

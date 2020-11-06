@@ -2,7 +2,14 @@
 	<div class="usersComponentWrapper primary-background-color">
 		<v-row class="px-6 manageusers-search-bar " justify="center" align="center">
 			<v-col cols="12" sm="8" md="6">
-				<Search @queryString="queryString" :placeholder="placeholder"></Search>
+				<Search
+					@queryString="queryString"
+					@filterObject="advanceSearch"
+					@clearFilter="advanceSearch"
+					:placeholder="placeholder"
+					:isAdvanceSearch="true"
+					:filterConfig="selectedSearchConfig"
+				></Search>
 			</v-col>
 		</v-row>
 
@@ -152,6 +159,7 @@
 		name: "Users",
 		mixins: [defaultCRUDMixin, helperMixin, inputFormMixin, searchMixin],
 		data: () => ({
+			activeState: true,
 			userList: [
 				// {
 				//   _id: "5f86e229249b154d40536494",
@@ -245,6 +253,7 @@
 		}),
 		created() {
 			this.getUsers();
+			this.setSearchConfig();
 		},
 		computed: {
 			...mapGetters(["partners"]),
@@ -258,6 +267,7 @@
 					filter: {
 						type: this.type,
 						search_text: this.search_text,
+						active: this.activeState,
 					},
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
@@ -287,6 +297,15 @@
 			},
 			queryString(data) {
 				this.search_text = data;
+				this.getUsers();
+			},
+			advanceSearch(filterObject) {
+				this.filter = { ...filterObject };
+				if (this.filter.active) {
+					this.activeState = false;
+				} else {
+					this.activeState = true;
+				}
 				this.getUsers();
 			},
 			formOutput(data) {
@@ -338,7 +357,6 @@
 					});
 				}
 			},
-
 			getEditRowObject(data) {
 				return {
 					...data.usr_data,
@@ -388,6 +406,16 @@
 						}
 					});
 				}
+			},
+			setSearchConfig() {
+				this.selectedSearchConfig = [
+					{
+						name: "Show Disabled Users",
+						key: "active",
+						inputType: "switch",
+						defaultValue: false,
+					},
+				];
 			},
 		},
 		props: {
