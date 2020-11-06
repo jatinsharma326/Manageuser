@@ -33,10 +33,11 @@
 </template>
 <script>
 	import helperMixin from "../mixins/helperMixins";
+	import searchMixin from "../mixins/searchMixin";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	export default {
 		name: "changeLogsModal",
-		mixins: [helperMixin],
+		mixins: [helperMixin, searchMixin],
 		components: {},
 		created() {
 			// this.getChangelogs(this.selectedInfo);
@@ -44,11 +45,6 @@
 		data: () => ({
 			modal: false,
 			changelogsList: [],
-			filter: {},
-			fetchCount: 0,
-			totalCount: 0,
-			pageSize: 20,
-			pageNo: 1,
 		}),
 		methods: {
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
