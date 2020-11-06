@@ -361,16 +361,15 @@
 		watch: {
 			companyInfo: {
 				deep: true,
-				handler(nv, ov) {
+				async handler(nv, ov) {
 					this.filter = {};
 					this.tripList = [];
 					this.pageNo = 1;
 					console.log("Company Info changed");
 					this.getFamTrip();
-					// if (nv.countries) {
-					// 	this.setSearchConfig(nv.countries);
-					// 	this.setInputConfig(this.partnerInfo.countries);
-					// }
+					await this.getEmployees();
+					await this.getCountryList();
+					this.setInputConfig(this.employeeList, this.countriesList);
 				},
 			},
 		},
