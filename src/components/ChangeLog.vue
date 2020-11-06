@@ -18,7 +18,7 @@
 						</v-timeline-item>
 					</v-timeline>
 					<v-card-actions>
-						<v-btn color="secondary" text @click="loadMoreLogs">
+						<v-btn v-if="pageSize <= fetchCount" color="secondary" text @click="loadMoreLogs">
 							View More
 						</v-btn>
 						<v-spacer></v-spacer>
