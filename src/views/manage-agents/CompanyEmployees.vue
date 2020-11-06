@@ -40,12 +40,7 @@
 							<v-btn @click="disableEmployee(employee)" color="error" text>
 								{{ employee.record.active ? "Disable" : "Enable" }}
 							</v-btn>
-							<v-btn
-								v-if="employee.record.active"
-								@click="openInputForm(true, employee)"
-								color="secondary"
-								text
-							>
+							<v-btn @click="openInputForm(true, employee)" color="secondary" text>
 								Edit
 							</v-btn>
 						</template>

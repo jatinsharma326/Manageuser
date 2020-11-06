@@ -36,7 +36,7 @@
 							<v-btn @click="disableUser(user)" color="error" text>
 								{{ user.record.active ? "Disable" : "Enable" }}
 							</v-btn>
-							<v-btn v-if="user.record.active" @click="openInputForm(true, user)" color="secondary" text>
+							<v-btn @click="openInputForm(true, user)" color="secondary" text>
 								Edit
 							</v-btn>
 						</template>

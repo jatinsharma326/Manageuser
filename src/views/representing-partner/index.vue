@@ -46,7 +46,7 @@
 								{{ user.record.active ? "Disable" : "Enable" }}
 							</v-btn>
 							<v-btn
-								v-if="(userType == ADMIN || userType == MANAGEMENT) && user.record.active"
+								v-if="userType == ADMIN || userType == MANAGEMENT"
 								@click="openInputForm(true, user)"
 								color="secondary"
 								text
