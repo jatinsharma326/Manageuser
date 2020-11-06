@@ -13,14 +13,14 @@ const defaultCRUDMixins = {
 	computed: {
 		...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType"]),
 		isAdminOrManagement: function() {
-			if (userType == ADMIN || userType == MANAGEMENT) {
+			if (this.userType == this.ADMIN || this.userType == this.MANAGEMENT) {
 				return true;
 			} else {
 				return false;
 			}
 		},
 		isSalesTeamMember: function() {
-			if (userType == SALES_AGENT || userType == REMOTE_SALES_AGENT) {
+			if (this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT) {
 				return true;
 			} else {
 				return false;
