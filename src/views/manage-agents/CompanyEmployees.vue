@@ -299,20 +299,10 @@
 						},
 					},
 					{
-						name: "Contact Numbers*",
+						name: "Contact Numbers",
 						type: "MultiInput",
 						key: "phone_numbers",
 						width: "half",
-						validations: {
-							required,
-							minLength: minLength(1),
-							$each: {
-								input: {
-									required,
-									minLength: minLength(8),
-								},
-							},
-						},
 					},
 					{
 						name: "DOB*",
@@ -463,12 +453,16 @@
 		watch: {
 			companyInfo: {
 				deep: true,
-				handler(nv, ov) {
+				async handler(nv, ov) {
 					this.filter = {};
 					this.employeeList = [];
 					this.pageNo = 1;
 					console.log("Company Info changed");
 					this.getCompanyEmployees();
+					await this.getAddresses();
+					this.setInputConfig(this.addressList);
+					await this.getStates();
+					this.setSearchConfig(this.statesList);
 					// if (nv.countries) {
 					// 	this.setSearchConfig(nv.countries);
 					// 	this.setInputConfig(this.partnerInfo.countries);
