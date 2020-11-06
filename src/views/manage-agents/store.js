@@ -125,7 +125,7 @@ export default {
 					partConfig: {
 						method: "post",
 						data: payload,
-						// url: constants.GLOBAL_SETTINGS_POLICIES,
+						url: constants.UPLOAD_TRAVEL_AGENT_FILE,
 					},
 					headerConfig: {
 						"Content-Type": "multipart/form-data",
@@ -145,6 +145,32 @@ export default {
 					};
 				});
 		},
+		spawnProcess: ({ commit, dispatch }) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					data: {},
+					url: constants.SPAWN_PROCESS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return data;
+					} else {
+						fail(data.message || "Failed spawn process");
+						return { ok: false };
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed spawn process");
+					return { ok: false };
+				});
+		},
+
 		// change URL for the below API call
 		downloadSample: ({ commit, dispatch }) => {
 			let fail = (msg) => commit("failure", msg);
