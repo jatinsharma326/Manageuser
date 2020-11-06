@@ -360,16 +360,15 @@
 		watch: {
 			companyInfo: {
 				deep: true,
-				handler(nv, ov) {
+				async handler(nv, ov) {
 					this.filter = {};
 					this.addressList = [];
 					this.pageNo = 1;
 					console.log("Company Info changed");
 					this.getAddresses();
-					// if (nv.countries) {
-					// 	this.setSearchConfig(nv.countries);
-					// 	this.setInputConfig(this.partnerInfo.countries);
-					// }
+					await this.getStates();
+					this.setInputConfig(this.statesList);
+					this.setSearchConfig(this.statesList);
 				},
 			},
 		},
