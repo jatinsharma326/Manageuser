@@ -19,334 +19,346 @@
 	export default {
 		name: "ManageUsers",
 		components: { Users },
-		created() {
-			this.getPartnerList();
+		async created() {
+			// this.getPartnerList();
+			await this.getCountryList();
+			this.setTabConfig(this.activeCountriesList);
 		},
 		data: () => ({
 			tab: "",
-			tabConfig: [
-				{
-					name: "Sales Team",
-					id: "salesTeam",
-					component: "Users",
-					props: {
-						name: "Sales Team",
-						type: "sales_agent",
-						placeholder: "Search Sales Team",
-						inputConfig: [
-							{
-								name: "Full Name*",
-								type: "String",
-								key: "name",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(1),
-								},
-							},
-							{
-								name: "Designation*",
-								type: "String",
-								key: "designation",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(1),
-								},
-							},
-							{
-								name: "Email*",
-								type: "String",
-								key: "email",
-								width: "full",
-								validations: {
-									required,
-									email,
-									minLength: minLength(4),
-								},
-							},
-							{
-								name: "Address*",
-								type: "String",
-								key: "address",
-								width: "full",
-								validations: {
-									required,
-									minLength: minLength(10),
-								},
-							},
-							{
-								name: "Countries*",
-								type: "Dropdown",
-								key: "countries",
-								width: "half",
-								multi: true,
-								isListInStore: true,
-								listVariable: "countries",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "Partners*",
-								type: "Dropdown",
-								key: "representing_partner_ids",
-								width: "half",
-								multi: true,
-								isListInStore: true,
-								listVariable: "partners",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "Contact Numbers*",
-								type: "MultiInput",
-								key: "phone_numbers",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(1),
-									$each: {
-										input: {
-											required,
-											minLength: minLength(8),
-										},
-									},
-								},
-							},
-							{
-								name: "DOB*",
-								type: "Date",
-								key: "dob",
-								width: "oneThird",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "DOJ*",
-								type: "Date",
-								key: "doj",
-								width: "oneThird",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "DOE",
-								type: "Date",
-								key: "doe",
-								width: "oneThird",
-							},
-						],
-					},
-				},
-				{
-					name: "Remote Sales Team",
-					id: "remoteSalesTeam",
-					component: "Users",
-					props: {
-						name: "Remote Sales Team",
-						type: "remote_sales_agent",
-						placeholder: "Search Remote Sales Team",
-						inputConfig: [
-							{
-								name: "Full Name*",
-								type: "String",
-								key: "name",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(4),
-								},
-							},
-							{
-								name: "Designation*",
-								type: "String",
-								key: "designation",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(1),
-								},
-							},
-							{
-								name: "Email*",
-								type: "String",
-								key: "email",
-								width: "half",
-								validations: {
-									required,
-									email,
-									minLength: minLength(4),
-								},
-							},
-							{
-								name: "Address*",
-								type: "String",
-								key: "address",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(10),
-								},
-							},
-							{
-								name: "Zone*",
-								type: "Dropdown",
-								key: "zone",
-								width: "half",
-								multi: false,
-								isListInStore: true,
-								listVariable: "zone",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "Contact Numbers*",
-								type: "MultiInput",
-								key: "phone_numbers",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(1),
-									$each: {
-										input: {
-											required,
-											minLength: minLength(8),
-										},
-									},
-								},
-							},
-							{
-								name: "DOB*",
-								type: "Date",
-								key: "dob",
-								width: "oneThird",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "DOJ*",
-								type: "Date",
-								key: "doj",
-								width: "oneThird",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "DOE",
-								type: "Date",
-								key: "doe",
-								width: "oneThird",
-							},
-						],
-					},
-				},
-				{
-					name: "Management Team",
-					id: "management",
-					component: "Users",
-					props: {
-						name: "Management",
-						type: "management",
-						placeholder: "Search Management Team",
-						inputConfig: [
-							{
-								name: "Full Name*",
-								type: "String",
-								key: "name",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(4),
-								},
-							},
-							{
-								name: "Designation*",
-								type: "String",
-								key: "designation",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(1),
-								},
-							},
-							{
-								name: "Email*",
-								type: "String",
-								key: "email",
-								width: "half",
-								validations: {
-									required,
-									email,
-									minLength: minLength(4),
-								},
-							},
-							{
-								name: "Address*",
-								type: "String",
-								key: "address",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(10),
-								},
-							},
-							{
-								name: "Contact Numbers*",
-								type: "MultiInput",
-								key: "phone_numbers",
-								width: "half",
-								validations: {
-									required,
-									minLength: minLength(1),
-									$each: {
-										input: {
-											required,
-											minLength: minLength(8),
-										},
-									},
-								},
-							},
-							{
-								name: "DOB*",
-								type: "Date",
-								key: "dob",
-								width: "oneThird",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "DOJ*",
-								type: "Date",
-								key: "doj",
-								width: "oneThird",
-								validations: {
-									required,
-								},
-							},
-							{
-								name: "DOE",
-								type: "Date",
-								key: "doe",
-								width: "oneThird",
-							},
-						],
-					},
-				},
-			],
+			tabConfig: [],
+			activeCountriesList: [],
 		}),
 		computed: {
 			...mapGetters([]),
 		},
 		methods: {
-			...mapActions(["getPartnerList"]),
+			// ...mapActions(["getPartnerList"]),
+			...mapActions("ManageTargets", ["getActiveCountries"]),
+			getCountryList() {
+				return this.getActiveCountries().then((data) => {
+					this.activeCountriesList = data.list;
+				});
+			},
+			setTabConfig(activeCountriesList = []) {
+				this.tabConfig = [
+					{
+						name: "Sales Team",
+						id: "salesTeam",
+						component: "Users",
+						props: {
+							name: "Sales Team",
+							type: "sales_agent",
+							placeholder: "Search Sales Team",
+							inputConfig: [
+								{
+									name: "Full Name*",
+									type: "String",
+									key: "name",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(1),
+									},
+								},
+								{
+									name: "Designation*",
+									type: "String",
+									key: "designation",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(1),
+									},
+								},
+								{
+									name: "Email*",
+									type: "String",
+									key: "email",
+									width: "full",
+									validations: {
+										required,
+										email,
+										minLength: minLength(4),
+									},
+								},
+								{
+									name: "Address*",
+									type: "String",
+									key: "address",
+									width: "full",
+									validations: {
+										required,
+										minLength: minLength(10),
+									},
+								},
+								{
+									name: "Countries*",
+									type: "Dropdown",
+									key: "countries",
+									width: "half",
+									multi: true,
+									isListInStore: false,
+									listItems: activeCountriesList,
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "Partners*",
+									type: "Dropdown",
+									key: "representing_partner_ids",
+									width: "half",
+									multi: true,
+									isListInStore: true,
+									listVariable: "partners",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "Contact Numbers*",
+									type: "MultiInput",
+									key: "phone_numbers",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(1),
+										$each: {
+											input: {
+												required,
+												minLength: minLength(8),
+											},
+										},
+									},
+								},
+								{
+									name: "DOB*",
+									type: "Date",
+									key: "dob",
+									width: "oneThird",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "DOJ*",
+									type: "Date",
+									key: "doj",
+									width: "oneThird",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "DOE",
+									type: "Date",
+									key: "doe",
+									width: "oneThird",
+								},
+							],
+						},
+					},
+					{
+						name: "Remote Sales Team",
+						id: "remoteSalesTeam",
+						component: "Users",
+						props: {
+							name: "Remote Sales Team",
+							type: "remote_sales_agent",
+							placeholder: "Search Remote Sales Team",
+							inputConfig: [
+								{
+									name: "Full Name*",
+									type: "String",
+									key: "name",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(4),
+									},
+								},
+								{
+									name: "Designation*",
+									type: "String",
+									key: "designation",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(1),
+									},
+								},
+								{
+									name: "Email*",
+									type: "String",
+									key: "email",
+									width: "half",
+									validations: {
+										required,
+										email,
+										minLength: minLength(4),
+									},
+								},
+								{
+									name: "Address*",
+									type: "String",
+									key: "address",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(10),
+									},
+								},
+								{
+									name: "Zone*",
+									type: "Dropdown",
+									key: "zone",
+									width: "half",
+									multi: false,
+									isListInStore: true,
+									listVariable: "zone",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "Contact Numbers*",
+									type: "MultiInput",
+									key: "phone_numbers",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(1),
+										$each: {
+											input: {
+												required,
+												minLength: minLength(8),
+											},
+										},
+									},
+								},
+								{
+									name: "DOB*",
+									type: "Date",
+									key: "dob",
+									width: "oneThird",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "DOJ*",
+									type: "Date",
+									key: "doj",
+									width: "oneThird",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "DOE",
+									type: "Date",
+									key: "doe",
+									width: "oneThird",
+								},
+							],
+						},
+					},
+					{
+						name: "Management Team",
+						id: "management",
+						component: "Users",
+						props: {
+							name: "Management",
+							type: "management",
+							placeholder: "Search Management Team",
+							inputConfig: [
+								{
+									name: "Full Name*",
+									type: "String",
+									key: "name",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(4),
+									},
+								},
+								{
+									name: "Designation*",
+									type: "String",
+									key: "designation",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(1),
+									},
+								},
+								{
+									name: "Email*",
+									type: "String",
+									key: "email",
+									width: "half",
+									validations: {
+										required,
+										email,
+										minLength: minLength(4),
+									},
+								},
+								{
+									name: "Address*",
+									type: "String",
+									key: "address",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(10),
+									},
+								},
+								{
+									name: "Contact Numbers*",
+									type: "MultiInput",
+									key: "phone_numbers",
+									width: "half",
+									validations: {
+										required,
+										minLength: minLength(1),
+										$each: {
+											input: {
+												required,
+												minLength: minLength(8),
+											},
+										},
+									},
+								},
+								{
+									name: "DOB*",
+									type: "Date",
+									key: "dob",
+									width: "oneThird",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "DOJ*",
+									type: "Date",
+									key: "doj",
+									width: "oneThird",
+									validations: {
+										required,
+									},
+								},
+								{
+									name: "DOE",
+									type: "Date",
+									key: "doe",
+									width: "oneThird",
+								},
+							],
+						},
+					},
+				];
+			},
 		},
 	};
 </script>
