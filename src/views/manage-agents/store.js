@@ -1,6 +1,9 @@
 import constants from "@/api";
 
-const initialState = () => ({});
+const initialState = () => ({
+	addressList: [],
+	employeesList: [],
+});
 export default {
 	namespaced: true,
 	state: initialState(),
@@ -13,6 +16,12 @@ export default {
 			Object.keys(initial).forEach((key) => {
 				state[key] = initial[key];
 			});
+		},
+		setAddressList(state, data) {
+			state.addressList = data;
+		},
+		setEmployeeList(state, data) {
+			state.employeesList = data;
 		},
 	},
 	actions: {
@@ -205,14 +214,15 @@ export default {
 		},
 
 		// change URL for the below API call
-		downloadSample: ({ commit, dispatch }) => {
+		downloadErrorFile: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"fileDownload_API_Call",
 				{
 					method: "get",
 					params: {},
-					url: constants.BULK_UPLOAD_INPUT_FILE,
+					params: payload,
+					url: constants.BULK_UPLOAD_ERROR_FILE,
 					responseType: "blob",
 				},
 				{ root: true }
@@ -220,11 +230,10 @@ export default {
 				.then(({ data, response }) => {
 					if (response.status === 200) {
 						commit("openSnackbar", { text: "Starting Download" }, { root: true });
-						console.log("Test Console for Download Policies Data", data);
 						const url = window.URL.createObjectURL(new Blob([data]));
 						const link = document.createElement("a");
 						link.href = url;
-						link.setAttribute("download", "sample.xlsx"); //or any other extension
+						link.setAttribute("download", "Errors.xlsx"); //or any other extension
 						document.body.appendChild(link);
 						link.click();
 						return;
@@ -624,5 +633,8 @@ export default {
 				});
 		},
 	},
-	getters: {},
+	getters: {
+		storeAddressList: (state) => state.addressList,
+		storeEmployeesList: (state) => state.employeesList,
+	},
 };
