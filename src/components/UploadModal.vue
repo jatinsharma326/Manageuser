@@ -6,8 +6,10 @@
 					<v-card-title>
 						<span class="headline">{{ title }}</span>
 						<v-spacer></v-spacer>
-						<div class="close-dialog" @click="closeModal">
-							<v-icon color="error">mdi-close</v-icon>
+						<div class="close-dialog" @click="closeModal(true)">
+							<v-btn fab color="error" text>
+								<v-icon>mdi-close</v-icon>
+							</v-btn>
 						</div>
 					</v-card-title>
 					<div v-if="showProgress" class="file-upload-progress-container">
@@ -73,8 +75,8 @@
 		methods: {
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("ManageAgents", ["downloadSample"]),
-			closeModal() {
-				this.$emit("closeModal");
+			closeModal(clearSession = false) {
+				this.$emit("closeModal", clearSession);
 			},
 			uploadFile() {
 				let formData = this.createFormData(this.file);
