@@ -23,11 +23,7 @@
 								</div>
 								<div class="log-buttons">
 									<v-btn @click="downloadInputFile(log)" color="primary" outlined>Input File</v-btn>
-									<v-btn
-										v-if="log.error_rows_exists"
-										@click="downloadErrorFile(log)"
-										color="error"
-										text
+									<v-btn v-if="log.error_rows_exists" @click="downloadError(log)" color="error" text
 										>Error File</v-btn
 									>
 								</div>
@@ -65,7 +61,7 @@
 		}),
 		methods: {
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
-			...mapActions("ManageAgents", ["getUploadLogs", "getInputFileURL"]),
+			...mapActions("ManageAgents", ["getUploadLogs", "getInputFileURL", "downloadErrorFile"]),
 			closeModal() {
 				this.pageSize = 20;
 				this.logsList = [];
@@ -104,6 +100,7 @@
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (data.ok) {
+						this.openSnackbar({ text: "Starting Download" });
 						const link = document.createElement("a");
 						link.href = data.url;
 						link.setAttribute("download", "InputFile.xlsx"); //or any other extension
@@ -114,7 +111,12 @@
 					}
 				});
 			},
-			downloadErrorFile(log) {},
+			downloadError(log) {
+				this.openLoaderDialog();
+				this.downloadErrorFile({
+					process_id: log.process_id,
+				}).then(() => this.closeLoaderDialog());
+			},
 		},
 		watch: {
 			toggleUploadlogModal(nv, ov) {
@@ -153,6 +155,9 @@
 			font-size: 14px;
 			color: grey;
 			// font-weight: 600;
+		}
+		.log-buttons {
+			margin-top: 5px;
 		}
 	}
 </style>
