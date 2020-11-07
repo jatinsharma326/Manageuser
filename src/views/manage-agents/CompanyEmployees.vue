@@ -156,6 +156,11 @@
 			await this.getStates();
 			this.setSearchConfig(this.statesList);
 		},
+		// updated() {
+		// 	if (this.toggleForm) {
+		// 		console.log("Updated");
+		// 	}
+		// },
 		data: () => ({
 			name: "Travel Agent Employee",
 			placeholder: "Search Travel Agent Employees",
@@ -189,7 +194,9 @@
 			statesList: [],
 			inputConfig: [],
 		}),
-		computed: {},
+		computed: {
+			...mapGetters("ManageAgents", ["storeAddressList"]),
+		},
 		methods: {
 			...mapActions("ManageAgents", [
 				"getStatesList",
@@ -199,7 +206,8 @@
 				"addCompanyEmployee",
 				"editCompanyEmployee",
 			]),
-			getCompanyEmployees() {
+			...mapMutations("ManageAgents", ["setEmployeeList"]),
+			getCompanyEmployees(callMutation = false) {
 				this.openLoaderDialog();
 				this.filter.company_id = this.companyInfo._id;
 				this.filter.active = this.activeState;
@@ -212,6 +220,9 @@
 					this.employeeList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+					if (callMutation) {
+						this.setEmployeeList(this.employeeList);
+					}
 				});
 			},
 			getAddresses() {
@@ -342,7 +353,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Travel Agent Employee" });
-							this.getCompanyEmployees();
+							this.getCompanyEmployees(true);
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -462,7 +473,7 @@
 					this.closeLoaderDialog();
 					if (data.ok) {
 						this.openSnackbar({ text: "Sucessfully Added Travel Agent Employee" });
-						this.getCompanyEmployees();
+						this.getCompanyEmployees(true);
 						this.closeForm();
 					} else {
 						this.openSnackbar({ text: data.message });
@@ -487,6 +498,12 @@
 					// 	this.setSearchConfig(nv.countries);
 					// 	this.setInputConfig(this.partnerInfo.countries);
 					// }
+				},
+			},
+			storeAddressList: {
+				deep: true,
+				handler(nv, ov) {
+					this.setInputConfig(nv);
 				},
 			},
 		},
