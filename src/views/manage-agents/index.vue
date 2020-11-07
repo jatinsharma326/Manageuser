@@ -99,7 +99,7 @@
 
 		<UploadModal
 			accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-			@closeModal="toggleUploadModal(false)"
+			@closeModal="closeUploadModal"
 			:toggleModal="uploadModal"
 			title="Bulk Upload Travel Agents"
 			:uploadFunction="uploadFileFunc"
@@ -299,6 +299,7 @@
 				"addCompany",
 				"editCompany",
 				"spawnProcess",
+				"deleteSpawnProcess",
 				"uploadTravelAgents",
 				"downloadSample",
 			]),
@@ -622,6 +623,14 @@
 			},
 			uploadFileFunc(formData) {
 				return this.uploadTravelAgents(formData);
+			},
+			closeUploadModal(data) {
+				if (data) {
+					this.deleteSpawnProcess({
+						process_id: this.process_id,
+					});
+				}
+				this.toggleUploadModal(false);
 			},
 			// Huzefa to check
 			downloadSampleFileFunc(formData) {
