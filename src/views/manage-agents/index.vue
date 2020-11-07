@@ -92,6 +92,11 @@
 			:selectedInfo="selectedCompanyInfo"
 		></ChangeLogModal>
 
+		<UploadLogs
+			@closeModal="toggleUploadlogModal = false"
+			:toggleUploadlogModal="toggleUploadlogModal"
+		></UploadLogs>
+
 		<UploadModal
 			accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
 			@closeModal="toggleUploadModal(false)"
@@ -169,7 +174,7 @@
 				</v-tooltip>
 				<v-tooltip left>
 					<template v-slot:activator="{ on, attrs }">
-						<v-btn fab dark small color="error" @click="toggleUploadModal(true)" v-bind="attrs" v-on="on">
+						<v-btn fab dark small color="error" @click="openUploadlogsModal(true)" v-bind="attrs" v-on="on">
 							<v-icon>mdi-math-log</v-icon>
 						</v-btn>
 					</template>
@@ -190,6 +195,7 @@
 	import ViewMoreModal from "../../components/ViewMoreModal";
 	import ChangeLogModal from "../../components/ChangeLog";
 	import UploadModal from "../../components/UploadModal";
+	import UploadLogs from "./UploadLogs";
 
 	export default {
 		name: "ManageAgents",
@@ -198,6 +204,7 @@
 			companyInfo,
 			ChangeLogModal,
 			UploadModal,
+			UploadLogs,
 		},
 		async created() {
 			this.getCompanies();
@@ -209,6 +216,7 @@
 			name: "Travel Agents",
 			placeholder: "Search Companies",
 			toggleChangelogModal: false,
+			toggleUploadlogModal: false,
 			selectedCompanyInfo: {},
 			fab: false,
 			hover: false,
@@ -318,6 +326,9 @@
 				// this.getChangelogs(company);
 				this.selectedCompanyInfo = { ...company };
 				this.toggleChangelogModal = true;
+			},
+			openUploadlogsModal(company) {
+				this.toggleUploadlogModal = true;
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
