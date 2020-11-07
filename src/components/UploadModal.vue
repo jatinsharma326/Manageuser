@@ -82,7 +82,7 @@
 				this.uploadFunction(formData).then((data) => {
 					this.showProgress = false;
 					if (data.ok) {
-						this.openSnackbar({ text: "File Upload Sucessful" });
+						this.openSnackbar({ text: "File Upload Sucessful. Check logs for Process Status" });
 						this.closeModal();
 						this.file = null;
 					} else {
