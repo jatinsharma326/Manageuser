@@ -194,6 +194,7 @@
 			...mapActions("ManageAgents", [
 				"getStatesList",
 				"getAddressList",
+				"checkEmployeeDetail",
 				"getCompanyEmployeeList",
 				"addCompanyEmployee",
 				"editCompanyEmployee",
@@ -304,13 +305,10 @@
 						width: "half",
 					},
 					{
-						name: "DOB*",
+						name: "DOB",
 						type: "Date",
 						key: "dob",
 						width: "oneThird",
-						validations: {
-							required,
-						},
 					},
 				];
 			},
@@ -331,29 +329,15 @@
 			async formOutput(data) {
 				// formData.company_address_id = formData.branch_name;
 				var formData = JSON.parse(JSON.stringify(data));
-
 				formData.company_id = this.companyInfo._id;
-				formData.dob = helpers.getISODate(formData.dob);
+				if (formData.dob) formData.dob = helpers.getISODate(formData.dob);
 				formData.company_id = this.companyInfo._id;
-				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
-				formData.email_ids = data.email_ids.map((data) => data.input);
+				formData.phone_numbers = data.phone_numbers.map((data) => data.input).filter((e) => e != "");
+				formData.email_ids = data.email_ids.map((data) => data.input).filter((e) => e != "");
 
 				console.log("Test Console Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
-				if (!this.isEditMode) {
-					this.addCompanyEmployee(formData).then((data) => {
-						this.closeLoaderDialog();
-						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Added Travel Agent Employee" });
-							this.getCompanyEmployees();
-							this.closeForm();
-						} else {
-							this.openSnackbar({ text: data.message });
-							this.getCompanyEmployees();
-						}
-					});
-				} else {
+				if (this.isEditMode) {
 					this.editCompanyEmployee(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
@@ -362,10 +346,36 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getCompanyEmployees();
 						}
 					});
+				} else {
+					// In the case of adding a travel agent employee
+					if (formData.phone_numbers.length || formData.email_ids.length) {
+						this.checkEmployeeDetail({
+							company_id: formData.company_id,
+							phone_numbers: formData.phone_numbers,
+							email_ids: formData.email_ids,
+						}).then((data) => {
+							if (data.ok && data.data) {
+								if (
+									window.confirm(
+										`Possible Duplicate Employee "${data.data.name}" (${data.data.designation}) already exists. Are you sure you want to continue.`
+									)
+								) {
+									this.addCompanyEmployeeWrapper(formData);
+								} else {
+									this.closeLoaderDialog();
+								}
+							} else {
+								this.addCompanyEmployeeWrapper(formData);
+							}
+						});
+					} else {
+						this.addCompanyEmployeeWrapper(formData);
+					}
 				}
+
+				// this.openLoaderDialog();
 			},
 			getEditRowObject(data) {
 				return {
@@ -396,7 +406,6 @@
 							this.getCompanyEmployees();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getCompanyEmployees();
 						}
 					});
 				}
@@ -447,6 +456,18 @@
 			},
 			updatedPageNo(page) {
 				this.getCompanyEmployees();
+			},
+			addCompanyEmployeeWrapper(formData) {
+				this.addCompanyEmployee(formData).then((data) => {
+					this.closeLoaderDialog();
+					if (data.ok) {
+						this.openSnackbar({ text: "Sucessfully Added Travel Agent Employee" });
+						this.getCompanyEmployees();
+						this.closeForm();
+					} else {
+						this.openSnackbar({ text: data.message });
+					}
+				});
 			},
 		},
 		watch: {
