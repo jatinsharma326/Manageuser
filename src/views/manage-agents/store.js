@@ -82,7 +82,7 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		// change URL for the below API call
+
 		getUploadLogs: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -90,7 +90,7 @@ export default {
 				{
 					method: "get",
 					params: payload,
-					// url: constants.ALL_STATES,
+					url: constants.BULK_UPLOAD_LOGS,
 				},
 				{ root: true }
 			)
@@ -106,6 +106,8 @@ export default {
 						fail(data.message || "Failed to load upload Logs List");
 						return {
 							ok: false,
+							totalCount: 0,
+							fetchCount: 0,
 							list: [],
 						};
 					}
@@ -116,7 +118,38 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		// change URL for the below API call
+		getInputFileURL: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.BULK_UPLOAD_INPUT_FILE,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							url: data.url,
+						};
+					} else {
+						fail(data.message || "Failed to load upload Logs List");
+						return {
+							ok: false,
+							url: "",
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load upload Logs List");
+					return { ok: false, url: "" };
+				});
+		},
+
 		uploadTravelAgents: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -179,7 +212,7 @@ export default {
 				{
 					method: "get",
 					params: {},
-					// url: constants.GLOBAL_SETTINGS_POLICIES,
+					url: constants.BULK_UPLOAD_INPUT_FILE,
 					responseType: "blob",
 				},
 				{ root: true }
@@ -372,6 +405,38 @@ export default {
 				});
 		},
 
+		checkEmployeeDetail: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.DUPLICATE_DATA_WARNING,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					console.log("Test Console Warning Main API", data);
+					if (data.ok) {
+						return {
+							ok: true,
+							data: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to get Employee Details");
+						return {
+							ok: false,
+							data: {},
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to get Employee Details");
+					return { ok: false, data: {} };
+				});
+		},
 		getCompanyEmployeeList: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
