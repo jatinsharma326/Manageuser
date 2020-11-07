@@ -127,7 +127,9 @@
 				// },
 			],
 		}),
-		computed: {},
+		computed: {
+			...mapGetters("ManageAgents", ["storeEmployeesList"]),
+		},
 		methods: {
 			...mapActions("ManageAgents", [
 				"getFamTripList",
@@ -366,6 +368,12 @@
 					await this.getEmployees();
 					await this.getCountryList();
 					this.setInputConfig(this.employeeList, this.countriesList);
+				},
+			},
+			storeEmployeesList: {
+				deep: true,
+				handler(nv, ov) {
+					this.setInputConfig(nv);
 				},
 			},
 		},
