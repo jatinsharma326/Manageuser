@@ -189,7 +189,6 @@
 						this.getSettings();
 					} else {
 						this.openSnackbar({ text: data.message });
-						this.getSettings();
 					}
 				});
 			},

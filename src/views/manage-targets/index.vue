@@ -240,7 +240,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getYearlyTargets();
 							this.closeForm();
 						}
 					});
@@ -253,7 +252,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getYearlyTargets();
 							this.closeForm();
 						}
 					});
@@ -279,7 +277,6 @@
 							this.getYearlyTargets();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getYearlyTargets();
 						}
 					});
 				}

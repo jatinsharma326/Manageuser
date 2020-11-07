@@ -191,7 +191,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getData();
 						}
 					});
 				} else {
@@ -203,7 +202,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getData();
 						}
 					});
 				}

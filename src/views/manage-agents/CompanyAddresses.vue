@@ -254,7 +254,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getAddresses();
 						}
 					});
 				} else {
@@ -266,7 +265,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getAddresses();
 						}
 					});
 				}
@@ -298,7 +296,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getAddresses();
 						}
 					});
 				}

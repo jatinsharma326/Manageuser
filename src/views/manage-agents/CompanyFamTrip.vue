@@ -259,7 +259,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getFamTrip();
 						}
 					});
 				} else {
@@ -271,7 +270,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getFamTrip();
 						}
 					});
 				}
@@ -303,7 +301,6 @@
 							this.getFamTrip();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getFamTrip();
 						}
 					});
 				}
@@ -352,7 +349,6 @@
 							this.getFamTrip();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getFamTrip();
 						}
 					});
 				}

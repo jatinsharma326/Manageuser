@@ -375,7 +375,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getCompanies();
 						}
 					});
 				} else {
@@ -383,12 +382,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Company" });
-							console.log("Edit Company success");
 							this.getCompanies();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit Company failed");
 						}
 					});
 				}
@@ -432,20 +429,20 @@
 				this.viewMoreModal = true;
 			},
 			toggleUploadModal(value) {
-				// if (value) {
-				// 	this.openLoaderDialog();
-				// 	this.spawnProcess().then((data) => {
-				// 		this.closeLoaderDialog();
-				// 		if (data.ok) {
-				// 			this.process_id = data.process_id;
-				// 			this.uploadModal = value;
-				// 		} else {
-				// 			this.openSnackbar({ text: "Another Upload Process is running. Please try again later" });
-				// 		}
-				// 	});
-				// } else {
-				this.uploadModal = value;
-				// }
+				if (value) {
+					this.openLoaderDialog();
+					this.spawnProcess().then((data) => {
+						this.closeLoaderDialog();
+						if (data.ok) {
+							this.process_id = data.process_id;
+							this.uploadModal = value;
+						} else {
+							this.openSnackbar({ text: "Another Upload Process is running. Please try again later" });
+						}
+					});
+				} else {
+					this.uploadModal = value;
+				}
 			},
 			setSearchConfig() {
 				/*

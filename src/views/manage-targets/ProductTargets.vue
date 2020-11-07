@@ -193,7 +193,6 @@
 						this.getData();
 					} else {
 						this.openSnackbar({ text: data.message });
-						this.getData();
 					}
 				});
 			},
@@ -255,7 +254,6 @@
 								this.closeForm();
 							} else {
 								this.openSnackbar({ text: data.message });
-								this.getData();
 								this.closeForm();
 							}
 						})
@@ -286,7 +284,6 @@
 							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.getData();
 						}
 					});
 				}

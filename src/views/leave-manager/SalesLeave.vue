@@ -188,8 +188,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.fetchPendingLeaves();
-							this.getData();
 						}
 					});
 				} else {
@@ -202,8 +200,6 @@
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.fetchPendingLeaves();
-							this.getData();
 						}
 					});
 				}
@@ -228,8 +224,6 @@
 							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
-							this.fetchPendingLeaves();
-							this.getData();
 						}
 					});
 				}
