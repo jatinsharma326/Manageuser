@@ -36,20 +36,10 @@
 							<v-btn @click="openChangelogsModal(address)" icon color="secondary" text
 								><v-icon>mdi-information-outline</v-icon></v-btn
 							>
-							<v-btn
-								v-if="userType == ADMIN || userType == MANAGEMENT"
-								@click="disablePartner(address)"
-								color="error"
-								text
-							>
+							<v-btn @click="disablePartner(address)" color="error" text>
 								{{ address.record.active ? "Disable" : "Enable" }}
 							</v-btn>
-							<v-btn
-								v-if="userType == ADMIN || userType == MANAGEMENT"
-								@click="openInputForm(true, address)"
-								color="secondary"
-								text
-							>
+							<v-btn @click="openInputForm(true, address)" color="secondary" text>
 								Edit
 							</v-btn>
 						</template>

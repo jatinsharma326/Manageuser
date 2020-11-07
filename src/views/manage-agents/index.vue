@@ -41,20 +41,10 @@
 							<v-btn @click="openChangelogsModal(company)" icon color="secondary" text
 								><v-icon>mdi-information-outline</v-icon></v-btn
 							>
-							<v-btn
-								v-if="userType == ADMIN || userType == MANAGEMENT"
-								@click="disableCompany(company)"
-								color="error"
-								text
-							>
+							<v-btn @click="disableCompany(company)" color="error" text>
 								{{ company.record.active ? "Disable" : "Enable" }}
 							</v-btn>
-							<v-btn
-								v-if="userType == ADMIN || userType == MANAGEMENT"
-								@click="openInputForm(true, company)"
-								color="secondary"
-								text
-							>
+							<v-btn @click="openInputForm(true, company)" color="secondary" text>
 								Edit
 							</v-btn>
 							<v-btn @click="openInformationModal(company)" color="primary" text>
@@ -134,7 +124,7 @@
 			@formOutput="formOutput"
 			@closeForm="closeForm"
 			:name="name"
-			:inputConfig="userType == ADMIN || userType == MANAGEMENT ? adminInputConfig : salesInputConfig"
+			:inputConfig="isAdminOrManagement ? adminInputConfig : salesInputConfig"
 			:keysToWatch="keysToWatch"
 			:toggleForm="toggleForm"
 			:formData="rowToEdit"

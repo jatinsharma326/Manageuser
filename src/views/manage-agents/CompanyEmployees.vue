@@ -36,7 +36,6 @@
 							<v-btn @click="openChangelogsModal(employee)" icon color="secondary" text
 								><v-icon>mdi-information-outline</v-icon></v-btn
 							>
-							<!-- v-if="userType == ADMIN || userType == MANAGEMENT" -->
 							<v-btn @click="disableEmployee(employee)" color="error" text>
 								{{ employee.record.active ? "Disable" : "Enable" }}
 							</v-btn>

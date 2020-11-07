@@ -31,7 +31,7 @@
 									{{ user.country }}
 								</template>
 								<template v-slot:actionButtons>
-									<template v-if="userType == ADMIN || userType == MANAGEMENT">
+									<template v-if="isAdminOrManagement">
 										<v-btn @click="deleteEmployee(user)" color="error" text>
 											Delete
 										</v-btn>
@@ -92,7 +92,7 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div v-if="userType == ADMIN || userType == MANAGEMENT" class="floating-button">
+		<div v-if="isAdminOrManagement" class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>

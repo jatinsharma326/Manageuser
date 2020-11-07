@@ -37,20 +37,10 @@
 					</template>
 					<template v-slot:actionButtons>
 						<template>
-							<v-btn
-								v-if="userType == ADMIN || userType == MANAGEMENT"
-								@click="disablePartner(user)"
-								color="error"
-								text
-							>
+							<v-btn v-if="isAdminOrManagement" @click="disablePartner(user)" color="error" text>
 								{{ user.record.active ? "Disable" : "Enable" }}
 							</v-btn>
-							<v-btn
-								v-if="userType == ADMIN || userType == MANAGEMENT"
-								@click="openInputForm(true, user)"
-								color="secondary"
-								text
-							>
+							<v-btn v-if="isAdminOrManagement" @click="openInputForm(true, user)" color="secondary" text>
 								Edit
 							</v-btn>
 							<v-btn @click="openEmployeeModal(user)" color="primary" text>
@@ -134,7 +124,7 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div v-if="userType == ADMIN || userType == MANAGEMENT" class="floating-button">
+		<div v-if="isAdminOrManagement" class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>

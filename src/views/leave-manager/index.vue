@@ -1,6 +1,6 @@
 <template>
 	<div class="leavesManagerWrapper">
-		<adminLeaves v-if="userType == ADMIN || userType == MANAGEMENT"></adminLeaves>
+		<adminLeaves v-if="isAdminOrManagement"></adminLeaves>
 		<salesLeaves v-else></salesLeaves>
 	</div>
 </template>
