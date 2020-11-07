@@ -631,29 +631,29 @@
 		background: white;
 
 		.input-with-group-key-title {
-			flex: 0 0 100%;
+			flex: 0 0 95%;
 		}
 
 		.oneFourth {
-			flex: 0 0 23% !important;
+			flex: 0 0 23.75% !important;
 			@include custom-max(475px) {
-				flex: 0 0 100% !important;
+				flex: 0 0 95% !important;
 			}
 		}
 		.oneThird {
-			flex: 0 0 30% !important;
+			flex: 0 0 31.35% !important;
 			@include custom-max(475px) {
-				flex: 0 0 100% !important;
+				flex: 0 0 95% !important;
 			}
 		}
 		.half {
-			flex: 0 0 46% !important;
+			flex: 0 0 47.5% !important;
 			@include custom-max(475px) {
-				flex: 0 0 100% !important;
+				flex: 0 0 95% !important;
 			}
 		}
 		.full {
-			flex: 0 0 100% !important;
+			flex: 0 0 95% !important;
 		}
 
 		.headline {
@@ -672,16 +672,16 @@
 			flex-wrap: wrap;
 		}
 		.date-picker {
-			flex-basis: 50%;
+			flex-basis: 47.5%;
 			@include media-breakpoint-up(xs) {
-				flex-basis: 100%;
+				flex-basis: 95%;
 			}
 		}
 		.multi-input-field {
-			flex-basis: 100%;
+			flex-basis: 95%;
 		}
 		.multi-input-buttons {
-			flex-basis: 100%;
+			flex-basis: 95%;
 			display: flex;
 			justify-content: flex-end;
 		}
