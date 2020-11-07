@@ -129,7 +129,8 @@
 		computed: {},
 		methods: {
 			...mapActions("ManageAgents", ["getStatesList", "getAddressList", "addAddress", "editAddress"]),
-			getAddresses() {
+			...mapMutations("ManageAgents", ["setAddressList"]),
+			getAddresses(callMutation = false) {
 				this.openLoaderDialog();
 				this.filter.company_id = this.companyInfo._id;
 				this.filter.active = this.activeState;
@@ -142,6 +143,9 @@
 					this.addressList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+					if (callMutation) {
+						this.setAddressList(this.addressList);
+					}
 				});
 			},
 			getStates() {
@@ -250,7 +254,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Address" });
-							this.getAddresses();
+							this.getAddresses(true);
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -261,7 +265,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Address" });
-							this.getAddresses();
+							this.getAddresses(true);
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
