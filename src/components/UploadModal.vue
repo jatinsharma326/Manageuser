@@ -10,7 +10,23 @@
 							<v-icon color="error">mdi-close</v-icon>
 						</div>
 					</v-card-title>
-					<div class="file-upload-section">
+					<div v-if="showProgress" class="file-upload-progress-container">
+						<div class="section-title">
+							Uploading
+						</div>
+						<div class="progress-bar-wrapper">
+							<v-progress-linear height="24px" color="primary" rounded :value="uploadPercentage">
+								<template v-slot:default="{ value }">
+									<strong>{{ Math.ceil(value) }}%</strong>
+								</template>
+							</v-progress-linear>
+							<!-- <div class="section-title progress-completion-status">{{ uploadPercentage }}%</div> -->
+						</div>
+						<div class="time-elapsed-section">
+							<!-- <TimeElapsed :date="startTime"></TimeElapsed>&nbsp;elapsed -->
+						</div>
+					</div>
+					<div v-else class="file-upload-section">
 						<v-file-input
 							v-model="file"
 							type="file"
@@ -34,23 +50,6 @@
 								text
 								>Download Sample</v-btn
 							>
-						</div>
-					</div>
-					<div v-if="showProgress" class="file-upload-progress-container">
-						<div class="section-title">
-							Uploading
-						</div>
-						<div class="progress-bar-wrapper">
-							<v-progress-linear
-								height="24px"
-								color="primary"
-								rounded
-								:value="uploadPercentage"
-							></v-progress-linear>
-							<div class="section-title progress-completion-status">{{ uploadPercentage }}%</div>
-						</div>
-						<div class="time-elapsed-section">
-							<!-- <TimeElapsed :date="startTime"></TimeElapsed>&nbsp;elapsed -->
 						</div>
 					</div>
 				</v-card>
@@ -122,11 +121,21 @@
 	};
 </script>
 <style lang="scss" scoped>
-	.uploadModalWrapper {
-		.file-upload-section {
-			padding: 20px;
-			display: flex;
-			justify-content: center;
-		}
+	.section-title {
+		font-weight: 700;
+		margin-bottom: 5px;
+	}
+	.file-upload-progress-container {
+		padding: 20px;
+		padding-bottom: 30px;
+	}
+	.file-upload-section {
+		padding: 20px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+	}
+	.upload-file-selector {
+		flex-basis: 95%;
 	}
 </style>
