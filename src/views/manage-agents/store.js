@@ -212,6 +212,29 @@ export default {
 					return { ok: false };
 				});
 		},
+		deleteSpawnProcess: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "post",
+					data: payload,
+					url: constants.BULK_UPLOAD_DELETE_SPAWN,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to delete Spawn Process");
+					return data;
+				})
+				.catch((err) => {
+					fail(err.toString() || "Failed to delete Spawn Process");
+					return {
+						ok: false,
+						message: err.message,
+					};
+				});
+		},
 
 		// change URL for the below API call
 		downloadErrorFile: ({ commit, dispatch }, payload) => {
