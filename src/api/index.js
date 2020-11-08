@@ -1,7 +1,7 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
-// const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
-const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
+const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
+// const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
 // : // : "https://4fe85f9c.ngrok.io";
 
 export default {
@@ -48,6 +48,7 @@ export default {
 	DUPLICATE_DATA_WARNING: BASE_URL + "TravelAgentEmployees/v0.1/warning",
 	BULK_UPLOAD_LOGS: BASE_URL + "BulkUpload/v0.1/all-session-logs",
 	BULK_UPLOAD_INPUT_FILE: BASE_URL + "BulkUpload/v0.1/file-url",
+	BULK_UPLOAD_DELETE_SPAWN: BASE_URL + "BulkUpload/v0.1/delete-process",
 	BULK_UPLOAD_ERROR_FILE: BASE_URL + "ErrorFiles/v0.1/",
 
 	// TRAVEL AGENTS ADDRESS
