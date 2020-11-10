@@ -53,7 +53,7 @@
 		mixins: [helperMixin, searchMixin],
 		components: {},
 		created() {
-			this.getLogs();
+			// this.getLogs();
 		},
 		data: () => ({
 			modal: false,
