@@ -93,7 +93,12 @@
 							</v-list-item>
 							<v-list-item>
 								<v-list-item-content>
-									<v-list-item-title>DOB: {{ getFormattedDate(employee.dob) }}</v-list-item-title>
+									<v-list-item-title
+										>DOB:
+										{{
+											employee.dob ? getFormattedDate(employee.dob) : "--/--/----"
+										}}</v-list-item-title
+									>
 								</v-list-item-content>
 							</v-list-item>
 						</v-list>
@@ -341,6 +346,7 @@
 				// formData.company_address_id = formData.branch_name;
 				var formData = JSON.parse(JSON.stringify(data));
 				formData.company_id = this.companyInfo._id;
+				if (!formData.designation) formData.designation = "";
 				if (formData.dob) formData.dob = helpers.getISODate(formData.dob);
 				formData.company_id = this.companyInfo._id;
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input).filter((e) => e != "");
