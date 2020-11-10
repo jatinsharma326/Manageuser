@@ -1,8 +1,9 @@
 <template>
 	<div class="callsListWrapper">
-		<v-row class="px-6 salescall-search-bar" justify="center" align="center">
-			<v-col cols="12" sm="8" md="6">
-				<!-- <div class="companyaddress-search-bar"> -->
+		<!-- <v-row class="px-6 salescall-search-bar" justify="center" align="center">
+			<v-col cols="12" sm="8" md="6"> -->
+		<div class="salescallSearchbarWrapper">
+			<div class="searchbar">
 				<Search
 					@queryString="queryString"
 					@filterObject="advanceSearch"
@@ -11,9 +12,36 @@
 					:isAdvanceSearch="true"
 					:filterConfig="selectedSearchConfig"
 				></Search>
-				<!-- </div> -->
-			</v-col>
-		</v-row>
+			</div>
+			<!-- <v-row justify="center">
+				<v-date-picker v-model="callDateDialog" ></v-date-picker>
+			</v-row> -->
+			<div class="datepicker">
+				<v-dialog ref="dialog" v-model="callDateDialog" :return-value.sync="callDate" persistent width="290px">
+					<template v-slot:activator="{ on, attrs }">
+						<v-text-field
+							v-model="callDate"
+							label="Sales call range"
+							prepend-icon="mdi-calendar"
+							readonly
+							v-bind="attrs"
+							v-on="on"
+						></v-text-field>
+					</template>
+					<v-date-picker v-model="callDate" scrollable>
+						<v-spacer></v-spacer>
+						<v-btn text color="primary" @click="callDateDialog = false">
+							Cancel
+						</v-btn>
+						<v-btn text color="primary" @click="$refs.dialog.save(callDate)">
+							OK
+						</v-btn>
+					</v-date-picker>
+				</v-dialog>
+			</div>
+		</div>
+		<!-- </v-col>
+		</v-row> -->
 
 		<div class="leaves-table">
 			<v-data-table hide-default-footer :headers="headers" :items="callsList" item-key="_id">
@@ -87,32 +115,32 @@
 		},
 		data: () => ({
 			callsList: [
-				{
-					_id: "5fa124ee6bff062f60d5fcc2",
-					date_of_call: "2020-10-30T18:30:00.000Z",
-					sr_no: "AUG20-0",
-					record: {
-						created_on: "2020-11-03T09:37:50.737Z",
-						updated_on: "2020-11-03T09:37:50.737Z",
-					},
-					mortal_id: "5fa1075dab44e634a4d90c83",
-					company_id: "5f9d03eb92bff8363cf43565",
-					company_address_id: "5f9d4f9ce639cb1de070195f",
-					company_address_data: {
-						branch_name: "Nagpada",
-						state: "Maharashtra",
-						city: "Mumbai",
-						pincode: "400008",
-						zone: "EAST",
-						address: "Dadar Mumbai",
-					},
-					company_data: {
-						name: "Thomas Cook",
-					},
-					mortal_data: {
-						name: "Aliasgar Pocketwala",
-					},
-				},
+				// {
+				// 	_id: "5fa124ee6bff062f60d5fcc2",
+				// 	date_of_call: "2020-10-30T18:30:00.000Z",
+				// 	sr_no: "AUG20-0",
+				// 	record: {
+				// 		created_on: "2020-11-03T09:37:50.737Z",
+				// 		updated_on: "2020-11-03T09:37:50.737Z",
+				// 	},
+				// 	mortal_id: "5fa1075dab44e634a4d90c83",
+				// 	company_id: "5f9d03eb92bff8363cf43565",
+				// 	company_address_id: "5f9d4f9ce639cb1de070195f",
+				// 	company_address_data: {
+				// 		branch_name: "Nagpada",
+				// 		state: "Maharashtra",
+				// 		city: "Mumbai",
+				// 		pincode: "400008",
+				// 		zone: "EAST",
+				// 		address: "Dadar Mumbai",
+				// 	},
+				// 	company_data: {
+				// 		name: "Thomas Cook",
+				// 	},
+				// 	mortal_data: {
+				// 		name: "Aliasgar Pocketwala",
+				// 	},
+				// },
 			],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "sr_no", width: 100 },
@@ -127,9 +155,14 @@
 				{ text: "", value: "actions" },
 			],
 			keysToWatch: ["company_id"],
+			callDate: "",
+			callDateDialog: false,
 			// userList: [],
 			// serialNumber: 0,
 		}),
+		computed: {
+			...mapGetters(["userData"]),
+		},
 		methods: {
 			// ...mapActions("LeaveManager", ["getAllLeaves", "updateStatus"]),
 			...mapActions("SalesCall", ["getSalesCall", "addSalesCall", "editSalesCall", "deleteSalesCall"]),
@@ -144,6 +177,7 @@
 			getData() {
 				this.openLoaderDialog();
 				// this.filter.representing_partner_id = this.partnerInfo._id;
+				console.log("Test Console User Data", this.userData);
 				this.getSalesCall({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -267,9 +301,18 @@
 	};
 </script>
 <style lang="scss" scoped>
-	.salescall-search-bar {
-		margin-top: 20px;
-		margin-bottom: 20px;
+	.salescallSearchbarWrapper {
+		margin: 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		.searchbar {
+			flex: 0 0 50%;
+		}
+		.datepicker {
+			flex: 0 0 20%;
+		}
 	}
 	.leaves-table {
 		margin: 10px;
