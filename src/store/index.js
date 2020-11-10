@@ -274,25 +274,25 @@ export default new Vuex.Store({
 						if (data.mortal.type === state.ADMIN) {
 							commit("typeTenLogin", {
 								token: data.token,
-								userData: data.mortal.userData,
+								userData: data.mortal,
 								dataObj: currentState,
 							});
 						} else if (data.mortal.type === state.MANAGEMENT) {
 							commit("typeTwentyLogin", {
 								token: data.token,
-								userData: data.mortal.userData,
+								userData: data.mortal,
 								dataObj: currentState,
 							});
 						} else if (data.mortal.type === state.SALES_AGENT) {
 							commit("typeThirtyLogin", {
 								token: data.token,
-								userData: data.mortal.userData,
+								userData: data.mortal,
 								dataObj: currentState,
 							});
 						} else if (data.mortal.type === state.REMOTE_SALES_AGENT) {
 							commit("typeFourtyLogin", {
 								token: data.token,
-								userData: data.mortal.userData,
+								userData: data.mortal,
 								dataObj: currentState,
 							});
 						}
@@ -324,25 +324,25 @@ export default new Vuex.Store({
 					} else if (data.mortal.type === state.ADMIN) {
 						commit("typeTenLogin", {
 							token: data.token,
-							userData: data.mortal.userData,
+							userData: data.mortal,
 							dataObj: data,
 						});
 					} else if (data.mortal.type === state.MANAGEMENT) {
 						commit("typeTwentyLogin", {
 							token: data.token,
-							userData: data.mortal.userData,
+							userData: data.mortal,
 							dataObj: data,
 						});
 					} else if (data.mortal.type === state.SALES_AGENT) {
 						commit("typeThirtyLogin", {
 							token: data.token,
-							userData: data.mortal.userData,
+							userData: data.mortal,
 							dataObj: data,
 						});
 					} else if (data.mortal.type === state.REMOTE_SALES_AGENT) {
 						commit("typeFourtyLogin", {
 							token: data.token,
-							userData: data.mortal.userData,
+							userData: data.mortal,
 							dataObj: data,
 						});
 					} else {
