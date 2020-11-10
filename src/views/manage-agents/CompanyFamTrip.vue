@@ -247,6 +247,9 @@
 
 				formData.company_id = this.companyInfo._id;
 				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
+				if (!formData.current_grade || formData.current_grade === null) {
+					formData.current_grade = "-";
+				}
 				formData.no_of_days = Number(formData.no_of_days);
 
 				console.log("Before API call FormData Object", formData);
