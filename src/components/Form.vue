@@ -129,7 +129,13 @@
 										v-on="on"
 									></v-text-field>
 								</template>
-								<v-date-picker v-model="formElements[config.key]" no-title scrollable>
+								<v-date-picker
+									v-model="formElements[config.key]"
+									:min="getMin(config)"
+									:max="getMax(config)"
+									no-title
+									scrollable
+								>
 									<v-spacer></v-spacer>
 
 									<v-btn text color="primary" @click="clearDate(config.key)">
@@ -282,7 +288,7 @@
 <script>
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapGetters } from "vuex";
-	// import moment from "moment-timezone";
+	import moment from "moment-timezone";
 	import helpers from "./helpers";
 	export default {
 		name: "Form",
@@ -332,6 +338,12 @@
 			clearDate(key) {
 				this.formElements[key] = null;
 				this.dateMenuRef[key] = false;
+			},
+			getMin(config) {
+				return config.min();
+			},
+			getMax(config) {
+				return config.max();
 			},
 			formValidation() {
 				this.showError = false;
