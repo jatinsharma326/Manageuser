@@ -20,20 +20,24 @@
 				<v-dialog ref="dialog" v-model="callDateDialog" :return-value.sync="callDate" persistent width="290px">
 					<template v-slot:activator="{ on, attrs }">
 						<v-text-field
-							v-model="callDate"
+							v-model="dateRangeText"
 							label="Sales call range"
-							prepend-icon="mdi-calendar"
 							readonly
+							outlined
+							@click="dataSelector"
 							v-bind="attrs"
 							v-on="on"
 						></v-text-field>
 					</template>
-					<v-date-picker v-model="callDate" scrollable>
+					<v-date-picker range v-model="callDate" scrollable>
 						<v-spacer></v-spacer>
-						<v-btn text color="primary" @click="callDateDialog = false">
+						<v-btn text color="primary" @click="resetDatePicker">
+							Reset
+						</v-btn>
+						<v-btn text color="primary" @click="cancelDatePicker">
 							Cancel
 						</v-btn>
-						<v-btn text color="primary" @click="$refs.dialog.save(callDate)">
+						<v-btn text color="primary" @click="submitDatePicker">
 							OK
 						</v-btn>
 					</v-date-picker>
@@ -49,7 +53,7 @@
 					{{ getFormattedDate(item.date_of_call, "MMMM Do YYYY dddd") }}
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
-					<template v-if="type == 'sales_call'">
+					<template v-if="canUserEdit(item)">
 						<v-menu bottom left>
 							<template v-slot:activator="{ on, attrs }">
 								<v-btn icon v-bind="attrs" v-on="on">
@@ -109,6 +113,7 @@
 		name: "SalesCallManager",
 		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin],
 		async created() {
+			this.setDateRange();
 			this.getData();
 			// 	await this.getUsers();
 			// 	this.setSearchConfig(this.userList);
@@ -155,13 +160,17 @@
 				{ text: "", value: "actions" },
 			],
 			keysToWatch: ["company_id"],
-			callDate: "",
+			callDate: [],
+			tempDateValue: [],
 			callDateDialog: false,
 			// userList: [],
 			// serialNumber: 0,
 		}),
 		computed: {
 			...mapGetters(["userData"]),
+			dateRangeText() {
+				return this.callDate.join(" ~ ");
+			},
 		},
 		methods: {
 			// ...mapActions("LeaveManager", ["getAllLeaves", "updateStatus"]),
@@ -176,8 +185,21 @@
 			// },
 			getData() {
 				this.openLoaderDialog();
-				// this.filter.representing_partner_id = this.partnerInfo._id;
-				console.log("Test Console User Data", this.userData);
+				// console.log("Test Console User Data", this.userData);
+				if (this.isSalesTeamMember) {
+					console.log("User Data ", this.userData);
+					this.filter.mortal_id = this.userData.id;
+				}
+				console.log("filter ", this.filter);
+				this.filter.date_from = moment(this.callDate[0])
+					.tz("Asia/Kolkata")
+					.startOf()
+					.toISOString();
+				this.filter.date_to = moment(this.callDate[1])
+					.tz("Asia/Kolkata")
+					.endOf()
+					.toISOString();
+
 				this.getSalesCall({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -188,6 +210,49 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 				});
+			},
+			dataSelector() {
+				this.tempDateValue = [...this.callDate];
+				console.log("Date picker clicked", this.tempDateValue);
+			},
+			cancelDatePicker() {
+				this.callDate = [...this.tempDateValue];
+				this.callDateDialog = false;
+			},
+			submitDatePicker() {
+				// Ask taher how exactly does the .save work and should we just close modal
+				this.$refs.dialog.save(this.callDate);
+				this.getData();
+			},
+			resetDatePicker() {
+				this.setDateRange();
+				this.getData();
+				this.callDateDialog = false;
+			},
+			setDateRange() {
+				let tempArray = [];
+				let startDate = moment()
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.format("YYYY-MM-DD");
+				let endDate = moment()
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.format("YYYY-MM-DD");
+				tempArray.push(startDate);
+				tempArray.push(endDate);
+				this.callDate = tempArray;
+			},
+			canUserEdit(item) {
+				let currentMonth = moment().startOf("month");
+				let callMonth = moment(item.date_of_call).startOf("month");
+				let diffrenceInDates = currentMonth.diff(callMonth, "months", true);
+				//Taher check the condition once
+				if (this.type == "sales_call" && (diffrenceInDates == 1 || diffrenceInDates == 0)) {
+					return true;
+				} else {
+					return false;
+				}
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
@@ -209,9 +274,9 @@
 				// formData.company_id = this.companyInfo._id;
 				if (formData.date_of_call) {
 					formData.date_of_call = helpers.getISODate(formData.date_of_call);
+					formData.month = Number(moment(formData.date_of_call).format("MM"));
+					formData.year = Number(moment(formData.date_of_call).format("YYYY"));
 				}
-				formData.month = 9;
-				formData.year = 2020;
 
 				console.log("Test Console Before API call FormData Object", formData);
 
@@ -297,6 +362,7 @@
 			type: { required: true, type: String },
 			placeholder: { required: true, type: String },
 			inputConfig: { required: false, type: Array },
+			selectedSearchConfig: { required: true, type: Array },
 		},
 	};
 </script>
@@ -311,7 +377,10 @@
 			flex: 0 0 50%;
 		}
 		.datepicker {
-			flex: 0 0 20%;
+			flex: 0 0 30%;
+			.v-text-field__details {
+				display: none;
+			}
 		}
 	}
 	.leaves-table {
@@ -328,5 +397,15 @@
 		}
 		// .expandable-section-content {
 		// }
+	}
+</style>
+<style lang="scss">
+	.datepicker {
+		.v-input__slot {
+			margin-bottom: 0;
+		}
+		.v-text-field__details {
+			display: none;
+		}
 	}
 </style>
