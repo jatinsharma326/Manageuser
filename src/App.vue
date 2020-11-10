@@ -49,11 +49,15 @@
 			<router-view />
 		</v-main>
 
-		<v-snackbar v-model="localSnackbarState" multi-line top right :timeout="snackbarTime">
-			{{ snackbarText }}
-			<v-btn color="accent" text @click.stop="closeSnackbar">
-				<v-icon>mdi-close</v-icon>
-			</v-btn>
+		<v-snackbar v-model="localSnackbarState" multi-line light top right :timeout="snackbarTime">
+			<div class="snackbarComponentWrapper">
+				<div class="content">{{ snackbarText }}</div>
+				<div class="action-button">
+					<v-btn small fab color="accent" text @click.stop="closeSnackbar">
+						<v-icon>mdi-close</v-icon>
+					</v-btn>
+				</div>
+			</div>
 		</v-snackbar>
 
 		<v-overlay class="app-loader" :value="loaderDialog" :z-index="300">
@@ -247,6 +251,12 @@
 		color: white;
 		padding-top: 24px;
 		padding-bottom: 54px;
+	}
+
+	.snackbarComponentWrapper {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	#navigation-list {
