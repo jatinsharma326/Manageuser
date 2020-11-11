@@ -173,6 +173,7 @@
 			promises.push(this.getZones());
 			promises.push(this.getBusinessTypes());
 			promises.push(this.getAllCurrencies());
+			promises.push(this.getStatesList());
 			await Promise.all(promises);
 		},
 		methods: {
@@ -184,6 +185,7 @@
 				"getBusinessTypes",
 				"getAllCurrencies",
 			]),
+			...mapActions("ManageAgents", ["getStatesList"]),
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "resetState", "openSnackbar", "closeSnackbar"]),
 			toggleNav() {
 				this.navigationToggle = !this.navigationToggle;
