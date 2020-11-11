@@ -10,7 +10,7 @@
 					@clearFilter="advanceSearch"
 					:placeholder="placeholder"
 					:isAdvanceSearch="true"
-					:filterConfig="selectedSearchConfig"
+					:filterConfig="searchConfig"
 				></Search>
 			</div>
 			<!-- <v-row justify="center">
@@ -62,7 +62,7 @@
 							</template>
 							<v-list>
 								<v-list-item @click="openInputForm(true, item)">EDIT</v-list-item>
-								<v-list-item>DELETE</v-list-item>
+								<v-list-item @click="deleteCall(item)">DELETE</v-list-item>
 							</v-list>
 						</v-menu>
 					</template>
@@ -186,7 +186,7 @@
 			getData() {
 				this.openLoaderDialog();
 				// console.log("Test Console User Data", this.userData);
-				if (this.isSalesTeamMember) {
+				if (this.isSalesTeamMember && this.type == "sales_call") {
 					console.log("User Data ", this.userData);
 					this.filter.mortal_id = this.userData.id;
 				}
@@ -195,10 +195,14 @@
 					.tz("Asia/Kolkata")
 					.startOf()
 					.toISOString();
-				this.filter.date_to = moment(this.callDate[1])
-					.tz("Asia/Kolkata")
-					.endOf()
-					.toISOString();
+				if (this.callDate[1]) {
+					this.filter.date_to = moment(this.callDate[1])
+						.tz("Asia/Kolkata")
+						.endOf()
+						.toISOString();
+				} else {
+					this.filter.date_to = this.filter.date_from;
+				}
 
 				this.getSalesCall({
 					filter: this.filter,
@@ -226,6 +230,7 @@
 			},
 			resetDatePicker() {
 				this.setDateRange();
+				this.$refs.dialog.save(this.callDate);
 				this.getData();
 				this.callDateDialog = false;
 			},
@@ -244,11 +249,15 @@
 				this.callDate = tempArray;
 			},
 			canUserEdit(item) {
-				let currentMonth = moment().startOf("month");
-				let callMonth = moment(item.date_of_call).startOf("month");
+				let currentMonth = moment()
+					.tz("Asia/Kolkata")
+					.startOf("month");
+				let callMonth = moment(item.date_of_call)
+					.tz("Asia/Kolkata")
+					.startOf("month");
 				let diffrenceInDates = currentMonth.diff(callMonth, "months", true);
 				//Taher check the condition once
-				if (this.type == "sales_call" && (diffrenceInDates == 1 || diffrenceInDates == 0)) {
+				if (this.type == "sales_call" && -2 <= diffrenceInDates && diffrenceInDates <= 1) {
 					return true;
 				} else {
 					return false;
@@ -313,7 +322,7 @@
 				};
 			},
 			// setSearchConfig(teamMember = []) {
-			// 	this.selectedSearchConfig = [
+			// 	this.searchConfig = [
 			// 		{
 			// 			name: "Name of Applicant",
 			// 			key: "names",
@@ -352,6 +361,22 @@
 			// 		},
 			// 	];
 			// },
+			deleteCall(call) {
+				if (window.confirm("Do you really want to Delete the Sales Call?")) {
+					this.openLoaderDialog();
+					this.deleteSalesCall({
+						_id: call._id,
+					}).then((data) => {
+						this.closeLoaderDialog();
+						if (data.ok) {
+							this.openSnackbar({ text: "Sucessfully Deleted the Sales Call" });
+							this.getData();
+						} else {
+							this.openSnackbar({ text: data.message });
+						}
+					});
+				}
+			},
 			updatedPageNo(page) {
 				this.getData();
 			},
@@ -362,22 +387,36 @@
 			type: { required: true, type: String },
 			placeholder: { required: true, type: String },
 			inputConfig: { required: false, type: Array },
-			selectedSearchConfig: { required: true, type: Array },
+			searchConfig: { required: true, type: Array },
 		},
 	};
 </script>
 <style lang="scss" scoped>
 	.salescallSearchbarWrapper {
-		margin: 20px;
+		margin: 20px 10px;
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: space-between;
 		align-items: center;
 
 		.searchbar {
 			flex: 0 0 50%;
+
+			@include custom-max(500px) {
+				flex: 0 0 100%;
+			}
 		}
 		.datepicker {
 			flex: 0 0 30%;
+
+			@include custom-max(767px) {
+				flex: 0 0 45%;
+			}
+			@include custom-max(500px) {
+				margin-top: 20px;
+				flex: 0 0 100%;
+			}
+
 			.v-text-field__details {
 				display: none;
 			}
