@@ -3,6 +3,7 @@ import constants from "@/api";
 const initialState = () => ({
 	addressList: [],
 	employeesList: [],
+	statesList: [],
 });
 export default {
 	namespaced: true,
@@ -22,6 +23,9 @@ export default {
 		},
 		setEmployeeList(state, data) {
 			state.employeesList = data;
+		},
+		setStateList(state, data) {
+			state.statesList = data;
 		},
 	},
 	actions: {
@@ -71,6 +75,7 @@ export default {
 			)
 				.then((data) => {
 					if (data.ok) {
+						commit("setStateList", data.data);
 						return {
 							ok: true,
 							list: data.data,
@@ -235,8 +240,6 @@ export default {
 					};
 				});
 		},
-
-		// change URL for the below API call
 		downloadErrorFile: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -659,5 +662,6 @@ export default {
 	getters: {
 		storeAddressList: (state) => state.addressList,
 		storeEmployeesList: (state) => state.employeesList,
+		storeStatesList: (state) => state.statesList,
 	},
 };
