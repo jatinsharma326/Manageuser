@@ -24,9 +24,8 @@
 		async created() {
 			await this.getCompanies();
 			await this.getUsers();
-			await this.getStates();
 			// console.log("All Lists", this.companyList, this.userList, this.statesList);
-			this.setConfig(this.companyList, this.userList, this.statesList, this.modifiedCompanyList);
+			this.setConfig(this.companyList, this.userList, this.storeStatesList, this.modifiedCompanyList);
 			// if (this.isSalesTeamMember) {
 			// }
 		},
@@ -35,14 +34,14 @@
 			companyList: [],
 			modifiedCompanyList: [],
 			userList: [],
-			statesList: [],
+			// statesList: [],
 			tabConfig: [],
 		}),
 		computed: {
-			...mapGetters([]),
+			...mapGetters("ManageAgents", ["storeStatesList"]),
 		},
 		methods: {
-			...mapActions("ManageAgents", ["getCompaniesList", "getAddressList", "getStatesList"]),
+			...mapActions("ManageAgents", ["getCompaniesList", "getAddressList"]),
 			...mapActions("UserManagement", ["getUserList"]),
 			async getUsers() {
 				try {
@@ -69,19 +68,16 @@
 					filter: {},
 				}).then((data) => {
 					this.companyList = data.list;
-					this.modifiedCompanyList = data.list.map((e) => ({
-						text: e.name,
-						value: e._id,
-					}));
+					this.modifiedCompanyList = data.list.map((e) => e.name);
 				});
 			},
-			getStates() {
-				return this.getStatesList({
-					filter: {},
-				}).then((data) => {
-					this.statesList = data.list;
-				});
-			},
+			// getStates() {
+			// 	return this.getStatesList({
+			// 		filter: {},
+			// 	}).then((data) => {
+			// 		this.statesList = data.list;
+			// 	});
+			// },
 			setConfig(companyList = [], userList = [], statesList = [], modifiedCompanyList = []) {
 				this.tabConfig = [
 					{
@@ -190,19 +186,10 @@
 									},
 								},
 							],
-							selectedSearchConfig: [
-								{
-									name: "Created By",
-									key: "names",
-									multi: true,
-									inputType: "dropdown",
-									defaultValue: [],
-									isListInStore: false,
-									listItems: userList,
-								},
+							searchConfig: [
 								{
 									name: "Company",
-									key: "companies",
+									key: "company_names",
 									multi: true,
 									inputType: "dropdown",
 									defaultValue: [],
@@ -236,10 +223,19 @@
 							name: "All Sales Call",
 							type: "all_sales_call",
 							placeholder: "Search All Sales Call",
-							selectedSearchConfig: [
+							searchConfig: [
+								{
+									name: "Created By",
+									key: "names",
+									multi: true,
+									inputType: "dropdown",
+									defaultValue: [],
+									isListInStore: false,
+									listItems: userList,
+								},
 								{
 									name: "Company",
-									key: "companies",
+									key: "company_names",
 									multi: true,
 									inputType: "dropdown",
 									defaultValue: [],
