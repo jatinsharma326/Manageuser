@@ -1,7 +1,5 @@
 <template>
 	<div class="callsListWrapper">
-		<!-- <v-row class="px-6 salescall-search-bar" justify="center" align="center">
-			<v-col cols="12" sm="8" md="6"> -->
 		<div class="salescallSearchbarWrapper">
 			<div class="searchbar">
 				<Search
@@ -13,9 +11,6 @@
 					:filterConfig="searchConfig"
 				></Search>
 			</div>
-			<!-- <v-row justify="center">
-				<v-date-picker v-model="callDateDialog" ></v-date-picker>
-			</v-row> -->
 			<div class="datepicker">
 				<v-dialog ref="dialog" v-model="callDateDialog" :return-value.sync="callDate" persistent width="290px">
 					<template v-slot:activator="{ on, attrs }">
@@ -44,8 +39,6 @@
 				</v-dialog>
 			</div>
 		</div>
-		<!-- </v-col>
-		</v-row> -->
 
 		<div class="leaves-table">
 			<v-data-table hide-default-footer :headers="headers" :items="callsList" item-key="_id">
@@ -70,14 +63,14 @@
 			</v-data-table>
 		</div>
 
-		<div class="text-center">
+		<!-- <div class="text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
-		</div>
+		</div> -->
 
 		<template v-if="type == 'sales_call'">
 			<UserForm
@@ -377,9 +370,9 @@
 					});
 				}
 			},
-			updatedPageNo(page) {
-				this.getData();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 		},
 		watch: {},
 		props: {
