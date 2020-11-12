@@ -340,10 +340,14 @@
 				this.dateMenuRef[key] = false;
 			},
 			getMin(config) {
-				return config.min();
+				if (config.min) {
+					return config.min();
+				}
 			},
 			getMax(config) {
-				return config.max();
+				if (config.max) {
+					return config.max();
+				}
 			},
 			formValidation() {
 				this.showError = false;
