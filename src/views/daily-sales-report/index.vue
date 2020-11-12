@@ -23,11 +23,14 @@
 		mixins: [defaultCRUDMixin],
 		components: { reportsList },
 		async created() {
+			this.openLoaderDialog();
 			await this.getCompanies();
 			await this.getUsers();
+			await this.getCountryList();
 			if (this.isSalesTeamMember) {
-				await this.getSalesCall();
+				await this.getSalesCallList();
 			}
+			this.closeLoaderDialog();
 			this.setConfig(
 				this.companyList,
 				this.userList,
@@ -45,6 +48,7 @@
 			modifiedCompanyList: [],
 			userList: [],
 			tabConfig: [],
+			filter: {},
 		}),
 		computed: {
 			...mapGetters(["userData"]),
@@ -86,23 +90,22 @@
 			},
 			getCountryList() {
 				return this.getActiveCountries().then((data) => {
+					console.log("4", data.list);
 					this.countriesList = data.list;
 				});
 			},
-			getSalesCall() {
+			getSalesCallList() {
 				this.filter.mortal_id = this.userData.id;
 				this.filter.date_from = moment()
 					.tz("Asia/Kolkata")
 					.subtract(1, "month")
 					.startOf("month")
-					.format("YYYY-MM-DD");
+					.toISOString();
 				this.filter.date_to = moment()
 					.tz("Asia/Kolkata")
 					.add(2, "month")
 					.endOf("month")
-					.format("YYYY-MM-DD");
-
-				console.log("Test Console Filter before DSR sales call info", this.filter);
+					.toISOString();
 
 				return this.getSalesCall({
 					filter: this.filter,
@@ -135,7 +138,7 @@
 										return (
 											helper.getFormattedDate(item.date_of_call, "DD-MM-YYYY") +
 											"-" +
-											item.item.company_data.name
+											item.company_data.name
 										);
 									},
 									titleContent: (item) => {
@@ -179,14 +182,14 @@
 										let call = this.callsList.find((e) => e._id == call_id);
 										return this.getCompanyEmployeeList({
 											filter: {
-												company_id: this.call.company_id,
+												company_id: call.company_id,
 												active: true,
 											},
 										}).then((data) => {
 											return data.list;
 										});
 									},
-									key: "company_address_id", // Change this after discussing with ali
+									key: "travel_agent_id",
 									width: "full",
 									itemText: "name",
 									itemValue: "_id",
@@ -197,7 +200,7 @@
 								{
 									name: "Product*",
 									type: "Dropdown",
-									key: "countries", // check with ali once
+									key: "countries",
 									width: "full",
 									multi: true,
 									isListInStore: false,
@@ -209,17 +212,27 @@
 								{
 									name: "Follow up Date",
 									type: "Date",
-									key: "follow_up",
+									key: "follow_up_on_date",
 									width: "half",
 								},
 								{
 									name: "Status",
 									type: "Dropdown",
-									key: "countries", // check with ali once
+									key: "status",
 									width: "half",
-									multi: true,
+									multi: false,
 									isListInStore: false,
 									listItems: ["ON GOING", "CLOSED"],
+								},
+								{
+									name: "Meeting Remark*",
+									type: "TextArea",
+									key: "meeting_remark",
+									width: "full",
+									validations: {
+										required,
+										minLength: minLength(2),
+									},
 								},
 							],
 							searchConfig: [
