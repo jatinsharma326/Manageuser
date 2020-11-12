@@ -1,11 +1,11 @@
 <template>
-	<div class="manageSalesCallWrapper">
+	<div class="manageDSRWrapper">
 		<v-tabs grow v-model="tab">
 			<v-tab v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">{{ ele.name }}</v-tab>
 		</v-tabs>
 		<v-tabs-items class="tabItemWrapper" v-model="tab">
 			<v-tab-item v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">
-				<callsList v-bind="{ ...ele.props }"></callsList>
+				<reportsList v-bind="{ ...ele.props }"></reportsList>
 			</v-tab-item>
 		</v-tabs-items>
 	</div>
@@ -15,33 +15,46 @@
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters } from "vuex";
-	import callsList from "./callsList";
+	import reportsList from "./reportsList";
 	import moment from "moment-timezone";
+	import helper from "../../components/helpers";
 	export default {
 		name: "ManageDSR",
 		mixins: [defaultCRUDMixin],
-		components: { callsList },
+		components: { reportsList },
 		async created() {
 			await this.getCompanies();
 			await this.getUsers();
-			// console.log("All Lists", this.companyList, this.userList, this.statesList);
-			this.setConfig(this.companyList, this.userList, this.storeStatesList, this.modifiedCompanyList);
-			// if (this.isSalesTeamMember) {
-			// }
+			if (this.isSalesTeamMember) {
+				await this.getSalesCall();
+			}
+			this.setConfig(
+				this.companyList,
+				this.userList,
+				this.storeStatesList,
+				this.modifiedCompanyList,
+				this.countriesList
+			);
 		},
 		data: () => ({
 			tab: "",
+			callsList: [],
 			companyList: [],
+			countriesList: [],
 			modifiedCompanyList: [],
 			userList: [],
 			tabConfig: [],
 		}),
 		computed: {
+			...mapGetters(["userData"]),
 			...mapGetters("ManageAgents", ["storeStatesList"]),
 		},
 		methods: {
-			...mapActions("ManageAgents", ["getCompaniesList", "getAddressList"]),
+			...mapActions("ManageAgents", ["getCompaniesList", "getAddressList", "getCompanyEmployeeList"]),
 			...mapActions("UserManagement", ["getUserList"]),
+			...mapActions("SalesCall", ["getSalesCall"]),
+			...mapActions("ManageTargets", ["getActiveCountries"]),
+
 			async getUsers() {
 				try {
 					let salesAgents = await this.getUserList({
@@ -70,68 +83,109 @@
 					this.modifiedCompanyList = data.list.map((e) => e.name);
 				});
 			},
-			setConfig(companyList = [], userList = [], statesList = [], modifiedCompanyList = []) {
+			getCountryList() {
+				return this.getActiveCountries().then((data) => {
+					this.countriesList = data.list;
+				});
+			},
+			getSalesCall() {
+				this.filter.mortal_id = this.userData.id;
+				this.filter.date_from = moment()
+					.tz("Asia/Kolkata")
+					.subtract(1, "month")
+					.startOf("month")
+					.format("YYYY-MM-DD");
+				this.filter.date_to = moment()
+					.tz("Asia/Kolkata")
+					.add(2, "month")
+					.endOf("month")
+					.format("YYYY-MM-DD");
+
+				console.log("Test Console Filter before DSR sales call info", this.filter);
+
+				return this.getSalesCall({
+					filter: this.filter,
+				}).then((data) => {
+					this.callsList = data.list;
+				});
+			},
+			setConfig(
+				companyList = [],
+				userList = [],
+				statesList = [],
+				modifiedCompanyList = [],
+				activeCountriesList = []
+			) {
 				this.tabConfig = [
 					{
-						name: "Sales Call",
-						id: "salesCall",
-						component: "Users",
+						name: "My DSR",
+						id: "myDSR",
 						props: {
-							name: "Sales Call",
-							type: "sales_call",
-							placeholder: "Search Sales Call",
+							name: "My DSR",
+							type: "my_dsr",
+							placeholder: "Search my DSR",
 							inputConfig: [
 								{
-									name: "Date of Visit*",
-									type: "Date",
-									key: "date_of_call",
-									min: () => {
-										return moment()
-											.tz("Asia/Kolkata")
-											.subtract(1, "month")
-											.startOf("month")
-											.format("YYYY-MM-DD");
+									name: "Sales Call Index*",
+									type: "DropdownWithMoreInfo",
+									isCustom: true,
+									subtitleContent: (item) => {
+										return (
+											helper.getFormattedDate(item.date_of_call, "DD-MM-YYYY") +
+											"-" +
+											item.item.company_data.name
+										);
 									},
-									max: () => {
-										return moment()
-											.tz("Asia/Kolkata")
-											.add(2, "month")
-											.endOf("month")
-											.format("YYYY-MM-DD");
+									titleContent: (item) => {
+										return item.sr_no;
 									},
-									width: "half",
+									// apiCall: (company_id) => {
+									// 	// return function getAddresses() {
+									// 	return this.getAddressList({
+									// 		filter: {
+									// 			company_id: company_id,
+									// 		},
+									// 	}).then((data) => {
+									// 		return {
+									// 			data,
+									// 		};
+									// 	});
+									// 	// };
+									// },
+									key: "sales_call_id",
+									width: "full",
+									multi: false,
+									isListInStore: false,
+									listItems: salesList,
+									itemText: "sr_no",
+									itemValue: "_id",
 									validations: {
 										required,
 									},
 								},
 								{
-									name: "Company Name*",
-									type: "DropdownWithMoreInfo",
-									isCustom: true,
+									name: "Travel Agent Employee*",
+									type: "AsyncDropdownWithMoreInfo",
+									triggerKey: "sales_call_id",
 									subtitleContent: (item) => {
-										return item.business_types.join(", ");
+										return item.designation + " - " + item.company_address_data.branch_name;
 									},
 									titleContent: (item) => {
 										return item.name;
 									},
-									apiCall: (company_id) => {
-										// return function getAddresses() {
-										return this.getAddressList({
+									apiCall: (call_id) => {
+										let call = this.callsList.find((e) => e._id == call_id);
+										return this.getCompanyEmployeeList({
 											filter: {
-												company_id: company_id,
+												company_id: this.call.company_id,
+												active: true,
 											},
 										}).then((data) => {
-											return {
-												data,
-											};
+											return data.list;
 										});
-										// };
 									},
-									key: "company_id",
-									width: "half",
-									multi: false,
-									isListInStore: false,
-									listItems: companyList,
+									key: "company_address_id", // Change this after discussing with ali
+									width: "full",
 									itemText: "name",
 									itemValue: "_id",
 									validations: {
@@ -139,31 +193,31 @@
 									},
 								},
 								{
-									name: "Branch Name*",
-									type: "AsyncDropdownWithMoreInfo",
-									triggerKey: "company_id",
-									subtitleContent: (item) => {
-										return item.address + " " + item.state + " " + item.city + " " + item.pincode;
-									},
-									titleContent: (item) => {
-										return item.branch_name;
-									},
-									apiCall: (company_id) => {
-										return this.getAddressList({
-											filter: {
-												company_id: company_id,
-											},
-										}).then((data) => {
-											return data.list;
-										});
-									},
-									key: "company_address_id",
-									width: "half",
-									itemText: "branch_name",
-									itemValue: "_id",
+									name: "Product*",
+									type: "Dropdown",
+									key: "countries", // check with ali once
+									width: "full",
+									multi: true,
+									isListInStore: false,
+									listItems: activeCountriesList,
 									validations: {
 										required,
 									},
+								},
+								{
+									name: "Follow up Date",
+									type: "Date",
+									key: "follow_up",
+									width: "half",
+								},
+								{
+									name: "Status",
+									type: "Dropdown",
+									key: "countries", // check with ali once
+									width: "half",
+									multi: true,
+									isListInStore: false,
+									listItems: ["ON GOING", "CLOSED"],
 								},
 							],
 							searchConfig: [
@@ -196,13 +250,13 @@
 						},
 					},
 					{
-						name: "All Sales Call",
-						id: "allSalesCall",
+						name: "All DSR",
+						id: "allDSR",
 						component: "Users",
 						props: {
-							name: "All Sales Call",
-							type: "all_sales_call",
-							placeholder: "Search All Sales Call",
+							name: "All DSR",
+							type: "all_dsr",
+							placeholder: "Search all DSR",
 							searchConfig: [
 								{
 									name: "Created By",
@@ -250,7 +304,7 @@
 	};
 </script>
 <style lang="scss">
-	.manageSalesCallWrapper {
+	.manageDSRWrapper {
 		height: 100%;
 		.tabItemWrapper {
 			height: 100%;
