@@ -1,6 +1,6 @@
 <template>
-	<div class="callsListWrapper">
-		<div class="salescallSearchbarWrapper">
+	<div class="reportListWrapper">
+		<div class="SearchbarWrapper">
 			<div class="searchbar">
 				<Search
 					@queryString="queryString"
@@ -12,11 +12,11 @@
 				></Search>
 			</div>
 			<div class="datepicker">
-				<v-dialog ref="dialog" v-model="callDateDialog" :return-value.sync="callDate" persistent width="290px">
+				<v-dialog ref="dialog" v-model="dateDialog" :return-value.sync="reportsDate" persistent width="290px">
 					<template v-slot:activator="{ on, attrs }">
 						<v-text-field
 							v-model="dateRangeText"
-							label="Sales call range"
+							label="Date Range"
 							readonly
 							outlined
 							@click="dataSelector"
@@ -24,7 +24,7 @@
 							v-on="on"
 						></v-text-field>
 					</template>
-					<v-date-picker range v-model="callDate" scrollable>
+					<v-date-picker range v-model="reportsDate" scrollable>
 						<v-spacer></v-spacer>
 						<v-btn text color="primary" @click="resetDatePicker">
 							Reset
@@ -39,8 +39,6 @@
 				</v-dialog>
 			</div>
 		</div>
-		<!-- </v-col>
-		</v-row> -->
 
 		<div class="leaves-table">
 			<v-data-table hide-default-footer :headers="headers" :items="callsList" item-key="_id">
@@ -74,7 +72,7 @@
 			></v-pagination>
 		</div>
 
-		<template v-if="type == 'sales_call'">
+		<template v-if="type == 'my_dsr'">
 			<UserForm
 				@formOutput="formOutput"
 				@closeForm="closeForm"
@@ -155,21 +153,21 @@
 				{ text: "", value: "actions" },
 			],
 			keysToWatch: ["company_id"],
-			callDate: [],
+			reportsDate: [],
 			tempDateValue: [],
-			callDateDialog: false,
+			dateDialog: false,
 			// userList: [],
 			// serialNumber: 0,
 		}),
 		computed: {
 			...mapGetters(["userData"]),
 			dateRangeText() {
-				return this.callDate.join(" ~ ");
+				return this.reportsDate.join(" ~ ");
 			},
 		},
 		methods: {
 			// ...mapActions("LeaveManager", ["getAllLeaves", "updateStatus"]),
-			...mapActions("SalesCall", ["getSalesCall", "addSalesCall", "editSalesCall", "deleteSalesCall"]),
+			...mapActions("SalesCall", ["getDSR", "addDSR", "editDSR", "deleteDSR"]),
 
 			// isDateBefore(date) {
 			// 	if (moment().isBefore(date)) {
@@ -181,17 +179,17 @@
 			getData() {
 				this.openLoaderDialog();
 				// console.log("Test Console User Data", this.userData);
-				if (this.isSalesTeamMember && this.type == "sales_call") {
+				if (this.isSalesTeamMember && this.type == "my_dsr") {
 					console.log("User Data ", this.userData);
 					this.filter.mortal_id = this.userData.id;
 				}
 				console.log("filter ", this.filter);
-				this.filter.date_from = moment(this.callDate[0])
+				this.filter.date_from = moment(this.reportsDate[0])
 					.tz("Asia/Kolkata")
 					.startOf()
 					.toISOString();
-				if (this.callDate[1]) {
-					this.filter.date_to = moment(this.callDate[1])
+				if (this.reportsDate[1]) {
+					this.filter.date_to = moment(this.reportsDate[1])
 						.tz("Asia/Kolkata")
 						.endOf()
 						.toISOString();
@@ -199,7 +197,7 @@
 					this.filter.date_to = this.filter.date_from;
 				}
 
-				this.getSalesCall({
+				this.getDSR({
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
@@ -211,23 +209,23 @@
 				});
 			},
 			dataSelector() {
-				this.tempDateValue = [...this.callDate];
+				this.tempDateValue = [...this.reportsDate];
 				console.log("Date picker clicked", this.tempDateValue);
 			},
 			cancelDatePicker() {
-				this.callDate = [...this.tempDateValue];
-				this.callDateDialog = false;
+				this.reportsDate = [...this.tempDateValue];
+				this.dateDialog = false;
 			},
 			submitDatePicker() {
 				// Ask taher how exactly does the .save work and should we just close modal
-				this.$refs.dialog.save(this.callDate);
+				this.$refs.dialog.save(this.reportsDate);
 				this.getData();
 			},
 			resetDatePicker() {
 				this.setDateRange();
-				this.$refs.dialog.save(this.callDate);
+				this.$refs.dialog.save(this.reportsDate);
 				this.getData();
-				this.callDateDialog = false;
+				this.dateDialog = false;
 			},
 			setDateRange() {
 				let tempArray = [];
@@ -241,7 +239,7 @@
 					.format("YYYY-MM-DD");
 				tempArray.push(startDate);
 				tempArray.push(endDate);
-				this.callDate = tempArray;
+				this.reportsDate = tempArray;
 			},
 			canUserEdit(item) {
 				let currentMonth = moment()
@@ -252,7 +250,7 @@
 					.startOf("month");
 				let diffrenceInDates = currentMonth.diff(callMonth, "months", true);
 				//Taher check the condition once
-				if (this.type == "sales_call" && -2 <= diffrenceInDates && diffrenceInDates <= 1) {
+				if (this.type == "my_dsr" && -2 <= diffrenceInDates && diffrenceInDates <= 1) {
 					return true;
 				} else {
 					return false;
@@ -286,7 +284,7 @@
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addSalesCall(formData).then((data) => {
+					this.addDSR(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Sales Call Entry" });
@@ -297,7 +295,7 @@
 						}
 					});
 				} else {
-					this.editSalesCall(formData).then((data) => {
+					this.editDSR(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Sales Call Entry" });
@@ -359,7 +357,7 @@
 			deleteCall(call) {
 				if (window.confirm("Do you really want to Delete the Sales Call?")) {
 					this.openLoaderDialog();
-					this.deleteSalesCall({
+					this.deleteDSR({
 						_id: call._id,
 					}).then((data) => {
 						this.closeLoaderDialog();
@@ -387,50 +385,52 @@
 	};
 </script>
 <style lang="scss" scoped>
-	.salescallSearchbarWrapper {
-		margin: 20px 10px;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		align-items: center;
+	.reportListWrapper {
+		.SearchbarWrapper {
+			margin: 20px 10px;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: center;
 
-		.searchbar {
-			flex: 0 0 50%;
+			.searchbar {
+				flex: 0 0 50%;
 
-			@include custom-max(500px) {
-				flex: 0 0 100%;
+				@include custom-max(500px) {
+					flex: 0 0 100%;
+				}
+			}
+			.datepicker {
+				flex: 0 0 30%;
+
+				@include custom-max(767px) {
+					flex: 0 0 45%;
+				}
+				@include custom-max(500px) {
+					margin-top: 20px;
+					flex: 0 0 100%;
+				}
+
+				.v-text-field__details {
+					display: none;
+				}
 			}
 		}
-		.datepicker {
-			flex: 0 0 30%;
-
-			@include custom-max(767px) {
-				flex: 0 0 45%;
-			}
-			@include custom-max(500px) {
-				margin-top: 20px;
-				flex: 0 0 100%;
-			}
-
-			.v-text-field__details {
-				display: none;
-			}
+		.leaves-table {
+			margin: 10px;
+			padding: 10px;
+			border: 1px solid $primary;
+			border-radius: 5px;
 		}
-	}
-	.leaves-table {
-		margin: 10px;
-		padding: 10px;
-		border: 1px solid $primary;
-		border-radius: 5px;
-	}
-	.expandable-section {
-		padding: 1em !important;
-		.expandable-section-title {
-			font-size: 16px;
-			font-weight: 600;
+		.expandable-section {
+			padding: 1em !important;
+			.expandable-section-title {
+				font-size: 16px;
+				font-weight: 600;
+			}
+			// .expandable-section-content {
+			// }
 		}
-		// .expandable-section-content {
-		// }
 	}
 </style>
 <style lang="scss">
