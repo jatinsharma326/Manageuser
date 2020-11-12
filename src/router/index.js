@@ -35,6 +35,12 @@ const routes = [
 		meta: { policy: [10, 20, 30, 40] },
 	},
 	{
+		path: "/msr",
+		name: "Monthly Sales Report",
+		component: () => import("../views/monthly-sales-report"),
+		meta: { policy: [10, 20, 30, 40] },
+	},
+	{
 		path: "/settings",
 		name: "Settings",
 		component: () => import("../views/settings"),
