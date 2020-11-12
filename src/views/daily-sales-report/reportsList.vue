@@ -47,7 +47,7 @@
 				:expanded.sync="expanded"
 				show-expand
 				item-key="_id"
-				:items="callsList"
+				:items="reportsList"
 			>
 				<template v-slot:[`item.sales_call_data.date_of_call`]="{ item }">
 					{{ getFormattedDate(item.sales_call_data.date_of_call, "MMMM Do YYYY dddd") }}
@@ -120,13 +120,14 @@
 	import helperMixin from "../../mixins/helperMixins";
 	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
+	import datePickerMixin from "../../mixins/datePickerMixin";
 	import helpers from "../../components/helpers";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import moment from "moment-timezone";
 
 	export default {
 		name: "DSRListManager",
-		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin, datePickerMixin],
 		async created() {
 			this.setDateRange();
 			this.getData();
@@ -134,34 +135,7 @@
 			// 	this.setSearchConfig(this.userList);
 		},
 		data: () => ({
-			callsList: [
-				// {
-				// 	_id: "5fa124ee6bff062f60d5fcc2",
-				// 	date_of_call: "2020-10-30T18:30:00.000Z",
-				// 	sr_no: "AUG20-0",
-				// 	record: {
-				// 		created_on: "2020-11-03T09:37:50.737Z",
-				// 		updated_on: "2020-11-03T09:37:50.737Z",
-				// 	},
-				// 	mortal_id: "5fa1075dab44e634a4d90c83",
-				// 	company_id: "5f9d03eb92bff8363cf43565",
-				// 	company_address_id: "5f9d4f9ce639cb1de070195f",
-				// 	company_address_data: {
-				// 		branch_name: "Nagpada",
-				// 		state: "Maharashtra",
-				// 		city: "Mumbai",
-				// 		pincode: "400008",
-				// 		zone: "EAST",
-				// 		address: "Dadar Mumbai",
-				// 	},
-				// 	company_data: {
-				// 		name: "Thomas Cook",
-				// 	},
-				// 	mortal_data: {
-				// 		name: "Aliasgar Pocketwala",
-				// 	},
-				// },
-			],
+			reportsList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "sales_call_data.sr_no", width: 100 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
@@ -224,7 +198,7 @@
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.callsList = data.list;
+					this.reportsList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 				});
