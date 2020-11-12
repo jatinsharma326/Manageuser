@@ -1,9 +1,7 @@
 <template>
-	<div class="partnersWrapper primary-background-color">
-		<!-- <Users v-bind="{ ...ele.props }"></Users> -->
-		<v-row class="px-6 managepartners-search-bar" justify="center" align="center">
-			<v-col cols="12" sm="8" md="6">
-				<!-- @queryString="queryString" -->
+	<div class="MSRWrapper primary-background-color">
+		<div class="MSRSearchbarWrapper">
+			<div class="searchbar">
 				<Search
 					@queryString="queryString"
 					@filterObject="advanceSearch"
@@ -12,74 +10,72 @@
 					:isAdvanceSearch="true"
 					:filterConfig="selectedSearchConfig"
 				></Search>
-			</v-col>
-		</v-row>
+			</div>
+			<div class="datepicker">
+				<v-dialog
+					ref="dialog"
+					v-model="dateDialog"
+					:return-value.sync="datePickerDate"
+					persistent
+					width="290px"
+				>
+					<template v-slot:activator="{ on, attrs }">
+						<v-text-field
+							v-model="dateRangeText"
+							label="Date Range"
+							readonly
+							outlined
+							@click="dataSelector"
+							v-bind="attrs"
+							v-on="on"
+						></v-text-field>
+					</template>
+					<v-date-picker range v-model="datePickerDate" scrollable>
+						<v-spacer></v-spacer>
+						<v-btn text color="primary" @click="resetDatePicker">
+							Reset
+						</v-btn>
+						<v-btn text color="primary" @click="cancelDatePicker">
+							Cancel
+						</v-btn>
+						<v-btn text color="primary" @click="submitDatePicker">
+							OK
+						</v-btn>
+					</v-date-picker>
+				</v-dialog>
+			</div>
+		</div>
 
 		<div class="card-wrapper">
-			<div v-for="user in partnerList" :key="user._id" class="card-element">
-				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
+			<div v-for="listItem in monthList" :key="listItem._id" class="card-element">
+				<InformationCard :expandCard="true" :isCardDisabled="!listItem.record.active">
 					<template v-slot:topLeft>
-						{{ user.business_types.join(", ") }}
+						{{ listItem.mortal_data.name }}
 					</template>
 					<template v-slot:mainContent>
-						{{ user.name }}
+						{{ listItem.month }}
 					</template>
 					<template v-slot:mainContentSubtitle>
-						{{ user.proprietor_info }}
-					</template>
-					<template v-slot:mainContentRight>
-						<div class="card-image">
-							<img :src="user.logo" alt="" />
-						</div>
+						{{ listItem.highlights }}
 					</template>
 					<template v-slot:moreInfo>
-						{{ user.countries.join(", ") }}
+						{{ listItem.countries.join(", ") }}
 					</template>
 					<template v-slot:actionButtons>
 						<template>
-							<v-btn v-if="isAdminOrManagement" @click="disablePartner(user)" color="error" text>
-								{{ user.record.active ? "Disable" : "Enable" }}
-							</v-btn>
-							<v-btn v-if="isAdminOrManagement" @click="openInputForm(true, user)" color="secondary" text>
+							<v-btn @click="openInputForm(true, listItem)" color="secondary" text>
 								Edit
 							</v-btn>
-							<v-btn @click="openEmployeeModal(user)" color="primary" text>
+							<v-btn @click="openEmployeeModal(listItem)" color="primary" text>
 								View
 							</v-btn>
 						</template>
 					</template>
 					<template v-slot:expandCardContent>
 						<v-list>
-							<v-list-item
-								v-for="(contact, index) in user.emergency_contacts"
-								:key="user._id + '+' + index"
-								two-line
-							>
-								<v-list-item-icon>
-									<v-icon color="secondary">
-										mdi-phone
-									</v-icon>
-								</v-list-item-icon>
-
+							<v-list-item>
 								<v-list-item-content>
-									<v-list-item-title>{{ contact.contacts.join(", ") }}</v-list-item-title>
-									<v-list-item-subtitle>{{ contact.country }}</v-list-item-subtitle>
-								</v-list-item-content>
-								<!-- <v-divider inset></v-divider> -->
-							</v-list-item>
-
-							<v-list-item
-								v-for="(email, index) in user.email_ids"
-								:key="user._id + '+' + index + 'Email'"
-							>
-								<v-list-item-icon>
-									<v-icon v-if="index == 0" color="secondary">
-										mdi-email
-									</v-icon>
-								</v-list-item-icon>
-
-								<v-list-item-content>
-									<v-list-item-title>{{ email }}</v-list-item-title>
+									{{ listItem.highlights }}
 								</v-list-item-content>
 							</v-list-item>
 						</v-list>
@@ -97,7 +93,7 @@
 			></v-pagination>
 		</div>
 
-		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
+		<!-- <ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
 			<template v-slot:modalTitle>
 				<div v-if="selectedPartnerInfo.name">
 					{{ selectedPartnerInfo.name }}
@@ -111,7 +107,7 @@
 			<template v-slot:modalContent>
 				<partnerEmployees :partnerInfo="selectedPartnerInfo"></partnerEmployees>
 			</template>
-		</ViewMoreModal>
+		</ViewMoreModal> -->
 
 		<UserForm
 			@formOutput="formOutput"
@@ -136,6 +132,7 @@
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
+	import datePickerMixin from "../../mixins/datePickerMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
@@ -144,7 +141,7 @@
 
 	export default {
 		name: "Partners",
-		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, datePickerMixin],
 		components: {
 			PartnerEmployees,
 		},
@@ -157,66 +154,7 @@
 			placeholder: "Search Partners",
 			selectedPartnerInfo: {},
 			activeState: true,
-			keysToWatch: ["countries"],
-			partnerList: [
-				// {
-				//   _id: "5f8579099618e43f60826225",
-				//   name: "Allied Partners",
-				//   proprietor_info: "Info 1",
-				//   business_types: ["FIT", "GIT"],
-				//   countries: ["United States", "Egypt"],
-				//   emergency_contacts: [
-				//     {
-				//       country: "United States",
-				//       contacts: ["123456789", "987654321"],
-				//     },
-				//   ],
-				//   logo: "",
-				//   record: {
-				//     created_on: "2020-10-13T09:53:13.958Z",
-				//     updated_on: "2020-10-13T11:01:45.456Z",
-				//     active: false,
-				//   },
-				// },
-				// {
-				//   _id: "5f857a9ad8a96c2e4ca6e7c5",
-				//   name: "Allied Partneras",
-				//   proprietor_info: "Info 1",
-				//   business_types: ["FIT", "GIT"],
-				//   countries: ["United States", "Egypt"],
-				//   emergency_contacts: [
-				//     {
-				//       country: "Egypt",
-				//       contacts: ["123456789", "987654321"],
-				//     },
-				//   ],
-				//   logo: "",
-				//   record: {
-				//     created_on: "2020-10-13T09:59:54.919Z",
-				//     updated_on: "2020-10-13T09:59:54.919Z",
-				//     active: true,
-				//   },
-				// },
-				// {
-				//   _id: "5f8582dc382e8941905682c8",
-				//   name: "Allied P",
-				//   proprietor_info: "Info 1",
-				//   business_types: ["FIT", "GIT"],
-				//   countries: ["United States", "Egypt"],
-				//   emergency_contacts: [
-				//     {
-				//       country: "Egypt",
-				//       contacts: ["123456789", "987654321"],
-				//     },
-				//   ],
-				//   logo: "",
-				//   record: {
-				//     created_on: "2020-10-13T10:35:08.048Z",
-				//     updated_on: "2020-10-13T10:35:08.048Z",
-				//     active: true,
-				//   },
-				// },
-			],
+			monthList: [],
 			inputConfig: [
 				{
 					name: "Partner Name*",
@@ -300,7 +238,7 @@
 		}),
 		computed: {},
 		methods: {
-			...mapActions("PartnerManagement", ["getPartnerList", "addPartner", "editPartner"]),
+			...mapActions("PartnerManagement", ["getMonthList", "addReportMonth", "editReportMonth"]),
 			getPartners() {
 				this.openLoaderDialog();
 				this.filter.active = this.activeState;
@@ -310,7 +248,7 @@
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.partnerList = data.list;
+					this.monthList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 				});
@@ -364,7 +302,7 @@
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addPartner(formData).then((data) => {
+					this.addReportMonth(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Partner" });
@@ -377,7 +315,7 @@
 						}
 					});
 				} else {
-					this.editPartner(formData).then((data) => {
+					this.editReportMonth(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Partner" });
@@ -405,7 +343,7 @@
 					)
 				) {
 					this.openLoaderDialog();
-					this.editPartner({
+					this.editReportMonth({
 						_id: data._id,
 						active: !data.record.active,
 						updated_on: data.record.updated_on,
@@ -477,7 +415,7 @@
 </script>
 
 <style lang="scss" scopped>
-	.partnersWrapper {
+	.MSRWrapper {
 		padding: 20px 5px;
 		height: 100%;
 	}
@@ -490,7 +428,7 @@
 </style>
 
 <style lang="scss">
-	.partnersWrapper .v-list-item__title,
+	.MSRWrapper .v-list-item__title,
 	.v-list-item__subtitle {
 		white-space: normal;
 	}
