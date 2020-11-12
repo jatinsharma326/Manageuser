@@ -67,5 +67,5 @@ export default {
 	DSR: BASE_URL + "DSR/v0.1/",
 
 	// MONTHLY SALES REPORT ENDPOINT
-	MSR: BASE_URL + "DSR/v0.1/",
+	MSR: BASE_URL + "MSR/v0.1/",
 };
