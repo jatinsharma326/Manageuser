@@ -12,54 +12,24 @@
 				></Search>
 			</div>
 			<div class="datepicker">
-				<v-dialog
-					ref="dialog"
-					v-model="dateDialog"
-					:return-value.sync="datePickerDate"
-					persistent
-					width="290px"
-				>
-					<template v-slot:activator="{ on, attrs }">
-						<v-text-field
-							v-model="dateRangeText"
-							label="Date Range"
-							readonly
-							outlined
-							@click="dataSelector"
-							v-bind="attrs"
-							v-on="on"
-						></v-text-field>
-					</template>
-					<v-date-picker range v-model="datePickerDate" scrollable>
-						<v-spacer></v-spacer>
-						<v-btn text color="primary" @click="resetDatePicker">
-							Reset
-						</v-btn>
-						<v-btn text color="primary" @click="cancelDatePicker">
-							Cancel
-						</v-btn>
-						<v-btn text color="primary" @click="submitDatePicker">
-							OK
-						</v-btn>
-					</v-date-picker>
-				</v-dialog>
+				<v-autocomplete v-model="selectedYear" :items="yearList" outlined label="Select Year"></v-autocomplete>
 			</div>
 		</div>
 
 		<div class="card-wrapper">
 			<div v-for="listItem in monthList" :key="listItem._id" class="card-element">
-				<InformationCard :expandCard="true" :isCardDisabled="!listItem.record.active">
+				<InformationCard :expandCard="true">
 					<template v-slot:topLeft>
 						{{ listItem.mortal_data.name }}
 					</template>
 					<template v-slot:mainContent>
-						{{ listItem.month }}
+						{{ getMonthName(listItem.month) }}
 					</template>
 					<template v-slot:mainContentSubtitle>
-						{{ listItem.highlights }}
+						{{ listItem.country }}
 					</template>
 					<template v-slot:moreInfo>
-						{{ listItem.countries.join(", ") }}
+						{{ listItem.highlights }}
 					</template>
 					<template v-slot:actionButtons>
 						<template>
@@ -132,22 +102,23 @@
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
-	import datePickerMixin from "../../mixins/datePickerMixin";
+	import moment from "moment-timezone";
+	// import datePickerMixin from "../../mixins/datePickerMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
-	import PartnerEmployees from "./PartnerEmployees";
+	// import PartnerEmployees from "./PartnerEmployees";
 	import ViewMoreModal from "../../components/ViewMoreModal";
 
 	export default {
 		name: "Partners",
-		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, datePickerMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
 		components: {
-			PartnerEmployees,
+			// PartnerEmployees,
 		},
 		created() {
-			this.getPartners();
-			this.setSearchConfig();
+			this.getData();
+			// this.setSearchConfig();
 		},
 		data: () => ({
 			name: "Representing Partner",
@@ -155,94 +126,249 @@
 			selectedPartnerInfo: {},
 			activeState: true,
 			monthList: [],
+			keysToWatch: [],
+			selectedYear: 2020,
+			yearList: [
+				2000,
+				2001,
+				2002,
+				2003,
+				2004,
+				2005,
+				2006,
+				2007,
+				2008,
+				2009,
+				2010,
+				2011,
+				2012,
+				2013,
+				2014,
+				2015,
+				2016,
+				2017,
+				2018,
+				2019,
+				2020,
+				2021,
+				2022,
+				2023,
+				2024,
+				2025,
+				2026,
+				2027,
+				2028,
+				2029,
+				2030,
+				2031,
+				2032,
+				2033,
+				2034,
+				2035,
+				2036,
+				2037,
+				2038,
+				2039,
+				2040,
+				2041,
+				2042,
+				2043,
+				2044,
+				2045,
+				2046,
+				2047,
+				2048,
+				2049,
+				2050,
+				2051,
+				2052,
+				2053,
+				2054,
+				2055,
+				2056,
+				2057,
+				2058,
+				2059,
+				2060,
+				2061,
+				2062,
+				2063,
+				2064,
+				2065,
+				2066,
+				2067,
+				2068,
+				2069,
+				2070,
+				2071,
+				2072,
+				2073,
+				2074,
+				2075,
+				2076,
+				2077,
+				2078,
+				2079,
+				2080,
+				2081,
+				2082,
+				2083,
+				2084,
+				2085,
+				2086,
+				2087,
+				2088,
+				2089,
+				2090,
+				2091,
+				2092,
+				2093,
+				2094,
+				2095,
+				2096,
+				2097,
+				2098,
+				2099,
+				2100,
+			],
+			monthList: [
+				{
+					text: January,
+					value: "01",
+				},
+				{
+					text: February,
+					value: "02",
+				},
+				{
+					text: March,
+					value: "03",
+				},
+				{
+					text: April,
+					value: "04",
+				},
+				{
+					text: May,
+					value: "05",
+				},
+				{
+					text: June,
+					value: "06",
+				},
+				{
+					text: July,
+					value: "07",
+				},
+				{
+					text: August,
+					value: "08",
+				},
+				{
+					text: September,
+					value: "09",
+				},
+				{
+					text: October,
+					value: "10",
+				},
+				{
+					text: November,
+					value: "11",
+				},
+				{
+					text: December,
+					value: "12",
+				},
+			],
 			inputConfig: [
-				{
-					name: "Partner Name*",
-					type: "String",
-					key: "name",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "Proprietor Info*",
-					type: "String",
-					key: "proprietor_info",
-					width: "half",
-					validations: {
-						required,
-						minLength: minLength(1),
-					},
-				},
-				{
-					name: "Business Type*",
-					type: "Dropdown",
-					key: "business_types",
-					width: "half",
-					multi: true,
-					isListInStore: true,
-					listVariable: "businessType",
-					validations: {
-						required,
-					},
-				},
-				{
-					name: "Partner Logo",
-					type: "FilePicker",
-					key: "logo",
-					width: "half",
-					acceptRules: "image/png, image/jpeg, image/bmp",
-					rules: [
-						(value) =>
-							!value || value.size <= 100000 || "Partner logo should be less than or equal to 100 kb!",
-					],
-				},
-				{
-					name: "Email",
-					type: "MultiInput",
-					key: "email_ids",
-					width: "full",
-					validations: {
-						$each: {
-							input: {
-								email,
-							},
-						},
-					},
-				},
-				{
-					name: "Countries*",
-					type: "Dropdown",
-					key: "countries",
-					width: "full",
-					multi: true,
-					isListInStore: true,
-					listVariable: "countries",
-					validations: {
-						required,
-					},
-				},
-				{
-					name: "Emergency Numbers",
-					type: "MultiInputWithGroupKey",
-					multi: true,
-					key: "emergency_contacts",
-					width: "half",
-					keyToGroup: "countries",
-					keyforGrouped: "country",
-					keyBeingGrouped: "contacts",
-				},
+				// {
+				// 	name: "Partner Name*",
+				// 	type: "String",
+				// 	key: "name",
+				// 	width: "half",
+				// 	validations: {
+				// 		required,
+				// 		minLength: minLength(1),
+				// 	},
+				// },
+				// {
+				// 	name: "Proprietor Info*",
+				// 	type: "String",
+				// 	key: "proprietor_info",
+				// 	width: "half",
+				// 	validations: {
+				// 		required,
+				// 		minLength: minLength(1),
+				// 	},
+				// },
+				// {
+				// 	name: "Business Type*",
+				// 	type: "Dropdown",
+				// 	key: "business_types",
+				// 	width: "half",
+				// 	multi: true,
+				// 	isListInStore: true,
+				// 	listVariable: "businessType",
+				// 	validations: {
+				// 		required,
+				// 	},
+				// },
+				// {
+				// 	name: "Partner Logo",
+				// 	type: "FilePicker",
+				// 	key: "logo",
+				// 	width: "half",
+				// 	acceptRules: "image/png, image/jpeg, image/bmp",
+				// 	rules: [
+				// 		(value) =>
+				// 			!value || value.size <= 100000 || "Partner logo should be less than or equal to 100 kb!",
+				// 	],
+				// },
+				// {
+				// 	name: "Email",
+				// 	type: "MultiInput",
+				// 	key: "email_ids",
+				// 	width: "full",
+				// 	validations: {
+				// 		$each: {
+				// 			input: {
+				// 				email,
+				// 			},
+				// 		},
+				// 	},
+				// },
+				// {
+				// 	name: "Countries*",
+				// 	type: "Dropdown",
+				// 	key: "countries",
+				// 	width: "full",
+				// 	multi: true,
+				// 	isListInStore: true,
+				// 	listVariable: "countries",
+				// 	validations: {
+				// 		required,
+				// 	},
+				// },
+				// {
+				// 	name: "Emergency Numbers",
+				// 	type: "MultiInputWithGroupKey",
+				// 	multi: true,
+				// 	key: "emergency_contacts",
+				// 	width: "half",
+				// 	keyToGroup: "countries",
+				// 	keyforGrouped: "country",
+				// 	keyBeingGrouped: "contacts",
+				// },
 			],
 		}),
 		computed: {},
 		methods: {
-			...mapActions("PartnerManagement", ["getMonthList", "addReportMonth", "editReportMonth"]),
-			getPartners() {
+			...mapActions("MSR", ["getMonthList", "addReportMonth", "editReportMonth"]),
+			getData() {
 				this.openLoaderDialog();
 				this.filter.active = this.activeState;
-				this.getPartnerList({
+				this.getMonthList({
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
@@ -253,9 +379,13 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
+			getMonthName(monthNumber) {
+				return moment(monthNumber, "MM").format("MMMM");
+			},
+
 			queryString(data) {
 				this.filter["search_text"] = data;
-				this.getPartners();
+				this.getData();
 			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
@@ -265,7 +395,7 @@
 					this.activeState = true;
 				}
 				this.pageNo = 1;
-				this.getPartners();
+				this.getData();
 			},
 			async formOutput(data) {
 				var tempFile = data.logo;
@@ -307,7 +437,7 @@
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Partner" });
 							console.log("Add Partner success");
-							this.getPartners();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -320,7 +450,7 @@
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Partner" });
 							console.log("Edit Partner success");
-							this.getPartners();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -353,7 +483,7 @@
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
 							console.log("Updated Partner status");
-							this.getPartners();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -367,48 +497,48 @@
 				// console.log(this.selectedPartnerInfo);
 				this.viewMoreModal = true;
 			},
-			setSearchConfig() {
-				/*
-				 * Name of Partner - Text field - string or number - can this be empty?
-				 * Business Type - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-				 * Countries - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-				 */
-				this.selectedSearchConfig = [
-					{
-						name: "Partner Name",
-						key: "name",
-						type: "text",
-						inputType: "textfield",
-						defaultValue: "",
-					},
-					{
-						name: "Business Type",
-						key: "business_types",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: true,
-						listVariable: "businessType",
-					},
-					{
-						name: "Countries",
-						key: "countries",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: true,
-						listVariable: "countries",
-					},
-					{
-						name: "Show Disabled Users",
-						key: "active",
-						inputType: "switch",
-						defaultValue: false,
-					},
-				];
-			},
+			// setSearchConfig() {
+			// 	/*
+			// 	 * Name of Partner - Text field - string or number - can this be empty?
+			// 	 * Business Type - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
+			// 	 * Countries - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
+			// 	 */
+			// 	this.selectedSearchConfig = [
+			// 		{
+			// 			name: "Partner Name",
+			// 			key: "name",
+			// 			type: "text",
+			// 			inputType: "textfield",
+			// 			defaultValue: "",
+			// 		},
+			// 		{
+			// 			name: "Business Type",
+			// 			key: "business_types",
+			// 			multi: true,
+			// 			inputType: "dropdown",
+			// 			defaultValue: [],
+			// 			isListInStore: true,
+			// 			listVariable: "businessType",
+			// 		},
+			// 		{
+			// 			name: "Countries",
+			// 			key: "countries",
+			// 			multi: true,
+			// 			inputType: "dropdown",
+			// 			defaultValue: [],
+			// 			isListInStore: true,
+			// 			listVariable: "countries",
+			// 		},
+			// 		{
+			// 			name: "Show Disabled Users",
+			// 			key: "active",
+			// 			inputType: "switch",
+			// 			defaultValue: false,
+			// 		},
+			// 	];
+			// },
 			updatedPageNo(page) {
-				this.getPartners();
+				this.getData();
 			},
 		},
 	};
