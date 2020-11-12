@@ -216,13 +216,16 @@
 									width: "half",
 								},
 								{
-									name: "Status",
+									name: "Status*",
 									type: "Dropdown",
 									key: "status",
 									width: "half",
 									multi: false,
 									isListInStore: false,
 									listItems: ["ON GOING", "CLOSED"],
+									validations: {
+										required,
+									},
 								},
 								{
 									name: "Meeting Remark*",
