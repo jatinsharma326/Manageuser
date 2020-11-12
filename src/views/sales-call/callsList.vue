@@ -12,7 +12,13 @@
 				></Search>
 			</div>
 			<div class="datepicker">
-				<v-dialog ref="dialog" v-model="callDateDialog" :return-value.sync="callDate" persistent width="290px">
+				<v-dialog
+					ref="dialog"
+					v-model="dateDialog"
+					:return-value.sync="datePickerDate"
+					persistent
+					width="290px"
+				>
 					<template v-slot:activator="{ on, attrs }">
 						<v-text-field
 							v-model="dateRangeText"
@@ -24,7 +30,7 @@
 							v-on="on"
 						></v-text-field>
 					</template>
-					<v-date-picker range v-model="callDate" scrollable>
+					<v-date-picker range v-model="datePickerDate" scrollable>
 						<v-spacer></v-spacer>
 						<v-btn text color="primary" @click="resetDatePicker">
 							Reset
@@ -98,13 +104,14 @@
 	import helperMixin from "../../mixins/helperMixins";
 	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
+	import datePickerMixin from "../../mixins/datePickerMixin";
 	import helpers from "../../components/helpers";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import moment from "moment-timezone";
 
 	export default {
 		name: "SalesCallManager",
-		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin, datePickerMixin],
 		async created() {
 			this.setDateRange();
 			this.getData();
@@ -153,16 +160,19 @@
 				{ text: "", value: "actions" },
 			],
 			keysToWatch: ["company_id"],
-			callDate: [],
-			tempDateValue: [],
-			callDateDialog: false,
+
+			//delete This if mixin works properly
+			// datePickerDate: [],
+			// tempDateValue: [],
+			// dateDialog: false,
+
 			// userList: [],
 			// serialNumber: 0,
 		}),
 		computed: {
 			...mapGetters(["userData"]),
 			dateRangeText() {
-				return this.callDate.join(" ~ ");
+				return this.datePickerDate.join(" ~ ");
 			},
 		},
 		methods: {
@@ -190,12 +200,12 @@
 					this.filter.mortal_id = this.userData.id;
 				}
 				console.log("filter ", this.filter);
-				this.filter.date_from = moment(this.callDate[0])
+				this.filter.date_from = moment(this.datePickerDate[0])
 					.tz("Asia/Kolkata")
 					.startOf()
 					.toISOString();
-				if (this.callDate[1]) {
-					this.filter.date_to = moment(this.callDate[1])
+				if (this.datePickerDate[1]) {
+					this.filter.date_to = moment(this.datePickerDate[1])
 						.tz("Asia/Kolkata")
 						.endOf()
 						.toISOString();
@@ -214,39 +224,39 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
-			dataSelector() {
-				this.tempDateValue = [...this.callDate];
-				console.log("Date picker clicked", this.tempDateValue);
-			},
-			cancelDatePicker() {
-				this.callDate = [...this.tempDateValue];
-				this.callDateDialog = false;
-			},
-			submitDatePicker() {
-				// Ask taher how exactly does the .save work and should we just close modal
-				this.$refs.dialog.save(this.callDate);
-				this.getData();
-			},
-			resetDatePicker() {
-				this.setDateRange();
-				this.$refs.dialog.save(this.callDate);
-				this.getData();
-				this.callDateDialog = false;
-			},
-			setDateRange() {
-				let tempArray = [];
-				let startDate = moment()
-					.tz("Asia/Kolkata")
-					.startOf("month")
-					.format("YYYY-MM-DD");
-				let endDate = moment()
-					.tz("Asia/Kolkata")
-					.endOf("month")
-					.format("YYYY-MM-DD");
-				tempArray.push(startDate);
-				tempArray.push(endDate);
-				this.callDate = tempArray;
-			},
+			// dataSelector() {
+			// 	this.tempDateValue = [...this.datePickerDate];
+			// 	console.log("Date picker clicked", this.tempDateValue);
+			// },
+			// cancelDatePicker() {
+			// 	this.datePickerDate = [...this.tempDateValue];
+			// 	this.dateDialog = false;
+			// },
+			// submitDatePicker() {
+			// 	// Ask taher how exactly does the .save work and should we just close modal
+			// 	this.$refs.dialog.save(this.datePickerDate);
+			// 	this.getData();
+			// },
+			// resetDatePicker() {
+			// 	this.setDateRange();
+			// 	this.$refs.dialog.save(this.datePickerDate);
+			// 	this.getData();
+			// 	this.dateDialog = false;
+			// },
+			// setDateRange() {
+			// 	let tempArray = [];
+			// 	let startDate = moment()
+			// 		.tz("Asia/Kolkata")
+			// 		.startOf("month")
+			// 		.format("YYYY-MM-DD");
+			// 	let endDate = moment()
+			// 		.tz("Asia/Kolkata")
+			// 		.endOf("month")
+			// 		.format("YYYY-MM-DD");
+			// 	tempArray.push(startDate);
+			// 	tempArray.push(endDate);
+			// 	this.datePickerDate = tempArray;
+			// },
 			canUserEdit(item) {
 				let currentMonth = moment()
 					.tz("Asia/Kolkata")
