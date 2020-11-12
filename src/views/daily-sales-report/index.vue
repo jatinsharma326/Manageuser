@@ -33,7 +33,8 @@
 				this.userList,
 				this.storeStatesList,
 				this.modifiedCompanyList,
-				this.countriesList
+				this.countriesList,
+				this.callsList
 			);
 		},
 		data: () => ({
@@ -114,7 +115,8 @@
 				userList = [],
 				statesList = [],
 				modifiedCompanyList = [],
-				activeCountriesList = []
+				activeCountriesList = [],
+				callsList = []
 			) {
 				this.tabConfig = [
 					{
@@ -156,7 +158,7 @@
 									width: "full",
 									multi: false,
 									isListInStore: false,
-									listItems: salesList,
+									listItems: callsList,
 									itemText: "sr_no",
 									itemValue: "_id",
 									validations: {
