@@ -11,6 +11,7 @@ import LeaveManager from "../views/leave-manager/store";
 import ManageTargets from "../views/manage-targets/store";
 import ManageAgents from "../views/manage-agents/store";
 import SalesCall from "../views/sales-call/store";
+import DSR from "../views/daily-sales-report/store";
 
 Vue.use(Vuex);
 
@@ -87,6 +88,7 @@ export default new Vuex.Store({
 		ManageTargets,
 		ManageAgents,
 		SalesCall,
+		DSR,
 	},
 
 	state: initialState(),
