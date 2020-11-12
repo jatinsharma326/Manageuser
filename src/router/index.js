@@ -29,6 +29,12 @@ const routes = [
 		meta: { policy: [10, 20, 30, 40] },
 	},
 	{
+		path: "/dsr",
+		name: "Daily Sales Report",
+		component: () => import("../views/daily-sales-report"),
+		meta: { policy: [10, 20, 30, 40] },
+	},
+	{
 		path: "/settings",
 		name: "Settings",
 		component: () => import("../views/settings"),
