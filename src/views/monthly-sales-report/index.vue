@@ -17,7 +17,7 @@
 		</div>
 
 		<div class="card-wrapper">
-			<div v-for="listItem in monthList" :key="listItem._id" class="card-element">
+			<div v-for="listItem in msrList" :key="listItem._id" class="card-element">
 				<InformationCard :expandCard="true">
 					<template v-slot:topLeft>
 						{{ listItem.mortal_data.name }}
@@ -107,25 +107,24 @@
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
-	// import PartnerEmployees from "./PartnerEmployees";
 	import ViewMoreModal from "../../components/ViewMoreModal";
 
 	export default {
-		name: "Partners",
+		name: "MonthlySalesReport",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
-		components: {
-			// PartnerEmployees,
-		},
-		created() {
+		components: {},
+		async created() {
+			await this.getCountries();
+			this.setInputConfig(this.yearList, this.monthList, this.countriesList);
+			await this.getUsers();
+			this.setSearchConfig(this.userList, this.countriesList);
 			this.getData();
-			// this.setSearchConfig();
 		},
 		data: () => ({
 			name: "Representing Partner",
 			placeholder: "Search Partners",
 			selectedPartnerInfo: {},
 			activeState: true,
-			monthList: [],
 			keysToWatch: [],
 			selectedYear: 2020,
 			yearList: [
@@ -233,138 +232,66 @@
 			],
 			monthList: [
 				{
-					text: January,
-					value: "01",
+					text: "January",
+					value: 1,
 				},
 				{
-					text: February,
-					value: "02",
+					text: "February",
+					value: 2,
 				},
 				{
-					text: March,
-					value: "03",
+					text: "March",
+					value: 3,
 				},
 				{
-					text: April,
-					value: "04",
+					text: "April",
+					value: 4,
 				},
 				{
-					text: May,
-					value: "05",
+					text: "May",
+					value: 5,
 				},
 				{
-					text: June,
-					value: "06",
+					text: "June",
+					value: 6,
 				},
 				{
-					text: July,
-					value: "07",
+					text: "July",
+					value: 7,
 				},
 				{
-					text: August,
-					value: "08",
+					text: "August",
+					value: 8,
 				},
 				{
-					text: September,
-					value: "09",
+					text: "September",
+					value: 9,
 				},
 				{
-					text: October,
-					value: "10",
+					text: "October",
+					value: 10,
 				},
 				{
-					text: November,
-					value: "11",
+					text: "November",
+					value: 11,
 				},
 				{
-					text: December,
-					value: "12",
+					text: "December",
+					value: 12,
 				},
 			],
-			inputConfig: [
-				// {
-				// 	name: "Partner Name*",
-				// 	type: "String",
-				// 	key: "name",
-				// 	width: "half",
-				// 	validations: {
-				// 		required,
-				// 		minLength: minLength(1),
-				// 	},
-				// },
-				// {
-				// 	name: "Proprietor Info*",
-				// 	type: "String",
-				// 	key: "proprietor_info",
-				// 	width: "half",
-				// 	validations: {
-				// 		required,
-				// 		minLength: minLength(1),
-				// 	},
-				// },
-				// {
-				// 	name: "Business Type*",
-				// 	type: "Dropdown",
-				// 	key: "business_types",
-				// 	width: "half",
-				// 	multi: true,
-				// 	isListInStore: true,
-				// 	listVariable: "businessType",
-				// 	validations: {
-				// 		required,
-				// 	},
-				// },
-				// {
-				// 	name: "Partner Logo",
-				// 	type: "FilePicker",
-				// 	key: "logo",
-				// 	width: "half",
-				// 	acceptRules: "image/png, image/jpeg, image/bmp",
-				// 	rules: [
-				// 		(value) =>
-				// 			!value || value.size <= 100000 || "Partner logo should be less than or equal to 100 kb!",
-				// 	],
-				// },
-				// {
-				// 	name: "Email",
-				// 	type: "MultiInput",
-				// 	key: "email_ids",
-				// 	width: "full",
-				// 	validations: {
-				// 		$each: {
-				// 			input: {
-				// 				email,
-				// 			},
-				// 		},
-				// 	},
-				// },
-				// {
-				// 	name: "Countries*",
-				// 	type: "Dropdown",
-				// 	key: "countries",
-				// 	width: "full",
-				// 	multi: true,
-				// 	isListInStore: true,
-				// 	listVariable: "countries",
-				// 	validations: {
-				// 		required,
-				// 	},
-				// },
-				// {
-				// 	name: "Emergency Numbers",
-				// 	type: "MultiInputWithGroupKey",
-				// 	multi: true,
-				// 	key: "emergency_contacts",
-				// 	width: "half",
-				// 	keyToGroup: "countries",
-				// 	keyforGrouped: "country",
-				// 	keyBeingGrouped: "contacts",
-				// },
-			],
+			msrList: [],
+			inputConfig: [],
+			countriesList: [],
 		}),
-		computed: {},
+		computed: {
+			...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType", "userData"]),
+		},
 		methods: {
 			...mapActions("MSR", ["getMonthList", "addReportMonth", "editReportMonth"]),
+			...mapActions("ManageTargets", ["getActiveCountries"]),
+			...mapActions("UserManagement", ["getUserList"]),
+
 			getData() {
 				this.openLoaderDialog();
 				this.filter.active = this.activeState;
@@ -374,15 +301,96 @@
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.monthList = data.list;
+					this.msrList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 				});
 			},
+			async getUsers() {
+				try {
+					let salesAgents = await this.getUserList({
+						filter: {
+							type: "sales_agent",
+						},
+					});
+					let remoteSalesAgents = await this.getUserList({
+						filter: {
+							type: "remote_sales_agent",
+						},
+					});
+					let userList = [];
+					userList.push(...salesAgents.list);
+					userList.push(...remoteSalesAgents.list);
+					this.userList = userList.map((e) => e.usr_data.name);
+				} catch (e) {
+					console.log(e);
+				}
+			},
 			getMonthName(monthNumber) {
 				return moment(monthNumber, "MM").format("MMMM");
 			},
-
+			getCountries() {
+				if (this.userType == "SALES_AGENT") {
+					this.countriesList = [...this.userData.usr_data.countries];
+				} else {
+					return this.getActiveCountryList();
+				}
+			},
+			getActiveCountryList() {
+				return this.getActiveCountries().then((data) => {
+					this.countriesList = data.list;
+				});
+			},
+			setInputConfig(yearList = [], monthList = [], countriesList = []) {
+				this.inputConfig = [
+					{
+						name: "Product*",
+						type: "Dropdown",
+						key: "country",
+						width: "full",
+						multi: false,
+						isListInStore: false,
+						listItems: countriesList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Year*",
+						type: "Dropdown",
+						key: "year",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: yearList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Month*",
+						type: "Dropdown",
+						key: "month",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: monthList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Month Highlight*",
+						type: "Textarea",
+						key: "highlights",
+						width: "full",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+				];
+			},
 			queryString(data) {
 				this.filter["search_text"] = data;
 				this.getData();
@@ -398,35 +406,34 @@
 				this.getData();
 			},
 			async formOutput(data) {
-				var tempFile = data.logo;
 				var formData = JSON.parse(JSON.stringify(data));
-				formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
-				formData.logo = tempFile;
-				var tempArray = [];
-				var tempObj = {};
+				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
+				// formData.logo = tempFile;
+				// var tempArray = [];
+				// var tempObj = {};
 
-				// loop over the emergency contacts objects to convert it into theh backend format
-				for (let contact of formData.emergency_contacts) {
-					tempObj = {};
-					for (let num of contact.input) {
-						if (num.input != "") {
-							tempObj["country"] = contact.groupKey;
-							if (!tempObj["contacts"]) tempObj["contacts"] = [];
-							tempObj["contacts"].push(num.input);
-						}
-					}
-					if (Object.keys(tempObj).length) {
-						tempArray.push(tempObj);
-					}
-				}
-				formData.emergency_contacts = tempArray;
+				// // loop over the emergency contacts objects to convert it into theh backend format
+				// for (let contact of formData.emergency_contacts) {
+				// 	tempObj = {};
+				// 	for (let num of contact.input) {
+				// 		if (num.input != "") {
+				// 			tempObj["country"] = contact.groupKey;
+				// 			if (!tempObj["contacts"]) tempObj["contacts"] = [];
+				// 			tempObj["contacts"].push(num.input);
+				// 		}
+				// 	}
+				// 	if (Object.keys(tempObj).length) {
+				// 		tempArray.push(tempObj);
+				// 	}
+				// }
+				// formData.emergency_contacts = tempArray;
 
-				// remove logo key if it's empty
-				if (formData.logo) {
-					formData.logo = await helpers.toBase64(formData.logo);
-				} else {
-					delete formData.logo;
-				}
+				// // remove logo key if it's empty
+				// if (formData.logo) {
+				// 	formData.logo = await helpers.toBase64(formData.logo);
+				// } else {
+				// 	delete formData.logo;
+				// }
 
 				console.log("Before API call FormData Object", formData);
 
@@ -497,46 +504,28 @@
 				// console.log(this.selectedPartnerInfo);
 				this.viewMoreModal = true;
 			},
-			// setSearchConfig() {
-			// 	/*
-			// 	 * Name of Partner - Text field - string or number - can this be empty?
-			// 	 * Business Type - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-			// 	 * Countries - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-			// 	 */
-			// 	this.selectedSearchConfig = [
-			// 		{
-			// 			name: "Partner Name",
-			// 			key: "name",
-			// 			type: "text",
-			// 			inputType: "textfield",
-			// 			defaultValue: "",
-			// 		},
-			// 		{
-			// 			name: "Business Type",
-			// 			key: "business_types",
-			// 			multi: true,
-			// 			inputType: "dropdown",
-			// 			defaultValue: [],
-			// 			isListInStore: true,
-			// 			listVariable: "businessType",
-			// 		},
-			// 		{
-			// 			name: "Countries",
-			// 			key: "countries",
-			// 			multi: true,
-			// 			inputType: "dropdown",
-			// 			defaultValue: [],
-			// 			isListInStore: true,
-			// 			listVariable: "countries",
-			// 		},
-			// 		{
-			// 			name: "Show Disabled Users",
-			// 			key: "active",
-			// 			inputType: "switch",
-			// 			defaultValue: false,
-			// 		},
-			// 	];
-			// },
+			setSearchConfig(teamMember = [], countriesList = []) {
+				this.selectedSearchConfig = [
+					{
+						name: "Select User",
+						key: "names",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: teamMember,
+					},
+					{
+						name: "Select Product",
+						key: "names",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: countriesList,
+					},
+				];
+			},
 			updatedPageNo(page) {
 				this.getData();
 			},
