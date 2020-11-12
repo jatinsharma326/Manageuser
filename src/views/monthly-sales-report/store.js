@@ -23,7 +23,7 @@ export default {
 				{
 					method: "get",
 					params: payload,
-					url: constants.MANAGE_PARTNER,
+					url: constants.MSR,
 				},
 				{ root: true }
 			)
@@ -51,14 +51,14 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		addPartner: ({ commit, dispatch }, payload) => {
+		addReportMonth: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.MANAGE_PARTNER,
+					url: constants.MSR,
 				},
 				{ root: true }
 			)
@@ -74,14 +74,14 @@ export default {
 					};
 				});
 		},
-		editPartner: ({ commit, dispatch }, payload) => {
+		editReportMonth: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.MANAGE_PARTNER,
+					url: constants.MSR,
 				},
 				{ root: true }
 			)
@@ -97,110 +97,41 @@ export default {
 					};
 				});
 		},
-		getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "get",
-					params: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (data.ok) {
-						return {
-							ok: true,
-							totalCount: data.totalCount,
-							fetchCount: data.fetchCount,
-							list: data.data,
-						};
-					} else {
-						fail(data.message || "Failed to Load Partner Employees List");
-						return {
-							ok: false,
-							totalCount: data.totalCount,
-							fetchCount: 0,
-							list: [],
-						};
-					}
-				})
-				.catch((err) => {
-					console.log("Yo ", err);
-					fail(err.toString() || "Failed to Load Partner Employees List");
-					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
-				});
-		},
-		addPartnerEmployees: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "post",
-					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add Partner Employees");
-					return data;
-				})
-				.catch((err) => {
-					fail(err.toString() || "Failed to add Partner Employees");
-					return {
-						ok: false,
-						message: err.message,
-					};
-				});
-		},
-		editPartnerEmployees: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "put",
-					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Partner Employee");
-					return data;
-				})
-				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner Employee");
-					return {
-						ok: false,
-						message: err.message,
-					};
-				});
-		},
-		deletePartnerEmployees: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "delete",
-					data: payload,
-					url: constants.MANAGE_PARTNER_EMPLOYEES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to Delete Partner Employee");
-					return data;
-				})
-				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner Employee");
-					return {
-						ok: false,
-						message: err.message,
-					};
-				});
-		},
+		// getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
+		// 	let fail = (msg) => commit("failure", msg);
+		// 	return dispatch(
+		// 		"apiCall",
+		// 		{
+		// 			method: "get",
+		// 			params: payload,
+		// 			url: constants.MANAGE_PARTNER_EMPLOYEES,
+		// 		},
+		// 		{ root: true }
+		// 	)
+		// 		.then((data) => {
+		// 			if (data.ok) {
+		// 				return {
+		// 					ok: true,
+		// 					totalCount: data.totalCount,
+		// 					fetchCount: data.fetchCount,
+		// 					list: data.data,
+		// 				};
+		// 			} else {
+		// 				fail(data.message || "Failed to Load Partner Employees List");
+		// 				return {
+		// 					ok: false,
+		// 					totalCount: data.totalCount,
+		// 					fetchCount: 0,
+		// 					list: [],
+		// 				};
+		// 			}
+		// 		})
+		// 		.catch((err) => {
+		// 			console.log("Yo ", err);
+		// 			fail(err.toString() || "Failed to Load Partner Employees List");
+		// 			return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+		// 		});
+		// },
 	},
 	getters: {
 		// masterData: (state) => state.masterData,
