@@ -120,6 +120,38 @@ export default {
 					};
 				});
 		},
+		checkCallDetail: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.DUPLICATE_CALL_WARNING,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					// console.log("Test Console Warning Main API", data);
+					if (data.ok) {
+						return {
+							ok: true,
+							data: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to get Employee Details");
+						return {
+							ok: false,
+							data: {},
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to get Employee Details");
+					return { ok: false, data: {} };
+				});
+		},
 	},
 	getters: {
 		// masterData: (state) => state.masterData,

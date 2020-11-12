@@ -167,7 +167,13 @@
 		},
 		methods: {
 			// ...mapActions("LeaveManager", ["getAllLeaves", "updateStatus"]),
-			...mapActions("SalesCall", ["getSalesCall", "addSalesCall", "editSalesCall", "deleteSalesCall"]),
+			...mapActions("SalesCall", [
+				"getSalesCall",
+				"addSalesCall",
+				"editSalesCall",
+				"deleteSalesCall",
+				"checkCallDetail",
+			]),
 
 			// isDateBefore(date) {
 			// 	if (moment().isBefore(date)) {
@@ -281,8 +287,39 @@
 				}
 
 				console.log("Test Console Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
+				if (formData.company_id || formData.date_of_call) {
+					this.checkCallDetail({
+						company_address_id: formData.company_address_id,
+						company_id: formData.company_id,
+						date_of_call: formData.date_of_call,
+					}).then((data) => {
+						if (data.ok && data.data && data.data.length) {
+							console.log("1", data.data);
+							if (
+								window.confirm(
+									`${data.data.map((e) => e.mortal_data.name).join(", ")} also ${
+										data.data.length > 1 ? "have" : "has"
+									} a Sales Call for "${data.data[0].company_data.name}" (For the Branch ${
+										data.data[0].company_address_data.branch_name
+									}) on ${this.getFormattedDate(
+										data.data[0].date_of_call
+									)}. Are you sure you want to continue.`
+								)
+							) {
+								this.addAndEditSalesCallWrapper(formData);
+							} else {
+								this.closeLoaderDialog();
+							}
+						} else {
+							this.addAndEditSalesCallWrapper(formData);
+						}
+					});
+				} else {
+					this.addAndEditSalesCallWrapper(formData);
+				}
+			},
+			addAndEditSalesCallWrapper(formData) {
 				if (!this.isEditMode) {
 					this.addSalesCall(formData).then((data) => {
 						this.closeLoaderDialog();
