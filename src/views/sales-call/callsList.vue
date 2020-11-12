@@ -299,8 +299,8 @@
 							if (
 								window.confirm(
 									`${data.data.map((e) => e.mortal_data.name).join(", ")} also ${
-										data.data.length > 1 ? "have" : "has"
-									} a Sales Call for "${data.data[0].company_data.name}" (For the Branch ${
+										data.data.length > 1 ? "have" : "has a"
+									} Sales Call for "${data.data[0].company_data.name}" (For the Branch ${
 										data.data[0].company_address_data.branch_name
 									}) on ${this.getFormattedDate(
 										data.data[0].date_of_call
