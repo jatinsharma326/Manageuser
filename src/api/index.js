@@ -51,13 +51,16 @@ export default {
 	BULK_UPLOAD_DELETE_SPAWN: BASE_URL + "BulkUpload/v0.1/delete-process",
 	BULK_UPLOAD_ERROR_FILE: BASE_URL + "ErrorFiles/v0.1/",
 
-	// TRAVEL AGENTS ADDRESS
+	// TRAVEL AGENTS SECTION CHANGELOGS
 	CHANGELOGS: BASE_URL + "Changelogs/v0.1/",
 
 	// Bulk Upload End Points for Travel Agents
 	SPAWN_PROCESS: BASE_URL + "BulkUpload/v0.1/spawn-bulk-upload-travel-agents",
 	UPLOAD_TRAVEL_AGENT_FILE: BASE_URL + "BulkUpload/v0.1/travel-agents",
 
-	// TRAVEL AGENTS ENDPOINT
+	// SALES CALL ENDPOINT
 	SALES_CALLS: BASE_URL + "SalesCalls/v0.1/",
+
+	// DAILY SALES REPORT ENDPOINT
+	DSR: BASE_URL + "DSR/v0.1/",
 };
