@@ -16,14 +16,14 @@ export default {
 		},
 	},
 	actions: {
-		getSalesCall: ({ commit, dispatch }, payload) => {
+		getDSR: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.SALES_CALLS,
+					url: constants.DSR,
 				},
 				{ root: true }
 			)
@@ -36,7 +36,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load All SalesCalls List");
+						fail(data.message || "Failed to load All DSR List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -47,73 +47,73 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to All SalesCalls List");
+					fail(err.toString() || "Failed to All DSR List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		addSalesCall: ({ commit, dispatch }, payload) => {
+		addDSR: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.SALES_CALLS,
+					url: constants.DSR,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add SalesCall Entry");
+					if (!data.ok) fail(data.message || "Failed to add DSR Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add SalesCall Entry");
+					fail(err.toString() || "Failed to add DSR Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		editSalesCall: ({ commit, dispatch }, payload) => {
+		editDSR: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.SALES_CALLS,
+					url: constants.DSR,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit SalesCall entry");
+					if (!data.ok) fail(data.message || "Failed to edit DSR entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit SalesCall Entry");
+					fail(err.toString() || "Failed to edit DSR Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		deleteSalesCall: ({ commit, dispatch }, payload) => {
+		deleteDSR: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "delete",
 					data: payload,
-					url: constants.SALES_CALLS,
+					url: constants.DSR,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to Delete SalesCall");
+					if (!data.ok) fail(data.message || "Failed to Delete DSR Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to Delete SalesCall");
+					fail(err.toString() || "Failed to Delete DSR Entry");
 					return {
 						ok: false,
 						message: err.message,
