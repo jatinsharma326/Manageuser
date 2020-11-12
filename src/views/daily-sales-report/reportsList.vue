@@ -41,9 +41,25 @@
 		</div>
 
 		<div class="leaves-table">
-			<v-data-table hide-default-footer :headers="headers" :items="callsList" item-key="_id">
-				<template v-slot:[`item.date_of_call`]="{ item }">
-					{{ getFormattedDate(item.date_of_call, "MMMM Do YYYY dddd") }}
+			<v-data-table
+				hide-default-footer
+				:headers="headers"
+				:expanded.sync="expanded"
+				show-expand
+				item-key="_id"
+				:items="callsList"
+			>
+				<template v-slot:[`item.sales_call_data.date_of_call`]="{ item }">
+					{{ getFormattedDate(item.sales_call_data.date_of_call, "MMMM Do YYYY dddd") }}
+				</template>
+				<template v-slot:[`item.follow_up_on_date`]="{ item }">
+					{{ item.follow_up_on_date ? getFormattedDate(item.follow_up_on_date, "MMMM Do YYYY dddd") : "-" }}
+				</template>
+				<template v-slot:expanded-item="{ headers, item }">
+					<td class="expandable-section table-expanded-background " :colspan="headers.length">
+						<div class="expandable-section-title">Remark</div>
+						<div class="expandable-section-content" v-html="item.meeting_remark">{{}}</div>
+					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
 					<template v-if="canUserEdit(item)">
@@ -141,18 +157,25 @@
 				// },
 			],
 			headers: [
-				{ text: "Sr. No.", align: "start", value: "sr_no", width: 100 },
+				{ text: "Sr. No.", align: "start", value: "sales_call_data.sr_no", width: 100 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
-				{ text: "Date of Visit", value: "date_of_call", width: 200 },
+				{ text: "Date of Visit", value: "sales_call_data.date_of_call", width: 200 },
 				{ text: "Company Name", value: "company_data.name", width: 200 },
 				{ text: "Branch Name", value: "company_address_data.branch_name", width: 150 },
 				{ text: "City", value: "company_address_data.city", width: 150 },
 				{ text: "State", value: "company_address_data.state", width: 150 },
 				{ text: "Address", value: "company_address_data.address", width: 150 },
-				// { text: "Purpose", value: "data-table-expand" },
+				{ text: "Employee", value: "company_address_data.address", width: 150 },
+				{ text: "Designation", value: "company_address_data.address", width: 150 },
+				{ text: "Contact No.", value: "company_address_data.address", width: 150 },
+				{ text: "Email ID", value: "company_address_data.address", width: 150 },
+				{ text: "Follow Up", value: "follow_up_on_date", width: 150 },
+				{ text: "Status", value: "company_address_data.address", width: 150 },
+				// { text: "Remark", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
-			keysToWatch: ["company_id"],
+			expanded: [],
+			keysToWatch: ["sales_call_id"],
 			reportsDate: [],
 			tempDateValue: [],
 			dateDialog: false,
@@ -166,16 +189,8 @@
 			},
 		},
 		methods: {
-			// ...mapActions("LeaveManager", ["getAllLeaves", "updateStatus"]),
-			...mapActions("SalesCall", ["getDSR", "addDSR", "editDSR", "deleteDSR"]),
+			...mapActions("DSR", ["getDSR", "addDSR", "editDSR", "deleteDSR"]),
 
-			// isDateBefore(date) {
-			// 	if (moment().isBefore(date)) {
-			// 		return true;
-			// 	} else {
-			// 		return false;
-			// 	}
-			// },
 			getData() {
 				this.openLoaderDialog();
 				// console.log("Test Console User Data", this.userData);
@@ -274,11 +289,13 @@
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
 				// formData.company_id = this.companyInfo._id;
-				if (formData.date_of_call) {
-					formData.date_of_call = helpers.getISODate(formData.date_of_call);
-					formData.month = Number(moment(formData.date_of_call).format("MM"));
-					formData.year = Number(moment(formData.date_of_call).format("YYYY"));
-				}
+				// if (formData.status == null) {
+				// 	formData.status = "";
+				// } else if (formData.status.length) {
+				// 	formData.status = formData.status[0];
+				// } else {
+				// 	formData.status = [];
+				// }
 
 				console.log("Test Console Before API call FormData Object", formData);
 
@@ -287,7 +304,7 @@
 					this.addDSR(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Added Sales Call Entry" });
+							this.openSnackbar({ text: "Sucessfully Added DSR Entry" });
 							this.getData();
 							this.closeForm();
 						} else {
@@ -298,7 +315,7 @@
 					this.editDSR(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Edited Sales Call Entry" });
+							this.openSnackbar({ text: "Sucessfully Edited DSR Entry" });
 							this.getData();
 							this.closeForm();
 						} else {
@@ -355,14 +372,14 @@
 			// 	];
 			// },
 			deleteCall(call) {
-				if (window.confirm("Do you really want to Delete the Sales Call?")) {
+				if (window.confirm("Do you really want to Delete the DSR?")) {
 					this.openLoaderDialog();
 					this.deleteDSR({
 						_id: call._id,
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Deleted the Sales Call" });
+							this.openSnackbar({ text: "Sucessfully Deleted the DSR" });
 							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -428,8 +445,9 @@
 				font-size: 16px;
 				font-weight: 600;
 			}
-			// .expandable-section-content {
-			// }
+			.expandable-section-content {
+				white-space: pre-wrap;
+			}
 		}
 	}
 </style>

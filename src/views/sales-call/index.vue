@@ -135,17 +135,17 @@
 										return item.name;
 									},
 									apiCall: (company_id) => {
-										// return function getAddresses() {
-										return this.getAddressList({
-											filter: {
-												company_id: company_id,
-											},
-										}).then((data) => {
-											return {
-												data,
-											};
-										});
-										// };
+										// // return function getAddresses() {
+										// return this.getAddressList({
+										// 	filter: {
+										// 		company_id: company_id,
+										// 	},
+										// }).then((data) => {
+										// 	return {
+										// 		data,
+										// 	};
+										// });
+										// // };
 									},
 									key: "company_id",
 									width: "half",
