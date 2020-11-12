@@ -52,6 +52,12 @@
 				<template v-slot:[`item.sales_call_data.date_of_call`]="{ item }">
 					{{ getFormattedDate(item.sales_call_data.date_of_call, "MMMM Do YYYY dddd") }}
 				</template>
+				<template v-slot:[`item.travel_agent_employee.phone_numbers`]="{ item }">
+					{{ item.travel_agent_employee.phone_numbers.join(", ") }}
+				</template>
+				<template v-slot:[`item.travel_agent_employee.email_ids`]="{ item }">
+					{{ item.travel_agent_employee.email_ids.join(", ") }}
+				</template>
 				<template v-slot:[`item.follow_up_on_date`]="{ item }">
 					{{ item.follow_up_on_date ? getFormattedDate(item.follow_up_on_date, "MMMM Do YYYY dddd") : "-" }}
 				</template>
@@ -165,10 +171,10 @@
 				{ text: "City", value: "company_address_data.city", width: 150 },
 				{ text: "State", value: "company_address_data.state", width: 150 },
 				{ text: "Address", value: "company_address_data.address", width: 150 },
-				{ text: "Employee", value: "travel_agent_employee[0].name", width: 150 },
-				{ text: "Designation", value: "travel_agent_employee[0].designation", width: 150 },
-				{ text: "Contact No.", value: "travel_agent_employee[0].phone_numbers", width: 150 },
-				{ text: "Email ID", value: "travel_agent_employee[0].email_ids", width: 150 },
+				{ text: "Employee", value: "travel_agent_employee.name", width: 150 },
+				{ text: "Designation", value: "travel_agent_employee.designation", width: 150 },
+				{ text: "Contact No.", value: "travel_agent_employee.phone_numbers", width: 150 },
+				{ text: "Email ID", value: "travel_agent_employee.email_ids", width: 150 },
 				{ text: "Follow Up", value: "follow_up_on_date", width: 150 },
 				{ text: "Status", value: "status", width: 150 },
 				// { text: "Remark", value: "data-table-expand" },
