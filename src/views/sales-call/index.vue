@@ -22,12 +22,11 @@
 		mixins: [defaultCRUDMixin],
 		components: { callsList },
 		async created() {
+			this.openLoaderDialog();
 			await this.getCompanies();
 			await this.getUsers();
-			// console.log("All Lists", this.companyList, this.userList, this.statesList);
+			this.closeLoaderDialog();
 			this.setConfig(this.companyList, this.userList, this.storeStatesList, this.modifiedCompanyList);
-			// if (this.isSalesTeamMember) {
-			// }
 		},
 		data: () => ({
 			tab: "",
@@ -71,13 +70,6 @@
 					this.modifiedCompanyList = data.list.map((e) => e.name);
 				});
 			},
-			// getStates() {
-			// 	return this.getStatesList({
-			// 		filter: {},
-			// 	}).then((data) => {
-			// 		this.statesList = data.list;
-			// 	});
-			// },
 			setConfig(companyList = [], userList = [], statesList = [], modifiedCompanyList = []) {
 				this.tabConfig = [
 					{
