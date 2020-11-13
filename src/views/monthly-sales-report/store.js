@@ -51,6 +51,41 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
+		getReportList: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.MSR_REPORT_LIST,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load MSR Report List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load MSR Report List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
 		addReportMonth: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
@@ -97,6 +132,7 @@ export default {
 					};
 				});
 		},
+
 		// getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
 		// 	let fail = (msg) => commit("failure", msg);
 		// 	return dispatch(
