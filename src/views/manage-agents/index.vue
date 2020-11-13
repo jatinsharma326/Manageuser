@@ -33,7 +33,7 @@
 					</template>
 					<template v-slot:mainContentRight>
 						<div class="big-grade">
-							{{ company.admin_grade }}
+							{{ company.admin_grade ? company.admin_grade : "-" }}
 						</div>
 					</template>
 					<template v-slot:actionButtons>
@@ -63,7 +63,9 @@
 									</v-list-item-icon>
 
 									<v-list-item-content>
-										<v-list-item-title>{{ grade.country }} </v-list-item-title>
+										<v-list-item-title
+											>{{ grade.country ? grade.country : "-" }}
+										</v-list-item-title>
 									</v-list-item-content>
 								</v-list-item>
 								<v-divider
