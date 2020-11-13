@@ -68,4 +68,5 @@ export default {
 
 	// MONTHLY SALES REPORT ENDPOINT
 	MSR: BASE_URL + "MSR/v0.1/",
+	MSR_REPORT_LIST: BASE_URL + "MSR/v0.1/month-wise-dsr",
 };
