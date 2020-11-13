@@ -115,6 +115,7 @@
 			ReportView,
 		},
 		async created() {
+			this.openLoaderDialog();
 			await this.getCountries();
 			this.setInputConfig(this.yearList, this.monthList, this.countriesList);
 			if (this.userType != this.SALES_AGENT) {
@@ -124,6 +125,8 @@
 				this.setSearchConfig(this.userList, this.countriesList, this.monthList);
 			}
 			this.setYear();
+			this.closeLoaderDialog();
+
 			// this.getData();
 		},
 		data: () => ({
@@ -541,38 +544,12 @@
 	.MSRWrapper {
 		padding: 20px 5px;
 		height: 100%;
-	}
-	.SearchbarWrapper {
-		margin: 20px 10px;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		align-items: center;
 
-		.searchbar {
-			flex: 0 0 50%;
-
-			@include custom-max(500px) {
-				flex: 0 0 100%;
-			}
-		}
-		.datepicker {
-			flex: 0 0 30%;
-
-			@include custom-max(767px) {
-				flex: 0 0 45%;
-			}
-			@include custom-max(500px) {
-				margin-top: 20px;
-				flex: 0 0 100%;
-			}
-
-			.v-text-field__details {
-				display: none;
-			}
-			.v-input__slot {
-				margin-bottom: 0 !important;
-			}
+		.more-info {
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
 		}
 	}
 	.card-image img {
