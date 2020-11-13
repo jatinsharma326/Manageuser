@@ -1,5 +1,12 @@
 <template>
 	<div class="MSRReportWrapper">
+		<div class="title-section">
+			<div class="title">MSR for {{ monthInfo.month_name }} by {{ monthInfo.mortal_data.name }}</div>
+			<v-btn color="primary" @click="downloadReport">Export Report</v-btn>
+		</div>
+		<div class="highlight-section">
+			{{ monthInfo.highlights }}
+		</div>
 		<div class="leaves-table">
 			<v-data-table
 				hide-default-footer
@@ -105,7 +112,7 @@
 			filter: {},
 		}),
 		methods: {
-			...mapActions("MSR", ["getReportList"]),
+			...mapActions("MSR", ["getReportList", "getReportFileURL"]),
 			getData() {
 				this.openLoaderDialog();
 				this.filter.month = this.monthInfo.month;
@@ -121,6 +128,28 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 				});
+			},
+			downloadReport() {
+				this.openSnackbar({ text: "Nothing to see here" });
+				/*
+				this.openLoaderDialog();
+				this.getReportFileURL({
+					// folder_name: log.folder_name,
+					// file_name: log.file_name,
+				}).then((data) => {
+					this.closeLoaderDialog();
+					if (data.ok) {
+						this.openSnackbar({ text: "Starting Download" });
+						const link = document.createElement("a");
+						link.href = data.url;
+						link.setAttribute("download", "report.xlsx"); //or any other extension
+						document.body.appendChild(link);
+						link.click();
+					} else {
+						this.openSnackbar({ text: "Failed to get Report File URL" });
+					}
+				});
+				*/
 			},
 		},
 		watch: {
@@ -142,5 +171,31 @@
 <style lang="scss" scoped>
 	.MSRReportWrapper {
 		height: 100%;
+		margin: 20px;
+
+		.title-section {
+			margin-bottom: 20px;
+			display: flex;
+			justify-content: space-between;
+		}
+		.highlight-section {
+			white-space: pre-wrap;
+			margin-bottom: 20px;
+		}
+	}
+	.leaves-table {
+		padding: 10px;
+		border: 1px solid $primary;
+		border-radius: 5px;
+	}
+	.expandable-section {
+		padding: 1em !important;
+		.expandable-section-title {
+			font-size: 16px;
+			font-weight: 600;
+		}
+		.expandable-section-content {
+			white-space: pre-wrap;
+		}
 	}
 </style>
