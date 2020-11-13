@@ -1,13 +1,13 @@
 <template>
 	<div class="MSRWrapper primary-background-color">
-		<div class="MSRSearchbarWrapper">
+		<div class="SearchbarWrapper">
 			<div class="searchbar">
 				<Search
 					@queryString="queryString"
 					@filterObject="advanceSearch"
 					@clearFilter="advanceSearch"
 					:placeholder="placeholder"
-					:isAdvanceSearch="true"
+					:isAdvanceSearch="userType == SALES_AGENT ? false : true"
 					:filterConfig="selectedSearchConfig"
 				></Search>
 			</div>
@@ -78,7 +78,6 @@
 				<partnerEmployees :partnerInfo="selectedPartnerInfo"></partnerEmployees>
 			</template>
 		</ViewMoreModal> -->
-
 		<UserForm
 			@formOutput="formOutput"
 			@closeForm="closeForm"
@@ -90,7 +89,7 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div v-if="isAdminOrManagement" class="floating-button">
+		<div v-if="isSalesTeamMember" class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
@@ -99,15 +98,15 @@
 </template>
 
 <script>
+	import ReportView from "./ReportView";
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
 	import moment from "moment-timezone";
-	// import datePickerMixin from "../../mixins/datePickerMixin";
-	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
-	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
 	import ViewMoreModal from "../../components/ViewMoreModal";
+	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
+	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
 		name: "MonthlySalesReport",
@@ -116,17 +115,23 @@
 		async created() {
 			await this.getCountries();
 			this.setInputConfig(this.yearList, this.monthList, this.countriesList);
-			await this.getUsers();
-			this.setSearchConfig(this.userList, this.countriesList);
-			this.getData();
+			if (this.userType != this.SALES_AGENT) {
+				if (this.isAdminOrManagement) {
+					await this.getUsers();
+				}
+				this.setSearchConfig(this.userList, this.countriesList, this.monthList);
+			}
+			this.setYear();
+			// this.getData();
 		},
 		data: () => ({
-			name: "Representing Partner",
-			placeholder: "Search Partners",
+			name: "Month Detail",
+			placeholder: "Search",
 			selectedPartnerInfo: {},
 			activeState: true,
 			keysToWatch: [],
-			selectedYear: 2020,
+			selectedYear: 0,
+			currentYear: 2020,
 			yearList: [
 				2000,
 				2001,
@@ -294,7 +299,7 @@
 
 			getData() {
 				this.openLoaderDialog();
-				this.filter.active = this.activeState;
+				this.filter.year = this.selectedYear;
 				this.getMonthList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -326,11 +331,15 @@
 					console.log(e);
 				}
 			},
+			setYear() {
+				this.currentYear = moment().format("YYYY");
+				this.selectedYear = Number(this.currentYear);
+			},
 			getMonthName(monthNumber) {
 				return moment(monthNumber, "MM").format("MMMM");
 			},
 			getCountries() {
-				if (this.userType == "SALES_AGENT") {
+				if (this.userType == this.SALES_AGENT) {
 					this.countriesList = [...this.userData.usr_data.countries];
 				} else {
 					return this.getActiveCountryList();
@@ -381,7 +390,7 @@
 					},
 					{
 						name: "Month Highlight*",
-						type: "Textarea",
+						type: "TextArea",
 						key: "highlights",
 						width: "full",
 						validations: {
@@ -407,33 +416,9 @@
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				// formData.email_ids = formData.email_ids.map((data) => data.input).filter((e) => e != "");
-				// formData.logo = tempFile;
-				// var tempArray = [];
-				// var tempObj = {};
 
-				// // loop over the emergency contacts objects to convert it into theh backend format
-				// for (let contact of formData.emergency_contacts) {
-				// 	tempObj = {};
-				// 	for (let num of contact.input) {
-				// 		if (num.input != "") {
-				// 			tempObj["country"] = contact.groupKey;
-				// 			if (!tempObj["contacts"]) tempObj["contacts"] = [];
-				// 			tempObj["contacts"].push(num.input);
-				// 		}
-				// 	}
-				// 	if (Object.keys(tempObj).length) {
-				// 		tempArray.push(tempObj);
-				// 	}
-				// }
-				// formData.emergency_contacts = tempArray;
-
-				// // remove logo key if it's empty
-				// if (formData.logo) {
-				// 	formData.logo = await helpers.toBase64(formData.logo);
-				// } else {
-				// 	delete formData.logo;
-				// }
+				formData.month_name = this.getMonthName(formData.month);
+				formData.mortal_id = this.userData.id;
 
 				console.log("Before API call FormData Object", formData);
 
@@ -504,16 +489,16 @@
 				// console.log(this.selectedPartnerInfo);
 				this.viewMoreModal = true;
 			},
-			setSearchConfig(teamMember = [], countriesList = []) {
+			setSearchConfig(teamMember = [], countriesList = [], monthList = []) {
 				this.selectedSearchConfig = [
 					{
-						name: "Select User",
-						key: "names",
+						name: "Select Month",
+						key: "month_numbers",
 						multi: true,
 						inputType: "dropdown",
 						defaultValue: [],
 						isListInStore: false,
-						listItems: teamMember,
+						listItems: monthList,
 					},
 					{
 						name: "Select Product",
@@ -525,8 +510,25 @@
 						listItems: countriesList,
 					},
 				];
+				if (this.isAdminOrManagement) {
+					let userObject = {
+						name: "Select User",
+						key: "names",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: teamMember,
+					};
+					this.selectedSearchConfig.push(userObject);
+				}
 			},
 			updatedPageNo(page) {
+				this.getData();
+			},
+		},
+		watch: {
+			selectedYear(nv, ov) {
 				this.getData();
 			},
 		},
@@ -537,6 +539,39 @@
 	.MSRWrapper {
 		padding: 20px 5px;
 		height: 100%;
+	}
+	.SearchbarWrapper {
+		margin: 20px 10px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+
+		.searchbar {
+			flex: 0 0 50%;
+
+			@include custom-max(500px) {
+				flex: 0 0 100%;
+			}
+		}
+		.datepicker {
+			flex: 0 0 30%;
+
+			@include custom-max(767px) {
+				flex: 0 0 45%;
+			}
+			@include custom-max(500px) {
+				margin-top: 20px;
+				flex: 0 0 100%;
+			}
+
+			.v-text-field__details {
+				display: none;
+			}
+			.v-input__slot {
+				margin-bottom: 0 !important;
+			}
+		}
 	}
 	.card-image img {
 		max-width: 100%;
