@@ -133,41 +133,37 @@ export default {
 				});
 		},
 
-		// getPartnerEmployeesList: ({ commit, dispatch }, payload) => {
-		// 	let fail = (msg) => commit("failure", msg);
-		// 	return dispatch(
-		// 		"apiCall",
-		// 		{
-		// 			method: "get",
-		// 			params: payload,
-		// 			url: constants.MANAGE_PARTNER_EMPLOYEES,
-		// 		},
-		// 		{ root: true }
-		// 	)
-		// 		.then((data) => {
-		// 			if (data.ok) {
-		// 				return {
-		// 					ok: true,
-		// 					totalCount: data.totalCount,
-		// 					fetchCount: data.fetchCount,
-		// 					list: data.data,
-		// 				};
-		// 			} else {
-		// 				fail(data.message || "Failed to Load Partner Employees List");
-		// 				return {
-		// 					ok: false,
-		// 					totalCount: data.totalCount,
-		// 					fetchCount: 0,
-		// 					list: [],
-		// 				};
-		// 			}
-		// 		})
-		// 		.catch((err) => {
-		// 			console.log("Yo ", err);
-		// 			fail(err.toString() || "Failed to Load Partner Employees List");
-		// 			return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
-		// 		});
-		// },
+		getReportFileURL: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.MSR_REPORT_FILE,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							url: data.url,
+						};
+					} else {
+						fail(data.message || "Failed to get report file");
+						return {
+							ok: false,
+							url: "",
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to get report file");
+					return { ok: false, url: "" };
+				});
+		},
 	},
 	getters: {
 		// masterData: (state) => state.masterData,
