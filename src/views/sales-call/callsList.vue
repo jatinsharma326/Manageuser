@@ -1,6 +1,6 @@
 <template>
 	<div class="callsListWrapper">
-		<div class="salescallSearchbarWrapper">
+		<div class="SearchbarWrapper">
 			<div class="searchbar">
 				<Search
 					@queryString="queryString"
@@ -115,38 +115,9 @@
 		async created() {
 			this.setDateRange();
 			this.getData();
-			// 	await this.getUsers();
-			// 	this.setSearchConfig(this.userList);
 		},
 		data: () => ({
-			callsList: [
-				// {
-				// 	_id: "5fa124ee6bff062f60d5fcc2",
-				// 	date_of_call: "2020-10-30T18:30:00.000Z",
-				// 	sr_no: "AUG20-0",
-				// 	record: {
-				// 		created_on: "2020-11-03T09:37:50.737Z",
-				// 		updated_on: "2020-11-03T09:37:50.737Z",
-				// 	},
-				// 	mortal_id: "5fa1075dab44e634a4d90c83",
-				// 	company_id: "5f9d03eb92bff8363cf43565",
-				// 	company_address_id: "5f9d4f9ce639cb1de070195f",
-				// 	company_address_data: {
-				// 		branch_name: "Nagpada",
-				// 		state: "Maharashtra",
-				// 		city: "Mumbai",
-				// 		pincode: "400008",
-				// 		zone: "EAST",
-				// 		address: "Dadar Mumbai",
-				// 	},
-				// 	company_data: {
-				// 		name: "Thomas Cook",
-				// 	},
-				// 	mortal_data: {
-				// 		name: "Aliasgar Pocketwala",
-				// 	},
-				// },
-			],
+			callsList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "sr_no", width: 100 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
@@ -160,14 +131,6 @@
 				{ text: "", value: "actions" },
 			],
 			keysToWatch: ["company_id"],
-
-			//delete This if mixin works properly
-			// datePickerDate: [],
-			// tempDateValue: [],
-			// dateDialog: false,
-
-			// userList: [],
-			// serialNumber: 0,
 		}),
 		computed: {
 			...mapGetters(["userData"]),
@@ -176,7 +139,6 @@
 			},
 		},
 		methods: {
-			// ...mapActions("LeaveManager", ["getAllLeaves", "updateStatus"]),
 			...mapActions("SalesCall", [
 				"getSalesCall",
 				"addSalesCall",
@@ -184,14 +146,6 @@
 				"deleteSalesCall",
 				"checkCallDetail",
 			]),
-
-			// isDateBefore(date) {
-			// 	if (moment().isBefore(date)) {
-			// 		return true;
-			// 	} else {
-			// 		return false;
-			// 	}
-			// },
 			getData() {
 				this.openLoaderDialog();
 				// console.log("Test Console User Data", this.userData);
@@ -224,39 +178,6 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
-			// dataSelector() {
-			// 	this.tempDateValue = [...this.datePickerDate];
-			// 	console.log("Date picker clicked", this.tempDateValue);
-			// },
-			// cancelDatePicker() {
-			// 	this.datePickerDate = [...this.tempDateValue];
-			// 	this.dateDialog = false;
-			// },
-			// submitDatePicker() {
-			// 	// Ask taher how exactly does the .save work and should we just close modal
-			// 	this.$refs.dialog.save(this.datePickerDate);
-			// 	this.getData();
-			// },
-			// resetDatePicker() {
-			// 	this.setDateRange();
-			// 	this.$refs.dialog.save(this.datePickerDate);
-			// 	this.getData();
-			// 	this.dateDialog = false;
-			// },
-			// setDateRange() {
-			// 	let tempArray = [];
-			// 	let startDate = moment()
-			// 		.tz("Asia/Kolkata")
-			// 		.startOf("month")
-			// 		.format("YYYY-MM-DD");
-			// 	let endDate = moment()
-			// 		.tz("Asia/Kolkata")
-			// 		.endOf("month")
-			// 		.format("YYYY-MM-DD");
-			// 	tempArray.push(startDate);
-			// 	tempArray.push(endDate);
-			// 	this.datePickerDate = tempArray;
-			// },
 			canUserEdit(item) {
 				let currentMonth = moment()
 					.tz("Asia/Kolkata")
@@ -432,36 +353,6 @@
 	};
 </script>
 <style lang="scss" scoped>
-	.salescallSearchbarWrapper {
-		margin: 20px 10px;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		align-items: center;
-
-		.searchbar {
-			flex: 0 0 50%;
-
-			@include custom-max(500px) {
-				flex: 0 0 100%;
-			}
-		}
-		.datepicker {
-			flex: 0 0 30%;
-
-			@include custom-max(767px) {
-				flex: 0 0 45%;
-			}
-			@include custom-max(500px) {
-				margin-top: 20px;
-				flex: 0 0 100%;
-			}
-
-			.v-text-field__details {
-				display: none;
-			}
-		}
-	}
 	.leaves-table {
 		margin: 10px;
 		padding: 10px;
