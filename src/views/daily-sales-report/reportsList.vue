@@ -162,14 +162,6 @@
 			],
 			expanded: [],
 			keysToWatch: ["sales_call_id"],
-
-			//delete This if mixin works properly
-			// datePickerDate: [],
-			// tempDateValue: [],
-			// dateDialog: false,
-
-			// userList: [],
-			// serialNumber: 0,
 		}),
 		computed: {
 			...mapGetters(["userData"]),
@@ -182,7 +174,6 @@
 
 			getData() {
 				this.openLoaderDialog();
-				// console.log("Test Console User Data", this.userData);
 				if (this.isSalesTeamMember && this.type == "my_dsr") {
 					console.log("User Data ", this.userData);
 					this.filter.mortal_id = this.userData.id;
@@ -212,39 +203,6 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
-			// dataSelector() {
-			// 	this.tempDateValue = [...this.datePickerDate];
-			// 	console.log("Date picker clicked", this.tempDateValue);
-			// },
-			// cancelDatePicker() {
-			// 	this.datePickerDate = [...this.tempDateValue];
-			// 	this.dateDialog = false;
-			// },
-			// submitDatePicker() {
-			// 	// Ask taher how exactly does the .save work and should we just close modal
-			// 	this.$refs.dialog.save(this.datePickerDate);
-			// 	this.getData();
-			// },
-			// resetDatePicker() {
-			// 	this.setDateRange();
-			// 	this.$refs.dialog.save(this.datePickerDate);
-			// 	this.getData();
-			// 	this.dateDialog = false;
-			// },
-			// setDateRange() {
-			// 	let tempArray = [];
-			// 	let startDate = moment()
-			// 		.tz("Asia/Kolkata")
-			// 		.startOf("month")
-			// 		.format("YYYY-MM-DD");
-			// 	let endDate = moment()
-			// 		.tz("Asia/Kolkata")
-			// 		.endOf("month")
-			// 		.format("YYYY-MM-DD");
-			// 	tempArray.push(startDate);
-			// 	tempArray.push(endDate);
-			// 	this.datePickerDate = tempArray;
-			// },
 			canUserEdit(item) {
 				let currentMonth = moment()
 					.tz("Asia/Kolkata")
@@ -253,7 +211,6 @@
 					.tz("Asia/Kolkata")
 					.startOf("month");
 				let diffrenceInDates = currentMonth.diff(callMonth, "months", true);
-				//Taher check the condition once
 				if (this.type == "my_dsr" && -2 <= diffrenceInDates && diffrenceInDates <= 1) {
 					return true;
 				} else {
@@ -265,7 +222,6 @@
 				this.getData();
 			},
 			advanceSearch(filterObject) {
-				// make changes here to the filterObject
 				var filterData = JSON.parse(JSON.stringify(filterObject));
 				if (filterData.date_of_call) {
 					filterData.date_of_call = helpers.getISODate(filterData.date_of_call);
@@ -277,16 +233,8 @@
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				// formData.company_id = this.companyInfo._id;
-				// if (formData.status == null) {
-				// 	formData.status = "";
-				// } else if (formData.status.length) {
-				// 	formData.status = formData.status[0];
-				// } else {
-				// 	formData.status = [];
-				// }
 
-				console.log("Test Console Before API call FormData Object", formData);
+				// console.log("Test Console Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -320,46 +268,6 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			// setSearchConfig(teamMember = []) {
-			// 	this.searchConfig = [
-			// 		{
-			// 			name: "Name of Applicant",
-			// 			key: "names",
-			// 			multi: true,
-			// 			inputType: "dropdown",
-			// 			defaultValue: [],
-			// 			isListInStore: false,
-			// 			listItems: teamMember,
-			// 		},
-			// 		{
-			// 			name: "Date of Application",
-			// 			key: "doa",
-			// 			inputType: "datePicker",
-			// 			defaultValue: null,
-			// 		},
-			// 		{
-			// 			name: "Date From",
-			// 			key: "date_from",
-			// 			inputType: "datePicker",
-			// 			defaultValue: null,
-			// 		},
-			// 		{
-			// 			name: "Date To",
-			// 			key: "date_to",
-			// 			inputType: "datePicker",
-			// 			defaultValue: null,
-			// 		},
-			// 		{
-			// 			name: "Leave Status",
-			// 			key: "statuses",
-			// 			multi: true,
-			// 			inputType: "dropdown",
-			// 			defaultValue: [],
-			// 			isListInStore: false,
-			// 			listItems: ["PENDING", "ACCEPTED", "REJECTED"],
-			// 		},
-			// 	];
-			// },
 			deleteCall(call) {
 				if (window.confirm("Do you really want to Delete the DSR?")) {
 					this.openLoaderDialog();
