@@ -87,6 +87,7 @@ body {
 }
 
 .big-grade {
+	text-transform: uppercase;
 	font-size: 22px;
 	font-weight: 300;
 	color: white;
@@ -97,6 +98,7 @@ body {
 	background: linear-gradient(145deg, #7fb2ff, #6b95de);
 }
 .small-grade {
+	text-transform: uppercase;
 	font-size: 16px;
 	font-weight: 300;
 	color: white;
@@ -105,4 +107,39 @@ body {
 	border-radius: 4px;
 	box-shadow: 5px 5px 10px #adbacf, -5px -5px 10px #f9ffff;
 	background: linear-gradient(145deg, #7fb2ff, #6b95de);
+}
+
+// Searchbar and date picker css style
+.SearchbarWrapper {
+	margin: 20px 10px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+
+	.searchbar {
+		flex: 0 0 50%;
+
+		@include custom-max(500px) {
+			flex: 0 0 100%;
+		}
+	}
+	.datepicker {
+		flex: 0 0 30%;
+
+		@include custom-max(767px) {
+			flex: 0 0 45%;
+		}
+		@include custom-max(500px) {
+			margin-top: 20px;
+			flex: 0 0 100%;
+		}
+
+		.v-text-field__details {
+			display: none;
+		}
+		.v-input__slot {
+			margin-bottom: 0 !important;
+		}
+	}
 }
