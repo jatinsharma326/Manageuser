@@ -300,36 +300,6 @@
 </script>
 <style lang="scss" scoped>
 	.reportListWrapper {
-		.SearchbarWrapper {
-			margin: 20px 10px;
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: space-between;
-			align-items: center;
-
-			.searchbar {
-				flex: 0 0 50%;
-
-				@include custom-max(500px) {
-					flex: 0 0 100%;
-				}
-			}
-			.datepicker {
-				flex: 0 0 30%;
-
-				@include custom-max(767px) {
-					flex: 0 0 45%;
-				}
-				@include custom-max(500px) {
-					margin-top: 20px;
-					flex: 0 0 100%;
-				}
-
-				.v-text-field__details {
-					display: none;
-				}
-			}
-		}
 		.leaves-table {
 			margin: 10px;
 			padding: 10px;
