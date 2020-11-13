@@ -13,6 +13,7 @@
 
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import commonAPICallsMixin from "../../mixins/commonAPICallsMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters } from "vuex";
 	import reportsList from "./reportsList";
@@ -20,16 +21,18 @@
 	import helper from "../../components/helpers";
 	export default {
 		name: "ManageDSR",
-		mixins: [defaultCRUDMixin],
+		mixins: [defaultCRUDMixin, commonAPICallsMixin],
 		components: { reportsList },
 		async created() {
 			this.openLoaderDialog();
-			await this.getCompanies();
+			let promiseArray = [];
 			await this.getUsers();
-			await this.getCountryList();
+			promiseArray.push(this.getCompanies());
+			promiseArray.push(this.getCountryList());
 			if (this.isSalesTeamMember) {
-				await this.getSalesCallList();
+				promiseArray.push(this.getSalesCallList());
 			}
+			await Promise.all(promiseArray);
 			this.closeLoaderDialog();
 			this.setConfig(
 				this.companyList,
@@ -43,10 +46,6 @@
 		data: () => ({
 			tab: "",
 			callsList: [],
-			companyList: [],
-			countriesList: [],
-			modifiedCompanyList: [],
-			userList: [],
 			tabConfig: [],
 			filter: {},
 		}),
@@ -59,41 +58,6 @@
 			...mapActions("UserManagement", ["getUserList"]),
 			...mapActions("SalesCall", ["getSalesCall"]),
 			...mapActions("ManageTargets", ["getActiveCountries"]),
-
-			async getUsers() {
-				try {
-					let salesAgents = await this.getUserList({
-						filter: {
-							type: "sales_agent",
-						},
-					});
-					let remoteSalesAgents = await this.getUserList({
-						filter: {
-							type: "remote_sales_agent",
-						},
-					});
-					let userList = [];
-					userList.push(...salesAgents.list);
-					userList.push(...remoteSalesAgents.list);
-					this.userList = userList.map((e) => e.usr_data.name);
-				} catch (e) {
-					console.log(e);
-				}
-			},
-			getCompanies() {
-				return this.getCompaniesList({
-					filter: {},
-				}).then((data) => {
-					this.companyList = data.list;
-					this.modifiedCompanyList = data.list.map((e) => e.name);
-				});
-			},
-			getCountryList() {
-				return this.getActiveCountries().then((data) => {
-					console.log("4", data.list);
-					this.countriesList = data.list;
-				});
-			},
 			getSalesCallList() {
 				this.filter.mortal_id = this.userData.id;
 				this.filter.date_from = moment()
