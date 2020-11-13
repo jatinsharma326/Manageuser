@@ -13,13 +13,14 @@
 
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import commonAPICallsMixin from "../../mixins/commonAPICallsMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters } from "vuex";
 	import callsList from "./callsList";
 	import moment from "moment-timezone";
 	export default {
 		name: "ManageSalesCall",
-		mixins: [defaultCRUDMixin],
+		mixins: [defaultCRUDMixin, commonAPICallsMixin],
 		components: { callsList },
 		async created() {
 			this.openLoaderDialog();
@@ -30,9 +31,6 @@
 		},
 		data: () => ({
 			tab: "",
-			companyList: [],
-			modifiedCompanyList: [],
-			userList: [],
 			// statesList: [],
 			tabConfig: [],
 		}),
@@ -40,36 +38,7 @@
 			...mapGetters("ManageAgents", ["storeStatesList"]),
 		},
 		methods: {
-			...mapActions("ManageAgents", ["getCompaniesList", "getAddressList"]),
-			...mapActions("UserManagement", ["getUserList"]),
-			async getUsers() {
-				try {
-					let salesAgents = await this.getUserList({
-						filter: {
-							type: "sales_agent",
-						},
-					});
-					let remoteSalesAgents = await this.getUserList({
-						filter: {
-							type: "remote_sales_agent",
-						},
-					});
-					let userList = [];
-					userList.push(...salesAgents.list);
-					userList.push(...remoteSalesAgents.list);
-					this.userList = userList.map((e) => e.usr_data.name);
-				} catch (e) {
-					console.log(e);
-				}
-			},
-			getCompanies() {
-				return this.getCompaniesList({
-					filter: {},
-				}).then((data) => {
-					this.companyList = data.list;
-					this.modifiedCompanyList = data.list.map((e) => e.name);
-				});
-			},
+			...mapActions("ManageAgents", ["getAddressList"]),
 			setConfig(companyList = [], userList = [], statesList = [], modifiedCompanyList = []) {
 				this.tabConfig = [
 					{
