@@ -36,7 +36,7 @@
 							<v-btn @click="openInputForm(true, listItem)" color="secondary" text>
 								Edit
 							</v-btn>
-							<v-btn @click="openEmployeeModal(listItem)" color="primary" text>
+							<v-btn @click="openMonthModal(listItem)" color="primary" text>
 								View
 							</v-btn>
 						</template>
@@ -63,21 +63,21 @@
 			></v-pagination>
 		</div>
 
-		<!-- <ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
+		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
 			<template v-slot:modalTitle>
-				<div v-if="selectedPartnerInfo.name">
-					{{ selectedPartnerInfo.name }}
+				<div v-if="selectedMonthInfo.month">
+					{{ getMonthName(selectedMonthInfo.month) }}, {{ selectedMonthInfo.year }}
 				</div>
 			</template>
 			<template v-slot:modalSubtitle>
-				<div class="tertiary-font-color" v-if="selectedPartnerInfo.business_types">
-					{{ selectedPartnerInfo.business_types.join("/ ") }}
+				<div class="tertiary-font-color" v-if="selectedMonthInfo.country">
+					{{ selectedMonthInfo.country }}
 				</div>
 			</template>
 			<template v-slot:modalContent>
-				<partnerEmployees :partnerInfo="selectedPartnerInfo"></partnerEmployees>
+				<ReportView :monthInfo="selectedMonthInfo"></ReportView>
 			</template>
-		</ViewMoreModal> -->
+		</ViewMoreModal>
 		<UserForm
 			@formOutput="formOutput"
 			@closeForm="closeForm"
@@ -111,7 +111,9 @@
 	export default {
 		name: "MonthlySalesReport",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
-		components: {},
+		components: {
+			ReportView,
+		},
 		async created() {
 			await this.getCountries();
 			this.setInputConfig(this.yearList, this.monthList, this.countriesList);
@@ -127,7 +129,7 @@
 		data: () => ({
 			name: "Month Detail",
 			placeholder: "Search",
-			selectedPartnerInfo: {},
+			selectedMonthInfo: {},
 			activeState: true,
 			keysToWatch: [],
 			selectedYear: 0,
@@ -484,9 +486,9 @@
 					});
 				}
 			},
-			openEmployeeModal(userData) {
-				this.selectedPartnerInfo = { ...userData };
-				// console.log(this.selectedPartnerInfo);
+			openMonthModal(monthData) {
+				this.selectedMonthInfo = { ...monthData };
+				// console.log(this.selectedMonthInfo);
 				this.viewMoreModal = true;
 			},
 			setSearchConfig(teamMember = [], countriesList = [], monthList = []) {
