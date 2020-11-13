@@ -83,7 +83,6 @@
 			@closeForm="closeForm"
 			:name="name"
 			:inputConfig="inputConfig"
-			:keysToWatch="keysToWatch"
 			:toggleForm="toggleForm"
 			:formData="rowToEdit"
 			:isEditMode="isEditMode"
@@ -100,6 +99,7 @@
 <script>
 	import ReportView from "./ReportView";
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
+	import commonAPICallsMixin from "../../mixins/commonAPICallsMixin";
 	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
 	import moment from "moment-timezone";
@@ -110,7 +110,7 @@
 
 	export default {
 		name: "MonthlySalesReport",
-		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, commonAPICallsMixin],
 		components: {
 			ReportView,
 		},
@@ -133,8 +133,6 @@
 			name: "Month Detail",
 			placeholder: "Search",
 			selectedMonthInfo: {},
-			activeState: true,
-			keysToWatch: [],
 			selectedYear: 0,
 			currentYear: 2020,
 			yearList: [
@@ -292,16 +290,12 @@
 			],
 			msrList: [],
 			inputConfig: [],
-			countriesList: [],
 		}),
 		computed: {
 			...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType", "userData"]),
 		},
 		methods: {
 			...mapActions("MSR", ["getMonthList", "addReportMonth", "editReportMonth"]),
-			...mapActions("ManageTargets", ["getActiveCountries"]),
-			...mapActions("UserManagement", ["getUserList"]),
-
 			getData() {
 				this.openLoaderDialog();
 				this.filter.year = this.selectedYear;
@@ -316,26 +310,6 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
-			async getUsers() {
-				try {
-					let salesAgents = await this.getUserList({
-						filter: {
-							type: "sales_agent",
-						},
-					});
-					let remoteSalesAgents = await this.getUserList({
-						filter: {
-							type: "remote_sales_agent",
-						},
-					});
-					let userList = [];
-					userList.push(...salesAgents.list);
-					userList.push(...remoteSalesAgents.list);
-					this.userList = userList.map((e) => e.usr_data.name);
-				} catch (e) {
-					console.log(e);
-				}
-			},
 			setYear() {
 				this.currentYear = moment().format("YYYY");
 				this.selectedYear = Number(this.currentYear);
@@ -347,13 +321,8 @@
 				if (this.userType == this.SALES_AGENT) {
 					this.countriesList = [...this.userData.usr_data.countries];
 				} else {
-					return this.getActiveCountryList();
+					return this.getCountryList();
 				}
-			},
-			getActiveCountryList() {
-				return this.getActiveCountries().then((data) => {
-					this.countriesList = data.list;
-				});
 			},
 			setInputConfig(yearList = [], monthList = [], countriesList = []) {
 				this.inputConfig = [
@@ -411,11 +380,6 @@
 			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
-				if (this.filter.active) {
-					this.activeState = false;
-				} else {
-					this.activeState = true;
-				}
 				this.pageNo = 1;
 				this.getData();
 			},
