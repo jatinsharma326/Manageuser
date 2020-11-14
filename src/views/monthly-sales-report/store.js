@@ -133,35 +133,38 @@ export default {
 				});
 		},
 
-		getReportFileURL: ({ commit, dispatch }, payload) => {
+		downloadReportFile: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
-				"apiCall",
+				"fileDownload_API_Call",
 				{
 					method: "get",
 					params: payload,
 					url: constants.MSR_REPORT_FILE,
+					responseType: "blob",
 				},
 				{ root: true }
 			)
-				.then((data) => {
-					if (data.ok) {
-						return {
-							ok: true,
-							url: data.url,
-						};
+				.then(({ data, response }) => {
+					if (response.status === 200) {
+						commit("openSnackbar", { text: "Starting Download" }, { root: true });
+						const url = window.URL.createObjectURL(new Blob([data]));
+						const link = document.createElement("a");
+						link.href = url;
+						link.setAttribute("download", "Report.xlsx");
+						document.body.appendChild(link);
+						link.click();
+						return;
 					} else {
-						fail(data.message || "Failed to get report file");
-						return {
-							ok: false,
-							url: "",
-						};
+						commit("openSnackbar", { text: "Could not start download" }, { root: true });
+						fail(data.message || "Failed to start download");
+						return;
 					}
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to get report file");
-					return { ok: false, url: "" };
+					commit("openSnackbar", { text: "Could not start download" }, { root: true });
+					fail(err.toString() || "Failed to Download Report File");
 				});
 		},
 	},
