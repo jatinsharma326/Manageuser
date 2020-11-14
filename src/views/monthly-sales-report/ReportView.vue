@@ -59,39 +59,39 @@
 		},
 		data: () => ({
 			reportsList: [
-				{
-					sales_call_id: "5faa849bbbd00900275d0322",
-					travel_agent_id: "5faa6ed0bbd00900275d0319",
-					status: "ON GOING",
-					follow_up_on_date: "2020-11-28T18:30:00.000Z",
-					meeting_remark: "Met with Akshay Sir, was a productive call. Might get business.",
-					mortal_id: "5f9fa9ea077a8d00252e1278",
-					sales_call_data: {
-						date_of_call: "2020-07-03T18:30:00.000Z",
-						sr_no: "JUL20-0",
-						mortal_id: "5f9fa9ea077a8d00252e1278",
-						company_id: "5faa6ed0bbd00900275d0315",
-						company_address_id: "5faa6ed0bbd00900275d0317",
-						company_data: {
-							name: "Haridwar Apps",
-						},
-						company_address_data: {
-							branch_name: "Dhongra",
-							zone: "NORTH",
-							address: "Bandra",
-							city: "Mumbai",
-							state: "Maharashtra",
-							pincode: "400008",
-							company_id: "5faa6ed0bbd00900275d0315",
-						},
-					},
-					travel_agent_data: {
-						name: "Aishwarya",
-						phone_numbers: ["125546"],
-						designation: "ASM",
-						email_ids: ["test@test.com", "d@gd.com"],
-					},
-				},
+				// {
+				// 	sales_call_id: "5faa849bbbd00900275d0322",
+				// 	travel_agent_id: "5faa6ed0bbd00900275d0319",
+				// 	status: "ON GOING",
+				// 	follow_up_on_date: "2020-11-28T18:30:00.000Z",
+				// 	meeting_remark: "Met with Akshay Sir, was a productive call. Might get business.",
+				// 	mortal_id: "5f9fa9ea077a8d00252e1278",
+				// 	sales_call_data: {
+				// 		date_of_call: "2020-07-03T18:30:00.000Z",
+				// 		sr_no: "JUL20-0",
+				// 		mortal_id: "5f9fa9ea077a8d00252e1278",
+				// 		company_id: "5faa6ed0bbd00900275d0315",
+				// 		company_address_id: "5faa6ed0bbd00900275d0317",
+				// 		company_data: {
+				// 			name: "Haridwar Apps",
+				// 		},
+				// 		company_address_data: {
+				// 			branch_name: "Dhongra",
+				// 			zone: "NORTH",
+				// 			address: "Bandra",
+				// 			city: "Mumbai",
+				// 			state: "Maharashtra",
+				// 			pincode: "400008",
+				// 			company_id: "5faa6ed0bbd00900275d0315",
+				// 		},
+				// 	},
+				// 	travel_agent_data: {
+				// 		name: "Aishwarya",
+				// 		phone_numbers: ["125546"],
+				// 		designation: "ASM",
+				// 		email_ids: ["test@test.com", "d@gd.com"],
+				// 	},
+				// },
 			],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "sales_call_data.sr_no", width: 100 },
@@ -112,12 +112,13 @@
 			filter: {},
 		}),
 		methods: {
-			...mapActions("MSR", ["getReportList", "getReportFileURL"]),
+			...mapActions("MSR", ["getReportList", "downloadReportFile"]),
 			getData() {
 				this.openLoaderDialog();
 				this.filter.month = this.monthInfo.month;
 				this.filter.year = this.monthInfo.year;
 				this.filter.country = this.monthInfo.country;
+				this.filter.mortal_id = this.monthInfo.mortal_id;
 				this.getReportList({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -130,26 +131,15 @@
 				});
 			},
 			downloadReport() {
-				this.openSnackbar({ text: "Nothing to see here" });
-				/*
 				this.openLoaderDialog();
-				this.getReportFileURL({
-					// folder_name: log.folder_name,
-					// file_name: log.file_name,
-				}).then((data) => {
+				this.downloadReportFile({
+					month: this.monthInfo.month,
+					year: this.monthInfo.year,
+					country: this.monthInfo.country,
+					mortal_id: this.monthInfo.mortal_id,
+				}).then(() => {
 					this.closeLoaderDialog();
-					if (data.ok) {
-						this.openSnackbar({ text: "Starting Download" });
-						const link = document.createElement("a");
-						link.href = data.url;
-						link.setAttribute("download", "report.xlsx"); //or any other extension
-						document.body.appendChild(link);
-						link.click();
-					} else {
-						this.openSnackbar({ text: "Failed to get Report File URL" });
-					}
 				});
-				*/
 			},
 		},
 		watch: {
