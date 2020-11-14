@@ -69,14 +69,14 @@
 			</v-data-table>
 		</div>
 
-		<!-- <div class="text-center">
+		<div class="text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
-		</div> -->
+		</div>
 
 		<template v-if="type == 'sales_call'">
 			<UserForm
@@ -338,9 +338,9 @@
 					});
 				}
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
+			updatedPageNo(page) {
+				this.getData();
+			},
 		},
 		watch: {},
 		props: {
