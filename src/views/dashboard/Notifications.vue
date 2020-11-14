@@ -6,7 +6,7 @@
 
 <script>
 	import { mapActions, mapGetters, mapMutations } from "vuex";
-	import InformationCard from "../components/InformationCard.vue";
+	import InformationCard from "../../components/InformationCard";
 	export default {
 		name: "Notifications",
 		components: { InformationCard },
