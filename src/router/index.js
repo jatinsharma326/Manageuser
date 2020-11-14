@@ -5,6 +5,12 @@ Vue.use(VueRouter);
 
 const routes = [
 	{
+		path: "/",
+		name: "Dashoard",
+		component: () => import("../views/dashboard"),
+		meta: { policy: [10, 20, 30, 40] },
+	},
+	{
 		path: "/manage-users",
 		name: "Manage Users",
 		component: () => import("../views/manage-users"),
