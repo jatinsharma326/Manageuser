@@ -85,6 +85,79 @@
 				activeCountriesList = [],
 				callsList = []
 			) {
+				let searchConfigItems = [
+					{
+						name: "Sales Call Index",
+						key: "sr_no",
+						type: "text",
+						inputType: "textfield",
+						defaultValue: "",
+						classes: ["half"],
+					},
+					{
+						name: "Date of Visit",
+						key: "date_of_call",
+						inputType: "datePicker",
+						defaultValue: null,
+						classes: ["half"],
+					},
+					{
+						name: "Branch Name",
+						key: "branch_name",
+						type: "text",
+						inputType: "textfield",
+						defaultValue: "",
+						classes: ["half"],
+					},
+					{
+						name: "Agent Employee",
+						key: "travel_agent_employee_name",
+						type: "text",
+						inputType: "textfield",
+						defaultValue: "",
+						classes: ["half"],
+					},
+					{
+						name: "Company",
+						key: "company_names",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: modifiedCompanyList,
+						classes: ["half"],
+					},
+					{
+						name: "State",
+						key: "states",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: statesList,
+						classes: ["half"],
+					},
+					{
+						name: "Product",
+						key: "countries",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: activeCountriesList,
+						classes: ["half"],
+					},
+					{
+						name: "Status",
+						key: "status",
+						multi: false,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: ["ON GOING", "CLOSED"],
+						classes: ["half"],
+					},
+				];
 				this.tabConfig = [
 					{
 						name: "My DSR",
@@ -108,19 +181,6 @@
 									titleContent: (item) => {
 										return item.sr_no;
 									},
-									// apiCall: (company_id) => {
-									// 	// return function getAddresses() {
-									// 	return this.getAddressList({
-									// 		filter: {
-									// 			company_id: company_id,
-									// 		},
-									// 	}).then((data) => {
-									// 		return {
-									// 			data,
-									// 		};
-									// 	});
-									// 	// };
-									// },
 									key: "sales_call_id",
 									width: "full",
 									multi: false,
@@ -202,33 +262,7 @@
 									},
 								},
 							],
-							searchConfig: [
-								{
-									name: "Company",
-									key: "company_names",
-									multi: true,
-									inputType: "dropdown",
-									defaultValue: [],
-									isListInStore: false,
-									listItems: modifiedCompanyList,
-								},
-								{
-									name: "Branch Name",
-									key: "branch_name",
-									type: "text",
-									inputType: "textfield",
-									defaultValue: "",
-								},
-								{
-									name: "State",
-									key: "states",
-									multi: true,
-									inputType: "dropdown",
-									defaultValue: [],
-									isListInStore: false,
-									listItems: statesList,
-								},
-							],
+							searchConfig: searchConfigItems,
 						},
 					},
 					{
@@ -248,32 +282,9 @@
 									defaultValue: [],
 									isListInStore: false,
 									listItems: userList,
+									classes: ["full"],
 								},
-								{
-									name: "Company",
-									key: "company_names",
-									multi: true,
-									inputType: "dropdown",
-									defaultValue: [],
-									isListInStore: false,
-									listItems: modifiedCompanyList,
-								},
-								{
-									name: "Branch Name",
-									key: "branch_name",
-									type: "text",
-									inputType: "textfield",
-									defaultValue: "",
-								},
-								{
-									name: "State",
-									key: "states",
-									multi: true,
-									inputType: "dropdown",
-									defaultValue: [],
-									isListInStore: false,
-									listItems: statesList,
-								},
+								...searchConfigItems,
 							],
 						},
 					},
