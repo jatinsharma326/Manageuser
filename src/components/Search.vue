@@ -25,6 +25,7 @@
 								v-if="filter.inputType == 'textfield'"
 								:key="filter.key + '__' + filterIndex"
 								class="form-item"
+								:class="checkForClass(filter.classes)"
 							>
 								<v-text-field
 									:type="filter.type"
@@ -36,6 +37,7 @@
 								v-if="filter.inputType == 'dropdown'"
 								:key="filter.key + '__' + filterIndex"
 								class="form-item"
+								:class="checkForClass(filter.classes)"
 							>
 								<v-autocomplete
 									:label="filter.name"
@@ -51,6 +53,7 @@
 								v-if="filter.inputType == 'switch'"
 								:key="filter.key + '__' + filterIndex"
 								class="form-item"
+								:class="checkForClass(filter.classes)"
 							>
 								<v-switch
 									v-model="filterObject[filter.key]"
@@ -63,6 +66,7 @@
 								v-if="filter.inputType == 'datePicker'"
 								:key="filter.key + '__' + filterIndex"
 								class="form-item"
+								:class="checkForClass(filter.classes)"
 							>
 								<v-menu
 									v-model="dateMenuRef[filter.key]"
@@ -134,6 +138,11 @@
 			},
 		},
 		methods: {
+			checkForClass(classes) {
+				if (classes) {
+					return classes;
+				}
+			},
 			performBasicSearch() {
 				clearTimeout(this.searchTimeoutRef);
 				this.searchTimeoutRef = setTimeout(() => {
@@ -223,5 +232,38 @@
 	.advance-search-card {
 		padding: 16px;
 		border-color: #9e9e9e;
+
+		.form-item {
+			padding: 5px;
+			flex-basis: 100%;
+		}
+
+		.filters-container {
+			display: flex;
+			justify-content: flex-start;
+			flex-wrap: wrap;
+		}
+
+		.oneFourth {
+			flex: 0 0 23.75% !important;
+			@include custom-max(475px) {
+				flex: 0 0 95% !important;
+			}
+		}
+		.oneThird {
+			flex: 0 0 31.35% !important;
+			@include custom-max(475px) {
+				flex: 0 0 95% !important;
+			}
+		}
+		.half {
+			flex: 0 0 47.5% !important;
+			@include custom-max(475px) {
+				flex: 0 0 95% !important;
+			}
+		}
+		.full {
+			flex: 0 0 95% !important;
+		}
 	}
 </style>
