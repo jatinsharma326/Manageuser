@@ -299,6 +299,9 @@
 			getData() {
 				this.openLoaderDialog();
 				this.filter.year = this.selectedYear;
+				if (this.isSalesTeamMember) {
+					this.filter.mortal_id = this.userData.id;
+				}
 				this.getMonthList({
 					filter: this.filter,
 					pageSize: this.pageSize,
