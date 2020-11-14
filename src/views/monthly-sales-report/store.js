@@ -135,6 +135,7 @@ export default {
 
 		downloadReportFile: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
+			console.log(payload);
 			return dispatch(
 				"fileDownload_API_Call",
 				{
@@ -151,7 +152,8 @@ export default {
 						const url = window.URL.createObjectURL(new Blob([data]));
 						const link = document.createElement("a");
 						link.href = url;
-						link.setAttribute("download", "Report.xlsx");
+
+						link.setAttribute("download", "MSR for " + payload.country + ".xlsx");
 						document.body.appendChild(link);
 						link.click();
 						return;
