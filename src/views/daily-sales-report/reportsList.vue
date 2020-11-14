@@ -61,6 +61,9 @@
 				<template v-slot:[`item.travel_agent_employee.phone_numbers`]="{ item }">
 					{{ item.travel_agent_employee.phone_numbers.join(", ") }}
 				</template>
+				<template v-slot:[`item.countries`]="{ item }">
+					{{ item.countries.join(", ") }}
+				</template>
 				<template v-slot:[`item.travel_agent_employee.email_ids`]="{ item }">
 					{{ item.travel_agent_employee.email_ids.join(", ") }}
 				</template>
@@ -144,6 +147,7 @@
 			reportsList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "sales_call_data.sr_no", width: 100 },
+				{ text: "Product", value: "countries", width: 150 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Visit", value: "sales_call_data.date_of_call", width: 200 },
 				{ text: "Company Name", value: "company_data.name", width: 200 },
@@ -175,10 +179,8 @@
 			getData() {
 				this.openLoaderDialog();
 				if (this.isSalesTeamMember && this.type == "my_dsr") {
-					console.log("User Data ", this.userData);
 					this.filter.mortal_id = this.userData.id;
 				}
-				console.log("filter ", this.filter);
 				this.filter.date_from = moment(this.datePickerDate[0])
 					.tz("Asia/Kolkata")
 					.startOf()
@@ -234,16 +236,14 @@
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
 
-				// console.log("Test Console Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addDSR(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added DSR Entry" });
-							this.getData();
 							this.closeForm();
+							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
 						}
@@ -253,8 +253,8 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited DSR Entry" });
-							this.getData();
 							this.closeForm();
+							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
 						}
@@ -299,6 +299,11 @@
 	};
 </script>
 <style lang="scss" scoped>
+	.SearchbarWrapper {
+		.searchWrapper {
+			flex-shrink: 0;
+		}
+	}
 	.reportListWrapper {
 		.leaves-table {
 			margin: 10px;
