@@ -16,14 +16,14 @@ export default {
 		},
 	},
 	actions: {
-		getAllLeaves: ({ commit, dispatch }, payload) => {
+		getAgentBirthdays: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.ALL_SALES_LEAVES,
+					url: constants.AGENT_BIRTHDAYS,
 				},
 				{ root: true }
 			)
@@ -36,7 +36,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load All Leaves List");
+						fail(data.message || "Failed to load Agent Birthday List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -47,7 +47,42 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to All Leaves List");
+					fail(err.toString() || "Failed to load Agent Birthday List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
+		getGDEmployeeBirthdays: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.EMPLOYEE_BIRTHDAYS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load GD Employee Birthday List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load GD EMployee Birthday List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
