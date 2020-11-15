@@ -13,6 +13,7 @@ import ManageAgents from "../views/manage-agents/store";
 import SalesCall from "../views/sales-call/store";
 import DSR from "../views/daily-sales-report/store";
 import MSR from "../views/monthly-sales-report/store";
+import Dashboard from "../views/dashboard/store";
 
 Vue.use(Vuex);
 
@@ -91,6 +92,7 @@ export default new Vuex.Store({
 		SalesCall,
 		DSR,
 		MSR,
+		Dashboard,
 	},
 
 	state: initialState(),
