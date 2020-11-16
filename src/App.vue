@@ -192,7 +192,10 @@
 			},
 			async logoutUser() {
 				console.log("User Logged Out");
+				this.openSnackbar({ text: "You are being logged out" });
+				this.openLoaderDialog();
 				await this.logout();
+				this.closeLoaderDialog();
 				if (this.currentRoute != "Dashboard") this.$router.push({ path: "/" });
 				localStorage.clear();
 				this.resetState();
