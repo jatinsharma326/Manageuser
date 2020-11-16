@@ -57,6 +57,15 @@ export default {
 			.tz("Asia/Kolkata")
 			.format(format);
 	},
+	daysUntil(dateToCheckAgainst) {
+		let dateToCheck = moment(dateToCheckAgainst);
+		let dateToday = moment();
+		if (dateToday.format("DD-MM-YYYY") == dateToCheck.format("DD-MM-YYYY")) {
+			return "Today 🎂🎉 ";
+		} else {
+			return dateToday.to(dateToCheck);
+		}
+	},
 	traverseObject,
 	toBase64,
 	base64MimeType,
