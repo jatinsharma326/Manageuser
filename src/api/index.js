@@ -1,9 +1,9 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
-// const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
+const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.103:1401/" : "http://192.168.1.103:1401/";
-const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
+// const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
 // const BASE_URL = isBuildVersion ? "https://3128e8a0ed71.ngrok.io/" : "https://3128e8a0ed71.ngrok.io/";
 
 export default {
