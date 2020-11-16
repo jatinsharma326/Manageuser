@@ -18,13 +18,16 @@
 						>
 							<InformationCard :expandCard="false">
 								<template v-slot:topLeft>
-									{{ person.name }}
+									{{ person.company_data.name }}
 								</template>
 								<template v-slot:topRight>
-									{{ person.designation }}
+									{{ getFormattedDate(person.birth_date) }}
 								</template>
 								<template v-slot:mainContent>
-									{{ getFormattedDate(person.birth_date) }}
+									{{ person.name + " ( " + person.designation + " )" }}
+								</template>
+								<template v-slot:mainContentSubtitle>
+									{{ daysUntil(person.birth_date) }}
 								</template>
 							</InformationCard>
 						</div>
@@ -49,13 +52,16 @@
 						>
 							<InformationCard :expandCard="false">
 								<template v-slot:topLeft>
-									{{ person.usr_data.name }}
-								</template>
-								<template v-slot:topRight>
 									{{ person.usr_data.designation }}
 								</template>
-								<template v-slot:mainContent>
+								<template v-slot:topRight>
 									{{ getFormattedDate(person.birth_date) }}
+								</template>
+								<template v-slot:mainContent>
+									{{ person.usr_data.name }}
+								</template>
+								<template v-slot:mainContentSubtitle>
+									{{ daysUntil(person.birth_date) }}
 								</template>
 							</InformationCard>
 						</div>
@@ -75,231 +81,20 @@
 		name: "BirthdayReminders",
 		mixins: [helperMixin],
 		components: { InformationCard },
-		created() {},
+		created() {
+			this.getAgentBirthdayList();
+			this.getGDEmployeeBirthdayList();
+		},
 		data: () => ({
 			showColumnOne: true,
 			showColumnTwo: true,
-			travelAgentBirthdays: [
-				{
-					name: "Ishwar Kumar",
-					designation: "SS",
-					dob: "1995-07-21T18:30:00.000Z",
-					inputYear: 2021,
-					birth_date: "2021-07-21T00:00:00.000Z",
-				},
-			],
-			gloablDestinationsBirthdays: [
-				{
-					usr_data: {
-						name: "Atul Chhetri",
-						dob: "1988-12-01T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2020,
-					birth_date: "2020-12-01T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Sameena Reshamvala ",
-						dob: "1976-12-07T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2020,
-					birth_date: "2020-12-07T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Manasi Shenoy ",
-						dob: "1998-01-07T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-01-07T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Payel Dutta",
-						dob: "1988-01-23T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-01-23T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Shabbir Kapadia",
-						dob: "1984-01-30T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-01-30T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Pearl Ghadiali ",
-						dob: "1996-02-06T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-02-06T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Hycinth D'Souza ",
-						dob: "1988-02-10T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-02-10T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Ali Pocketwala",
-						dob: "2008-02-13T18:30:00.000Z",
-						designation: "Sales Lead",
-					},
-					inputYear: 2021,
-					birth_date: "2021-02-13T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Kanishka Khemani ",
-						dob: "1979-04-22T18:30:00.000Z",
-						designation: "Country Manager ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-04-22T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Sunil Menon",
-						dob: "1993-05-05T18:30:00.000Z",
-						designation: "Country Manager ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-05-05T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Hiten Dhruv ",
-						dob: "1983-05-16T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-05-16T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Aditi Desai",
-						dob: "1997-06-03T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-06-03T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Pranav Kapadia",
-						dob: "1970-06-29T18:30:00.000Z",
-						designation: "Founder ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-06-29T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Parth Mehta",
-						dob: "1989-07-09T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-07-09T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Nupoor Desai ",
-						dob: "1984-08-18T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-08-18T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Pruthvi Khetani ",
-						dob: "1980-09-09T18:30:00.000Z",
-						designation: "CEO",
-					},
-					inputYear: 2021,
-					birth_date: "2021-09-09T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Admin",
-						dob: "2020-10-01T07:51:41.381Z",
-						designation: "Admin",
-					},
-					inputYear: 2021,
-					birth_date: "2021-10-01T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Admin",
-						dob: "2020-10-01T07:51:41.381Z",
-						designation: "Admin",
-					},
-					inputYear: 2021,
-					birth_date: "2021-10-01T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Admin",
-						dob: "2020-10-01T07:51:41.381Z",
-						designation: "Admin",
-					},
-					inputYear: 2021,
-					birth_date: "2021-10-01T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Christina Aitiwadekar",
-						dob: "1990-10-03T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-10-03T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Jai Beniwal",
-						dob: "1986-10-19T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-10-19T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Atul Chhetri",
-						dob: "1988-12-01T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-12-01T00:00:00.000Z",
-				},
-				{
-					usr_data: {
-						name: "Sameena Reshamvala ",
-						dob: "1976-12-07T18:30:00.000Z",
-						designation: "Manager - Sales ",
-					},
-					inputYear: 2021,
-					birth_date: "2021-12-07T00:00:00.000Z",
-				},
-			],
+			travelAgentBirthdays: [],
+			gloablDestinationsBirthdays: [],
 		}),
 		methods: {
+			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("Dashboard", ["getAgentBirthdays", "getGDEmployeeBirthdays"]),
+
 			getAgentBirthdayList() {
 				this.openLoaderDialog();
 				this.getAgentBirthdays({
@@ -340,6 +135,15 @@
 					// this.fetchCount = data.fetchCount;
 				});
 			},
+			// daysUntil(dateToCheckAgainst) {
+			// 	let dateToCheck = moment(dateToCheckAgainst);
+			// 	let dateToday = moment();
+			// 	if (dateToday.format("DD-MM-YYYY") == dateToCheck.format("DD-MM-YYYY")) {
+			// 		return "Today";
+			// 	} else {
+			// 		return dateToday.to(dateToCheck);
+			// 	}
+			// },
 		},
 		computed: {},
 		watch: {},
@@ -351,19 +155,26 @@
 		display: flex;
 		justify-content: space-evenly;
 		align-items: flex-start;
+		@include custom-max(767px) {
+			flex-wrap: wrap;
+		}
 
 		.column {
 			flex: 0 0 46%;
-			margin: 10px;
+			margin: 15px 10px 10px 10px;
 			padding: 10px;
 			border: 1px solid $primary;
 			border-radius: 5px;
+			@include custom-max(767px) {
+				flex: 0 0 94%;
+			}
 		}
 
 		.title-section {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
+			padding: 5px 10px;
 			.title {
 				display: inline-block;
 			}
@@ -372,15 +183,19 @@
 		.content-section {
 			display: grid;
 			grid-gap: 0;
-			// grid-template-columns: 50% 50%;
 			grid-template-rows: max-content;
+			height: calc(86vh - 64px - 48px);
+			overflow: auto;
+			/*
+			grid-template-columns: 50% 50%;
 
-			// @include custom-max(1050px) {
-			// 	grid-template-columns: 50% 50%;
-			// }
-			// @include custom-max(767px) {
-			// 	grid-template-columns: 100%;
-			// }
+			@include custom-max(1050px) {
+				grid-template-columns: 50% 50%;
+			}
+			@include custom-max(767px) {
+				grid-template-columns: 100%;
+			}
+			*/
 		}
 	}
 </style>
