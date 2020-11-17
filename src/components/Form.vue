@@ -426,7 +426,7 @@
 			closeForm() {
 				this.$emit("closeForm");
 			},
-			initialiseFormElements() {
+			async initialiseFormElements() {
 				this.showError = false;
 				if (this.watcherList.length) {
 					for (let i of this.watcherList) {
@@ -525,8 +525,15 @@
 							}
 						} else if (i.type == "FilePicker") {
 							if (this.formData[i.key]) {
-								let extn = helpers.base64MimeType(this.formData[i.key]);
-								let fileObj = helpers.dataURLtoFile(this.formData[i.key], "logo." + extn);
+								// let extn = helpers.base64MimeType(this.formData[i.key]);
+								// let fileObj = helpers.dataURLtoFile(this.formData[i.key], "logo." + extn);
+								let urlSplit = this.formData[i.key].split(".");
+								let extn = urlSplit[urlSplit.length - 1];
+								let fileObj = await helpers.URLtoFile(
+									this.formData[i.key],
+									"logo." + extn,
+									"image/" + extn
+								);
 
 								this.$set(this.formElements, i.key, fileObj);
 							} else {
