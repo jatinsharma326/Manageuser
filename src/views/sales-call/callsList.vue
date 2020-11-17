@@ -47,7 +47,13 @@
 		</div>
 
 		<div class="leaves-table">
-			<v-data-table hide-default-footer :headers="headers" :items="callsList" item-key="_id">
+			<v-data-table
+				:items-per-page="pageSize"
+				hide-default-footer
+				:headers="headers"
+				:items="callsList"
+				item-key="_id"
+			>
 				<template v-slot:[`item.date_of_call`]="{ item }">
 					{{ getFormattedDate(item.date_of_call, "MMMM Do YYYY dddd") }}
 				</template>
