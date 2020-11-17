@@ -143,3 +143,42 @@ body {
 		}
 	}
 }
+
+// Dashboard Layout common CSS
+.dashboardColumnWrapper {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: flex-start;
+	@include custom-max(767px) {
+		flex-wrap: wrap;
+	}
+
+	.column {
+		flex: 0 0 46%;
+		margin: 15px 10px 10px 10px;
+		padding: 10px;
+		border: 1px solid $primary;
+		border-radius: 5px;
+		@include custom-max(767px) {
+			flex: 0 0 94%;
+		}
+	}
+
+	.title-section {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 5px 10px;
+		.title {
+			display: inline-block;
+		}
+	}
+
+	.content-section {
+		display: grid;
+		grid-gap: 0;
+		grid-template-rows: max-content;
+		height: calc(86vh - 64px - 48px);
+		overflow: auto;
+	}
+}
