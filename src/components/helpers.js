@@ -34,6 +34,15 @@ let dataURLtoFile = (dataurl, filename) => {
 	return new File([u8arr], filename, { type: mime });
 };
 
+let URLtoFile = (url, fileName, contentType) => {
+	return fetch(url, { headers: { "Content-Type": contentType } }).then(async (response) => {
+		// const contentType = response.headers.get("content-type");
+		// console.log("URLtoFile content type", contentType);
+		const blob = await response.blob();
+		return new File([blob], fileName, { contentType });
+	});
+};
+
 let toBase64 = (file) =>
 	new Promise((resolve, reject) => {
 		const reader = new FileReader();
@@ -68,6 +77,7 @@ export default {
 	},
 	traverseObject,
 	toBase64,
+	URLtoFile,
 	base64MimeType,
 	dataURLtoFile,
 };
