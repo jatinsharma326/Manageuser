@@ -357,7 +357,7 @@
 				if (formData.logo) {
 					formData.logo = await helpers.toBase64(formData.logo);
 				} else {
-					delete formData.logo;
+					formData.logo = null;
 				}
 
 				console.log("Before API call FormData Object", formData);
