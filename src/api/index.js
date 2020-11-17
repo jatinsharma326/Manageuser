@@ -4,6 +4,8 @@ const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.ord
 // const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.103:1401/" : "http://192.168.1.103:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
+// const BASE_URL = isBuildVersion ? "http://192.168.31.6:1401/" : "http://192.168.31.6:1401/";
+// const BASE_URL = isBuildVersion ? "http://192.168.43.67:1401/" : "http://192.168.43.67:1401/";
 // const BASE_URL = isBuildVersion ? "https://3128e8a0ed71.ngrok.io/" : "https://3128e8a0ed71.ngrok.io/";
 
 export default {
@@ -75,4 +77,6 @@ export default {
 	//DASHBOARD CALLS
 	AGENT_BIRTHDAYS: BASE_URL + "TravelAgentEmployees/v0.1/birthday-reminder",
 	EMPLOYEE_BIRTHDAYS: BASE_URL + "Mortals/v0.1/birthday-reminder",
+	DSR_REMINDER: BASE_URL + "DSR/v0.1/follow-up-reminder",
+	FOLLOW_UP_REMINDER: BASE_URL + "DSR/v0.1/follow-up-reminder",
 };
