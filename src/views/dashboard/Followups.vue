@@ -70,7 +70,9 @@
 									{{ daysUntil(listItem.follow_up_on_date) }}
 								</template>
 								<template v-slot:moreInfo>
-									{{ listItem.meeting_remark }}
+									<div @click="toggleReadmore(listItem)" :class="setClass(listItem)">
+										{{ listItem.meeting_remark }}
+									</div>
 									<!-- {{ listItem.travel_agent_employee }} -->
 								</template>
 								<template v-slot:actionButtons>
@@ -160,6 +162,7 @@
 		components: { InformationCard },
 		created() {
 			this.getDSRRemindersList();
+			// this.initializeToggleObject();
 			// getFollowUpRemindersList();
 		},
 		data: () => ({
@@ -167,6 +170,7 @@
 			showColumnTwo: true,
 			DSRReminders: [],
 			followUpReminders: [],
+			hideCompleteRemark: {},
 		}),
 		methods: {
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
@@ -174,7 +178,7 @@
 
 			getDSRRemindersList() {
 				this.openLoaderDialog();
-				this.getDSRReminders({
+				return this.getDSRReminders({
 					// filter: {
 					// 	type: this.type,
 					// 	search_text: this.search_text,
@@ -187,6 +191,7 @@
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched DSR Reminder List" });
 					}
+					this.initializeToggleObject(data.list);
 					this.DSRReminders = data.list;
 					// this.totalCount = data.totalCount;
 					// this.fetchCount = data.fetchCount;
@@ -212,6 +217,17 @@
 					// this.fetchCount = data.fetchCount;
 				});
 			},
+			initializeToggleObject(list) {
+				for (let listItem of list) {
+					this.$set(this.hideCompleteRemark, listItem._id, true);
+				}
+			},
+			toggleReadmore(listItem) {
+				this.hideCompleteRemark[listItem._id] = !this.hideCompleteRemark[listItem._id];
+			},
+			setClass(listItem) {
+				return { "hide-complete-content": this.hideCompleteRemark[listItem._id] };
+			},
 			// daysUntil(dateToCheckAgainst) {
 			// 	let dateToCheck = moment(dateToCheckAgainst);
 			// 	let dateToday = moment();
@@ -227,4 +243,10 @@
 	};
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+	.FollowupsWrapper {
+		.more-info {
+			cursor: pointer;
+		}
+	}
+</style>
