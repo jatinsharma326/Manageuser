@@ -182,3 +182,10 @@ body {
 		overflow: auto;
 	}
 }
+.hide-complete-content {
+	cursor: pointer;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
