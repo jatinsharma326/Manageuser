@@ -125,7 +125,8 @@
 		data: () => ({
 			callsList: [],
 			headers: [
-				{ text: "Sr. No.", align: "start", value: "sr_no", width: 100 },
+				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+				{ text: "Index", align: "start", value: "sr_no", width: 100 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Visit", value: "date_of_call", width: 200 },
 				{ text: "Company Name", value: "company_data.name", width: 200 },
@@ -182,6 +183,11 @@
 					this.callsList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+
+					this.callsList = this.callsList.map((d, index) => ({
+						...d,
+						serial_number: (this.pageNo - 1) * 20 + (index + 1),
+					}));
 				});
 			},
 			canUserEdit(item) {

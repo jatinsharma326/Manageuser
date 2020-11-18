@@ -9,11 +9,12 @@
 		</div>
 		<div class="leaves-table">
 			<v-data-table
+				:items-per-page="fetchCount"
 				hide-default-footer
 				:headers="headers"
 				:expanded.sync="expanded"
 				show-expand
-				item-key="_id"
+				item-key="serial_number"
 				:items="reportsList"
 			>
 				<template v-slot:[`item.sales_call_data.date_of_call`]="{ item }">
@@ -34,14 +35,14 @@
 			</v-data-table>
 		</div>
 
-		<div class="text-center">
+		<!-- <div class="text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
-		</div>
+		</div> -->
 	</div>
 </template>
 
@@ -60,7 +61,8 @@
 		data: () => ({
 			reportsList: [],
 			headers: [
-				{ text: "Sr. No.", align: "start", value: "sales_call_data.sr_no", width: 100 },
+				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+				{ text: "Index", align: "start", value: "sales_call_data.sr_no", width: 100 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Visit", value: "sales_call_data.date_of_call", width: 200 },
 				{ text: "Company Name", value: "sales_call_data.company_data.name", width: 200 },
@@ -94,6 +96,11 @@
 					this.reportsList = data.list.dsr_data;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+
+					this.reportsList = this.reportsList.map((d, index) => ({
+						...d,
+						serial_number: index + 1,
+					}));
 				});
 			},
 			downloadReport() {

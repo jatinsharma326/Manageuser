@@ -48,6 +48,7 @@
 
 		<div class="leaves-table">
 			<v-data-table
+				:items-per-page="pageSize"
 				hide-default-footer
 				:headers="headers"
 				:expanded.sync="expanded"
@@ -146,7 +147,8 @@
 		data: () => ({
 			reportsList: [],
 			headers: [
-				{ text: "Sr. No.", align: "start", value: "sales_call_data.sr_no", width: 100 },
+				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+				{ text: "Index", align: "start", value: "sales_call_data.sr_no", width: 100 },
 				{ text: "Product", value: "countries", width: 150 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Visit", value: "sales_call_data.date_of_call", width: 200 },
@@ -203,6 +205,11 @@
 					this.reportsList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+
+					this.reportsList = this.reportsList.map((d, index) => ({
+						...d,
+						serial_number: (this.pageNo - 1) * 20 + (index + 1),
+					}));
 				});
 			},
 			canUserEdit(item) {
