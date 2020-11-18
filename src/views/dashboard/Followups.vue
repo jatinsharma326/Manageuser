@@ -165,35 +165,7 @@
 		data: () => ({
 			showColumnOne: true,
 			showColumnTwo: true,
-			DSRReminders: [
-				{
-					status: "ON GOING",
-					// follow_up_on_date: null,
-					// meeting_remark: "Test",
-					countries: ["Brazil"],
-					sales_call_data: {
-						date_of_call: "2020-11-14T18:30:00.000Z",
-						// sr_no: "NOV20-1",
-					},
-					// travel_agent_employee: {
-					// 	// name: "Ishwar Kumar",
-					// 	// designation: "SS",
-					// 	email_ids: [],
-					// 	phone_numbers: ["656565"],
-					// },
-					// company_data: {
-					// 	name: "Faridabad Consultants",
-					// },
-					// company_address_data: {
-					// 	branch_name: "Taherabad",
-					// 	state: "Maharashtra",
-					// 	city: "Mumbai",
-					// 	pincode: "400008",
-					// 	zone: "NORTH",
-					// 	address: "Bandra",
-					// },
-				},
-			],
+			DSRReminders: [],
 			followUpReminders: [],
 		}),
 		methods: {
