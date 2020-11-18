@@ -78,6 +78,5 @@ export default {
 	traverseObject,
 	toBase64,
 	URLtoFile,
-	base64MimeType,
 	dataURLtoFile,
 };
