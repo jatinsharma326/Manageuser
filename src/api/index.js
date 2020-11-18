@@ -73,6 +73,7 @@ export default {
 	MSR: BASE_URL + "MSR/v0.1/",
 	MSR_REPORT_LIST: BASE_URL + "MSR/v0.1/month-wise-dsr",
 	MSR_REPORT_FILE: BASE_URL + "MSR/v0.1/download-dsr-report",
+	MSR_REPORT_FILE_ALL_PRODUCT: BASE_URL + "MSR/v0.1/download-all-dsr",
 
 	//DASHBOARD CALLS
 	AGENT_BIRTHDAYS: BASE_URL + "TravelAgentEmployees/v0.1/birthday-reminder",
