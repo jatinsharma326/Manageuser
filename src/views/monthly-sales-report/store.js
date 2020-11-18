@@ -169,6 +169,42 @@ export default {
 					fail(err.toString() || "Failed to Download Report File");
 				});
 		},
+		downloadCompleteReportFile: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			console.log(payload);
+			return dispatch(
+				"fileDownload_API_Call",
+				{
+					method: "get",
+					params: payload,
+					url: constants.MSR_REPORT_FILE_ALL_PRODUCT,
+					responseType: "blob",
+				},
+				{ root: true }
+			)
+				.then(({ data, response }) => {
+					if (response.status === 200) {
+						commit("openSnackbar", { text: "Starting Download" }, { root: true });
+						const url = window.URL.createObjectURL(new Blob([data]));
+						const link = document.createElement("a");
+						link.href = url;
+
+						link.setAttribute("download", "MSR for all Products.xlsx");
+						document.body.appendChild(link);
+						link.click();
+						return;
+					} else {
+						commit("openSnackbar", { text: "Could not start download" }, { root: true });
+						fail(data.message || "Failed to start download");
+						return;
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					commit("openSnackbar", { text: "Could not start download" }, { root: true });
+					fail(err.toString() || "Failed to Download Report File");
+				});
+		},
 	},
 	getters: {
 		// masterData: (state) => state.masterData,
