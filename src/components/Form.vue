@@ -2,7 +2,8 @@
 	<v-dialog v-model="form" width="600px" persistent>
 		<div class="form-wrapper">
 			<div class="headline">
-				<div class="">{{ isEditMode ? "Edit " : "Add " }}{{ name }}</div>
+				<!-- <div class="">{{ isEditMode ? "Edit " : "Add " }}{{ name }}</div> -->
+				<div class="">{{ getFormName() }}{{ name }}</div>
 			</div>
 			<div v-show="showError" id="error-container" class="error-container">
 				{{ errorText }}
@@ -349,6 +350,15 @@
 					return config.max();
 				}
 			},
+			getFormName() {
+				if (this.isExportForm) {
+					return "Export ";
+				} else if (this.isEditMode) {
+					return "Edit ";
+				} else {
+					return "Add ";
+				}
+			},
 			formValidation() {
 				this.showError = false;
 				this.errorText = false;
@@ -626,6 +636,7 @@
 			toggleForm: { required: true, type: Boolean, default: false },
 			keysToWatch: { required: false, type: Array, default: () => [] },
 			formData: { required: false, type: Object },
+			isExportForm: { required: false, type: Boolean, default: false },
 		},
 		watch: {
 			toggleForm(nv, ov) {
