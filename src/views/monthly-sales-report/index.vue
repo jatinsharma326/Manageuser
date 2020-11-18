@@ -78,6 +78,7 @@
 				<ReportView :monthInfo="selectedMonthInfo"></ReportView>
 			</template>
 		</ViewMoreModal>
+		<!-- Below is the form for Add and Edit -->
 		<UserForm
 			@formOutput="formOutput"
 			@closeForm="closeForm"
@@ -88,10 +89,52 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div v-if="isSalesTeamMember" class="floating-button">
+		<!-- Below is the form for Extract -->
+		<UserForm
+			@formOutput="exportFormOutput"
+			@closeForm="closeExportForm"
+			:name="name"
+			:inputConfig="exportConfig"
+			:toggleForm="toggleExportForm"
+			:isExportForm="isExportForm"
+			:isEditMode="false"
+		></UserForm>
+
+		<div v-if="userType == SALES_AGENT" class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
+		</div>
+
+		<div v-if="userType == REMOTE_SALES_AGENT" class="floating-button">
+			<v-speed-dial v-model="fab" direction="top" :open-on-hover="hover" transition="scale-transition">
+				<template v-slot:activator>
+					<v-btn v-model="fab" color="primary" dark fab>
+						<v-icon v-if="fab">
+							mdi-arrow-down-drop-circle
+						</v-icon>
+						<v-icon v-else>
+							mdi-arrow-up-drop-circle
+						</v-icon>
+					</v-btn>
+				</template>
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn @click="openInputForm()" color="secondary" dark small fab v-bind="attrs" v-on="on">
+							<v-icon>mdi-plus</v-icon>
+						</v-btn>
+					</template>
+					<span>Add MSR Month</span>
+				</v-tooltip>
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn fab dark small color="tertiary" @click="openExportForm()" v-bind="attrs" v-on="on">
+							<v-icon>mdi-download</v-icon>
+						</v-btn>
+					</template>
+					<span>Export Complete MSR</span>
+				</v-tooltip>
+			</v-speed-dial>
 		</div>
 	</div>
 </template>
@@ -130,11 +173,15 @@
 			// this.getData();
 		},
 		data: () => ({
-			name: "Month Detail",
+			name: "Month Sales Report",
 			placeholder: "Search",
 			selectedMonthInfo: {},
 			selectedYear: 0,
 			currentYear: 2020,
+			toggleExportForm: false,
+			isExportForm: false,
+			fab: false,
+			hover: false,
 			yearList: [
 				2000,
 				2001,
@@ -290,12 +337,13 @@
 			],
 			msrList: [],
 			inputConfig: [],
+			exportConfig: [],
 		}),
 		computed: {
 			...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType", "userData"]),
 		},
 		methods: {
-			...mapActions("MSR", ["getMonthList", "addReportMonth", "editReportMonth"]),
+			...mapActions("MSR", ["getMonthList", "addReportMonth", "editReportMonth", "downloadCompleteReportFile"]),
 			getData() {
 				this.openLoaderDialog();
 				this.filter.year = this.selectedYear;
@@ -327,6 +375,25 @@
 					return this.getCountryList();
 				}
 			},
+			openExportForm() {
+				this.isExportForm = true;
+				this.toggleExportForm = true;
+			},
+			closeExportForm() {
+				this.isExportForm = false;
+				this.toggleExportForm = false;
+			},
+			exportFormOutput(data) {
+				this.openLoaderDialog();
+				this.downloadCompleteReportFile({
+					month: data.month,
+					year: data.year,
+					highlights: data.highlights,
+					mortal_id: this.userData.id,
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
+			},
 			setInputConfig(yearList = [], monthList = [], countriesList = []) {
 				this.inputConfig = [
 					{
@@ -341,6 +408,42 @@
 							required,
 						},
 					},
+					{
+						name: "Year*",
+						type: "Dropdown",
+						key: "year",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: yearList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Month*",
+						type: "Dropdown",
+						key: "month",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: monthList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Month Highlight*",
+						type: "TextArea",
+						key: "highlights",
+						width: "full",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+				];
+				this.exportConfig = [
 					{
 						name: "Year*",
 						type: "Dropdown",
