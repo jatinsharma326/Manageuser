@@ -35,12 +35,21 @@ let dataURLtoFile = (dataurl, filename) => {
 };
 
 let URLtoFile = (url, fileName, contentType) => {
-	return fetch(url, { headers: { "Content-Type": contentType } }).then(async (response) => {
-		// const contentType = response.headers.get("content-type");
-		// console.log("URLtoFile content type", contentType);
-		const blob = await response.blob();
-		return new File([blob], fileName, { contentType });
-	});
+	return fetch(url, { headers: { "Content-Type": contentType }, mode: "no-cors" })
+		.then(async (response) => {
+			try {
+				// const contentType = response.headers.get("content-type");
+				// console.log("URLtoFile content type", contentType);
+				const blob = await response.blob();
+				return new File([blob], fileName, { contentType });
+			} catch (e) {
+				console.log(e);
+				return null;
+			}
+		})
+		.catch(() => {
+			return null;
+		});
 };
 
 let toBase64 = (file) =>
