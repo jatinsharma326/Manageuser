@@ -351,13 +351,14 @@
 				}
 			},
 			getFormName() {
-				if (this.isExportForm) {
-					return "Export ";
-				} else if (this.isEditMode) {
-					return "Edit ";
-				} else {
-					return "Add ";
+				if (this.prependFormName) {
+					if (this.isEditMode) {
+						return "Edit ";
+					} else {
+						return "Add ";
+					}
 				}
+				return "";
 			},
 			formValidation() {
 				this.showError = false;
@@ -641,7 +642,7 @@
 			toggleForm: { required: true, type: Boolean, default: false },
 			keysToWatch: { required: false, type: Array, default: () => [] },
 			formData: { required: false, type: Object },
-			isExportForm: { required: false, type: Boolean, default: false },
+			prependFormName: { required: false, type: Boolean, default: true },
 		},
 		watch: {
 			toggleForm(nv, ov) {
