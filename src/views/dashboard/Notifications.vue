@@ -125,7 +125,7 @@
 		mixins: [helperMixin],
 		components: { InformationCard },
 		created() {
-			this.getDSRRemindersList();
+			this.getDSRNotificationList();
 		},
 		data: () => ({
 			showColumnOne: true,
@@ -134,11 +134,11 @@
 		}),
 		methods: {
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
-			...mapActions("Dashboard", ["getDSRReminders", "getFollowUpReminders"]),
+			...mapActions("Dashboard", ["getDSRNotification"]),
 
-			getFollowUpRemindersList() {
+			getDSRNotificationList() {
 				this.openLoaderDialog();
-				this.getFollowUpReminders({
+				this.getDSRNotification({
 					// filter: {
 					// 	type: this.type,
 					// 	search_text: this.search_text,
