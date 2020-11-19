@@ -1,6 +1,6 @@
 <template>
 	<div class="settingsWrapper">
-		<div class="settings-row">
+		<div v-if="isAdmin" class="settings-row">
 			<div class="settings-key">
 				<div class="key-title">Total Number of paid leaves</div>
 				<div class="key-subtitle">
@@ -11,7 +11,7 @@
 				<v-text-field v-model="totalPaidLeaves" label="No of Leaves"></v-text-field>
 			</div>
 		</div>
-		<div class="settings-row">
+		<div v-if="isAdmin" class="settings-row">
 			<div class="settings-key">
 				<div class="key-title">Currency</div>
 				<div class="key-subtitle">
@@ -67,7 +67,7 @@
 				</div>
 			</div>
 			<div class="settings-value text-field">
-				<div class="file-input">
+				<div v-if="isAdmin" class="file-input">
 					<v-file-input
 						v-model="file"
 						class="file-picker"
@@ -78,6 +78,7 @@
 				</div>
 				<div class="upload-actions">
 					<v-btn
+						v-if="isAdmin"
 						outlined
 						:disabled="!showProgress && file ? false : true"
 						color="primary"
@@ -91,7 +92,7 @@
 				</div>
 			</div>
 		</div>
-		<v-btn color="primary" @click="editAdminSettings">SUBMIT</v-btn>
+		<v-btn v-if="isAdmin" color="primary" @click="editAdminSettings">SUBMIT</v-btn>
 	</div>
 </template>
 
@@ -102,7 +103,9 @@
 		name: "Settings",
 		components: {},
 		created() {
-			this.getSettings();
+			if (this.isAdmin) {
+				this.getSettings();
+			}
 			// this.currencyValue = this.activeCurrencies.map(function(active) {
 			//   return active.currency_type;
 			// });
@@ -125,6 +128,16 @@
 			],
 			currencyValue: [],
 		}),
+		computed: {
+			...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType", "userData"]),
+			...mapGetters(["uploadPercentage", "allCurrencies"]),
+			isAdmin: function() {
+				return this.userType == this.ADMIN;
+			},
+			isSalesTeam: function() {
+				return this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT;
+			},
+		},
 		methods: {
 			...mapActions("Settings", [
 				"getGlobalSettings",
@@ -202,9 +215,6 @@
 			save() {
 				event.preventDefault();
 			},
-		},
-		computed: {
-			...mapGetters(["uploadPercentage", "allCurrencies"]),
 		},
 		watch: {
 			currencyValue(nv, ov) {
