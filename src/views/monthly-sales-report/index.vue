@@ -93,10 +93,10 @@
 		<UserForm
 			@formOutput="exportFormOutput"
 			@closeForm="closeExportForm"
-			:name="name"
+			name="Export MSR for all products"
 			:inputConfig="exportConfig"
 			:toggleForm="toggleExportForm"
-			:isExportForm="isExportForm"
+			:prependFormName="false"
 			:isEditMode="false"
 		></UserForm>
 
@@ -179,9 +179,8 @@
 			selectedYear: 0,
 			currentYear: 2020,
 			toggleExportForm: false,
-			isExportForm: false,
 			fab: false,
-			hover: false,
+			hover: true,
 			yearList: [
 				2000,
 				2001,
@@ -577,7 +576,7 @@
 					},
 					{
 						name: "Select Product",
-						key: "names",
+						key: "countries",
 						multi: true,
 						inputType: "dropdown",
 						defaultValue: [],
