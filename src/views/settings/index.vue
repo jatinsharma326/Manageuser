@@ -59,6 +59,22 @@
 				</div>
 			</div>
 		</div>
+		<div v-if="!isAdmin" class="settings-row">
+			<div class="settings-key">
+				<div class="key-title">Old Password</div>
+			</div>
+			<div class="settings-value text-field">
+				<v-text-field v-model="oldPassword"></v-text-field>
+			</div>
+		</div>
+		<div v-if="!isAdmin" class="settings-row">
+			<div class="settings-key">
+				<div class="key-title">New Password</div>
+			</div>
+			<div class="settings-value text-field">
+				<v-text-field v-model="newPassword"></v-text-field>
+			</div>
+		</div>
 		<div class="settings-row">
 			<div class="settings-key">
 				<div class="key-title">Policies</div>
@@ -89,10 +105,11 @@
 					<v-btn color="green" class="action-button" v-if="policies" @click="downloadPoliciesF()" text
 						>Download</v-btn
 					>
+					<div v-if="!policies">There is no policy file. Please ask ADMIN to upload it</div>
 				</div>
 			</div>
 		</div>
-		<v-btn v-if="isAdmin" color="primary" @click="editAdminSettings">SUBMIT</v-btn>
+		<v-btn color="primary" @click="submitSettings()">SUBMIT</v-btn>
 	</div>
 </template>
 
@@ -105,6 +122,8 @@
 		created() {
 			if (this.isAdmin) {
 				this.getSettings();
+			} else {
+				this.getPolicyFileStatus();
 			}
 			// this.currencyValue = this.activeCurrencies.map(function(active) {
 			//   return active.currency_type;
@@ -115,6 +134,9 @@
 			totalPaidLeaves: 0,
 			activeCurrencies: [],
 			policies: false,
+			oldPassword: "",
+			newPassword: "",
+			policyFileStatus: false,
 			file: null,
 			showProgress: false,
 			headers: [
@@ -144,8 +166,17 @@
 				"updateGlobalSettings",
 				"uploadPolicies",
 				"downloadPolicies",
+				"getPolicyStatus",
+				"updatePasswordAPI",
 			]),
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
+			submitSettings() {
+				if (this.isAdmin) {
+					this.editAdminSettings();
+				} else {
+					this.updatePassword();
+				}
+			},
 			getSettings() {
 				this.openLoaderDialog();
 				this.getGlobalSettings().then((data) => {
@@ -169,6 +200,19 @@
 					if (data.ok) {
 						this.openSnackbar({ text: "File Upload Sucessful" });
 						this.file = null;
+					} else {
+						this.openSnackbar({ text: data.message });
+					}
+				});
+			},
+			getPolicyFileStatus() {
+				this.openLoaderDialog();
+				this.getPolicyStatus().then((data) => {
+					this.closeLoaderDialog();
+					if (data.ok) {
+						if (data.policyStatus) {
+							this.policies = data.policyStatus;
+						}
 					} else {
 						this.openSnackbar({ text: data.message });
 					}
@@ -200,6 +244,22 @@
 					if (data.ok) {
 						this.openSnackbar({ text: "Settings Edited Sucessfully" });
 						this.getSettings();
+					} else {
+						this.openSnackbar({ text: data.message });
+					}
+				});
+			},
+			updatePassword() {
+				this.openLoaderDialog();
+				this.updatePasswordAPI({
+					old_password: this.oldPassword,
+					new_password: this.newPassword,
+				}).then((data) => {
+					this.closeLoaderDialog();
+					if (data.ok) {
+						this.openSnackbar({ text: "Changed Password Sucessfully" });
+						this.oldPassword = "";
+						this.newPassword = "";
 					} else {
 						this.openSnackbar({ text: data.message });
 					}
