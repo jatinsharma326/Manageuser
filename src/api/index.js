@@ -80,4 +80,5 @@ export default {
 	EMPLOYEE_BIRTHDAYS: BASE_URL + "Mortals/v0.1/birthday-reminder",
 	DSR_REMINDER: BASE_URL + "DSR/v0.1/follow-up-reminder",
 	FOLLOW_UP_REMINDER: BASE_URL + "DSR/v0.1/follow-up-reminder",
+	DSR_NOTIFICATIONS: BASE_URL + "DSR/v0.1/dsr-for-my-products",
 };
