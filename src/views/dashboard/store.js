@@ -156,6 +156,41 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
+		getDSRNotification: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.DSR_NOTIFICATIONS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to get DSR Notification List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to get DSR Notification List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
 	},
 	getters: {
 		// masterData: (state) => state.masterData,
