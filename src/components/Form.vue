@@ -392,6 +392,11 @@
 					});
 					return false;
 				} else {
+					for (let elements in this.formElements) {
+						if (typeof this.formElements[elements] == "string") {
+							this.formElements[elements] = this.formElements[elements].trim();
+						}
+					}
 					if (!this.isEditMode) {
 						this.$emit("formOutput", this.formElements);
 					} else {
