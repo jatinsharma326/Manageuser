@@ -34,6 +34,8 @@ export default {
 	// GLOBAL SETTINGS END POINT
 	GLOBAL_SETTINGS: BASE_URL + "Admin/v0.1/global-settings",
 	GLOBAL_SETTINGS_POLICIES: BASE_URL + "Admin/v0.1/policies",
+	CHECK_POLICIES_STATUS: BASE_URL + "Global/v0.1/check-policy-exists",
+	UPDATE_PASSWORD: BASE_URL + "Common/v0.1/change-password",
 
 	// MANAGE LEAVES END POINT
 	ALL_SALES_LEAVES: BASE_URL + "Leaves/v0.1/all-sales-leaves",
