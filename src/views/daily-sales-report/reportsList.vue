@@ -116,12 +116,22 @@
 				:formData="rowToEdit"
 				:isEditMode="isEditMode"
 			></UserForm>
-			<div class="floating-button">
-				<v-btn @click="openInputForm()" color="primary" dark fab>
-					<v-icon>mdi-plus</v-icon>
-				</v-btn>
-			</div>
 		</template>
+		<div class="floating-button">
+			<v-btn v-if="type == 'my_dsr'" @click="openInputForm()" color="primary" dark fab>
+				<v-icon>mdi-plus</v-icon>
+			</v-btn>
+			<template v-else>
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn @click="getData()" color="primary" dark fab v-bind="attrs" v-on="on">
+							<v-icon>mdi-refresh</v-icon>
+						</v-btn>
+					</template>
+					<span>Refresh List</span>
+				</v-tooltip>
+			</template>
+		</div>
 	</div>
 </template>
 
