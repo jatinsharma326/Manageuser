@@ -16,6 +16,37 @@ export default {
 		},
 	},
 	actions: {
+		getActiveCurrencies: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.ACTIVE_CURRENCIES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load All FollowUp List");
+						return {
+							ok: false,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to All FollowUp List");
+					return { ok: false, list: [] };
+				});
+		},
 		getFollowUp: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
