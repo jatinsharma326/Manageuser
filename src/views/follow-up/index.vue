@@ -145,6 +145,7 @@
 			//get companies is defined in commonAPIMixins which gets companiesList and modifiedCompanyList
 			promiseArray.push(this.getCompanies());
 			promiseArray.push(this.getCountryList());
+			promiseArray.push(this.getActiveCurrenciesList());
 			await Promise.all(promiseArray);
 			this.closeLoaderDialog();
 			this.setConfig(
@@ -160,7 +161,6 @@
 			placeholder: "Search Followup Entry",
 			searchConfig: [],
 			inputConfig: [],
-			activeCurrencyList: [],
 			followUpList: [
 				{
 					_id: "5fb75c954fe7ba447c013758",
@@ -237,10 +237,28 @@
 			},
 		},
 		methods: {
-			...mapActions("FollowUp", ["getFollowUp", "addFollowUp", "editFollowUp", "deleteFollowUp"]),
-			...mapActions("ManageAgents", ["getCompaniesList"]),
-			...mapActions("UserManagement", ["getUserList"]),
-			...mapActions("ManageTargets", ["getActiveCountries"]),
+			...mapActions("FollowUp", [
+				"getActiveCurrencies",
+				"getFollowUp",
+				"addFollowUp",
+				"editFollowUp",
+				"deleteFollowUp",
+			]),
+			setDateRange() {
+				let tempArray = [];
+				let startDate = moment()
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.format("YYYY-MM-DD");
+				let endDate = moment()
+					.tz("Asia/Kolkata")
+					.add(5, "month")
+					.endOf("month")
+					.format("YYYY-MM-DD");
+				tempArray.push(startDate);
+				tempArray.push(endDate);
+				this.datePickerDate = tempArray;
+			},
 			getData() {
 				this.openLoaderDialog();
 				this.filter.date_from = moment(this.datePickerDate[0])
@@ -357,9 +375,9 @@
 					{
 						name: "Product*",
 						type: "Dropdown",
-						key: "countries",
+						key: "country",
 						width: "full",
-						multi: true,
+						multi: false,
 						isListInStore: false,
 						listItems: activeCountriesList,
 						validations: {
@@ -417,10 +435,13 @@
 						width: "half",
 					},
 					{
-						name: "Date of Travel",
+						name: "Date of Travel*",
 						type: "Date",
 						key: "date_of_travel",
 						width: "half",
+						validations: {
+							required,
+						},
 					},
 					{
 						name: "Adult Pax no.",
@@ -619,7 +640,41 @@
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				// if (!formData.designation) formData.designation = "";
+
+				if (!formData.amount_pending) {
+					formData.amount_pending = 0;
+				} else {
+					formData.amount_pending = Number(formData.amount_pending);
+				}
+				if (!formData.amount_received) {
+					formData.amount_received = 0;
+				} else {
+					formData.amount_received = Number(formData.amount_received);
+				}
+				if (!formData.no_of_nights) {
+					formData.no_of_nights = 0;
+				} else {
+					formData.no_of_nights = Number(formData.no_of_nights);
+				}
+				if (!formData.number_of_pax_adult) {
+					formData.number_of_pax_adult = 0;
+				} else {
+					formData.number_of_pax_adult = Number(formData.number_of_pax_adult);
+				}
+				if (!formData.number_of_pax_child) {
+					formData.number_of_pax_child = 0;
+				} else {
+					formData.number_of_pax_child = Number(formData.number_of_pax_child);
+				}
+
+				if (!formData.contact_number) formData.contact_number = "";
+				if (!formData.invoice_no) formData.invoice_no = "";
+				if (!formData.remark) formData.remark = "";
+
+				formData.reminder_date = helpers.getISODate(formData.reminder_date);
+				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
+				formData.month_of_travel = Number(this.getFormattedDate(formData.date_of_travel, "MM"));
+
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addFollowUp(formData).then((data) => {
