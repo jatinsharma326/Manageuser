@@ -6,6 +6,7 @@ const commonAPICallsMixin = {
 		companyList: [],
 		countriesList: [],
 		modifiedCompanyList: [],
+		modifiedCompanyIdsList: [],
 		userList: [],
 	}),
 	computed: {},
@@ -45,6 +46,10 @@ const commonAPICallsMixin = {
 			}).then((data) => {
 				this.companyList = data.list;
 				this.modifiedCompanyList = data.list.map((e) => e.name);
+				this.modifiedCompanyIdsList = data.list.map((e) => ({
+					text: e.name,
+					value: e._id,
+				}));
 			});
 		},
 		getCountryList() {
