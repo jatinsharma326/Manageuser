@@ -56,25 +56,22 @@
 				item-key="_id"
 				:items="followUpList"
 			>
-				<template v-slot:[`item.sales_call_data.date_of_call`]="{ item }">
-					{{ getFormattedDate(item.sales_call_data.date_of_call, "MMMM Do YYYY dddd") }}
+				<template v-slot:[`item.date_of_enquiry`]="{ item }">
+					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
 				</template>
-				<template v-slot:[`item.travel_agent_employee.phone_numbers`]="{ item }">
-					{{ item.travel_agent_employee.phone_numbers.join(", ") }}
+				<template v-slot:[`item.date_of_travel`]="{ item }">
+					{{ item.date_of_travel ? getFormattedDate(item.date_of_travel, "MMMM Do YYYY dddd") : "-" }}
 				</template>
-				<template v-slot:[`item.countries`]="{ item }">
-					{{ item.countries.join(", ") }}
+				<template v-slot:[`item.reminder_date`]="{ item }">
+					{{ item.reminder_date ? getFormattedDate(item.reminder_date, "MMMM Do YYYY dddd") : "-" }}
 				</template>
-				<template v-slot:[`item.travel_agent_employee.email_ids`]="{ item }">
-					{{ item.travel_agent_employee.email_ids.join(", ") }}
-				</template>
-				<template v-slot:[`item.follow_up_on_date`]="{ item }">
-					{{ item.follow_up_on_date ? getFormattedDate(item.follow_up_on_date, "MMMM Do YYYY dddd") : "-" }}
+				<template v-slot:[`item.record.updated_on`]="{ item }">
+					{{ item.record.updated_on ? getFormattedDate(item.record.updated_on, "MMMM Do YYYY dddd") : "-" }}
 				</template>
 				<template v-slot:expanded-item="{ headers, item }">
 					<td class="expandable-section table-expanded-background " :colspan="headers.length">
 						<div class="expandable-section-title">Remark</div>
-						<div class="expandable-section-content" v-html="item.meeting_remark">{{}}</div>
+						<div class="expandable-section-content" v-html="item.remark">{{}}</div>
 					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
@@ -214,7 +211,7 @@
 				{ text: "Adult Pax", value: "number_of_pax_adult", width: 150 },
 				{ text: "No. of Nights", value: "no_of_nights", width: 150 },
 				{ text: "Child Pax", value: "number_of_pax_child", width: 150 },
-				{ text: "Inquiry Type", value: "business_type", width: 150 },
+				{ text: "Inquiry Type", value: "business_types", width: 150 },
 				{ text: "Email Subject", value: "email_subject", width: 150 },
 				{ text: "File Status", value: "status", width: 150 },
 				{ text: "Follow Up", value: "reminder_date", width: 150 },
@@ -549,6 +546,10 @@
 						type: "String",
 						key: "invoice_no",
 						width: "half",
+						disableTriggerKey: "status",
+						disableCheck: (data) => {
+							return this.checkDisableCondition(data);
+						},
 					},
 					{
 						name: "Payment Type",
@@ -587,16 +588,6 @@
 						multi: false,
 						isListInStore: false,
 						listItems: activeCurrencyList,
-						disableTriggerKey: "status",
-						disableCheck: (data) => {
-							return this.checkDisableCondition(data);
-						},
-					},
-					{
-						name: "Invoice Number",
-						type: "String",
-						key: "invoice_no",
-						width: "half",
 						disableTriggerKey: "status",
 						disableCheck: (data) => {
 							return this.checkDisableCondition(data);
@@ -671,7 +662,9 @@
 				if (!formData.invoice_no) formData.invoice_no = "";
 				if (!formData.remark) formData.remark = "";
 
-				formData.reminder_date = helpers.getISODate(formData.reminder_date);
+				if (formData.reminder_date) {
+					formData.reminder_date = helpers.getISODate(formData.reminder_date);
+				}
 				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
 				formData.month_of_travel = Number(this.getFormattedDate(formData.date_of_travel, "MM"));
 
@@ -727,7 +720,6 @@
 				this.getData();
 			},
 			checkDisableCondition(value) {
-				console.log("Disable Value", value);
 				if (value == "CONFIRMED") {
 					return false;
 				} else {
