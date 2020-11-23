@@ -47,6 +47,12 @@ const routes = [
 		meta: { policy: [10, 20, 30, 40] },
 	},
 	{
+		path: "/follow-up",
+		name: "Follow Up",
+		component: () => import("../views/follow-up"),
+		meta: { policy: [10, 20, 30, 40] },
+	},
+	{
 		path: "/settings",
 		name: "Settings",
 		component: () => import("../views/settings"),
