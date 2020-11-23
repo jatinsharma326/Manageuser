@@ -54,7 +54,7 @@
 				:expanded.sync="expanded"
 				show-expand
 				item-key="_id"
-				:items="reportsList"
+				:items="followUpList"
 			>
 				<template v-slot:[`item.sales_call_data.date_of_call`]="{ item }">
 					{{ getFormattedDate(item.sales_call_data.date_of_call, "MMMM Do YYYY dddd") }}
@@ -78,19 +78,17 @@
 					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
-					<template v-if="canUserEdit(item)">
-						<v-menu bottom left>
-							<template v-slot:activator="{ on, attrs }">
-								<v-btn icon v-bind="attrs" v-on="on">
-									<v-icon>mdi-dots-vertical</v-icon>
-								</v-btn>
-							</template>
-							<v-list>
-								<v-list-item @click="openInputForm(true, item)">EDIT</v-list-item>
-								<v-list-item @click="deleteCall(item)">DELETE</v-list-item>
-							</v-list>
-						</v-menu>
-					</template>
+					<v-menu bottom left>
+						<template v-slot:activator="{ on, attrs }">
+							<v-btn icon v-bind="attrs" v-on="on">
+								<v-icon>mdi-dots-vertical</v-icon>
+							</v-btn>
+						</template>
+						<v-list>
+							<v-list-item @click="openInputForm(true, item)">EDIT</v-list-item>
+							<v-list-item @click="deleteCall(item)">DELETE</v-list-item>
+						</v-list>
+					</v-menu>
 				</template>
 			</v-data-table>
 		</div>
@@ -108,7 +106,6 @@
 			@formOutput="formOutput"
 			@closeForm="closeForm"
 			:name="name"
-			:type="type"
 			:inputConfig="inputConfig"
 			:keysToWatch="keysToWatch"
 			:toggleForm="toggleForm"
@@ -141,23 +138,18 @@
 		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin, datePickerMixin, commonAPICallsMixin],
 		async created() {
 			this.setDateRange();
-			this.getData();
-			// 	await this.getUsers();
-			// 	this.setSearchConfig(this.userList);
+			// this.getData();
 			this.openLoaderDialog();
 			let promiseArray = [];
 			await this.getUsers();
+			//get companies is defined in commonAPIMixins which gets comapniesList and modifiedCompanyList
 			promiseArray.push(this.getCompanies());
 			promiseArray.push(this.getCountryList());
-			if (this.isSalesTeamMember) {
-				promiseArray.push(this.getSalesCallList());
-			}
 			await Promise.all(promiseArray);
 			this.closeLoaderDialog();
 			this.setConfig(
 				this.companyList,
 				this.userList,
-				this.storeStatesList,
 				this.modifiedCompanyList,
 				this.countriesList,
 				this.callsList
@@ -165,68 +157,76 @@
 		},
 		data: () => ({
 			name: "Followup Entry",
-			reportsList: [
+			placeholder: "Search Followup Entry",
+			searchConfig: [],
+			inputConfig: [],
+			followUpList: [
 				{
-					_id: "5facf4ab75576e2d0c9ac662",
-					countries: ["Fiji"],
-					date_of_enquiry: "2020-12-12T18:30:00.000Z",
-					travel_agent_id: "5faa6ed0bbd00900275d031a",
-					company_data: {
-						name: "Faridabad Consultants",
-					},
-					city: "Mumbai",
-					zone: "NORTH",
-					contact_person_name: "Taher Pardawala",
-					contact_person_phone_number: "98989892892",
-					date_of_travel: "2021-01-12T18:30:00.000Z",
-					adult_pax: 12,
-					no_of_nights: 6,
-					child_pax: 0,
-					business_type: "FIT",
-					email_subject: "Taher Rohan",
-					file_status: "Taher Rohan",
-					follow_up_on_date: "Taher Rohan",
-					payment_status: "Taher Rohan",
-					currency: "USD",
-					pending_amount: "Taher Rohan",
-					received_amount: "Taher Rohan",
+					_id: "5fb75c954fe7ba447c013758",
+					country: "Brazil",
+					date_of_enquiry: "2020-11-19T18:30:00.000Z",
+					company_id: "5faa6ed0bbd00900275d0315",
+					city: "Rio de Janerio",
+					zone: "WEST",
+					mortal_id: "5faf76736365ae32d4be2576",
+					contact_person: "Cristiano Jr",
+					contact_number: "+25 884222214",
+					date_of_travel: "2021-01-14T18:30:00.000Z",
+					month_of_travel: 1,
+					number_of_pax_adult: 8,
+					number_of_pax_child: 3,
+					no_of_nights: 7,
+					business_type: "MICE",
+					email_subject: "email_subject_here",
+					status: "QUOTED",
+					remark: "remark_here",
+					reminder_date: "2021-01-09T18:30:00.000Z",
+					payment_status: "",
+					invoice_no: "",
+					payment_type: "",
+					currency_type: "",
+					amount_received: "",
+					amount_pending: "",
 					record: {
-						created_on: "2020-11-12T08:39:07.975Z",
-						updated_on: "2020-11-12T08:39:07.975Z",
+						created_on: "2020-11-20T06:05:09.728Z",
+						updated_on: "2020-11-19T18:30:00.000Z",
 					},
-					meeting_remark: "- Taher\n\n-ALi\n\n\n\n-Rohan",
+					company_data: {
+						name: "Haridwar Apps",
+					},
+					mortal_data: {
+						name: "Remote Sales Agent No 15012",
+					},
 				},
 			],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
-				{ text: "Product", value: "countries", width: 150 },
+				{ text: "Product", value: "country", width: 150 },
 				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
 				{ text: "Company Name", value: "company_data.name", width: 200 },
-				{ text: "Branch Name", value: "company_address_data.branch_name", width: 150 },
-				{ text: "City", value: "company_address_data.city", width: 150 },
-				{ text: "Zone", value: "company_address_data.zone", width: 150 },
-				{ text: "Name of Contact", value: "contact_person_name", width: 150 },
-				{ text: "Contact No.", value: "contact_person_phone_numbers", width: 150 },
+				{ text: "City", value: "city", width: 150 },
+				{ text: "Zone", value: "zone", width: 150 },
+				{ text: "Name of Contact", value: "contact_person", width: 150 },
+				{ text: "Contact No.", value: "contact_number", width: 150 },
 				{ text: "Date of Travel", value: "date_of_travel", width: 150 },
-				{ text: "Adult Pax", value: "adult_pax", width: 150 },
+				{ text: "Adult Pax", value: "number_of_pax_adult", width: 150 },
 				{ text: "No. of Nights", value: "no_of_nights", width: 150 },
-				{ text: "Child Pax", value: "child_pax", width: 150 },
+				{ text: "Child Pax", value: "number_of_pax_child", width: 150 },
 				{ text: "Inquiry Type", value: "business_type", width: 150 },
 				{ text: "Email Subject", value: "email_subject", width: 150 },
-				{ text: "File Status", value: "file_status", width: 150 },
-				{ text: "Follow Up", value: "follow_up_on_date", width: 150 },
+				{ text: "File Status", value: "status", width: 150 },
+				{ text: "Follow Up", value: "reminder_date", width: 150 },
 				{ text: "Payment Status", value: "payment_status", width: 150 },
 				{ text: "Invoice No.", value: "invoice_no", width: 150 },
 				{ text: "Payment Type", value: "payment_type", width: 150 },
-				{ text: "Currency", value: "currency", width: 150 },
-				{ text: "Pending (Amount)", value: "pending_amount", width: 150 },
-				{ text: "Received (Amount)", value: "received_amount", width: 150 },
+				{ text: "Currency", value: "currency_type", width: 150 },
+				{ text: "Pending (Amount)", value: "amount_pending", width: 150 },
+				{ text: "Received (Amount)", value: "amount_received", width: 150 },
 				{ text: "Last Updated On", value: "record.updated_on", width: 150 },
-				{ text: "Remark", value: "data-table-expand" },
 				{ text: "", value: "actions" },
 			],
 			expanded: [],
-			keysToWatch: ["file_status"],
+			keysToWatch: ["payment_status"],
 		}),
 		computed: {
 			...mapGetters(["userData"]),
@@ -235,10 +235,9 @@
 			},
 		},
 		methods: {
-			...mapActions("DSR", ["getDSR", "addDSR", "editDSR", "deleteDSR"]),
-			...mapActions("ManageAgents", ["getCompaniesList", "getAddressList", "getCompanyEmployeeList"]),
+			...mapActions("FollowUp", ["getFollowUp", "addFollowUp", "editFollowUp", "deleteFollowUp"]),
+			...mapActions("ManageAgents", ["getCompaniesList"]),
 			...mapActions("UserManagement", ["getUserList"]),
-			...mapActions("SalesCall", ["getSalesCall"]),
 			...mapActions("ManageTargets", ["getActiveCountries"]),
 			getData() {
 				this.openLoaderDialog();
@@ -255,252 +254,277 @@
 					this.filter.date_to = this.filter.date_from;
 				}
 
-				this.getDSR({
+				this.getFollowUp({
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.reportsList = data.list;
+					this.followUpList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.reportsList = this.reportsList.map((d, index) => ({
+					this.followUpList = this.followUpList.map((d, index) => ({
 						...d,
 						serial_number: (this.pageNo - 1) * 20 + (index + 1),
 					}));
 				});
 			},
 			setConfig(
+				modifiedCompanyList = [],
 				companyList = [],
 				userList = [],
-				statesList = [],
-				modifiedCompanyList = [],
 				activeCountriesList = [],
 				callsList = []
 			) {
-				let searchConfigItems = [
+				// this.searchConfigItems = [
+				// 	{
+				// 		name: "Sales Call Index",
+				// 		key: "sr_no",
+				// 		type: "text",
+				// 		inputType: "textfield",
+				// 		defaultValue: "",
+				// 		classes: ["half"],
+				// 	},
+				// 	{
+				// 		name: "Date of Visit",
+				// 		key: "date_of_call",
+				// 		inputType: "datePicker",
+				// 		defaultValue: null,
+				// 		classes: ["half"],
+				// 	},
+				// 	{
+				// 		name: "Branch Name",
+				// 		key: "branch_name",
+				// 		type: "text",
+				// 		inputType: "textfield",
+				// 		defaultValue: "",
+				// 		classes: ["half"],
+				// 	},
+				// 	{
+				// 		name: "Agent Employee",
+				// 		key: "travel_agent_employee_name",
+				// 		type: "text",
+				// 		inputType: "textfield",
+				// 		defaultValue: "",
+				// 		classes: ["half"],
+				// 	},
+				// 	{
+				// 		name: "Company",
+				// 		key: "company_names",
+				// 		multi: true,
+				// 		inputType: "dropdown",
+				// 		defaultValue: [],
+				// 		isListInStore: false,
+				// 		listItems: modifiedCompanyList,
+				// 		classes: ["half"],
+				// 	},
+				// 	{
+				// 		name: "State",
+				// 		key: "states",
+				// 		multi: true,
+				// 		inputType: "dropdown",
+				// 		defaultValue: [],
+				// 		isListInStore: false,
+				// 		listItems: statesList,
+				// 		classes: ["half"],
+				// 	},
+				// 	{
+				// 		name: "Product",
+				// 		key: "countries",
+				// 		multi: true,
+				// 		inputType: "dropdown",
+				// 		defaultValue: [],
+				// 		isListInStore: false,
+				// 		listItems: activeCountriesList,
+				// 		classes: ["half"],
+				// 	},
+				// 	{
+				// 		name: "Status",
+				// 		key: "status",
+				// 		multi: false,
+				// 		inputType: "dropdown",
+				// 		defaultValue: [],
+				// 		isListInStore: false,
+				// 		listItems: ["ON GOING", "CLOSED"],
+				// 		classes: ["half"],
+				// 	},
+				// ];
+
+				this.inputConfig = [
 					{
-						name: "Sales Call Index",
-						key: "sr_no",
-						type: "text",
-						inputType: "textfield",
-						defaultValue: "",
-						classes: ["half"],
-					},
-					{
-						name: "Date of Visit",
-						key: "date_of_call",
-						inputType: "datePicker",
-						defaultValue: null,
-						classes: ["half"],
-					},
-					{
-						name: "Branch Name",
-						key: "branch_name",
-						type: "text",
-						inputType: "textfield",
-						defaultValue: "",
-						classes: ["half"],
-					},
-					{
-						name: "Agent Employee",
-						key: "travel_agent_employee_name",
-						type: "text",
-						inputType: "textfield",
-						defaultValue: "",
-						classes: ["half"],
-					},
-					{
-						name: "Company",
-						key: "company_names",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: modifiedCompanyList,
-						classes: ["half"],
-					},
-					{
-						name: "State",
-						key: "states",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: statesList,
-						classes: ["half"],
-					},
-					{
-						name: "Product",
+						name: "Product*",
+						type: "Dropdown",
 						key: "countries",
+						width: "full",
 						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
 						isListInStore: false,
 						listItems: activeCountriesList,
-						classes: ["half"],
+						validations: {
+							required,
+						},
 					},
 					{
-						name: "Status",
-						key: "status",
-						multi: false,
-						inputType: "dropdown",
-						defaultValue: [],
+						name: "Company*",
+						type: "Dropdown",
+						key: "company_id",
+						width: "full",
+						multi: true,
 						isListInStore: false,
-						listItems: ["ON GOING", "CLOSED"],
-						classes: ["half"],
-					},
-				];
-
-				this.tabConfig = [
-					{
-						name: "My DSR",
-						id: "myDSR",
-						props: {
-							name: "My DSR",
-							type: "my_dsr",
-							placeholder: "Search my DSR",
-							inputConfig: [
-								{
-									name: "Sales Call Index*",
-									type: "DropdownWithMoreInfo",
-									isCustom: true,
-									subtitleContent: (item) => {
-										return (
-											helper.getFormattedDate(item.date_of_call, "DD-MM-YYYY") +
-											"-" +
-											item.company_data.name
-										);
-									},
-									titleContent: (item) => {
-										return item.sr_no;
-									},
-									key: "sales_call_id",
-									width: "full",
-									multi: false,
-									isListInStore: false,
-									listItems: callsList,
-									itemText: "sr_no",
-									itemValue: "_id",
-									validations: {
-										required,
-									},
-								},
-								{
-									name: "Travel Agent Employee*",
-									type: "AsyncDropdownWithMoreInfo",
-									triggerKey: "sales_call_id",
-									subtitleContent: (item) => {
-										return item.designation + " - " + item.company_address_data.branch_name;
-									},
-									titleContent: (item) => {
-										return item.name;
-									},
-									apiCall: (call_id) => {
-										let call = this.callsList.find((e) => e._id == call_id);
-										return this.getCompanyEmployeeList({
-											filter: {
-												company_id: call.company_id,
-												active: true,
-											},
-										}).then((data) => {
-											return data.list;
-										});
-									},
-									key: "travel_agent_id",
-									width: "full",
-									itemText: "name",
-									itemValue: "_id",
-									validations: {
-										required,
-									},
-								},
-								{
-									name: "Product*",
-									type: "Dropdown",
-									key: "countries",
-									width: "full",
-									multi: true,
-									isListInStore: false,
-									listItems: activeCountriesList,
-									validations: {
-										required,
-									},
-								},
-								{
-									name: "Follow up Date",
-									type: "Date",
-									key: "follow_up_on_date",
-									width: "half",
-								},
-								{
-									name: "Status*",
-									type: "Dropdown",
-									key: "status",
-									width: "half",
-									multi: false,
-									isListInStore: false,
-									listItems: ["ON GOING", "CLOSED"],
-									validations: {
-										required,
-									},
-								},
-								{
-									name: "Meeting Remark*",
-									type: "TextArea",
-									key: "meeting_remark",
-									width: "full",
-									validations: {
-										required,
-										minLength: minLength(2),
-									},
-								},
-							],
-							searchConfig: searchConfigItems,
+						listItems: modifiedCompanyList,
+						validations: {
+							required,
 						},
 					},
 					{
-						name: "All DSR",
-						id: "allDSR",
-						component: "Users",
-						props: {
-							name: "All DSR",
-							type: "all_dsr",
-							placeholder: "Search all DSR",
-							searchConfig: [
-								{
-									name: "Created By",
-									key: "names",
-									multi: true,
-									inputType: "dropdown",
-									defaultValue: [],
-									isListInStore: false,
-									listItems: userList,
-									classes: ["full"],
-								},
-								...searchConfigItems,
-							],
+						name: "City*",
+						type: "String",
+						key: "city",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
 						},
 					},
+					{
+						name: "Zone*",
+						type: "String",
+						key: "zone",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Name of Contact*",
+						type: "String",
+						key: "contact_person",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Contact No.",
+						type: "String",
+						key: "contact_number",
+						width: "half",
+					},
+					{
+						name: "Date of Travel",
+						type: "Date",
+						key: "date_of_travel",
+						width: "half",
+					},
+					{
+						name: "Adult Pax no.",
+						type: "Number",
+						key: "number_of_pax_adult",
+						width: "half",
+					},
+					{
+						name: "Child Pax no.",
+						type: "Number",
+						key: "number_of_pax_child",
+						width: "half",
+					},
+					{
+						name: "No. of Nights",
+						type: "Number",
+						key: "no_of_nights",
+						width: "half",
+					},
+					{
+						name: "Business Type*",
+						type: "Dropdown",
+						key: "business_types",
+						width: "full",
+						multi: true,
+						isListInStore: true,
+						listVariable: "businessType",
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Email Subject*",
+						type: "TextArea",
+						key: "email_subject",
+						width: "full",
+						validations: {
+							required,
+							minLength: minLength(2),
+						},
+					},
+					{
+						name: "Status*",
+						type: "Dropdown",
+						key: "status",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: [
+							"NEW ENQUIRY",
+							"QUOTED",
+							"REQUOTE",
+							"BOOKING ON HOLD",
+							"CONFIRMED",
+							"FILE LOST",
+							"CANCELLED",
+						],
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Follow up Date",
+						type: "Date",
+						key: "reminder_date",
+						width: "half",
+					},
+					{
+						name: "Any Remarks",
+						type: "TextArea",
+						key: "remark",
+						width: "full",
+					},
+					{
+						name: "Payment Status",
+						type: "Dropdown",
+						key: "payment_status",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: ["PENDING", "RECEIVED", "REFUND"],
+					},
+					{
+						name: "Payment Type",
+						type: "AsyncDropdownWithMoreInfo",
+						triggerKey: "payment_status",
+						subtitleContent: (item) => {
+							return "";
+						},
+						titleContent: (item) => {
+							return item;
+						},
+						apiCall: (selection) => {
+							let subSelection = [];
+							let promise = new Promise(function(resolve, reject) {
+								if (selection == "RECEIVED") {
+									subSelection.push("ADVANCE RECEIVED", "INR FOR CONFIRMATION", "FULL PAYMENT");
+								} else if (selection == "REFUND") {
+									subSelection.push("CREDIT NOTE");
+								}
+								resolve(subSelection);
+							});
+							return promise;
+						},
+						key: "payment_type",
+						width: "half",
+					},
 				];
-				if (this.isAdminOrManagement) {
-					this.tabConfig.shift();
-				}
-			},
-			canUserEdit(item) {
-				let currentMonth = moment()
-					.tz("Asia/Kolkata")
-					.startOf("month");
-				let callMonth = moment(item.date_of_call)
-					.tz("Asia/Kolkata")
-					.startOf("month");
-				let diffrenceInDates = currentMonth.diff(callMonth, "months", true);
-				if (this.type == "my_dsr" && -2 <= diffrenceInDates && diffrenceInDates <= 1) {
-					return true;
-				} else {
-					return false;
-				}
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
@@ -521,10 +545,10 @@
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addDSR(formData).then((data) => {
+					this.addFollowUp(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Added DSR Entry" });
+							this.openSnackbar({ text: "Sucessfully Added FollowUp Entry" });
 							this.closeForm();
 							this.getData();
 						} else {
@@ -532,10 +556,10 @@
 						}
 					});
 				} else {
-					this.editDSR(formData).then((data) => {
+					this.editFollowUp(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Edited DSR Entry" });
+							this.openSnackbar({ text: "Sucessfully Edited FollowUp Entry" });
 							this.closeForm();
 							this.getData();
 						} else {
@@ -552,14 +576,14 @@
 				};
 			},
 			deleteCall(call) {
-				if (window.confirm("Do you really want to Delete the DSR?")) {
+				if (window.confirm("Do you really want to Delete the FollowUp?")) {
 					this.openLoaderDialog();
-					this.deleteDSR({
+					this.deleteFollowUp({
 						_id: call._id,
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Deleted the DSR" });
+							this.openSnackbar({ text: "Sucessfully Deleted the FollowUp" });
 							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -572,17 +596,11 @@
 			},
 		},
 		watch: {},
-		props: {
-			name: { required: true, type: String },
-			type: { required: true, type: String },
-			placeholder: { required: true, type: String },
-			inputConfig: { required: false, type: Array },
-			searchConfig: { required: true, type: Array },
-		},
+		props: {},
 	};
 </script>
 <style lang="scss">
-	.manageDSRWrapper {
+	.manageFollowUpWrapper {
 		height: 100%;
 		.tabItemWrapper {
 			height: 100%;
