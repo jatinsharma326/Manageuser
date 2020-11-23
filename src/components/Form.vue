@@ -407,10 +407,14 @@
 						if (typeof this.formElements[elements] == "string") {
 							this.formElements[elements] = this.formElements[elements].trim();
 						}
+						if (this.formElements[elements] === undefined) {
+							this.formElements[elements] = null;
+						}
 					}
 					if (!this.isEditMode) {
 						this.$emit("formOutput", this.formElements);
 					} else {
+						console.log("Test Console Form Output Inside Form", this.formElements);
 						this.$emit("formOutput", {
 							...this.formElements,
 							_id: this.formData._id,
