@@ -25,6 +25,7 @@ export default {
 	ALL_CURRENCIES: BASE_URL + "Global/v0.1/currencies",
 	ACTIVE_COUNTRIES: BASE_URL + "Partners/v0.1/active-countries",
 	ALL_STATES: BASE_URL + "Global/v0.1/states",
+	ACTIVE_CURRENCIES: BASE_URL + "Global/v0.1/active-currencies",
 
 	//API ENDPOINT FOR MANAGE USER DATA
 	MANAGE_USERS: BASE_URL + "Mortals/v0.1/",
