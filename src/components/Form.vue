@@ -17,6 +17,7 @@
 						v-model="formElements[config.key]"
 						class="form-item"
 						:class="checkWidth(config.width)"
+						:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 					></v-text-field>
 
 					<v-text-field
@@ -27,6 +28,7 @@
 						class="form-item"
 						type="number"
 						:class="checkWidth(config.width)"
+						:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 					></v-text-field>
 
 					<v-textarea
@@ -36,6 +38,7 @@
 						v-model="formElements[config.key]"
 						class="form-item"
 						:class="checkWidth(config.width)"
+						:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 					></v-textarea>
 
 					<template v-else-if="config.type == 'Dropdown'">
@@ -47,6 +50,7 @@
 							:multiple="config.multi"
 							class="form-item"
 							:class="checkWidth(config.width)"
+							:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 							chips
 							clearable
 							deletable-chips
@@ -64,6 +68,7 @@
 							:multiple="config.multi"
 							class="form-item"
 							:class="checkWidth(config.width)"
+							:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 							chips
 							clearable
 							deletable-chips
@@ -90,6 +95,7 @@
 							:multiple="config.multi"
 							class="form-item"
 							:class="checkWidth(config.width)"
+							:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 							chips
 							clearable
 							deletable-chips
@@ -134,6 +140,7 @@
 									v-model="formElements[config.key]"
 									:min="getMin(config)"
 									:max="getMax(config)"
+									:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 									no-title
 									scrollable
 								>
@@ -259,6 +266,7 @@
 							:label="config.name"
 							class="form-item"
 							:class="checkWidth(config.width)"
+							:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 						></v-file-input>
 					</template>
 
@@ -269,6 +277,7 @@
 							:label="config.name"
 							class="form-item"
 							inset
+							:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
 						></v-switch>
 					</template>
 				</template>
@@ -302,6 +311,7 @@
 			dateMenuRef: {},
 			asyncList: {},
 			watcherList: [],
+			disableConfig: {},
 			errorMessages: {
 				required: {
 					type: "normal",
@@ -451,6 +461,8 @@
 				}
 
 				for (let i of this.inputConfig) {
+					this.$set(this.disableConfig, i.key, false);
+
 					if (!this.isEditMode) {
 						// This will initialize the form when add user button is clicked
 						if (i.type == "MultiInput") {
@@ -577,6 +589,12 @@
 					}
 				}
 
+				for (let i of this.inputConfig) {
+					if (i.disableCheck) {
+						this.disableConfig[i.key] = i.disableCheck(this.formElements[i.disableTriggerKey]);
+					}
+				}
+
 				// Initialise watchers
 				if (this.keysToWatch && this.keysToWatch.length > 0) {
 					// create watchers here
@@ -589,6 +607,9 @@
 			},
 			keyUpdated(watchKey, nv, ov) {
 				for (let i of this.inputConfig) {
+					// if (i.disableCheck) {
+					// 	console.log("disableConfig and disable check", this.disableConfig, i.disableCheck);
+					// }
 					if (i.type == "MultiInputWithGroupKey" && watchKey == i.keyToGroup) {
 						if (!ov || !ov.length) {
 							this.formElements[i.key] = nv.map((e) => ({
@@ -622,6 +643,8 @@
 								this.asyncList[i.key] = data;
 							});
 						}
+					} else if (i.disableCheck && watchKey == i.disableTriggerKey) {
+						this.disableConfig[i.key] = i.disableCheck(this.formElements[i.disableTriggerKey]);
 					}
 				}
 			},

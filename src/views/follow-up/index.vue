@@ -86,7 +86,7 @@
 						</template>
 						<v-list>
 							<v-list-item @click="openInputForm(true, item)">EDIT</v-list-item>
-							<v-list-item @click="deleteCall(item)">DELETE</v-list-item>
+							<v-list-item @click="deleteEntry(item)">DELETE</v-list-item>
 						</v-list>
 					</v-menu>
 				</template>
@@ -138,21 +138,21 @@
 		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin, datePickerMixin, commonAPICallsMixin],
 		async created() {
 			this.setDateRange();
-			// this.getData();
+			this.getData();
 			this.openLoaderDialog();
 			let promiseArray = [];
 			await this.getUsers();
-			//get companies is defined in commonAPIMixins which gets comapniesList and modifiedCompanyList
+			//get companies is defined in commonAPIMixins which gets companiesList and modifiedCompanyList
 			promiseArray.push(this.getCompanies());
 			promiseArray.push(this.getCountryList());
 			await Promise.all(promiseArray);
 			this.closeLoaderDialog();
 			this.setConfig(
-				this.companyList,
 				this.userList,
-				this.modifiedCompanyList,
+				this.companyList,
+				this.modifiedCompanyIdsList,
 				this.countriesList,
-				this.callsList
+				this.activeCurrencyList
 			);
 		},
 		data: () => ({
@@ -160,6 +160,7 @@
 			placeholder: "Search Followup Entry",
 			searchConfig: [],
 			inputConfig: [],
+			activeCurrencyList: [],
 			followUpList: [
 				{
 					_id: "5fb75c954fe7ba447c013758",
@@ -178,7 +179,7 @@
 					no_of_nights: 7,
 					business_type: "MICE",
 					email_subject: "email_subject_here",
-					status: "QUOTED",
+					status: "CONFIRMED",
 					remark: "remark_here",
 					reminder_date: "2021-01-09T18:30:00.000Z",
 					payment_status: "",
@@ -202,6 +203,7 @@
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Product", value: "country", width: 150 },
+				{ text: "User", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
 				{ text: "Company Name", value: "company_data.name", width: 200 },
 				{ text: "City", value: "city", width: 150 },
@@ -226,7 +228,7 @@
 				{ text: "", value: "actions" },
 			],
 			expanded: [],
-			keysToWatch: ["payment_status"],
+			keysToWatch: ["status", "payment_status"],
 		}),
 		computed: {
 			...mapGetters(["userData"]),
@@ -271,11 +273,11 @@
 				});
 			},
 			setConfig(
-				modifiedCompanyList = [],
-				companyList = [],
 				userList = [],
+				companyList = [],
+				modifiedCompanyIdsList = [],
 				activeCountriesList = [],
-				callsList = []
+				activeCurrencyList = []
 			) {
 				// this.searchConfigItems = [
 				// 	{
@@ -369,9 +371,9 @@
 						type: "Dropdown",
 						key: "company_id",
 						width: "full",
-						multi: true,
+						multi: false,
 						isListInStore: false,
-						listItems: modifiedCompanyList,
+						listItems: modifiedCompanyIdsList,
 						validations: {
 							required,
 						},
@@ -388,12 +390,14 @@
 					},
 					{
 						name: "Zone*",
-						type: "String",
+						type: "Dropdown",
 						key: "zone",
 						width: "half",
+						multi: false,
+						isListInStore: true,
+						listVariable: "zone",
 						validations: {
 							required,
-							minLength: minLength(1),
 						},
 					},
 					{
@@ -464,6 +468,7 @@
 						key: "status",
 						width: "half",
 						multi: false,
+						// triggerKey: "status",
 						isListInStore: false,
 						listItems: [
 							"NEW ENQUIRY",
@@ -477,6 +482,21 @@
 						validations: {
 							required,
 						},
+						// disableCheck: function(data, value) {
+						// 	console.log("Disable Data", data);
+						// 	let a = JSON.parse(JSON.stringify(data));
+
+						// 	console.log("Disable Function", a);
+						// 	console.log("Disable Value", value);
+						// 	if (value == "CONFIRMED") {
+						// 		a["payment_status"] = false;
+						// 		a["payment_type"] = false;
+						// 	} else {
+						// 		a["payment_status"] = true;
+						// 		a["payment_type"] = true;
+						// 	}
+						// 	return a;
+						// },
 					},
 					{
 						name: "Follow up Date",
@@ -498,17 +518,29 @@
 						multi: false,
 						isListInStore: false,
 						listItems: ["PENDING", "RECEIVED", "REFUND"],
+						disableTriggerKey: "status",
+						disableCheck: (data) => {
+							return this.checkDisableCondition(data);
+						},
+					},
+					{
+						name: "Invoice Number",
+						type: "String",
+						key: "invoice_no",
+						width: "half",
 					},
 					{
 						name: "Payment Type",
 						type: "AsyncDropdownWithMoreInfo",
-						triggerKey: "payment_status",
+						key: "payment_type",
+						width: "half",
 						subtitleContent: (item) => {
 							return "";
 						},
 						titleContent: (item) => {
 							return item;
 						},
+						triggerKey: "payment_status",
 						apiCall: (selection) => {
 							let subSelection = [];
 							let promise = new Promise(function(resolve, reject) {
@@ -521,8 +553,53 @@
 							});
 							return promise;
 						},
-						key: "payment_type",
+						disableTriggerKey: "status",
+						disableCheck: (data) => {
+							return this.checkDisableCondition(data);
+						},
+					},
+					{
+						name: "Currency",
+						type: "Dropdown",
+						key: "currency_type",
+						width: "full",
+						multi: false,
+						isListInStore: false,
+						listItems: activeCurrencyList,
+						disableTriggerKey: "status",
+						disableCheck: (data) => {
+							return this.checkDisableCondition(data);
+						},
+					},
+					{
+						name: "Invoice Number",
+						type: "String",
+						key: "invoice_no",
 						width: "half",
+						disableTriggerKey: "status",
+						disableCheck: (data) => {
+							return this.checkDisableCondition(data);
+						},
+					},
+					{
+						name: "Amount Pending",
+						type: "Number",
+						key: "amount_pending",
+						width: "half",
+						disableTriggerKey: "status",
+						disableCheck: (data) => {
+							return this.checkDisableCondition(data);
+						},
+					},
+					{
+						name: "Amount Received",
+						type: "Number",
+						key: "amount_received",
+						width: "half",
+						disableTriggerKey: "status",
+						disableCheck: (data) => {
+							return this.checkDisableCondition(data);
+						},
 					},
 				];
 			},
@@ -542,7 +619,7 @@
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-
+				// if (!formData.designation) formData.designation = "";
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addFollowUp(formData).then((data) => {
@@ -575,7 +652,7 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			deleteCall(call) {
+			deleteEntry(call) {
 				if (window.confirm("Do you really want to Delete the FollowUp?")) {
 					this.openLoaderDialog();
 					this.deleteFollowUp({
@@ -593,6 +670,14 @@
 			},
 			updatedPageNo(page) {
 				this.getData();
+			},
+			checkDisableCondition(value) {
+				console.log("Disable Value", value);
+				if (value == "CONFIRMED") {
+					return false;
+				} else {
+					return true;
+				}
 			},
 		},
 		watch: {},
