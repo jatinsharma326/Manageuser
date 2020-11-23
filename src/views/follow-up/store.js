@@ -16,14 +16,14 @@ export default {
 		},
 	},
 	actions: {
-		getDSR: ({ commit, dispatch }, payload) => {
+		getFollowUp: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.DSR,
+					url: constants.FOLLOW_UP,
 				},
 				{ root: true }
 			)
@@ -36,7 +36,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load All DSR List");
+						fail(data.message || "Failed to load All FollowUp List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -47,73 +47,73 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to All DSR List");
+					fail(err.toString() || "Failed to All FollowUp List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		addDSR: ({ commit, dispatch }, payload) => {
+		addFollowUp: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.DSR,
+					url: constants.FOLLOW_UP,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add DSR Entry");
+					if (!data.ok) fail(data.message || "Failed to add FollowUp Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add DSR Entry");
+					fail(err.toString() || "Failed to add FollowUp Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		editDSR: ({ commit, dispatch }, payload) => {
+		editFollowUp: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.DSR,
+					url: constants.FOLLOW_UP,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit DSR entry");
+					if (!data.ok) fail(data.message || "Failed to edit FollowUp entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit DSR Entry");
+					fail(err.toString() || "Failed to edit FollowUp Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		deleteDSR: ({ commit, dispatch }, payload) => {
+		deleteFollowUp: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "delete",
 					data: payload,
-					url: constants.DSR,
+					url: constants.FOLLOW_UP,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to Delete DSR Entry");
+					if (!data.ok) fail(data.message || "Failed to Delete FollowUp Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to Delete DSR Entry");
+					fail(err.toString() || "Failed to Delete FollowUp Entry");
 					return {
 						ok: false,
 						message: err.message,
