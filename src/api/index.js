@@ -83,4 +83,7 @@ export default {
 	DSR_REMINDER: BASE_URL + "DSR/v0.1/follow-up-reminder",
 	FOLLOW_UP_REMINDER: BASE_URL + "DSR/v0.1/follow-up-reminder",
 	DSR_NOTIFICATIONS: BASE_URL + "DSR/v0.1/dsr-for-my-products",
+
+	// FOLLOW UP ENDPOINT
+	FOLLOW_UP: BASE_URL + "FollowUps/v0.1/",
 };
