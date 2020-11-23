@@ -7,6 +7,7 @@ const commonAPICallsMixin = {
 		countriesList: [],
 		modifiedCompanyList: [],
 		modifiedCompanyIdsList: [],
+		activeCurrencyList: [],
 		userList: [],
 	}),
 	computed: {},
@@ -14,6 +15,7 @@ const commonAPICallsMixin = {
 		...mapActions("ManageAgents", ["getCompaniesList"]),
 		...mapActions("UserManagement", ["getUserList"]),
 		...mapActions("ManageTargets", ["getActiveCountries"]),
+		...mapActions("FollowUp", ["getActiveCurrencies"]),
 		async getUsers() {
 			try {
 				let promiseArray = [];
@@ -55,6 +57,11 @@ const commonAPICallsMixin = {
 		getCountryList() {
 			return this.getActiveCountries().then((data) => {
 				this.countriesList = data.list;
+			});
+		},
+		getActiveCurrenciesList() {
+			return this.getActiveCurrencies().then((data) => {
+				this.activeCurrencyList = data.list;
 			});
 		},
 	},
