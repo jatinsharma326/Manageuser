@@ -20,9 +20,7 @@
 								<template v-slot:topLeft>
 									{{ listItem.sales_call_data.sr_no }}
 								</template>
-								<template v-slot:topRight>
-									{{ getFormattedDate(listItem.follow_up_on_date) }}
-								</template>
+								<template v-slot:topRight> by {{ listItem.mortal_data.name }} </template>
 								<template v-slot:mainContent>
 									{{
 										listItem.travel_agent_employee.name +
@@ -32,7 +30,7 @@
 									}}
 								</template>
 								<template v-slot:mainContentSubtitle>
-									{{ daysUntil(listItem.follow_up_on_date) }}
+									Date of call: {{ getFormattedDate(listItem.sales_call_data.date_of_call) }}
 								</template>
 								<template v-slot:moreInfo>
 									<div @click="toggleReadmore(listItem)" :class="setClass(listItem)">
@@ -44,38 +42,40 @@
 								</template>
 								<template v-slot:expandCardContent>
 									<v-list>
-										<v-list-item
-											v-for="(number, index) in listItem.travel_agent_employee.phone_numbers"
-											:key="listItem._id + '+' + index"
-										>
-											<v-list-item-icon>
-												<v-icon v-if="index == 0" color="secondary">
-													mdi-phone
-												</v-icon>
-											</v-list-item-icon>
+										<template v-if="listItem.travel_agent_employee.phone_numbers.length > 0">
+											<v-list-item
+												v-for="(number, index) in listItem.travel_agent_employee.phone_numbers"
+												:key="listItem._id + '+' + index"
+											>
+												<v-list-item-icon>
+													<v-icon v-if="index == 0" color="secondary">
+														mdi-phone
+													</v-icon>
+												</v-list-item-icon>
 
-											<v-list-item-content>
-												<v-list-item-title>{{ number }}</v-list-item-title>
-											</v-list-item-content>
-										</v-list-item>
+												<v-list-item-content>
+													<v-list-item-title>{{ number }}</v-list-item-title>
+												</v-list-item-content>
+											</v-list-item>
+											<v-divider inset></v-divider>
+										</template>
 
-										<v-divider inset></v-divider>
+										<template v-if="listItem.travel_agent_employee.email_ids.length > 0">
+											<v-list-item>
+												<v-list-item-icon>
+													<v-icon color="secondary">
+														mdi-email
+													</v-icon>
+												</v-list-item-icon>
 
-										<v-list-item>
-											<v-list-item-icon>
-												<v-icon color="secondary">
-													mdi-email
-												</v-icon>
-											</v-list-item-icon>
-
-											<v-list-item-content>
-												<v-list-item-title>{{
-													listItem.travel_agent_employee.email_ids.join(", ")
-												}}</v-list-item-title>
-											</v-list-item-content>
-										</v-list-item>
-
-										<v-divider inset></v-divider>
+												<v-list-item-content>
+													<v-list-item-title>{{
+														listItem.travel_agent_employee.email_ids.join(", ")
+													}}</v-list-item-title>
+												</v-list-item-content>
+											</v-list-item>
+											<v-divider inset></v-divider>
+										</template>
 
 										<v-list-item>
 											<v-list-item-icon>
@@ -175,6 +175,9 @@
 
 <style lang="scss">
 	.NotificationsWrapper {
+		.dashboardColumnWrapper .column {
+			flex: 0 0 96%;
+		}
 		.more-info {
 			cursor: pointer;
 		}
