@@ -47,11 +47,8 @@ const commonAPICallsMixin = {
 				filter: {},
 			}).then((data) => {
 				this.companyList = data.list;
-				this.modifiedCompanyList = data.list.map((e) => e.name);
-				this.modifiedCompanyIdsList = data.list.map((e) => ({
-					text: e.name,
-					value: e._id,
-				}));
+				// console.log("Test Console Companies", this.companyList);
+				// this.modifiedCompanyList = data.list.map((e) => e.name);
 			});
 		},
 		getCountryList() {
