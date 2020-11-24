@@ -18,6 +18,12 @@ const defaultCRUDMixins = {
 		isSalesTeamMember: function() {
 			return this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT;
 		},
+		isOnlySalesAgent: function() {
+			return this.userType == this.SALES_AGENT;
+		},
+		isOnlyRemoteAgent: function() {
+			return this.userType == this.REMOTE_SALES_AGENT;
+		},
 	},
 	methods: {
 		...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
