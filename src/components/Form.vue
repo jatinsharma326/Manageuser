@@ -39,6 +39,7 @@
 						class="form-item"
 						:class="checkWidth(config.width)"
 						:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
+						:rows="config.rows ? config.rows : 3"
 					></v-textarea>
 
 					<template v-else-if="config.type == 'Dropdown'">
@@ -51,6 +52,8 @@
 							class="form-item"
 							:class="checkWidth(config.width)"
 							:disabled="disableConfig[config.key] ? disableConfig[config.key] : false"
+							:item-text="config.itemText ? config.itemText : 'text'"
+							:item-value="config.itemValue ? config.itemValue : 'value'"
 							chips
 							clearable
 							deletable-chips
@@ -321,12 +324,12 @@
 				numeric: { type: "normal", msg: (name) => `${name} can only be Numbers` },
 				minLength: {
 					type: "conditional",
-					msg: (name, condition) => `${name} needs to have a minimum of length of ${condition}`,
+					msg: (name, condition) => `${name} needs to have a minimum length of ${condition}`,
 					conditionKey: "min",
 				},
 				maxLength: {
 					type: "conditional",
-					msg: (name, condition) => `${name} needs to have a minimum of length of ${condition}`,
+					msg: (name, condition) => `${name} needs to have a minimum length of ${condition}`,
 					conditionKey: "max",
 				},
 				email: { type: "normal", msg: (name) => `${name} is not a valid email` },
@@ -647,7 +650,9 @@
 								this.asyncList[i.key] = data;
 							});
 						}
-					} else if (i.disableCheck && watchKey == i.disableTriggerKey) {
+					}
+
+					if (i.disableCheck && watchKey == i.disableTriggerKey) {
 						this.disableConfig[i.key] = i.disableCheck(this.formElements[i.disableTriggerKey]);
 					}
 				}
