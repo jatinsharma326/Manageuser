@@ -59,11 +59,32 @@
 				<template v-slot:[`item.date_of_enquiry`]="{ item }">
 					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
 				</template>
+				<template v-slot:[`item.contact_number`]="{ item }">
+					{{ item.contact_number ? item.contact_number : "-" }}
+				</template>
 				<template v-slot:[`item.date_of_travel`]="{ item }">
 					{{ item.date_of_travel ? getFormattedDate(item.date_of_travel, "MMMM Do YYYY dddd") : "-" }}
 				</template>
 				<template v-slot:[`item.reminder_date`]="{ item }">
 					{{ item.reminder_date ? getFormattedDate(item.reminder_date, "MMMM Do YYYY dddd") : "-" }}
+				</template>
+				<template v-slot:[`item.payment_status`]="{ item }">
+					{{ item.payment_status ? item.payment_status : "-" }}
+				</template>
+				<template v-slot:[`item.invoice_no`]="{ item }">
+					{{ item.invoice_no ? item.invoice_no : "-" }}
+				</template>
+				<template v-slot:[`item.payment_type`]="{ item }">
+					{{ item.payment_type ? item.payment_type : "-" }}
+				</template>
+				<template v-slot:[`item.currency_type`]="{ item }">
+					{{ item.currency_type ? item.currency_type : "-" }}
+				</template>
+				<template v-slot:[`item.amount_pending`]="{ item }">
+					{{ item.amount_pending ? item.amount_pending : "-" }}
+				</template>
+				<template v-slot:[`item.amount_received`]="{ item }">
+					{{ item.amount_received ? item.amount_received : "-" }}
 				</template>
 				<template v-slot:[`item.record.updated_on`]="{ item }">
 					{{ item.record.updated_on ? getFormattedDate(item.record.updated_on, "MMMM Do YYYY dddd") : "-" }}
@@ -75,17 +96,19 @@
 					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
-					<v-menu bottom left>
-						<template v-slot:activator="{ on, attrs }">
-							<v-btn icon v-bind="attrs" v-on="on">
-								<v-icon>mdi-dots-vertical</v-icon>
-							</v-btn>
-						</template>
-						<v-list>
-							<v-list-item @click="openInputForm(true, item)">EDIT</v-list-item>
-							<v-list-item @click="deleteEntry(item)">DELETE</v-list-item>
-						</v-list>
-					</v-menu>
+					<template v-if="isSalesTeamMember">
+						<v-menu bottom left>
+							<template v-slot:activator="{ on, attrs }">
+								<v-btn icon v-bind="attrs" v-on="on">
+									<v-icon>mdi-dots-vertical</v-icon>
+								</v-btn>
+							</template>
+							<v-list>
+								<v-list-item @click="openInputForm(true, item)">EDIT</v-list-item>
+								<v-list-item @click="deleteEntry(item)">DELETE</v-list-item>
+							</v-list>
+						</v-menu>
+					</template>
 				</template>
 			</v-data-table>
 		</div>
@@ -98,22 +121,23 @@
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
 		</div>
-
-		<UserForm
-			@formOutput="formOutput"
-			@closeForm="closeForm"
-			:name="name"
-			:inputConfig="inputConfig"
-			:keysToWatch="keysToWatch"
-			:toggleForm="toggleForm"
-			:formData="rowToEdit"
-			:isEditMode="isEditMode"
-		></UserForm>
-		<div class="floating-button">
-			<v-btn @click="openInputForm()" color="primary" dark fab>
-				<v-icon>mdi-plus</v-icon>
-			</v-btn>
-		</div>
+		<template v-if="isSalesTeamMember">
+			<UserForm
+				@formOutput="formOutput"
+				@closeForm="closeForm"
+				:name="name"
+				:inputConfig="inputConfig"
+				:keysToWatch="keysToWatch"
+				:toggleForm="toggleForm"
+				:formData="rowToEdit"
+				:isEditMode="isEditMode"
+			></UserForm>
+			<div class="floating-button">
+				<v-btn @click="openInputForm()" color="primary" dark fab>
+					<v-icon>mdi-plus</v-icon>
+				</v-btn>
+			</div>
+		</template>
 	</div>
 </template>
 
@@ -138,17 +162,19 @@
 			this.getData();
 			this.openLoaderDialog();
 			let promiseArray = [];
-			await this.getUsers();
+			if (this.isAdminOrManagement) {
+				await this.getUsers();
+			}
+			await this.getCountries();
 			//get companies is defined in commonAPIMixins which gets companiesList and modifiedCompanyList
 			promiseArray.push(this.getCompanies());
-			promiseArray.push(this.getCountryList());
 			promiseArray.push(this.getActiveCurrenciesList());
 			await Promise.all(promiseArray);
 			this.closeLoaderDialog();
 			this.setConfig(
 				this.userList,
 				this.companyList,
-				this.modifiedCompanyIdsList,
+				// this.modifiedCompanyIdsList,
 				this.countriesList,
 				this.activeCurrencyList
 			);
@@ -158,45 +184,7 @@
 			placeholder: "Search Followup Entry",
 			searchConfig: [],
 			inputConfig: [],
-			followUpList: [
-				{
-					_id: "5fb75c954fe7ba447c013758",
-					country: "Brazil",
-					date_of_enquiry: "2020-11-19T18:30:00.000Z",
-					company_id: "5faa6ed0bbd00900275d0315",
-					city: "Rio de Janerio",
-					zone: "WEST",
-					mortal_id: "5faf76736365ae32d4be2576",
-					contact_person: "Cristiano Jr",
-					contact_number: "+25 884222214",
-					date_of_travel: "2021-01-14T18:30:00.000Z",
-					month_of_travel: 1,
-					number_of_pax_adult: 8,
-					number_of_pax_child: 3,
-					no_of_nights: 7,
-					business_type: "MICE",
-					email_subject: "email_subject_here",
-					status: "CONFIRMED",
-					remark: "remark_here",
-					reminder_date: "2021-01-09T18:30:00.000Z",
-					payment_status: "",
-					invoice_no: "",
-					payment_type: "",
-					currency_type: "",
-					amount_received: "",
-					amount_pending: "",
-					record: {
-						created_on: "2020-11-20T06:05:09.728Z",
-						updated_on: "2020-11-19T18:30:00.000Z",
-					},
-					company_data: {
-						name: "Haridwar Apps",
-					},
-					mortal_data: {
-						name: "Remote Sales Agent No 15012",
-					},
-				},
-			],
+			followUpList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Product", value: "country", width: 150 },
@@ -256,6 +244,13 @@
 				tempArray.push(endDate);
 				this.datePickerDate = tempArray;
 			},
+			getCountries() {
+				if (this.userType == this.SALES_AGENT) {
+					this.countriesList = [...this.userData.usr_data.countries];
+				} else {
+					return this.getCountryList();
+				}
+			},
 			getData() {
 				this.openLoaderDialog();
 				this.filter.date_from = moment(this.datePickerDate[0])
@@ -290,93 +285,132 @@
 			setConfig(
 				userList = [],
 				companyList = [],
-				modifiedCompanyIdsList = [],
-				activeCountriesList = [],
+				// modifiedCompanyIdsList = [],
+				countriesList = [],
 				activeCurrencyList = []
 			) {
-				// this.searchConfigItems = [
-				// 	{
-				// 		name: "Sales Call Index",
-				// 		key: "sr_no",
-				// 		type: "text",
-				// 		inputType: "textfield",
-				// 		defaultValue: "",
-				// 		classes: ["half"],
-				// 	},
-				// 	{
-				// 		name: "Date of Visit",
-				// 		key: "date_of_call",
-				// 		inputType: "datePicker",
-				// 		defaultValue: null,
-				// 		classes: ["half"],
-				// 	},
-				// 	{
-				// 		name: "Branch Name",
-				// 		key: "branch_name",
-				// 		type: "text",
-				// 		inputType: "textfield",
-				// 		defaultValue: "",
-				// 		classes: ["half"],
-				// 	},
-				// 	{
-				// 		name: "Agent Employee",
-				// 		key: "travel_agent_employee_name",
-				// 		type: "text",
-				// 		inputType: "textfield",
-				// 		defaultValue: "",
-				// 		classes: ["half"],
-				// 	},
-				// 	{
-				// 		name: "Company",
-				// 		key: "company_names",
-				// 		multi: true,
-				// 		inputType: "dropdown",
-				// 		defaultValue: [],
-				// 		isListInStore: false,
-				// 		listItems: modifiedCompanyList,
-				// 		classes: ["half"],
-				// 	},
-				// 	{
-				// 		name: "State",
-				// 		key: "states",
-				// 		multi: true,
-				// 		inputType: "dropdown",
-				// 		defaultValue: [],
-				// 		isListInStore: false,
-				// 		listItems: statesList,
-				// 		classes: ["half"],
-				// 	},
-				// 	{
-				// 		name: "Product",
-				// 		key: "countries",
-				// 		multi: true,
-				// 		inputType: "dropdown",
-				// 		defaultValue: [],
-				// 		isListInStore: false,
-				// 		listItems: activeCountriesList,
-				// 		classes: ["half"],
-				// 	},
-				// 	{
-				// 		name: "Status",
-				// 		key: "status",
-				// 		multi: false,
-				// 		inputType: "dropdown",
-				// 		defaultValue: [],
-				// 		isListInStore: false,
-				// 		listItems: ["ON GOING", "CLOSED"],
-				// 		classes: ["half"],
-				// 	},
-				// ];
+				this.searchConfig = [
+					{
+						name: "Product",
+						key: "countries",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: countriesList,
+						classes: ["half"],
+					},
+					{
+						name: "Date of Enquiry",
+						key: "date_of_enquiry",
+						inputType: "datePicker",
+						defaultValue: null,
+						classes: ["half"],
+					},
+					{
+						name: "Follow Up Date",
+						key: "reminder_date",
+						inputType: "datePicker",
+						defaultValue: null,
+						classes: ["half"],
+					},
+					{
+						name: "City",
+						key: "city",
+						type: "text",
+						inputType: "textfield",
+						defaultValue: "",
+						classes: ["half"],
+					},
+					{
+						name: "Name of Contact",
+						key: "contact_person",
+						type: "text",
+						inputType: "textfield",
+						defaultValue: "",
+						classes: ["half"],
+					},
+					{
+						name: "Company",
+						key: "company_names",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: companyList,
+						itemText: "name",
+						itemValue: "name",
+						classes: ["half"],
+					},
+					{
+						name: "Inquiry Type",
+						key: "business_types",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: true,
+						listVariable: "businessType",
+						classes: ["half"],
+					},
+					{
+						name: "File Status",
+						key: "statuses",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: [
+							"NEW ENQUIRY",
+							"QUOTED",
+							"REQUOTE",
+							"BOOKING ON HOLD",
+							"CONFIRMED",
+							"FILE LOST",
+							"CANCELLED",
+						],
+						classes: ["half"],
+					},
+					{
+						name: "Payment Status",
+						key: "payment_statuses",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: ["PENDING", "RECEIVED", "REFUND"],
+						classes: ["half"],
+					},
+					{
+						name: "Payment Type",
+						key: "payment_types",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: ["ADVANCE RECEIVED", "INR FOR CONFIRMATION", "FULL PAYMENT", "CREDIT NOTE"],
+						classes: ["half"],
+					},
+					{
+						name: "Currency",
+						key: "currency_types",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: activeCurrencyList,
+						classes: ["full"],
+					},
+				];
 
 				this.inputConfig = [
 					{
 						name: "Product*",
 						type: "Dropdown",
 						key: "country",
-						width: "full",
+						width: "half",
 						multi: false,
 						isListInStore: false,
-						listItems: activeCountriesList,
+						listItems: countriesList,
 						validations: {
 							required,
 						},
@@ -385,10 +419,12 @@
 						name: "Company*",
 						type: "Dropdown",
 						key: "company_id",
-						width: "full",
+						width: "half",
 						multi: false,
 						isListInStore: false,
-						listItems: modifiedCompanyIdsList,
+						listItems: companyList,
+						itemText: "name",
+						itemValue: "_id",
 						validations: {
 							required,
 						},
@@ -401,18 +437,6 @@
 						validations: {
 							required,
 							minLength: minLength(1),
-						},
-					},
-					{
-						name: "Zone*",
-						type: "Dropdown",
-						key: "zone",
-						width: "half",
-						multi: false,
-						isListInStore: true,
-						listVariable: "zone",
-						validations: {
-							required,
 						},
 					},
 					{
@@ -462,7 +486,7 @@
 						name: "Business Type*",
 						type: "Dropdown",
 						key: "business_types",
-						width: "full",
+						width: "half",
 						multi: true,
 						isListInStore: true,
 						listVariable: "businessType",
@@ -500,21 +524,6 @@
 						validations: {
 							required,
 						},
-						// disableCheck: function(data, value) {
-						// 	console.log("Disable Data", data);
-						// 	let a = JSON.parse(JSON.stringify(data));
-
-						// 	console.log("Disable Function", a);
-						// 	console.log("Disable Value", value);
-						// 	if (value == "CONFIRMED") {
-						// 		a["payment_status"] = false;
-						// 		a["payment_type"] = false;
-						// 	} else {
-						// 		a["payment_status"] = true;
-						// 		a["payment_type"] = true;
-						// 	}
-						// 	return a;
-						// },
 					},
 					{
 						name: "Follow up Date",
@@ -547,9 +556,7 @@
 						key: "invoice_no",
 						width: "half",
 						disableTriggerKey: "status",
-						disableCheck: (data) => {
-							return this.checkDisableCondition(data);
-						},
+						disableCheck: (data) => this.checkDisableCondition(data),
 					},
 					{
 						name: "Payment Type",
@@ -614,6 +621,46 @@
 						},
 					},
 				];
+
+				if (this.isAdminOrManagement || this.isOnlySalesAgent) {
+					this.searchConfig.push({
+						name: "Zone",
+						key: "zones",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: true,
+						listVariable: "zone",
+						classes: ["half"],
+					});
+				}
+				if (this.isAdminOrManagement) {
+					this.searchConfig.unshift({
+						name: "Created By",
+						key: "names",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: userList,
+						classes: ["half"],
+					});
+				}
+
+				if (this.isOnlySalesAgent) {
+					this.inputConfig.unshift({
+						name: "Zone*",
+						type: "Dropdown",
+						key: "zone",
+						width: "half",
+						multi: false,
+						isListInStore: true,
+						listVariable: "zone",
+						validations: {
+							required,
+						},
+					});
+				}
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
@@ -632,6 +679,10 @@
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
 
+				if (this.isOnlyRemoteAgent) {
+					formData.zone = this.userData.usr_data.zone;
+				}
+
 				if (!formData.amount_pending) {
 					formData.amount_pending = 0;
 				} else {
@@ -642,17 +693,17 @@
 				} else {
 					formData.amount_received = Number(formData.amount_received);
 				}
-				if (!formData.no_of_nights) {
+				if (!formData.no_of_nights || formData.no_of_nights < 0) {
 					formData.no_of_nights = 0;
 				} else {
 					formData.no_of_nights = Number(formData.no_of_nights);
 				}
-				if (!formData.number_of_pax_adult) {
+				if (!formData.number_of_pax_adult || formData.number_of_pax_adult < 0) {
 					formData.number_of_pax_adult = 0;
 				} else {
 					formData.number_of_pax_adult = Number(formData.number_of_pax_adult);
 				}
-				if (!formData.number_of_pax_child) {
+				if (!formData.number_of_pax_child || formData.number_of_pax_child < 0) {
 					formData.number_of_pax_child = 0;
 				} else {
 					formData.number_of_pax_child = Number(formData.number_of_pax_child);
@@ -667,7 +718,6 @@
 				}
 				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
 				formData.month_of_travel = Number(this.getFormattedDate(formData.date_of_travel, "MM"));
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addFollowUp(formData).then((data) => {
