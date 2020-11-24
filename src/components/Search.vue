@@ -44,6 +44,8 @@
 									v-model="filterObject[filter.key]"
 									:items="getItems(filter, 'test')"
 									:multiple="filter.multi"
+									:item-text="filter.itemText ? filter.itemText : 'text'"
+									:item-value="filter.itemValue ? filter.itemValue : 'value'"
 									chips
 									clearable
 									deletable-chips
