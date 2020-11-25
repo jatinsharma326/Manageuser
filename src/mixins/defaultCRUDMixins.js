@@ -24,6 +24,9 @@ const defaultCRUDMixins = {
 		isOnlyRemoteAgent: function() {
 			return this.userType == this.REMOTE_SALES_AGENT;
 		},
+		isOnlyAdmin: function() {
+			return this.userType == this.ADMIN;
+		},
 	},
 	methods: {
 		...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
