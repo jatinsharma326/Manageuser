@@ -82,7 +82,8 @@ body {
 	background-color: white;
 }
 
-.v-list-item__title {
+.v-list-item__title,
+.v-list-item__subtitle {
 	white-space: normal;
 }
 
@@ -177,7 +178,7 @@ body {
 	.content-section {
 		display: grid;
 		grid-gap: 0;
-		grid-template-rows: max-content;
+		grid-template-rows: auto;
 		height: calc(86vh - 64px - 48px);
 		overflow: auto;
 	}
