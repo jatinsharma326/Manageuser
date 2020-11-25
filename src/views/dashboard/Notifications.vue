@@ -175,8 +175,13 @@
 
 <style lang="scss">
 	.NotificationsWrapper {
-		.dashboardColumnWrapper .column {
-			flex: 0 0 96%;
+		.dashboardColumnWrapper {
+			.column {
+				flex: 0 0 96%;
+			}
+			.content-section {
+				grid-template-columns: 50% 50%;
+			}
 		}
 		.more-info {
 			cursor: pointer;
