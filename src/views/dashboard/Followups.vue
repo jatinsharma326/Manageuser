@@ -12,7 +12,7 @@
 					<div class="content-section">
 						<div
 							v-for="(listItem, index) in followUpReminders"
-							:key="index + '_followUpReminders'"
+							:key="index + '_followUpReminders' + listItem._id"
 							class="card-element"
 						>
 							<InformationCard :expandCard="true">
@@ -104,7 +104,7 @@
 					<div class="content-section">
 						<div
 							v-for="(listItem, index) in DSRReminders"
-							:key="index + '_DSRReminders'"
+							:key="index + '_DSRReminders' + listItem._id"
 							class="card-element"
 						>
 							<InformationCard :expandCard="true">
@@ -140,7 +140,7 @@
 										<template v-if="listItem.travel_agent_employee.phone_numbers.length > 0">
 											<v-list-item
 												v-for="(number, index) in listItem.travel_agent_employee.phone_numbers"
-												:key="listItem._id + '+' + index"
+												:key="listItem._id + '+' + index + '_DSRReminders_phoneNumber'"
 											>
 												<v-list-item-icon>
 													<v-icon v-if="index == 0" color="secondary">
@@ -158,7 +158,7 @@
 										<template v-if="listItem.travel_agent_employee.email_ids.length > 0">
 											<v-list-item
 												v-for="(emailId, index) in listItem.travel_agent_employee.email_ids"
-												:key="listItem._id + '+' + index"
+												:key="listItem._id + '+' + index + '_DSRReminders_email'"
 											>
 												<v-list-item-icon>
 													<v-icon v-if="index == 0" color="secondary">
