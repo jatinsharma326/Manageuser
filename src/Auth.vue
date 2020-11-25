@@ -2,7 +2,7 @@
 	<div class="authWrapper">
 		<div class="auth-page-title">
 			Global Destinations CRM <br />
-			V 4.2.3
+			V 5.0.0
 		</div>
 		<div class="auth-input-wrapper">
 			<div class="form-title">Login</div>
