@@ -75,11 +75,11 @@ export default {
 			.tz("Asia/Kolkata")
 			.format(format);
 	},
-	daysUntil(dateToCheckAgainst) {
+	daysUntil(dateToCheckAgainst, todayMessage = "Today") {
 		let dateToCheck = moment(dateToCheckAgainst);
 		let dateToday = moment();
 		if (dateToday.format("DD-MM-YYYY") == dateToCheck.format("DD-MM-YYYY")) {
-			return "Today 🎂🎉 ";
+			return todayMessage;
 		} else {
 			return dateToday.to(dateToCheck);
 		}
