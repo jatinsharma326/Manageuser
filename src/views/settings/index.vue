@@ -72,9 +72,30 @@
 				<div class="key-title">New Password</div>
 			</div>
 			<div class="settings-value text-field">
-				<v-text-field v-model="newPassword"></v-text-field>
+				<v-text-field v-model="newPassword" label="New Password" name="newPassword" :rules="passwordRules" />
+
+				<v-text-field
+					v-model="confirmPassword"
+					label="Confirm Password"
+					name="confirmPassword"
+					:rules="confirmPasswordRules"
+				/>
+				<v-btn
+					v-if="!isAdmin"
+					:disabled="
+						newPassword !== confirmPassword ||
+							newPassword === '' ||
+							confirmPassword === '' ||
+							oldPassword === ''
+					"
+					color="primary"
+					@click="updatePassword()"
+					class="submit-button password-change"
+					>SUBMIT</v-btn
+				>
 			</div>
 		</div>
+
 		<div class="settings-row">
 			<div class="settings-key">
 				<div class="key-title">Policies</div>
@@ -109,7 +130,7 @@
 				</div>
 			</div>
 		</div>
-		<v-btn color="primary" @click="submitSettings()">SUBMIT</v-btn>
+		<v-btn v-if="isAdmin" color="primary" class="submit-button" @click="editAdminSettings()">SUBMIT</v-btn>
 	</div>
 </template>
 
@@ -123,6 +144,7 @@
 			if (this.isAdmin) {
 				this.getSettings();
 			} else {
+				this.setRules();
 				this.getPolicyFileStatus();
 			}
 			// this.currencyValue = this.activeCurrencies.map(function(active) {
@@ -136,6 +158,9 @@
 			policies: false,
 			oldPassword: "",
 			newPassword: "",
+			confirmPassword: "",
+			passwordRules: [],
+			confirmPasswordRules: [],
 			policyFileStatus: false,
 			file: null,
 			showProgress: false,
@@ -170,12 +195,15 @@
 				"updatePasswordAPI",
 			]),
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
-			submitSettings() {
-				if (this.isAdmin) {
-					this.editAdminSettings();
-				} else {
-					this.updatePassword();
-				}
+			setRules() {
+				this.passwordRules = [
+					(value) => !!value || "Please type password.",
+					(value) => (value && value.length >= 6) || "Minimum 6 characters",
+				];
+				this.confirmPasswordRules = [
+					(value) => !!value || "Please type confirm password",
+					(value) => value === this.newPassword || "The password confirmation does not match.",
+				];
 			},
 			getSettings() {
 				this.openLoaderDialog();
@@ -253,7 +281,7 @@
 				this.openLoaderDialog();
 				this.updatePasswordAPI({
 					old_password: this.oldPassword,
-					new_password: this.newPassword,
+					new_password: this.confirmPassword,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (data.ok) {
@@ -307,6 +335,12 @@
 <style lang="scss">
 	.settingsWrapper {
 		padding: 20px;
+
+		.submit-button {
+			&.password-change {
+				margin-top: 20px;
+			}
+		}
 
 		.action-button {
 			margin-right: 10px;
