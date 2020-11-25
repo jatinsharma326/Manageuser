@@ -224,69 +224,7 @@
 			hover: false,
 			uploadModal: false,
 			activeState: true,
-			companyList: [
-				// {
-				// 	_id: "5f857918e43f60826225",
-				// 	name: "Thomas Cook",
-				// 	business_types: ["FIT", "GIT", "MICE", "ADHOC", "LUXURY"],
-				// 	website: "thomascook.in",
-				// 	grading: [
-				// 		{
-				// 			country: "United State",
-				// 			grade: "A",
-				// 		},
-				// 	],
-				// 	admin_grade: "A",
-				// 	blacklist: false,
-				// 	record: {
-				// 		active: true,
-				// 		created_on: "date",
-				// 		updated_on: "date",
-				// 	},
-				// },
-				// {
-				// 	_id: "5f857918e43f76087225",
-				// 	name: "SOTC",
-				// 	business_types: ["FIT", "LUXURY"],
-				// 	website: "sotc.com",
-				// 	grading: [
-				// 		{
-				// 			country: "Vietnam",
-				// 			grade: "C",
-				// 		},
-				// 		{
-				// 			country: "Afghanistan",
-				// 			grade: "C",
-				// 		},
-				// 	],
-				// 	admin_grade: "B",
-				// 	blacklist: false,
-				// 	record: {
-				// 		active: true,
-				// 		created_on: "date",
-				// 		updated_on: "date",
-				// 	},
-				// },
-				// {
-				// 	_id: "5f9985ac96e9d514f0e4df55",
-				// 	updated_on: "2020-10-28T14:52:28.603Z",
-				// 	name: "Thomas Cook New",
-				// 	blacklist: false,
-				// 	admin_grade: "A",
-				// 	grading: [
-				// 		{
-				// 			country: "Algeria",
-				// 			grade: "A",
-				// 		},
-				// 	],
-				// 	business_types: ["FIT", "MICE"],
-				// 	record: {
-				// 		active: true,
-				// 		created_on: "date",
-				// 		updated_on: "date",
-				// 	},
-				// },
-			],
+			companyList: [],
 			keysToWatch: ["countries"],
 			activeCountriesList: [],
 			adminInputConfig: [],
