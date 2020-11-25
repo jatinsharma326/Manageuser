@@ -13,7 +13,10 @@
 			</v-col>
 		</v-row>
 
-		<div class="card-wrapper">
+		<div v-if="showErrorMessage" class="content-error-message">
+			{{ errorMessage }}
+		</div>
+		<div v-else class="card-wrapper">
 			<div v-for="user in userList" :key="user._id" class="card-element">
 				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
 					<template v-slot:topLeft>
@@ -175,6 +178,8 @@
 		data: () => ({
 			activeState: true,
 			userList: [],
+			showErrorMessage: false,
+			errorMessage: "",
 		}),
 		created() {
 			this.getUsers();
@@ -194,16 +199,29 @@
 						search_text: this.search_text,
 						active: this.activeState,
 					},
+					type: this.type,
+					active: this.activeState,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					if (!data.ok) {
-						this.openSnackbar({ text: "Failed to Fetched User Data" });
+
+					if (data.totalCount === 0 && data.ok) {
+						this.showErrorMessage = true;
+						this.errorMessage = "No data in the database. Please add a User";
+					} else if (data.fetchCount === 0 && data.ok) {
+						this.showErrorMessage = true;
+						this.errorMessage = "No Results for your Search. Please try again";
+					} else if (!data.ok) {
+						this.openSnackbar({ text: "Failed to Fetch User Data" });
+						this.showErrorMessage = true;
+						this.errorMessage = "Failed to Fetch User Data. Please Refresh";
+					} else {
+						this.showErrorMessage = false;
+						this.userList = data.list;
+						this.totalCount = data.totalCount;
+						this.fetchCount = data.fetchCount;
 					}
-					this.userList = data.list;
-					this.totalCount = data.totalCount;
-					this.fetchCount = data.fetchCount;
 				});
 			},
 			getMainContentSubtitle(user) {
