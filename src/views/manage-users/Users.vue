@@ -103,8 +103,22 @@
 									<v-list-item-title>{{ user.usr_data.address }}</v-list-item-title>
 								</v-list-item-content>
 							</v-list-item>
-
 							<v-divider></v-divider>
+							<template v-if="isAdminOrManagement">
+								<v-list-item>
+									<v-list-item-icon>
+										<v-icon color="secondary">
+											mdi-information-outline
+										</v-icon>
+									</v-list-item-icon>
+
+									<v-list-item-content>
+										<v-list-item-title>{{ user.usr_data.no_of_leaves }}</v-list-item-title>
+										<v-list-item-subtitle> No of leaves </v-list-item-subtitle>
+									</v-list-item-content>
+								</v-list-item>
+								<v-divider></v-divider>
+							</template>
 							<v-list-item>
 								<v-list-item-content>
 									<v-list-item-title>
@@ -139,7 +153,7 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div v-if="userType == ADMIN" class="floating-button">
+		<div v-if="isOnlyAdmin" class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
