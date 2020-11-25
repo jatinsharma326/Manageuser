@@ -8,7 +8,6 @@
 						<v-icon>{{ showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<!-- <v-expand-transition> -->
 				<div v-show="showColumnOne">
 					<div class="content-section">
 						<div
@@ -27,13 +26,17 @@
 									{{ person.name + " ( " + person.designation + " )" }}
 								</template>
 								<template v-slot:mainContentSubtitle>
-									{{ daysUntil(person.birth_date) }}
+									{{ daysUntil(person.birth_date, "Today 🎂🎉 ") }}
 								</template>
 							</InformationCard>
 						</div>
+						<div v-if="columnOnePageSize < columnOneTotalCount" class="action-button">
+							<v-btn color="secondary" text @click="loadMoreColumnOne">
+								View More
+							</v-btn>
+						</div>
 					</div>
 				</div>
-				<!-- </v-expand-transition> -->
 			</div>
 			<div class="column-two column">
 				<div class="title-section">
@@ -42,7 +45,6 @@
 						<v-icon>{{ showColumnTwo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<!-- <v-expand-transition> -->
 				<div v-show="showColumnTwo">
 					<div class="content-section">
 						<div
@@ -61,13 +63,17 @@
 									{{ person.usr_data.name }}
 								</template>
 								<template v-slot:mainContentSubtitle>
-									{{ daysUntil(person.birth_date) }}
+									{{ daysUntil(person.birth_date, "Today 🎂🎉 ") }}
 								</template>
 							</InformationCard>
 						</div>
+						<div v-if="columnTwoPageSize < columnTwoTotalCount" class="action-button">
+							<v-btn color="secondary" text @click="loadMoreColumnTwo">
+								View More
+							</v-btn>
+						</div>
 					</div>
 				</div>
-				<!-- </v-expand-transition> -->
 			</div>
 		</div>
 	</div>
@@ -88,6 +94,10 @@
 		data: () => ({
 			showColumnOne: true,
 			showColumnTwo: true,
+			columnOnePageSize: 20,
+			columnTwoPageSize: 20,
+			columnOneTotalCount: "",
+			columnTwoTotalCount: "",
 			travelAgentBirthdays: [],
 			gloablDestinationsBirthdays: [],
 		}),
@@ -95,59 +105,50 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("Dashboard", ["getAgentBirthdays", "getGDEmployeeBirthdays"]),
 
+			loadMoreColumnOne() {
+				this.columnOnePageSize = this.columnOnePageSize + 20;
+				this.getAgentBirthdayList();
+			},
+			loadMoreColumnTwo() {
+				this.columnTwoPageSize = this.columnTwoPageSize + 20;
+				this.getGDEmployeeBirthdayList();
+			},
 			getAgentBirthdayList() {
 				this.openLoaderDialog();
 				this.getAgentBirthdays({
-					// filter: {
-					// 	type: this.type,
-					// 	search_text: this.search_text,
-					// 	active: this.activeState,
-					// },
-					// pageSize: this.pageSize,
-					// pageNo: this.pageNo,
+					pageSize: this.columnOnePageSize,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched Agent Birthday List" });
 					}
 					this.travelAgentBirthdays = data.list;
-					// this.totalCount = data.totalCount;
-					// this.fetchCount = data.fetchCount;
+					this.columnOneTotalCount = data.totalCount;
 				});
 			},
 			getGDEmployeeBirthdayList() {
 				this.openLoaderDialog();
 				this.getGDEmployeeBirthdays({
-					// filter: {
-					// 	type: this.type,
-					// 	search_text: this.search_text,
-					// 	active: this.activeState,
-					// },
-					// pageSize: this.pageSize,
-					// pageNo: this.pageNo,
+					pageSize: this.columnTwoPageSize,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched Employee Birthday List" });
 					}
 					this.gloablDestinationsBirthdays = data.list;
-					// this.totalCount = data.totalCount;
-					// this.fetchCount = data.fetchCount;
+					this.columnTwoTotalCount = data.totalCount;
 				});
 			},
-			// daysUntil(dateToCheckAgainst) {
-			// 	let dateToCheck = moment(dateToCheckAgainst);
-			// 	let dateToday = moment();
-			// 	if (dateToday.format("DD-MM-YYYY") == dateToCheck.format("DD-MM-YYYY")) {
-			// 		return "Today";
-			// 	} else {
-			// 		return dateToday.to(dateToCheck);
-			// 	}
-			// },
 		},
 		computed: {},
 		watch: {},
 	};
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+	.BirthdayRemindersWrapper {
+		.card-element:last-child {
+			padding-bottom: 10px;
+		}
+	}
+</style>

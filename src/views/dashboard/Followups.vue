@@ -8,7 +8,6 @@
 						<v-icon>{{ showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<!-- <v-expand-transition> -->
 				<div v-show="showColumnOne">
 					<div class="content-section">
 						<div
@@ -86,9 +85,13 @@
 								</template>
 							</InformationCard>
 						</div>
+						<div v-if="columnOnePageSize < columnOneTotalCount" class="action-button">
+							<v-btn color="secondary" text @click="loadMoreColumnOne">
+								View More
+							</v-btn>
+						</div>
 					</div>
 				</div>
-				<!-- </v-expand-transition> -->
 			</div>
 			<div class="column-two column">
 				<div class="title-section">
@@ -97,7 +100,6 @@
 						<v-icon>{{ showColumnTwo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<!-- <v-expand-transition> -->
 				<div v-show="showColumnTwo">
 					<div class="content-section">
 						<div
@@ -135,38 +137,42 @@
 								</template>
 								<template v-slot:expandCardContent>
 									<v-list>
-										<v-list-item
-											v-for="(number, index) in listItem.travel_agent_employee.phone_numbers"
-											:key="listItem._id + '+' + index"
-										>
-											<v-list-item-icon>
-												<v-icon v-if="index == 0" color="secondary">
-													mdi-phone
-												</v-icon>
-											</v-list-item-icon>
+										<template v-if="listItem.travel_agent_employee.phone_numbers.length > 0">
+											<v-list-item
+												v-for="(number, index) in listItem.travel_agent_employee.phone_numbers"
+												:key="listItem._id + '+' + index"
+											>
+												<v-list-item-icon>
+													<v-icon v-if="index == 0" color="secondary">
+														mdi-phone
+													</v-icon>
+												</v-list-item-icon>
 
-											<v-list-item-content>
-												<v-list-item-title>{{ number }}</v-list-item-title>
-											</v-list-item-content>
-										</v-list-item>
+												<v-list-item-content>
+													<v-list-item-title>{{ number }}</v-list-item-title>
+												</v-list-item-content>
+											</v-list-item>
 
-										<v-divider inset></v-divider>
+											<v-divider inset></v-divider>
+										</template>
+										<template v-if="listItem.travel_agent_employee.email_ids.length > 0">
+											<v-list-item
+												v-for="(emailId, index) in listItem.travel_agent_employee.email_ids"
+												:key="listItem._id + '+' + index"
+											>
+												<v-list-item-icon>
+													<v-icon v-if="index == 0" color="secondary">
+														mdi-email
+													</v-icon>
+												</v-list-item-icon>
 
-										<v-list-item>
-											<v-list-item-icon>
-												<v-icon color="secondary">
-													mdi-email
-												</v-icon>
-											</v-list-item-icon>
+												<v-list-item-content>
+													<v-list-item-title>{{ emailId }}</v-list-item-title>
+												</v-list-item-content>
+											</v-list-item>
 
-											<v-list-item-content>
-												<v-list-item-title>{{
-													listItem.travel_agent_employee.email_ids.join(", ")
-												}}</v-list-item-title>
-											</v-list-item-content>
-										</v-list-item>
-
-										<v-divider inset></v-divider>
+											<v-divider inset></v-divider>
+										</template>
 
 										<v-list-item>
 											<v-list-item-icon>
@@ -199,9 +205,13 @@
 								</template>
 							</InformationCard>
 						</div>
+						<div v-if="columnTwoPageSize < columnTwoTotalCount" class="action-button">
+							<v-btn color="secondary" text @click="loadMoreColumnTwo">
+								View More
+							</v-btn>
+						</div>
 					</div>
 				</div>
-				<!-- </v-expand-transition> -->
 			</div>
 		</div>
 	</div>
@@ -223,6 +233,10 @@
 		data: () => ({
 			showColumnOne: true,
 			showColumnTwo: true,
+			columnOnePageSize: 20,
+			columnTwoPageSize: 20,
+			columnOneTotalCount: "",
+			columnTwoTotalCount: "",
 			DSRReminders: [],
 			followUpReminders: [],
 			hideCompleteRemark: {},
@@ -231,16 +245,18 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("Dashboard", ["getDSRReminders", "getFollowUpReminders"]),
 
+			loadMoreColumnOne() {
+				this.columnOnePageSize = this.columnOnePageSize + 20;
+				this.getFollowUpRemindersList();
+			},
+			loadMoreColumnTwo() {
+				this.columnTwoPageSize = this.columnTwoPageSize + 20;
+				this.getDSRRemindersList();
+			},
 			getDSRRemindersList() {
 				this.openLoaderDialog();
 				return this.getDSRReminders({
-					// filter: {
-					// 	type: this.type,
-					// 	search_text: this.search_text,
-					// 	active: this.activeState,
-					// },
-					// pageSize: this.pageSize,
-					// pageNo: this.pageNo,
+					pageSize: this.columnOnePageSize,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {
@@ -248,28 +264,20 @@
 					}
 					this.initializeToggleObject(data.list);
 					this.DSRReminders = data.list;
-					// this.totalCount = data.totalCount;
-					// this.fetchCount = data.fetchCount;
+					this.columnOneTotalCount = data.totalCount;
 				});
 			},
 			getFollowUpRemindersList() {
 				this.openLoaderDialog();
 				this.getFollowUpReminders({
-					// filter: {
-					// 	type: this.type,
-					// 	search_text: this.search_text,
-					// 	active: this.activeState,
-					// },
-					// pageSize: this.pageSize,
-					// pageNo: this.pageNo,
+					pageSize: this.columnTwoPageSize,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched Follow Up List" });
 					}
 					this.followUpReminders = data.list;
-					// this.totalCount = data.totalCount;
-					// this.fetchCount = data.fetchCount;
+					this.columnTwoTotalCount = data.totalCount;
 				});
 			},
 			initializeToggleObject(list) {
@@ -283,15 +291,6 @@
 			setClass(listItem) {
 				return { "hide-complete-content": this.hideCompleteRemark[listItem._id] };
 			},
-			// daysUntil(dateToCheckAgainst) {
-			// 	let dateToCheck = moment(dateToCheckAgainst);
-			// 	let dateToday = moment();
-			// 	if (dateToday.format("DD-MM-YYYY") == dateToCheck.format("DD-MM-YYYY")) {
-			// 		return "Today";
-			// 	} else {
-			// 		return dateToday.to(dateToCheck);
-			// 	}
-			// },
 		},
 		computed: {},
 		watch: {},
@@ -302,6 +301,11 @@
 	.FollowupsWrapper {
 		.more-info {
 			cursor: pointer;
+		}
+	}
+	.FollowupsWrapper {
+		.card-element:last-child {
+			padding-bottom: 10px;
 		}
 	}
 </style>

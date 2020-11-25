@@ -8,7 +8,6 @@
 						<v-icon>{{ showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<!-- <v-expand-transition> -->
 				<div v-show="showColumnOne">
 					<div class="content-section">
 						<div
@@ -108,9 +107,13 @@
 								</template>
 							</InformationCard>
 						</div>
+						<div v-if="columnOnePageSize < columnOneTotalCount" class="action-button">
+							<v-btn color="secondary" text @click="loadMoreColumnOne">
+								View More
+							</v-btn>
+						</div>
 					</div>
 				</div>
-				<!-- </v-expand-transition> -->
 			</div>
 		</div>
 	</div>
@@ -129,6 +132,8 @@
 		},
 		data: () => ({
 			showColumnOne: true,
+			columnOnePageSize: 20,
+			columnOneTotalCount: "",
 			notificationsList: [],
 			hideCompleteRemark: {},
 		}),
@@ -136,24 +141,21 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("Dashboard", ["getDSRNotification"]),
 
+			loadMoreColumnOne() {
+				this.columnOnePageSize = this.columnOnePageSize + 20;
+				this.getDSRNotificationList();
+			},
 			getDSRNotificationList() {
 				this.openLoaderDialog();
 				this.getDSRNotification({
-					// filter: {
-					// 	type: this.type,
-					// 	search_text: this.search_text,
-					// 	active: this.activeState,
-					// },
-					// pageSize: this.pageSize,
-					// pageNo: this.pageNo,
+					pageSize: this.columnOnePageSize,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched Follow Up List" });
 					}
 					this.notificationsList = data.list;
-					// this.totalCount = data.totalCount;
-					// this.fetchCount = data.fetchCount;
+					this.columnOneTotalCount = data.totalCount;
 				});
 			},
 			initializeToggleObject(list) {
@@ -180,9 +182,15 @@
 				flex: 0 0 96%;
 			}
 			.content-section {
+				grid-template-rows: min-content;
 				grid-template-columns: 50% 50%;
 			}
 		}
+
+		.card-element:last-child {
+			padding-bottom: 10px;
+		}
+
 		.more-info {
 			cursor: pointer;
 		}
