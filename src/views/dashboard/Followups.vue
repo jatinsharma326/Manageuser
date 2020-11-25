@@ -16,20 +16,75 @@
 							:key="index + '_followUpReminders'"
 							class="card-element"
 						>
-							<!-- <InformationCard :expandCard="false">
+							<InformationCard :expandCard="true">
 								<template v-slot:topLeft>
-									{{ listItem.usr_data.designation }}
+									{{ listItem.status }}
 								</template>
 								<template v-slot:topRight>
-									{{ getFormattedDate(listItem.birth_date) }}
+									Date of Enquiry: {{ getFormattedDate(listItem.date_of_enquiry) }}
 								</template>
 								<template v-slot:mainContent>
-									{{ listItem.usr_data.name }}
+									{{ listItem.contact_person + " ( " + listItem.company_data.name + " )" }}
 								</template>
 								<template v-slot:mainContentSubtitle>
-									{{ daysUntil(listItem.birth_date) }}
+									{{ daysUntil(listItem.reminder_date) }}
 								</template>
-							</InformationCard> -->
+								<template v-slot:moreInfo>
+									<div @click="toggleReadmore(listItem)" :class="setClass(listItem)">
+										{{ listItem.email_subject }}
+									</div>
+								</template>
+								<template v-slot:actionButtons>
+									{{ listItem.country }}
+								</template>
+								<template v-slot:expandCardContent>
+									<v-list>
+										<v-list-item>
+											<v-list-item-icon>
+												<v-icon color="secondary">
+													mdi-clock-time-four-outline
+												</v-icon>
+											</v-list-item-icon>
+
+											<v-list-item-content>
+												<v-list-item-title>Date of travel</v-list-item-title>
+												<v-list-item-subtitle>{{
+													getFormattedDate(listItem.date_of_travel)
+												}}</v-list-item-subtitle>
+											</v-list-item-content>
+										</v-list-item>
+
+										<template v-if="listItem.contact_number">
+											<v-divider inset></v-divider>
+											<v-list-item>
+												<v-list-item-icon>
+													<v-icon color="secondary">
+														mdi-phone
+													</v-icon>
+												</v-list-item-icon>
+
+												<v-list-item-content>
+													<v-list-item-title>{{ listItem.contact_number }}</v-list-item-title>
+												</v-list-item-content>
+											</v-list-item>
+										</template>
+										<template v-if="listItem.remark">
+											<v-divider inset></v-divider>
+											<v-list-item>
+												<v-list-item-icon>
+													<v-icon color="secondary">
+														mdi-note
+													</v-icon>
+												</v-list-item-icon>
+
+												<v-list-item-content>
+													<v-list-item-title>{{ listItem.remark }}</v-list-item-title>
+												</v-list-item-content>
+											</v-list-item>
+										</template>
+									</v-list>
+								</template>
+							</InformationCard>
 						</div>
 					</div>
 				</div>
@@ -162,8 +217,8 @@
 		components: { InformationCard },
 		created() {
 			this.getDSRRemindersList();
+			this.getFollowUpRemindersList();
 			// this.initializeToggleObject();
-			// getFollowUpRemindersList();
 		},
 		data: () => ({
 			showColumnOne: true,
