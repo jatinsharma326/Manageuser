@@ -160,96 +160,7 @@
 		mixins: [defaultCRUDMixin, helperMixin, inputFormMixin, searchMixin],
 		data: () => ({
 			activeState: true,
-			userList: [
-				// {
-				//   _id: "5f86e229249b154d40536494",
-				//   record: {
-				//     created_on: "2020-10-14T11:34:01.617Z",
-				//     updated_on: "2020-10-14T11:34:01.617Z",
-				//     active: true,
-				//   },
-				//   credentials: {
-				//     username: "pocketwala.ali@gmail.com",
-				//   },
-				//   type: 30,
-				//   owner: "5f758a8d90d2426336f37c44",
-				//   usr_data: {
-				//     name: "Aliasgar Pocketwala",
-				//     dob: "2020-09-30T18:30:00.000Z",
-				//     address: "Mazgaon",
-				//     phone_numbers: ["9768835921"],
-				//     email: "pocketwala.ali@gmail.com",
-				//     designation: "SS",
-				//     doj: "2020-09-30T18:30:00.000Z",
-				//     doe: "2020-09-30T18:30:00.000Z",
-				//     representing_partner_ids: [],
-				//     countries: ["USA"],
-				//     no_of_leaves: 26,
-				//   },
-				// },
-				// {
-				//   _id: "5f86f00568c8a450285d6f93",
-				//   record: {
-				//     created_on: "2020-10-14T12:33:09.032Z",
-				//     updated_on: "2020-10-14T12:33:09.032Z",
-				//     active: true,
-				//   },
-				//   credentials: {
-				//     username: "skypunch@gmail.com",
-				//   },
-				//   type: 30,
-				//   owner: "5f758a8d90d2426336f37c44",
-				//   usr_data: {
-				//     name: "Aliasgar Pocketwala",
-				//     dob: "2020-09-30T18:30:00.000Z",
-				//     address: "Mazgaon",
-				//     phone_numbers: ["9768835921"],
-				//     email: "skypunch@gmail.com",
-				//     designation: "SS",
-				//     doj: "2020-09-30T18:30:00.000Z",
-				//     doe: "2020-09-30T18:30:00.000Z",
-				//     representing_partner_ids: [
-				//       {
-				//         text: "Allied Partneras",
-				//         value: "5f857a9ad8a96c2e4ca6e7c5",
-				//       },
-				//     ],
-				//     countries: ["United States"],
-				//     no_of_leaves: 26,
-				//   },
-				// },
-				// {
-				//   _id: "5f899e04c0f5464a64a301ab",
-				//   record: {
-				//     created_on: "2020-10-16T13:20:04.748Z",
-				//     updated_on: "2020-10-16T13:20:04.748Z",
-				//     active: true,
-				//   },
-				//   credentials: {
-				//     username: "hsuhhuhu@huhhu.com",
-				//   },
-				//   type: 30,
-				//   owner: "5f758a8d90d2426336f37c44",
-				//   usr_data: {
-				//     name: "Huzefa",
-				//     dob: "2020-09-30T18:30:00.000Z",
-				//     address: "bbhbhbh ghjgjgjhgjhg hgjhgjhgjh",
-				//     phone_numbers: ["1111111111111111"],
-				//     email: "hsuhhuhu@huhhu.com",
-				//     designation: "uuhhuhuhhhuuu",
-				//     doj: "2020-09-30T18:30:00.000Z",
-				//     representing_partner_ids: [
-				//       {
-				//         text: "Allied Partneras",
-				//         value: "5f857a9ad8a96c2e4ca6e7c5",
-				//       },
-				//     ],
-				//     countries: ["Australia"],
-				//     doe: null,
-				//     no_of_leaves: 26,
-				//   },
-				// },
-			],
+			userList: [],
 		}),
 		created() {
 			this.getUsers();
@@ -281,12 +192,6 @@
 					this.fetchCount = data.fetchCount;
 				});
 			},
-			/* getFormattedDate(date, format = "DD/MM/YYYY") {
-				return helpers.getFormattedDate(date, format);
-			}, */
-			// getISODate(date) {
-			//   return helpers.getISODate(date);
-			// },
 			getMainContentSubtitle(user) {
 				if (user.type == this.SALES_AGENT) {
 					return user.usr_data.countries.join(", ");
@@ -310,7 +215,6 @@
 			},
 			formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				console.log("Test Console User form", data);
 				formData.type = this.type;
 				formData.dob = helpers.getISODate(formData.dob);
 				formData.doj = helpers.getISODate(formData.doj);
@@ -333,7 +237,6 @@
 						}
 					});
 				}
-				console.log("Test Console User form After", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
