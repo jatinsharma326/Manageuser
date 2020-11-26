@@ -44,7 +44,9 @@ const commonAPICallsMixin = {
 		},
 		getCompanies() {
 			return this.getCompaniesList({
-				filter: {},
+				filter: {
+					active: true,
+				},
 			}).then((data) => {
 				this.companyList = data.list;
 				// console.log("Test Console Companies", this.companyList);
