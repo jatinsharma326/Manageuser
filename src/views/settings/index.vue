@@ -127,11 +127,10 @@
 						@click="uploadFile()"
 						>Upload</v-btn
 					>
-					<!-- v-if="policies || false" -->
-					<v-btn color="green" class="action-button" v-if="false" @click="downloadPoliciesF()" text
+					<v-btn color="green" class="action-button" v-if="policies" @click="downloadPoliciesF()" text
 						>Download</v-btn
 					>
-					<div v-if="!policies || true">There is no policy file. Please ask ADMIN to upload it</div>
+					<div v-if="!policies && !isAdmin">There is no policy file.</div>
 				</div>
 			</div>
 		</div>
@@ -189,14 +188,6 @@
 			isSalesTeam: function() {
 				return this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT;
 			},
-			// passwordSubmitCheck: function() {
-			// 	return (
-			// 		Object.keys(this.$refs).length &&
-			// 		this.$refs.newPassword.valid &&
-			// 		this.$refs.confirmPassword.valid &&
-			// 		this.oldPassword
-			// 	);
-			// },
 		},
 		methods: {
 			...mapActions("Settings", [
@@ -208,16 +199,14 @@
 				"updatePasswordAPI",
 			]),
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
-			setRules() {
-				this.passwordRules = [
-					(value) => !!value || "Required",
-					(value) => (value && value.length >= 6) || "Minimum 6 characters",
-				];
-				this.confirmPasswordRules = [
-					(value) => !!value || "Required",
-					(value) => value === this.newPassword || "The password confirmation does not match.",
-				];
-			},
+
+			/**
+			 *  Only called for the Admin User it gets
+			 * - *totalPaidLeaves Current Total number of Leaves
+			 * - *activeCurrencies Array of active Currencies
+			 * - *policies True/False Indicator to show if any policies have been uploaded or no. This check is to show download button
+			 * - *currencyValue Is given to the Currency selection dropdown. Theres a watcher set on this field to see if any new values have been selected
+			 */
 			getSettings() {
 				this.openLoaderDialog();
 				this.getGlobalSettings().then((data) => {
@@ -233,19 +222,24 @@
 					});
 				});
 			},
-			uploadFile() {
-				this.showProgress = true;
-				let formData = this.createFormData(this.file);
-				this.uploadPolicies(formData).then((data) => {
-					this.showProgress = false;
-					if (data.ok) {
-						this.openSnackbar({ text: "File Upload Sucessful" });
-						this.file = null;
-					} else {
-						this.openSnackbar({ text: data.message });
-					}
-				});
+			/**
+			 * For the All Other Users except admin
+			 * - Rules are set for New Password and Old password Input fields
+			 */
+			setRules() {
+				this.passwordRules = [
+					(value) => !!value || "Required",
+					(value) => (value && value.length >= 6) || "Minimum 6 characters",
+				];
+				this.confirmPasswordRules = [
+					(value) => !!value || "Required",
+					(value) => value === this.newPassword || "The password confirmation does not match.",
+				];
 			},
+			/**
+			 * For the All Other Users except admin
+			 * - Check to see if a policy exists or no, based on which the user is either shown a warning or an error message
+			 */
 			getPolicyFileStatus() {
 				this.openLoaderDialog();
 				this.getPolicyStatus().then((data) => {
@@ -259,14 +253,59 @@
 					}
 				});
 			},
-			downloadPoliciesF() {
-				this.downloadPolicies().then(() => {});
+			/**
+			 * For the Admin Users only
+			 * - This function is called when the User has already selected the file using the file picker.
+			 * - The File needs to be converted to file format and hence is given to the createFormData function
+			 * - If the file is uploaded correctly "this.file" is set to null to empty the file picker
+			 * - On failure of upload "this.file" is not set to null as the user can attempt to upload the file again
+			 */
+			uploadFile() {
+				this.showProgress = true;
+				let formData = this.createFormData(this.file);
+				this.uploadPolicies(formData).then((data) => {
+					this.showProgress = false;
+					if (data.ok) {
+						this.openSnackbar({ text: "File Upload Sucessful" });
+						this.file = null;
+					} else {
+						this.openSnackbar({ text: data.message });
+					}
+				});
 			},
+			/**
+			 * For the Admin Users only
+			 * - To convert the data into file format with the name of policies
+			 */
 			createFormData(file) {
 				let formData = new FormData();
 				formData.append("policies", file);
 				return formData;
 			},
+			/**
+			 * This function is called by all the System Users
+			 * - To download the policies
+			 */
+			downloadPoliciesF() {
+				this.downloadPolicies().then(() => {});
+			},
+			/**
+			 * For the Admin Users only
+			 * - to set label for the File picker
+			 */
+			policiesCheck() {
+				if (this.policies) {
+					return "Select Replacement Policies";
+				} else {
+					return "Select Policies";
+				}
+			},
+			/**
+			 * For the Admin Users only
+			 * - Called when submit button is clicked
+			 * - From the active Currencies list each value is checked, for a value where conversion_to_usd is not present it is set to 1
+			 * - All Conversion to USD are then converted to numbers as the input is made in string format
+			 */
 			editAdminSettings() {
 				for (let currency of this.activeCurrencies) {
 					if (!currency.conversion_to_usd) {
@@ -275,7 +314,7 @@
 					currency.conversion_to_usd = Number(currency.conversion_to_usd);
 				}
 				this.totalPaidLeaves = Number(this.totalPaidLeaves);
-				//   updateGlobalSettings
+
 				this.openLoaderDialog();
 				this.updateGlobalSettings({
 					total_paid_leaves: this.totalPaidLeaves,
@@ -290,41 +329,44 @@
 					}
 				});
 			},
+			/**
+			 * For the All Other Users except admin
+			 * - $refs.newPassword.reset & $refs.confirmPassword.reset are done to reset the text feilds
+			 * - All the text feild are set to null to clear their values
+			 */
 			updatePassword() {
-				console.log("1", this.$refs.newPassword);
-				console.log("2", this.$refs.confirmPassword);
 				this.openLoaderDialog();
 				this.updatePasswordAPI({
 					old_password: this.oldPassword,
 					new_password: this.confirmPassword,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.oldPassword = "";
+					this.oldPassword = null;
 					this.newPassword = null;
 					this.confirmPassword = null;
 					this.$refs.newPassword.reset();
 					this.$refs.confirmPassword.reset();
 
 					if (data.ok) {
-						this.openSnackbar({ text: "Changed Password Sucessfully" });
+						this.openSnackbar({ text: "Password Changed Sucessfully" });
 					} else {
 						this.openSnackbar({ text: data.message });
 					}
 				});
 			},
-			policiesCheck() {
-				if (this.policies) {
-					return "Select Replacement Policies";
-				} else {
-					return "Select Policies";
-				}
-			},
-			save() {
-				event.preventDefault();
-			},
+			// save() {
+			// 	event.preventDefault();
+			// },
 		},
 		watch: {
+			/**
+			 * For the Admin Users only
+			 * - This watcher is called everytime a new value is selected from the currencies dropdown
+			 * - nv is an array of updated values, for every value in nv it is compared to all the values in active currencies.
+			 * - If found, an object is created with that name and conversion set to 1
+			 */
 			currencyValue(nv, ov) {
+				console.log("The nv", nv);
 				let tempObj = [];
 				let found;
 				for (let value of nv) {
