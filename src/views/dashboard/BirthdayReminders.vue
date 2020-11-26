@@ -94,6 +94,7 @@
 		data: () => ({
 			showColumnOne: true,
 			showColumnTwo: true,
+			pageNo: 1,
 			columnOnePageSize: 20,
 			columnTwoPageSize: 20,
 			columnOneTotalCount: "",
@@ -117,6 +118,7 @@
 				this.openLoaderDialog();
 				this.getAgentBirthdays({
 					pageSize: this.columnOnePageSize,
+					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {
@@ -130,6 +132,7 @@
 				this.openLoaderDialog();
 				this.getGDEmployeeBirthdays({
 					pageSize: this.columnTwoPageSize,
+					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {

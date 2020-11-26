@@ -132,6 +132,7 @@
 		},
 		data: () => ({
 			showColumnOne: true,
+			pageNo: 1,
 			columnOnePageSize: 20,
 			columnOneTotalCount: "",
 			notificationsList: [],
@@ -149,6 +150,7 @@
 				this.openLoaderDialog();
 				this.getDSRNotification({
 					pageSize: this.columnOnePageSize,
+					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {
@@ -184,6 +186,9 @@
 			.content-section {
 				grid-template-rows: min-content;
 				grid-template-columns: 50% 50%;
+				@include custom-max(767px) {
+					grid-template-columns: 100%;
+				}
 			}
 		}
 
