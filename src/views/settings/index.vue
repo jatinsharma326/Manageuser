@@ -64,7 +64,7 @@
 				<div class="key-title">Old Password</div>
 			</div>
 			<div class="settings-value text-field">
-				<v-text-field v-model="oldPassword"></v-text-field>
+				<v-text-field v-model="oldPassword" label="Old Password" name="oldPassword"></v-text-field>
 			</div>
 		</div>
 		<div v-if="!isAdmin" class="settings-row">
@@ -72,21 +72,25 @@
 				<div class="key-title">New Password</div>
 			</div>
 			<div class="settings-value text-field">
-				<v-text-field v-model="newPassword" label="New Password" name="newPassword" :rules="passwordRules" />
+				<v-text-field
+					v-model="newPassword"
+					label="New Password"
+					name="newPassword"
+					:rules="passwordRules"
+					ref="newPassword"
+				/>
 
 				<v-text-field
 					v-model="confirmPassword"
 					label="Confirm Password"
 					name="confirmPassword"
 					:rules="confirmPasswordRules"
+					ref="confirmPassword"
 				/>
 				<v-btn
 					v-if="!isAdmin"
 					:disabled="
-						newPassword !== confirmPassword ||
-							newPassword === '' ||
-							confirmPassword === '' ||
-							oldPassword === ''
+						!($refs.newPassword && $refs.newPassword.valid && $refs.confirmPassword.valid && oldPassword)
 					"
 					color="primary"
 					@click="updatePassword()"
@@ -123,10 +127,11 @@
 						@click="uploadFile()"
 						>Upload</v-btn
 					>
-					<v-btn color="green" class="action-button" v-if="policies" @click="downloadPoliciesF()" text
+					<!-- v-if="policies || false" -->
+					<v-btn color="green" class="action-button" v-if="false" @click="downloadPoliciesF()" text
 						>Download</v-btn
 					>
-					<div v-if="!policies">There is no policy file. Please ask ADMIN to upload it</div>
+					<div v-if="!policies || true">There is no policy file. Please ask ADMIN to upload it</div>
 				</div>
 			</div>
 		</div>
@@ -184,6 +189,14 @@
 			isSalesTeam: function() {
 				return this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT;
 			},
+			// passwordSubmitCheck: function() {
+			// 	return (
+			// 		Object.keys(this.$refs).length &&
+			// 		this.$refs.newPassword.valid &&
+			// 		this.$refs.confirmPassword.valid &&
+			// 		this.oldPassword
+			// 	);
+			// },
 		},
 		methods: {
 			...mapActions("Settings", [
@@ -197,11 +210,11 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			setRules() {
 				this.passwordRules = [
-					(value) => !!value || "Please type password.",
+					(value) => !!value || "Required",
 					(value) => (value && value.length >= 6) || "Minimum 6 characters",
 				];
 				this.confirmPasswordRules = [
-					(value) => !!value || "Please type confirm password",
+					(value) => !!value || "Required",
 					(value) => value === this.newPassword || "The password confirmation does not match.",
 				];
 			},
@@ -278,16 +291,22 @@
 				});
 			},
 			updatePassword() {
+				console.log("1", this.$refs.newPassword);
+				console.log("2", this.$refs.confirmPassword);
 				this.openLoaderDialog();
 				this.updatePasswordAPI({
 					old_password: this.oldPassword,
 					new_password: this.confirmPassword,
 				}).then((data) => {
 					this.closeLoaderDialog();
+					this.oldPassword = "";
+					this.newPassword = null;
+					this.confirmPassword = null;
+					this.$refs.newPassword.reset();
+					this.$refs.confirmPassword.reset();
+
 					if (data.ok) {
 						this.openSnackbar({ text: "Changed Password Sucessfully" });
-						this.oldPassword = "";
-						this.newPassword = "";
 					} else {
 						this.openSnackbar({ text: data.message });
 					}
