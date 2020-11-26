@@ -233,11 +233,11 @@
 				let tempArray = [];
 				let startDate = moment()
 					.tz("Asia/Kolkata")
-					.startOf("month")
+					// .startOf("month")
 					.format("YYYY-MM-DD");
 				let endDate = moment()
 					.tz("Asia/Kolkata")
-					.add(5, "month")
+					.add(3, "month")
 					.endOf("month")
 					.format("YYYY-MM-DD");
 				tempArray.push(startDate);
@@ -387,7 +387,14 @@
 						inputType: "dropdown",
 						defaultValue: [],
 						isListInStore: false,
-						listItems: ["ADVANCE RECEIVED", "INR FOR CONFIRMATION", "FULL PAYMENT", "CREDIT NOTE"],
+						listItems: [
+							"NONE",
+							"ADVANCE RECEIVED",
+							"INR FOR CONFIRMATION",
+							"FULL PAYMENT",
+							"CREDIT NOTE",
+							"EMAIL CONFIRMATION",
+						],
 						classes: ["half"],
 					},
 					{
@@ -576,7 +583,7 @@
 								if (selection == "RECEIVED") {
 									subSelection.push("ADVANCE RECEIVED", "INR FOR CONFIRMATION", "FULL PAYMENT");
 								} else if (selection == "REFUND") {
-									subSelection.push("CREDIT NOTE");
+									subSelection.push("NONE", "CREDIT NOTE", "EMAIL CONFIRMATION");
 								}
 								resolve(subSelection);
 							});
@@ -716,6 +723,11 @@
 				if (formData.reminder_date) {
 					formData.reminder_date = helpers.getISODate(formData.reminder_date);
 				}
+
+				if (formData.currency_type == "") formData.currency_type == null;
+				if (formData.payment_type == "") formData.payment_type == null;
+				if (formData.payment_status == "") formData.payment_status == null;
+
 				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
 				formData.month_of_travel = Number(this.getFormattedDate(formData.date_of_travel, "MM"));
 				console.log("Test console FormData", formData);
