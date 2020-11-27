@@ -278,7 +278,7 @@
 
 					this.followUpList = this.followUpList.map((d, index) => ({
 						...d,
-						serial_number: (this.pageNo - 1) * 20 + (index + 1),
+						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
 					}));
 				});
 			},
