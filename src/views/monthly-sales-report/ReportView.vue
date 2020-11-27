@@ -7,7 +7,10 @@
 		<div class="highlight-section">
 			{{ monthInfo.highlights }}
 		</div>
-		<div class="leaves-table">
+		<div v-if="totalCount === 0" class="content-error-message">
+			No data in the DSR for the selected product
+		</div>
+		<div v-else class="leaves-table">
 			<v-data-table
 				:items-per-page="fetchCount"
 				hide-default-footer
@@ -78,6 +81,7 @@
 			],
 			expanded: [],
 			filter: {},
+			fetchCount: 0,
 		}),
 		methods: {
 			...mapActions("MSR", ["getReportList", "downloadReportFile"]),
@@ -94,7 +98,7 @@
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.reportsList = data.list.dsr_data;
-					this.totalCount = data.totalCount;
+					// this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
 					this.reportsList = this.reportsList.map((d, index) => ({

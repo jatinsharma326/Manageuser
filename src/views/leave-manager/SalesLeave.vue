@@ -4,7 +4,10 @@
 			<div class="leaves-title">Recent Leave Application</div>
 			<div class="pending-leave">Leaves Pending : {{ pendingLeaves }}</div>
 		</div>
-		<div class="leaves-table">
+		<div v-if="totalCount === 0" class="content-error-message">
+			Please add a leave.
+		</div>
+		<div v-else class="leaves-table">
 			<v-data-table
 				hide-default-footer
 				:headers="headers"

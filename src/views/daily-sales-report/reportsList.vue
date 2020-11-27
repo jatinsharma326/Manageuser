@@ -45,8 +45,10 @@
 				</v-dialog>
 			</div>
 		</div>
-
-		<div class="leaves-table">
+		<div v-if="totalCount === 0" class="content-error-message">
+			Please add a DSR Entry.
+		</div>
+		<div v-else class="leaves-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer

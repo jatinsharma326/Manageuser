@@ -1,6 +1,9 @@
 <template>
 	<div class="salesLeavesManagerWrapper">
-		<div class="leaves-table">
+		<div v-if="totalCount === 0" class="content-error-message">
+			Please add a country to set Targets
+		</div>
+		<div v-else class="leaves-table">
 			<!-- <v-data-table hide-default-footer :headers="headers" :items="productTargetList" mobile-breakpoint="300"> -->
 			<v-data-table
 				:items-per-page="fetchCount"
