@@ -49,12 +49,12 @@
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import helperMixins from "../../mixins/helperMixins";
-	import searchMixin from "../../mixins/searchMixin";
+	// import searchMixin from "../../mixins/searchMixin";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
 		name: "MSRReportView",
-		mixins: [searchMixin, helperMixins, defaultCRUDMixin],
+		mixins: [helperMixins, defaultCRUDMixin],
 		created() {
 			this.getData();
 		},
@@ -89,8 +89,8 @@
 				this.filter.mortal_id = this.monthInfo.mortal_id;
 				this.getReportList({
 					filter: this.filter,
-					pageSize: this.pageSize,
-					pageNo: this.pageNo,
+					// pageSize: this.pageSize,
+					// pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.reportsList = data.list.dsr_data;
