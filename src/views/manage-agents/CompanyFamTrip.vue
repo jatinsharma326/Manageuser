@@ -15,6 +15,10 @@
 		<!-- </v-col>
 		</v-row> -->
 
+		<div v-if="showErrorMessage" class="content-error-message">
+			{{ errorMessage }}
+		</div>
+
 		<div class="card-wrapper">
 			<div v-for="trip in tripList" :key="trip._id" class="card-element">
 				<InformationCard :expandCard="true">
@@ -144,11 +148,13 @@
 				this.filter.company_id = this.companyInfo._id;
 				this.getFamTripList({
 					filter: this.filter,
+					company_id: this.companyInfo._id,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.tripList = data.list;
+					this.tripList = this.checkForErrorMessage(data, "trip");
+					// this.tripList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 				});

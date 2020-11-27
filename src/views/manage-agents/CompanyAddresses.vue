@@ -15,6 +15,10 @@
 		<!-- </v-col>
 		</v-row> -->
 
+		<div v-if="showErrorMessage" class="content-error-message">
+			{{ errorMessage }}
+		</div>
+
 		<div class="card-wrapper">
 			<div v-for="address in addressList" :key="address._id" class="card-element">
 				<InformationCard :expandCard="false" :isCardDisabled="!address.record.active">
@@ -106,23 +110,7 @@
 			toggleChangelogModal: false,
 			selectedCardInfo: {},
 			activeState: true,
-			addressList: [
-				// {
-				// 	_id: "5f9a990d4667e23dac5fc70d",
-				// 	record: {
-				// 		created_on: "2020-10-29T10:27:25.734Z",
-				// 		updated_on: "2020-10-29T10:27:25.734Z",
-				// 		active: true,
-				// 	},
-				// 	zone: "EAST",
-				// 	branch_name: "Dadar",
-				// 	address: "Dadar Mumbai",
-				// 	city: "Mumbai",
-				// 	state: "Maharashtra",
-				// 	pincode: "400008",
-				// 	company_id: "5f9985ac96e9d514f0e4df55",
-				// },
-			],
+			addressList: [],
 			statesList: [],
 			inputConfig: [],
 		}),
@@ -136,11 +124,14 @@
 				this.filter.active = this.activeState;
 				this.getAddressList({
 					filter: this.filter,
+					company_id: this.companyInfo._id,
+					active: this.activeState,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.addressList = data.list;
+					this.addressList = this.checkForErrorMessage(data, "address");
+					// this.addressList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 					if (callMutation) {

@@ -15,6 +15,10 @@
 		<!-- </v-col>
 		</v-row> -->
 
+		<div v-if="showErrorMessage" class="content-error-message">
+			{{ errorMessage }}
+		</div>
+
 		<div class="card-wrapper">
 			<div v-for="employee in employeeList" :key="employee._id" class="card-element">
 				<InformationCard :expandCard="true" :isCardDisabled="!employee.record.active">
@@ -173,28 +177,7 @@
 			toggleChangelogModal: false,
 			selectedCardInfo: {},
 			activeState: true,
-			employeeList: [
-				// {
-				// 	_id: "5f9030204c38c0313714",
-				// 	name: "Sachin Tendulkar",
-				// 	designation: "SS",
-				// 	business_types: ["FIT", "MICE"],
-				// 	branch_name: "Mazgaon",
-				// 	zone: "EAST",
-				// 	address: "Dadar Mumbai",
-				// 	city: "Mumbai",
-				// 	state: "Maharashtra",
-				// 	pincode: "400008",
-				// 	phone_numbers: ["98291898212", "7693321300"],
-				// 	email_ids: ["eassa@tese.com", "fasda@fcsa.in"],
-				// 	dob: "2020-09-30T18:30:00.000Z",
-				// 	record: {
-				// 		created_on: "2020-10-21T10:52:50.445Z",
-				// 		updated_on: "2020-10-21T10:52:50.445Z",
-				// 		active: true,
-				// 	},
-				// },
-			],
+			employeeList: [],
 			addressList: [],
 			statesList: [],
 			inputConfig: [],
@@ -218,11 +201,14 @@
 				this.filter.active = this.activeState;
 				this.getCompanyEmployeeList({
 					filter: this.filter,
+					company_id: this.companyInfo._id,
+					active: this.activeState,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.employeeList = data.list;
+					this.employeeList = this.checkForErrorMessage(data, "employee");
+					// this.employeeList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 					if (callMutation) {

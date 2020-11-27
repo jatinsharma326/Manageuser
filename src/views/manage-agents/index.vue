@@ -15,6 +15,10 @@
 			</v-col>
 		</v-row>
 
+		<div v-if="showErrorMessage" class="content-error-message">
+			{{ errorMessage }}
+		</div>
+
 		<div class="card-wrapper">
 			<div v-for="company in companyList" :key="company._id" class="card-element">
 				<InformationCard
@@ -256,11 +260,13 @@
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
+					active: this.activeState,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.companyList = data.list;
+					this.companyList = this.checkForErrorMessage(data, "company");
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+					// this.companyList = data.list;
 				});
 			},
 			openChangelogsModal(company) {
