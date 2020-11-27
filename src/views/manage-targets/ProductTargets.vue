@@ -148,6 +148,7 @@
 					filter: {
 						financial_year_id: this.targetYear._id,
 					},
+					financial_year_id: this.targetYear._id,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.productTargetList = data.list;
