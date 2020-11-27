@@ -211,8 +211,6 @@
 				this.openLoaderDialog();
 				this.getTargets({
 					filter: this.filter,
-					pageSize: this.pageSize,
-					pageNo: this.pageNo,
 				})
 					.then((data) => {
 						this.closeLoaderDialog();
