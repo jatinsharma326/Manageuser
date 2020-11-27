@@ -15,6 +15,10 @@
 			</v-col>
 		</v-row>
 
+		<div v-if="showErrorMessage" class="content-error-message">
+			{{ errorMessage }}
+		</div>
+
 		<div class="card-wrapper">
 			<div v-for="user in partnerList" :key="user._id" class="card-element">
 				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
@@ -306,13 +310,15 @@
 				this.filter.active = this.activeState;
 				this.getPartnerList({
 					filter: this.filter,
+					active: this.activeState,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.partnerList = data.list;
+					this.partnerList = this.checkForErrorMessage(data, "company");
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+					// this.partnerList = data.list;
 				});
 			},
 			queryString(data) {
