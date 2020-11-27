@@ -15,6 +15,7 @@ import DSR from "../views/daily-sales-report/store";
 import MSR from "../views/monthly-sales-report/store";
 import FollowUp from "../views/follow-up/store";
 import Dashboard from "../views/dashboard/store";
+import Reports from "../views/reports/store";
 
 Vue.use(Vuex);
 
@@ -95,6 +96,7 @@ export default new Vuex.Store({
 		MSR,
 		FollowUp,
 		Dashboard,
+		Reports,
 	},
 
 	state: initialState(),

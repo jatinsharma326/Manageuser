@@ -53,6 +53,12 @@ const routes = [
 		meta: { policy: [10, 20, 30, 40] },
 	},
 	{
+		path: "/reports",
+		name: "Reports",
+		component: () => import("../views/reports"),
+		meta: { policy: [10, 20, 30, 40] },
+	},
+	{
 		path: "/settings",
 		name: "Settings",
 		component: () => import("../views/settings"),
