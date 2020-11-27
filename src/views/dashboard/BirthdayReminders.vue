@@ -9,7 +9,10 @@
 					</v-btn>
 				</div>
 				<div v-show="showColumnOne">
-					<div class="content-section">
+					<div v-if="columnOneTotalCount === 0" class="content-error-message">
+						Please add Date of Birth for any travel agent.
+					</div>
+					<div v-else class="content-section">
 						<div
 							v-for="(person, index) in travelAgentBirthdays"
 							:key="index + '_travelAgentEmployee'"
