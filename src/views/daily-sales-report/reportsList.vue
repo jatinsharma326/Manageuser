@@ -210,6 +210,7 @@
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
+					reportType: this.type,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.reportsList = data.list;
@@ -218,7 +219,7 @@
 
 					this.reportsList = this.reportsList.map((d, index) => ({
 						...d,
-						serial_number: (this.pageNo - 1) * 20 + (index + 1),
+						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
 					}));
 				});
 			},

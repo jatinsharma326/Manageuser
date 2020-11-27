@@ -17,13 +17,15 @@ export default {
 	},
 	actions: {
 		getDSR: ({ commit, dispatch }, payload) => {
+			let URLparam = payload.reportType;
+			delete payload.reportType;
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.DSR,
+					url: constants.DSR + URLparam + "/",
 				},
 				{ root: true }
 			)
