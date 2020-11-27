@@ -232,6 +232,34 @@
 						},
 					},
 				];
+				this.selectedSearchConfig = [
+					{
+						name: "Countries",
+						key: "countries",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: countries,
+					},
+					{
+						name: "Employee",
+						key: "employee_names",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: employeeList,
+						itemText: "name",
+						itemValue: "name",
+					},
+					{
+						name: "Date of Travel",
+						key: "date_of_travel",
+						inputType: "datePicker",
+						defaultValue: null,
+					},
+				];
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
@@ -310,35 +338,35 @@
 					});
 				}
 			},
-			setSearchConfig() {
-				this.selectedSearchConfig = [
-					{
-						name: "Partner Name",
-						key: "name",
-						type: "text",
-						inputType: "textfield",
-						defaultValue: "",
-					},
-					{
-						name: "Business Type",
-						key: "business_types",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: true,
-						listVariable: "businessType",
-					},
-					{
-						name: "Countries",
-						key: "countries",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: true,
-						listVariable: "countries",
-					},
-				];
-			},
+			// setSearchConfig() {
+			// 	this.selectedSearchConfig = [
+			// 		{
+			// 			name: "Partner Name",
+			// 			key: "name",
+			// 			type: "text",
+			// 			inputType: "textfield",
+			// 			defaultValue: "",
+			// 		},
+			// 		{
+			// 			name: "Business Type",
+			// 			key: "business_types",
+			// 			multi: true,
+			// 			inputType: "dropdown",
+			// 			defaultValue: [],
+			// 			isListInStore: true,
+			// 			listVariable: "businessType",
+			// 		},
+			// 		{
+			// 			name: "Countries",
+			// 			key: "countries",
+			// 			multi: true,
+			// 			inputType: "dropdown",
+			// 			defaultValue: [],
+			// 			isListInStore: true,
+			// 			listVariable: "countries",
+			// 		},
+			// 	];
+			// },
 			updatedPageNo(page) {
 				this.getFamTrip();
 			},
