@@ -17,13 +17,15 @@ export default {
 	},
 	actions: {
 		getSalesCall: ({ commit, dispatch }, payload) => {
+			let URLparam = payload.callType;
+			delete payload.callType;
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.SALES_CALLS,
+					url: constants.SALES_CALLS + URLparam + "/",
 				},
 				{ root: true }
 			)

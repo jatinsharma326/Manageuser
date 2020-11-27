@@ -165,12 +165,9 @@
 			]),
 			getData() {
 				this.openLoaderDialog();
-				// console.log("Test Console User Data", this.userData);
 				if (this.isSalesTeamMember && this.type == "sales_call") {
-					console.log("User Data ", this.userData);
 					this.filter.mortal_id = this.userData.id;
 				}
-				console.log("filter ", this.filter);
 				this.filter.date_from = moment(this.datePickerDate[0])
 					.tz("Asia/Kolkata")
 					.startOf()
@@ -188,6 +185,7 @@
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
+					callType: this.type,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.callsList = data.list;
@@ -196,7 +194,7 @@
 
 					this.callsList = this.callsList.map((d, index) => ({
 						...d,
-						serial_number: (this.pageNo - 1) * 20 + (index + 1),
+						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
 					}));
 				});
 			},
