@@ -45,8 +45,10 @@
 				</v-dialog>
 			</div>
 		</div>
-
-		<div class="leaves-table">
+		<div v-if="totalCount === 0" class="content-error-message">
+			Please add a Followup Entry
+		</div>
+		<div v-else class="leaves-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer
@@ -278,7 +280,7 @@
 
 					this.followUpList = this.followUpList.map((d, index) => ({
 						...d,
-						serial_number: (this.pageNo - 1) * 20 + (index + 1),
+						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
 					}));
 				});
 			},

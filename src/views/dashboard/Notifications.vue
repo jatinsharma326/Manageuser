@@ -9,7 +9,10 @@
 					</v-btn>
 				</div>
 				<div v-show="showColumnOne">
-					<div class="content-section">
+					<div v-if="columnOneTotalCount === 0" class="content-error-message">
+						No Notifications for the DSR section.
+					</div>
+					<div v-else class="content-section">
 						<div
 							v-for="(listItem, index) in notificationsList"
 							:key="index + '_DSRNotifications'"

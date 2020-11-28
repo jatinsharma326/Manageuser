@@ -4,7 +4,10 @@
 			<div class="leaves-title">Recent Leave Application</div>
 			<div class="pending-leave">Leaves Pending : {{ pendingLeaves }}</div>
 		</div>
-		<div class="leaves-table">
+		<div v-if="totalCount === 0" class="content-error-message">
+			Please add a leave.
+		</div>
+		<div v-else class="leaves-table">
 			<v-data-table
 				hide-default-footer
 				:headers="headers"
@@ -63,6 +66,15 @@
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
 		</div>
+
+		<div class="text-center">
+			<v-pagination
+				@input="updatedPageNo"
+				v-if="isPaginationRequired"
+				v-model="pageNo"
+				:length="Math.ceil(fetchCount / pageSize)"
+			></v-pagination>
+		</div>
 	</div>
 </template>
 
@@ -70,6 +82,7 @@
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import helperMixin from "../../mixins/helperMixins";
 	import inputFormMixin from "../../mixins/inputFormMixin";
+	import searchMixin from "../../mixins/searchMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import helpers from "../../components/helpers";
@@ -77,7 +90,7 @@
 
 	export default {
 		name: "SalesLeaveManager",
-		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin],
+		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin],
 		created() {
 			this.fetchPendingLeaves();
 			this.getData();
@@ -150,7 +163,10 @@
 			]),
 			getData() {
 				this.openLoaderDialog();
-				this.getSalesLeaves().then((data) => {
+				this.getSalesLeaves({
+					pageSize: this.pageSize,
+					pageNo: this.pageNo,
+				}).then((data) => {
 					this.closeLoaderDialog();
 					this.leavesList = data.list;
 					this.totalCount = data.totalCount;
@@ -227,6 +243,9 @@
 						}
 					});
 				}
+			},
+			updatedPageNo(page) {
+				this.getData();
 			},
 		},
 		watch: {},

@@ -11,7 +11,9 @@
 				></Search>
 			</v-col>
 		</v-row>
-
+		<div v-if="totalCount === 0" class="content-error-message">
+			No leaves Entry yet.
+		</div>
 		<div class="leaves-table">
 			<v-data-table
 				hide-default-footer

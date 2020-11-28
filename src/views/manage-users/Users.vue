@@ -13,6 +13,10 @@
 			</v-col>
 		</v-row>
 
+		<div v-if="showErrorMessage" class="content-error-message">
+			{{ errorMessage }}
+		</div>
+
 		<div class="card-wrapper">
 			<div v-for="user in userList" :key="user._id" class="card-element">
 				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
@@ -142,6 +146,15 @@
 			</div>
 		</div>
 
+		<div class="text-center">
+			<v-pagination
+				@input="updatedPageNo"
+				v-if="isPaginationRequired"
+				v-model="pageNo"
+				:length="Math.ceil(fetchCount / pageSize)"
+			></v-pagination>
+		</div>
+
 		<UserForm
 			@formOutput="formOutput"
 			@closeForm="closeForm"
@@ -194,16 +207,19 @@
 						search_text: this.search_text,
 						active: this.activeState,
 					},
+					active: this.activeState,
+					type: this.type,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					if (!data.ok) {
-						this.openSnackbar({ text: "Failed to Fetched User Data" });
-					}
-					this.userList = data.list;
+					this.userList = this.checkForErrorMessage(data, "user");
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
+					// if (!data.ok) {
+					// 	this.openSnackbar({ text: "Failed to Fetched User Data" });
+					// }
+					// this.userList = data.list;
 				});
 			},
 			getMainContentSubtitle(user) {
@@ -287,6 +303,9 @@
 					_id: data._id,
 					updated_on: data.record.updated_on,
 				};
+			},
+			updatedPageNo(page) {
+				this.getUsers();
 			},
 			disableUser(data) {
 				if (

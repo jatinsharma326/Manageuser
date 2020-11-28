@@ -45,8 +45,10 @@
 				</v-dialog>
 			</div>
 		</div>
-
-		<div class="leaves-table">
+		<div v-if="totalCount === 0" class="content-error-message">
+			Please add a DSR Entry.
+		</div>
+		<div v-else class="leaves-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer
@@ -210,6 +212,7 @@
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
+					reportType: this.type,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.reportsList = data.list;
@@ -218,7 +221,7 @@
 
 					this.reportsList = this.reportsList.map((d, index) => ({
 						...d,
-						serial_number: (this.pageNo - 1) * 20 + (index + 1),
+						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
 					}));
 				});
 			},

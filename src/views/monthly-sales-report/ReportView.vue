@@ -7,7 +7,10 @@
 		<div class="highlight-section">
 			{{ monthInfo.highlights }}
 		</div>
-		<div class="leaves-table">
+		<div v-if="totalCount === 0" class="content-error-message">
+			No data in the DSR for the selected product
+		</div>
+		<div v-else class="leaves-table">
 			<v-data-table
 				:items-per-page="fetchCount"
 				hide-default-footer
@@ -49,12 +52,12 @@
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import helperMixins from "../../mixins/helperMixins";
-	import searchMixin from "../../mixins/searchMixin";
+	// import searchMixin from "../../mixins/searchMixin";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
 		name: "MSRReportView",
-		mixins: [searchMixin, helperMixins, defaultCRUDMixin],
+		mixins: [helperMixins, defaultCRUDMixin],
 		created() {
 			this.getData();
 		},
@@ -78,6 +81,7 @@
 			],
 			expanded: [],
 			filter: {},
+			fetchCount: 0,
 		}),
 		methods: {
 			...mapActions("MSR", ["getReportList", "downloadReportFile"]),
@@ -89,12 +93,12 @@
 				this.filter.mortal_id = this.monthInfo.mortal_id;
 				this.getReportList({
 					filter: this.filter,
-					pageSize: this.pageSize,
-					pageNo: this.pageNo,
+					// pageSize: this.pageSize,
+					// pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.reportsList = data.list.dsr_data;
-					this.totalCount = data.totalCount;
+					// this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
 					this.reportsList = this.reportsList.map((d, index) => ({

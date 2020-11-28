@@ -12,6 +12,10 @@
 			</v-col>
 		</v-row>
 
+		<div v-if="showErrorMessage" class="content-error-message">
+			{{ errorMessage }}
+		</div>
+
 		<template v-if="employeesList.length">
 			<template v-for="(country, countryIndex) in countriesWithEmployee">
 				<div :key="country + '__' + countryIndex + '__tilte'" class="country-title">
@@ -244,15 +248,19 @@
 				this.filter.representing_partner_id = this.partnerInfo._id;
 				this.getPartnerEmployeesList({
 					filter: this.filter,
+					representing_partner_id: this.partnerInfo._id,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.employeesList = data.list;
+					this.employeesList = this.checkForErrorMessage(data, "company");
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
-					let temp = this.employeesList.map((e) => e.country);
-					this.countriesWithEmployee = Array.from(new Set(temp));
+					if (this.employeesList) {
+						let temp = this.employeesList.map((e) => e.country);
+						this.countriesWithEmployee = Array.from(new Set(temp));
+					}
+					this.employeesList = data.list;
 				});
 			},
 			queryString(data) {

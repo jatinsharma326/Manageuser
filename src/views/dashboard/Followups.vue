@@ -9,7 +9,10 @@
 					</v-btn>
 				</div>
 				<div v-show="showColumnOne">
-					<div class="content-section">
+					<div v-if="columnOneTotalCount === 0" class="content-error-message">
+						No reminders for the followup section.
+					</div>
+					<div v-else class="content-section">
 						<div
 							v-for="(listItem, index) in followUpReminders"
 							:key="index + '_followUpReminders' + listItem._id"
@@ -101,7 +104,10 @@
 					</v-btn>
 				</div>
 				<div v-show="showColumnTwo">
-					<div class="content-section">
+					<div v-if="columnTwoTotalCount === 0" class="content-error-message">
+						No reminders for the DSR section.
+					</div>
+					<div v-else class="content-section">
 						<div
 							v-for="(listItem, index) in DSRReminders"
 							:key="index + '_DSRReminders' + listItem._id"
