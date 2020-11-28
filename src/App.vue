@@ -149,16 +149,10 @@
 					highlight: "#00a0ff",
 					iconColor: "#00a0ff",
 				},
-				{
-					icon: "search",
-					title: "Set Targets",
-					route: "/targets",
-					highlight: "#00a0ff",
-					iconColor: "#00a0ff",
-				},
 			],
 		}),
 		async created() {
+			this.setRouteItems();
 			if (helpers.getCurrentRoute() != "settings") {
 				this.currentRoute =
 					this.routeItems.find((e) => e.route == "/" + helpers.getCurrentRoute()).title || "Dashboard";
@@ -187,6 +181,17 @@
 			]),
 			...mapActions("ManageAgents", ["getStatesList"]),
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "resetState", "openSnackbar", "closeSnackbar"]),
+			setRouteItems() {
+				if (this.userType == this.ADMIN || this.userType == this.MANAGEMENT) {
+					this.routeItems.push({
+						icon: "search",
+						title: "Set Targets",
+						route: "/targets",
+						highlight: "#00a0ff",
+						iconColor: "#00a0ff",
+					});
+				}
+			},
 			toggleNav() {
 				this.navigationToggle = !this.navigationToggle;
 			},
