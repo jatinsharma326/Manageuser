@@ -120,7 +120,6 @@
 		async created() {
 			this.setDateRange();
 			this.getData();
-			console.log(this.countriesList);
 			this.setSearchConfig(this.countriesList, this.userList);
 		},
 		data: () => ({
@@ -162,11 +161,11 @@
 				let startDate = moment()
 					.tz("Asia/Kolkata")
 					.startOf("year")
-					.format("YYYY-MM-DD");
+					.format("YYYY-MM");
 				let endDate = moment()
 					.tz("Asia/Kolkata")
 					.endOf("year")
-					.format("YYYY-MM-DD");
+					.format("YYYY-MM");
 				tempArray.push(startDate);
 				tempArray.push(endDate);
 				this.datePickerDate = tempArray;
@@ -221,7 +220,7 @@
 				this.getData();
 			},
 			setSearchConfig(countriesList = [], userList = []) {
-				console.log(countriesList);
+				// console.log(countriesList);
 				this.selectedSearchConfig = [
 					{
 						name: "Inquiry Type",
@@ -258,6 +257,27 @@
 			},
 		},
 		watch: {
+			datePickerDate: {
+				deep: true,
+				async handler(nv, ov) {
+					// console.log("ov", ov, "nv", nv);
+					for (let valueOV of ov) {
+						for (let valueNV of nv) {
+							if (valueOV != valueNV) {
+								this.$emit("mainDateRange", this.datePickerDate);
+							}
+						}
+					}
+					// this.filter = {};
+					// this.dataList = [];
+					// this.pageNo = 1;
+					// console.log("Company Info changed");
+					// this.getData();
+					// await this.getStates();
+					// this.setInputConfig(this.statesList);
+					// this.setSearchConfig(this.statesList);
+				},
+			},
 			// companyInfo: {
 			// 	deep: true,
 			// 	async handler(nv, ov) {
