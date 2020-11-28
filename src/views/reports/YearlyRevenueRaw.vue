@@ -119,6 +119,7 @@
 		components: {},
 		async created() {
 			this.setDateRange();
+			this.setYearlyRevenueMainDate(this.datePickerDate);
 			this.getData();
 			this.setSearchConfig(this.countriesList, this.userList);
 		},
@@ -155,7 +156,7 @@
 		},
 		methods: {
 			...mapActions("FollowUp", ["getFollowUp"]),
-			...mapMutations([]),
+			...mapMutations("Reports", ["setYearlyRevenueMainDate", "setYearlyRevenueFilter"]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -189,6 +190,8 @@
 				this.filter.payment_status = "RECEIVED";
 				this.filter.payment_type = "FULL PAYMENT";
 
+				this.setYearlyRevenueFilter(this.filter);
+
 				this.getFollowUp({
 					filter: this.filter,
 					pageSize: this.pageSize,
@@ -216,6 +219,7 @@
 				} else {
 					this.activeState = true;
 				}
+				this.setYearlyRevenueFilter(this.filter);
 				this.pageNo = 1;
 				this.getData();
 			},
@@ -264,7 +268,8 @@
 					for (let valueOV of ov) {
 						for (let valueNV of nv) {
 							if (valueOV != valueNV) {
-								this.$emit("mainDateRange", this.datePickerDate);
+								// this.$emit("mainDateRange", this.datePickerDate);
+								this.setYearlyRevenueMainDate(this.datePickerDate);
 							}
 						}
 					}
