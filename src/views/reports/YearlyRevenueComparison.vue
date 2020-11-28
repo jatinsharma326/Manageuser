@@ -37,6 +37,7 @@
 			</div>
 		</div>
 		{{ yearlyRevenueMainDate }}
+		{{ yearlyRevenueFilter }}
 		<div v-if="totalCount === 0" class="content-error-message">
 			No Followup entries. Please add followup entries to see the reports
 		</div>
@@ -138,6 +139,7 @@
 			],
 		}),
 		computed: {
+			...mapGetters("Reports", ["yearlyRevenueMainDate", "yearlyRevenueFilter"]),
 			dateRangeText() {
 				return this.datePickerDate.join(" ~ ");
 			},
@@ -246,9 +248,7 @@
 			},
 		},
 		watch: {},
-		props: {
-			yearlyRevenueMainDate: { required: false, type: Array, default: () => [] },
-		},
+		props: {},
 	};
 </script>
 
