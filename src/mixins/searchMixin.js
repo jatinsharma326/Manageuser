@@ -6,7 +6,7 @@ const searchMixins = {
 		Search,
 	},
 	data: () => ({
-		pageSize: 2,
+		pageSize: 20,
 		pageNo: 1,
 		totalCount: 0,
 		fetchCount: 0,
