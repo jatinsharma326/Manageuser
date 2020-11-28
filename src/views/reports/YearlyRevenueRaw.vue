@@ -278,19 +278,6 @@
 					// this.setSearchConfig(this.statesList);
 				},
 			},
-			// companyInfo: {
-			// 	deep: true,
-			// 	async handler(nv, ov) {
-			// 		this.filter = {};
-			// 		this.dataList = [];
-			// 		this.pageNo = 1;
-			// 		console.log("Company Info changed");
-			// 		this.getData();
-			// 		await this.getStates();
-			// 		this.setInputConfig(this.statesList);
-			// 		this.setSearchConfig(this.statesList);
-			// 	},
-			// },
 		},
 		props: {
 			name: { required: true, type: String },
