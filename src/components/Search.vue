@@ -1,12 +1,18 @@
 <template>
 	<div class="searchWrapper">
+		<v-badge v-if="isOnlyAdvanceSearch" class="filter-button" dot overlap :value="areFiltersApplied">
+			<v-btn color="primary" text @click.stop="toggleAdvanceSearchSection()">{{ placeholder }}</v-btn>
+		</v-badge>
 		<v-text-field
+			v-else
 			label="Search"
-			outlined
+			:outlined="!isOnlyAdvanceSearch"
+			:solo="isOnlyAdvanceSearch"
 			class="search-bar"
 			@input="performBasicSearch()"
 			v-model="queryString"
 			:placeholder="placeholder"
+			:readonly="isOnlyAdvanceSearch"
 		>
 			<template v-slot:append>
 				<v-badge dot overlap :value="areFiltersApplied">
@@ -104,7 +110,7 @@
 							Clear
 						</v-btn>
 						<v-btn outlined color="primary" @click="performAdvanceSearch()">
-							Search
+							{{ isAdvanceAFilter ? "Filter" : "Search" }}
 						</v-btn>
 					</v-card-actions>
 				</v-card>
@@ -200,6 +206,16 @@
 				type: Boolean,
 				default: false,
 			},
+			isOnlyAdvanceSearch: {
+				required: false,
+				type: Boolean,
+				default: false,
+			},
+			isAdvanceAFilter: {
+				required: false,
+				type: Boolean,
+				default: false,
+			},
 			placeholder: {
 				required: false,
 				type: String,
@@ -222,6 +238,9 @@
 		@include custom-max(600px) {
 			flex-basis: 90%;
 		}
+	}
+	.filter-button {
+		margin-bottom: 1px;
 	}
 	.search-bar {
 		.v-text-field__details {
