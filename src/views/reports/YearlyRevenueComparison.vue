@@ -22,16 +22,23 @@
 						></v-text-field>
 					</template>
 					<v-date-picker range type="month" v-model="datePickerDate" scrollable>
-						<v-spacer></v-spacer>
-						<v-btn text color="primary" @click="resetDatePicker">
-							Reset
-						</v-btn>
-						<v-btn text color="primary" @click="cancelDatePicker">
-							Cancel
-						</v-btn>
-						<v-btn text color="primary" @click="submitDatePicker">
-							OK
-						</v-btn>
+						<div class="date-picker-action-section">
+							<div class="date-error-message" v-show="!showErrorMessage">
+								Date doesn't match range selected in previous tab
+							</div>
+							<div class="action-buttons">
+								<v-spacer></v-spacer>
+								<v-btn text color="primary" @click="resetDatePicker">
+									Reset
+								</v-btn>
+								<v-btn text color="primary" @click="cancelDatePicker">
+									Cancel
+								</v-btn>
+								<v-btn :disabled="!showErrorMessage" text color="primary" @click="submitDatePickerr">
+									OK
+								</v-btn>
+							</div>
+						</div>
 					</v-date-picker>
 				</v-dialog>
 			</div>
@@ -116,6 +123,7 @@
 			selectedCardInfo: {},
 			activeState: true,
 			dataList: [],
+			showErrorMessage: true,
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Product", value: "country", width: 150 },
@@ -149,17 +157,43 @@
 			...mapMutations([]),
 			setDateRange() {
 				let tempArray = [];
-				let startDate = moment()
+				let startDate = moment(this.yearlyRevenueMainDate[0])
 					.tz("Asia/Kolkata")
+					.subtract(1, "year")
 					.startOf("year")
 					.format("YYYY-MM");
-				let endDate = moment()
+				let endDate = moment(this.yearlyRevenueMainDate[1])
 					.tz("Asia/Kolkata")
+					.subtract(1, "year")
 					.endOf("year")
 					.format("YYYY-MM");
+				// let diffrenceInDates = currentMonth.diff(callMonth, "months", true);
 				tempArray.push(startDate);
 				tempArray.push(endDate);
 				this.datePickerDate = tempArray;
+			},
+			submitDatePickerr() {
+				if (this.isDateValid) {
+					this.$refs.dialog.save(this.datePickerDate);
+					this.getData();
+				} else {
+					console.log("Please Select a Correct Date Range");
+				}
+			},
+			isDateValid(newValue) {
+				let diffrenceInStartDates, diffrenceInEndDates;
+				diffrenceInStartDates = moment(this.yearlyRevenueMainDate[0])
+					.tz("Asia/Kolkata")
+					.diff(moment(newValue[0]).tz("Asia/Kolkata"), "months", true);
+				diffrenceInEndDates = moment(this.yearlyRevenueMainDate[1])
+					.tz("Asia/Kolkata")
+					.diff(moment(newValue[1]).tz("Asia/Kolkata"), "months", true);
+
+				if (Number.isInteger(diffrenceInStartDates / 12) && Number.isInteger(diffrenceInEndDates / 12)) {
+					return true;
+				} else {
+					return false;
+				}
 			},
 			getData() {
 				this.openLoaderDialog();
@@ -196,58 +230,24 @@
 					}));
 				});
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getData();
-			},
-			advanceSearch(filterObject) {
-				this.filter = { ...filterObject };
-				if (this.filter.active) {
-					this.activeState = false;
-				} else {
-					this.activeState = true;
-				}
-				this.pageNo = 1;
-				this.getData();
-			},
-			setSearchConfig(countriesList = [], userList = []) {
-				// console.log(countriesList);
-				this.selectedSearchConfig = [
-					{
-						name: "Inquiry Type",
-						key: "business_types",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: true,
-						listVariable: "businessType",
-					},
-					{
-						name: "Product",
-						key: "countries",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: countriesList,
-					},
-					{
-						name: "Created By",
-						key: "names",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: userList,
-						classes: ["full"],
-					},
-				];
-			},
 			updatedPageNo(page) {
 				this.getData();
 			},
 		},
-		watch: {},
+		watch: {
+			datePickerDate: {
+				deep: true,
+				async handler(nv, ov) {
+					for (let valueOV of ov) {
+						for (let valueNV of nv) {
+							if (valueOV != valueNV) {
+								this.showErrorMessage = this.isDateValid(nv);
+							}
+						}
+					}
+				},
+			},
+		},
 		props: {},
 	};
 </script>
@@ -261,5 +261,17 @@
 		margin-top: 12px;
 		display: flex;
 		justify-content: center;
+	}
+	.date-picker-action-section {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		.date-error-message {
+			color: $error;
+			padding: 10px;
+			text-align: center;
+		}
 	}
 </style>
