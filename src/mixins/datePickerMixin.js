@@ -11,7 +11,7 @@ const datePickerMixin = {
 	methods: {
 		dataSelector() {
 			this.tempDateValue = [...this.datePickerDate];
-			console.log("Date picker clicked", this.tempDateValue);
+			// console.log("Date picker clicked", this.tempDateValue);
 		},
 		cancelDatePicker() {
 			this.datePickerDate = [...this.tempDateValue];
