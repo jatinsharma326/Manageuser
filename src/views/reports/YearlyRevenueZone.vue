@@ -114,7 +114,7 @@
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
-		name: "YearlyRevenueRaw",
+		name: "YearlyRevenueZone",
 		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
 		components: {},
 		async created() {
