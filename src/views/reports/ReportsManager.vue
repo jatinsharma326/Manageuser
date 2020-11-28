@@ -8,10 +8,7 @@
 			</v-tabs>
 			<v-tabs-items class="tabItemWrapper" v-model="tab">
 				<v-tab-item>
-					<YearlyRevenueRaw
-						@mainDateRange="yearlyRevenueMainDate"
-						v-bind="{ ...propsList }"
-					></YearlyRevenueRaw>
+					<YearlyRevenueRaw v-bind="{ ...propsList }"></YearlyRevenueRaw>
 				</v-tab-item>
 				<v-tab-item>
 					<YearlyRevenueComparison></YearlyRevenueComparison>
