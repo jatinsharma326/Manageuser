@@ -1,18 +1,7 @@
 <template>
 	<div class="companyAddressWrapper">
 		<div class="SearchbarWrapper">
-			<div class="searchbar">
-				<Search
-					@queryString="queryString"
-					@filterObject="advanceSearch"
-					@clearFilter="advanceSearch"
-					:placeholder="placeholder"
-					:isAdvanceSearch="true"
-					:isOnlyAdvanceSearch="true"
-					:isAdvanceAFilter="true"
-					:filterConfig="selectedSearchConfig"
-				></Search>
-			</div>
+			<div class="searchbar"></div>
 			<div class="datepicker">
 				<v-dialog
 					ref="dialog"
@@ -47,6 +36,7 @@
 				</v-dialog>
 			</div>
 		</div>
+		{{ yearlyRevenueMainDate }}
 		<div v-if="totalCount === 0" class="content-error-message">
 			No Followup entries. Please add followup entries to see the reports
 		</div>
@@ -114,13 +104,12 @@
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
-		name: "YearlyRevenueRaw",
+		name: "YearlyRevenueComparison",
 		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
 		components: {},
 		async created() {
 			this.setDateRange();
 			this.getData();
-			this.setSearchConfig(this.countriesList, this.userList);
 		},
 		data: () => ({
 			selectedCardInfo: {},
@@ -256,47 +245,9 @@
 				this.getData();
 			},
 		},
-		watch: {
-			datePickerDate: {
-				deep: true,
-				async handler(nv, ov) {
-					// console.log("ov", ov, "nv", nv);
-					for (let valueOV of ov) {
-						for (let valueNV of nv) {
-							if (valueOV != valueNV) {
-								this.$emit("mainDateRange", this.datePickerDate);
-							}
-						}
-					}
-					// this.filter = {};
-					// this.dataList = [];
-					// this.pageNo = 1;
-					// console.log("Company Info changed");
-					// this.getData();
-					// await this.getStates();
-					// this.setInputConfig(this.statesList);
-					// this.setSearchConfig(this.statesList);
-				},
-			},
-			// companyInfo: {
-			// 	deep: true,
-			// 	async handler(nv, ov) {
-			// 		this.filter = {};
-			// 		this.dataList = [];
-			// 		this.pageNo = 1;
-			// 		console.log("Company Info changed");
-			// 		this.getData();
-			// 		await this.getStates();
-			// 		this.setInputConfig(this.statesList);
-			// 		this.setSearchConfig(this.statesList);
-			// 	},
-			// },
-		},
+		watch: {},
 		props: {
-			name: { required: true, type: String },
-			placeholder: { required: false, type: String },
-			userList: { required: false, type: Array, default: () => [] },
-			countriesList: { required: false, type: Array, default: () => [] },
+			yearlyRevenueMainDate: { required: false, type: Array, default: () => [] },
 		},
 	};
 </script>
