@@ -11,7 +11,7 @@
 					</template>
 					<template v-slot:actionButtons>
 						<template>
-							<v-btn @click="openconfigItemsModal(configItem)" color="primary" text>
+							<v-btn @click="openTargetsModal(configItem)" color="primary" text>
 								View
 							</v-btn>
 						</template>
