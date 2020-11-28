@@ -1,5 +1,5 @@
 <template>
-	<div class="targetsWrapper">
+	<div class="reportsWrapper">
 		<div class="card-wrapper">
 			<div v-for="configItem in config" :key="configItem._id" class="card-element">
 				<InformationCard>
@@ -52,7 +52,7 @@
 			}
 			await this.getCountries();
 			this.closeLoaderDialog();
-			this.setConfig(this.businessType, this.countriesList, this.userList);
+			this.setConfig(this.countriesList, this.userList);
 		},
 		data: () => {
 			return {
@@ -61,16 +61,7 @@
 			};
 		},
 		computed: {
-			...mapGetters([
-				"zone",
-				"businessType",
-				"REMOTE_SALES_AGENT",
-				"SALES_AGENT",
-				"MANAGEMENT",
-				"ADMIN",
-				"userType",
-				"userData",
-			]),
+			...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType", "userData"]),
 		},
 		methods: {
 			getCountries() {
@@ -80,15 +71,15 @@
 					return this.getCountryList();
 				}
 			},
-			setConfig(businessType = [], countriesList = [], userList = []) {
+			setConfig(countriesList = [], userList = []) {
 				this.config = [
 					{
 						name: "Yearly Revenue",
 						id: "yearlyRevenue",
 						props: {
 							name: "Yearly Revenue",
-							placeholder: "Search Yearly Revenue",
-							businessType,
+							id: "yearlyRevenue",
+							placeholder: "Filter Report",
 							userList,
 							countriesList,
 						},
@@ -98,8 +89,8 @@
 						id: "travelAgent",
 						props: {
 							name: "Travel Agent",
-							placeholder: "Search Travel Agent",
-							businessType,
+							id: "travelAgent",
+							placeholder: "Filter Report",
 							userList,
 							countriesList,
 						},
@@ -109,8 +100,8 @@
 						id: "zoneOrCity",
 						props: {
 							name: "Zone / City",
-							placeholder: "Search Zone / City",
-							businessType,
+							id: "zoneOrCity",
+							placeholder: "Filter Report",
 							userList,
 							countriesList,
 						},
@@ -120,8 +111,8 @@
 						id: "target",
 						props: {
 							name: "Target",
+							id: "target",
 							placeholder: "Search Target",
-							businessType,
 							userList,
 							countriesList,
 						},
@@ -137,7 +128,7 @@
 </script>
 
 <style lang="scss" scopped>
-	.targetsWrapper {
+	.reportsWrapper {
 		padding: 20px 5px;
 	}
 </style>
