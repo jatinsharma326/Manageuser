@@ -3,23 +3,22 @@
 		<template v-if="id == 'yearlyRevenue'">
 			<v-tabs grow v-model="tab">
 				<v-tab>Raw Data</v-tab>
-				<!-- <v-tab>Employees</v-tab>
-				<v-tab>Fam Trip</v-tab> -->
+				<v-tab>Yearly Comparison</v-tab>
+				<v-tab>Zone Wise Summary</v-tab>
 			</v-tabs>
 			<v-tabs-items class="tabItemWrapper" v-model="tab">
 				<v-tab-item>
-					<!-- :name="name"
-						:placeholder="placeholder"
-						:userList="userList"
-						:countriesList="countriesList" -->
-					<YearlyRevenueRaw v-bind="{ ...propsList }"></YearlyRevenueRaw>
-				</v-tab-item>
-				<!-- <v-tab-item>
-					<CompanyEmployees :companyInfo="companyInfo"></CompanyEmployees>
+					<YearlyRevenueRaw
+						@mainDateRange="yearlyRevenueMainDate"
+						v-bind="{ ...propsList }"
+					></YearlyRevenueRaw>
 				</v-tab-item>
 				<v-tab-item>
-					<CompanyFamTrip :companyInfo="companyInfo"></CompanyFamTrip>
-				</v-tab-item> -->
+					<YearlyRevenueComparison></YearlyRevenueComparison>
+				</v-tab-item>
+				<v-tab-item>
+					<YearlyRevenueZone></YearlyRevenueZone>
+				</v-tab-item>
 			</v-tabs-items>
 		</template>
 	</div>
@@ -28,15 +27,15 @@
 <script>
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import YearlyRevenueRaw from "./YearlyRevenueRaw";
-	// import CompanyEmployees from "./CompanyEmployees";
-	// import CompanyFamTrip from "./CompanyFamTrip";
+	import YearlyRevenueComparison from "./YearlyRevenueComparison";
+	import YearlyRevenueZone from "./YearlyRevenueZone";
 
 	export default {
 		name: "ReportsManager",
 		components: {
 			YearlyRevenueRaw,
-			// CompanyEmployees,
-			// CompanyFamTrip,
+			YearlyRevenueComparison,
+			YearlyRevenueZone,
 		},
 		created() {
 			this.setProps();
@@ -45,6 +44,7 @@
 		data: () => ({
 			tab: "",
 			propsList: {},
+			yearlyRevenueMainDate: [],
 		}),
 		computed: {
 			...mapGetters([]),
@@ -60,6 +60,7 @@
 				};
 			},
 		},
+		watch: {},
 		props: {
 			name: { required: true, type: String },
 			id: { required: true, type: String },
