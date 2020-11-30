@@ -1,9 +1,8 @@
 <template>
-	<div class="companyAddressWrapper">
+	<div class="travelAgentRawWrapper">
 		<div class="SearchbarWrapper">
 			<div class="searchbar">
 				<Search
-					@queryString="queryString"
 					@filterObject="advanceSearch"
 					@clearFilter="advanceSearch"
 					:placeholder="placeholder"
@@ -114,12 +113,12 @@
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
-		name: "YearlyRevenueRaw",
+		name: "TravelAgentRaw",
 		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
 		components: {},
 		async created() {
 			this.setDateRange();
-			this.setYearlyRevenueMainDate(this.datePickerDate);
+			// this.setYearlyRevenueMainDate(this.datePickerDate);
 			this.getData();
 			this.setSearchConfig(this.countriesList, this.userList);
 		},
@@ -156,7 +155,6 @@
 		},
 		methods: {
 			...mapActions("FollowUp", ["getFollowUp"]),
-			...mapMutations("Reports", ["setYearlyRevenueMainDate", "setYearlyRevenueFilter"]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -185,12 +183,6 @@
 				} else {
 					this.filter.date_to = this.filter.date_from;
 				}
-				//To only get the Amount RECEIVED we need to filter out following conditions
-				this.filter.status = "CONFIRMED";
-				this.filter.payment_status = "RECEIVED";
-				this.filter.payment_type = "FULL PAYMENT";
-
-				this.setYearlyRevenueFilter(this.filter);
 
 				this.getFollowUp({
 					filter: this.filter,
@@ -208,10 +200,6 @@
 					}));
 				});
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getData();
-			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -219,12 +207,10 @@
 				} else {
 					this.activeState = true;
 				}
-				this.setYearlyRevenueFilter(this.filter);
 				this.pageNo = 1;
 				this.getData();
 			},
 			setSearchConfig(countriesList = [], userList = []) {
-				// console.log(countriesList);
 				this.selectedSearchConfig = [
 					{
 						name: "Inquiry Type",
@@ -255,35 +241,24 @@
 						classes: ["full"],
 					},
 				];
+				if (this.isAdminOrManagement || this.isOnlySalesAgent) {
+					this.selectedSearchConfig.push({
+						name: "Zone",
+						key: "zones",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: true,
+						listVariable: "zone",
+						// classes: ["half"],
+					});
+				}
 			},
 			updatedPageNo(page) {
 				this.getData();
 			},
 		},
-		watch: {
-			datePickerDate: {
-				deep: true,
-				async handler(nv, ov) {
-					// console.log("ov", ov, "nv", nv);
-					for (let valueOV of ov) {
-						for (let valueNV of nv) {
-							if (valueOV != valueNV) {
-								// this.$emit("mainDateRange", this.datePickerDate);
-								this.setYearlyRevenueMainDate(this.datePickerDate);
-							}
-						}
-					}
-					// this.filter = {};
-					// this.dataList = [];
-					// this.pageNo = 1;
-					// console.log("Company Info changed");
-					// this.getData();
-					// await this.getStates();
-					// this.setInputConfig(this.statesList);
-					// this.setSearchConfig(this.statesList);
-				},
-			},
-		},
+		watch: {},
 		props: {
 			name: { required: true, type: String },
 			placeholder: { required: false, type: String },
@@ -294,13 +269,8 @@
 </script>
 
 <style lang="scss" scopped>
-	.companyAddressWrapper {
+	.travelAgentRawWrapper {
 		padding: 20px 5px;
 		height: 100%;
-	}
-	.companyaddress-search-bar {
-		margin-top: 12px;
-		display: flex;
-		justify-content: center;
 	}
 </style>
