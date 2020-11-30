@@ -100,9 +100,9 @@
 		components: { ChangeLogModal },
 		async created() {
 			this.getAddresses();
-			await this.getStates();
-			this.setInputConfig(this.statesList);
-			this.setSearchConfig(this.statesList);
+			// await this.getStates();
+			this.setInputConfig(this.storeStatesList);
+			this.setSearchConfig(this.storeStatesList);
 		},
 		data: () => ({
 			name: "Branch Address",
@@ -111,12 +111,13 @@
 			selectedCardInfo: {},
 			activeState: true,
 			addressList: [],
-			statesList: [],
 			inputConfig: [],
 		}),
-		computed: {},
+		computed: {
+			...mapGetters("ManageAgents", ["storeStatesList"]),
+		},
 		methods: {
-			...mapActions("ManageAgents", ["getStatesList", "getAddressList", "addAddress", "editAddress"]),
+			...mapActions("ManageAgents", ["getAddressList", "addAddress", "editAddress"]),
 			...mapMutations("ManageAgents", ["setAddressList"]),
 			getAddresses(callMutation = false) {
 				this.openLoaderDialog();
@@ -139,13 +140,13 @@
 					}
 				});
 			},
-			getStates() {
-				return this.getStatesList({
-					filter: {},
-				}).then((data) => {
-					this.statesList = data.list;
-				});
-			},
+			// getStates() {
+			// 	return this.getStatesList({
+			// 		filter: {},
+			// 	}).then((data) => {
+			// 		this.statesList = data.list;
+			// 	});
+			// },
 			openChangelogsModal(info) {
 				// this.getChangelogs(info);
 				this.selectedCardInfo = { ...info };
@@ -349,8 +350,8 @@
 					console.log("Company Info changed");
 					this.getAddresses();
 					await this.getStates();
-					this.setInputConfig(this.statesList);
-					this.setSearchConfig(this.statesList);
+					this.setInputConfig(this.storeStatesList);
+					this.setSearchConfig(this.storeStatesList);
 				},
 			},
 		},
