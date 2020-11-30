@@ -190,7 +190,7 @@
 				this.filter.payment_status = "RECEIVED";
 				this.filter.payment_type = "FULL PAYMENT";
 
-				this.setYearlyRevenueFilter(this.filter);
+				// this.setYearlyRevenueFilter(this.filter);
 
 				this.getFollowUp({
 					filter: this.filter,
