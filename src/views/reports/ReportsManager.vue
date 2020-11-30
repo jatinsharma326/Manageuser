@@ -24,7 +24,31 @@
 			</v-tabs>
 			<v-tabs-items class="tabItemWrapper" v-model="tab">
 				<v-tab-item>
-					<TravelAgentRaw v-bind="{ ...propsList }"></TravelAgentRaw>
+					<TravelAgentReport v-bind="{ ...propsList }"></TravelAgentReport>
+				</v-tab-item>
+			</v-tabs-items>
+		</template>
+		<template v-if="id == 'zoneOrCity'">
+			<v-tabs grow v-model="tab">
+				<v-tab>Zone</v-tab>
+				<v-tab>City</v-tab>
+			</v-tabs>
+			<v-tabs-items class="tabItemWrapper" v-model="tab">
+				<v-tab-item>
+					<ZoneReport v-bind="{ ...propsList }"></ZoneReport>
+				</v-tab-item>
+				<v-tab-item>
+					<CityReport v-bind="{ ...propsList }"></CityReport>
+				</v-tab-item>
+			</v-tabs-items>
+		</template>
+		<template v-if="id == 'target'">
+			<v-tabs grow v-model="tab">
+				<v-tab>Target Overview</v-tab>
+			</v-tabs>
+			<v-tabs-items class="tabItemWrapper" v-model="tab">
+				<v-tab-item>
+					<TargetReport v-bind="{ ...propsList }"></TargetReport>
 				</v-tab-item>
 			</v-tabs-items>
 		</template>
@@ -36,7 +60,10 @@
 	import YearlyRevenueRaw from "./YearlyRevenueRaw";
 	import YearlyRevenueComparison from "./YearlyRevenueComparison";
 	import YearlyRevenueZone from "./YearlyRevenueZone";
-	import TravelAgentRaw from "./TravelAgentRaw";
+	import TravelAgentReport from "./TravelAgentReport";
+	import ZoneReport from "./ZoneReport";
+	import CityReport from "./CityReport";
+	import TargetReport from "./TargetReport";
 
 	export default {
 		name: "ReportsManager",
@@ -44,11 +71,13 @@
 			YearlyRevenueRaw,
 			YearlyRevenueComparison,
 			YearlyRevenueZone,
-			TravelAgentRaw,
+			TravelAgentReport,
+			ZoneReport,
+			CityReport,
+			TargetReport,
 		},
 		created() {
 			this.setProps();
-			// this.getPartnerList();
 		},
 		data: () => ({
 			tab: "",
