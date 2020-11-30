@@ -25,14 +25,14 @@ export default {
 		},
 	},
 	actions: {
-		getTargets: ({ commit, dispatch }) => {
+		getYearlyComparison: ({ commit, dispatch }, params) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
-					params: {},
-					url: constants.FINANCIAL_YEAR,
+					params: params,
+					url: constants.YEARLY_COMPARISON,
 				},
 				{ root: true }
 			)
