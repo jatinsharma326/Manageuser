@@ -83,13 +83,17 @@
 			</div>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
+			{{ pageSize }}
+			<div class="page-size-dropdown">
+				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
+			</div>
 		</div>
 
 		<ChangeLogModal
@@ -213,7 +217,7 @@
 			UploadLogs,
 		},
 		async created() {
-			this.getCompanies();
+			this.getData();
 			this.setSearchConfig();
 			await this.getCountryList();
 			this.setInputConfig(this.activeCountriesList);
@@ -253,7 +257,7 @@
 					this.activeCountriesList = data.list;
 				});
 			},
-			getCompanies() {
+			getData() {
 				this.openLoaderDialog();
 				this.filter.active = this.activeState;
 				this.getCompaniesList({
@@ -279,7 +283,7 @@
 			},
 			queryString(data) {
 				this.filter["search_text"] = data;
-				this.getCompanies();
+				this.getData();
 			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
@@ -290,7 +294,7 @@
 				}
 				// console.log("Test Console advance search filter obj", this.filter);
 				this.pageNo = 1;
-				this.getCompanies();
+				this.getData();
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
@@ -329,7 +333,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Company" });
-							this.getCompanies();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -340,7 +344,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Company" });
-							this.getCompanies();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -372,7 +376,7 @@
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Company Status" });
 							console.log("Updated Company status");
-							this.getCompanies();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -565,7 +569,7 @@
 				];
 			},
 			updatedPageNo(page) {
-				this.getCompanies();
+				this.getData();
 			},
 			uploadFileFunc(formData) {
 				return this.uploadTravelAgents(formData);
@@ -594,6 +598,15 @@
 </script>
 
 <style lang="scss" scopped>
+	.paginationWrapper {
+		padding: 10px;
+		display: flex;
+		justify-content: space-between;
+
+		.page-size-dropdown {
+			max-width: 150px;
+		}
+	}
 	.agentsWrapper {
 		padding: 20px 5px;
 		height: 100%;

@@ -6,13 +6,15 @@ const searchMixins = {
 		Search,
 	},
 	data: () => ({
-		pageSize: 20,
+		pageSize: 2,
 		pageNo: 1,
 		totalCount: 0,
 		fetchCount: 0,
 		showErrorMessage: false,
 		errorMessage: "",
 		selectedSearchConfig: [],
+		pageSizeList: [2, 4, 6, 8, 10],
+		// pageSizeList: [20, 40, 60, 80, 100],
 		filter: {},
 		search_text: "",
 	}),
@@ -42,6 +44,13 @@ const searchMixins = {
 				this.totalCount = data.totalCount;
 				this.fetchCount = data.fetchCount;
 				return data.list;
+			}
+		},
+	},
+	watch: {
+		pageSize: function(nv, ov) {
+			if (nv != ov) {
+				this.getData();
 			}
 		},
 	},
