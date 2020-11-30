@@ -43,62 +43,18 @@
 				</v-dialog>
 			</div>
 		</div>
-		{{ yearlyRevenueMainDate }}
-		{{ yearlyRevenueFilter }}
-		<div v-if="totalCount === 0" class="content-error-message">
-			No Followup entries. Please add followup entries to see the reports
-		</div>
-		<div v-else class="leaves-table">
-			<v-data-table
-				:items-per-page="pageSize"
-				hide-default-footer
-				:headers="headers"
-				item-key="_id"
-				:items="dataList"
-			>
-				<template v-slot:[`item.date_of_enquiry`]="{ item }">
-					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
+
+		<div class="leaves-table">
+			<v-data-table :items-per-page="pageSize" hide-default-footer :headers="headers" :items="dataList">
+				<template v-slot:[`header.record_1`]="{ header }">
+					{{ getFormattedDate(comparisonDateFrom, "MMM YYYY") }} to
+					{{ getFormattedDate(comparisonDateTo, "MMM YYYY") }}
 				</template>
-				<template v-slot:[`item.contact_number`]="{ item }">
-					{{ item.contact_number ? item.contact_number : "-" }}
-				</template>
-				<template v-slot:[`item.date_of_travel`]="{ item }">
-					{{ item.date_of_travel ? getFormattedDate(item.date_of_travel, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.reminder_date`]="{ item }">
-					{{ item.reminder_date ? getFormattedDate(item.reminder_date, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.payment_status`]="{ item }">
-					{{ item.payment_status ? item.payment_status : "-" }}
-				</template>
-				<template v-slot:[`item.invoice_no`]="{ item }">
-					{{ item.invoice_no ? item.invoice_no : "-" }}
-				</template>
-				<template v-slot:[`item.payment_type`]="{ item }">
-					{{ item.payment_type ? item.payment_type : "-" }}
-				</template>
-				<template v-slot:[`item.currency_type`]="{ item }">
-					{{ item.currency_type ? item.currency_type : "-" }}
-				</template>
-				<template v-slot:[`item.amount_pending`]="{ item }">
-					{{ item.amount_pending ? item.amount_pending : "-" }}
-				</template>
-				<template v-slot:[`item.amount_received`]="{ item }">
-					{{ item.amount_received ? item.amount_received : "-" }}
-				</template>
-				<template v-slot:[`item.record.updated_on`]="{ item }">
-					{{ item.record.updated_on ? getFormattedDate(item.record.updated_on, "MMMM Do YYYY dddd") : "-" }}
+				<template v-slot:[`header.record_2`]="{ header }">
+					{{ getFormattedDate(selectionDateFrom, "MMM YYYY") }} to
+					{{ getFormattedDate(selectionDateTo, "MMM YYYY") }}
 				</template>
 			</v-data-table>
-		</div>
-
-		<div class="text-center">
-			<v-pagination
-				@input="updatedPageNo"
-				v-if="isPaginationRequired"
-				v-model="pageNo"
-				:length="Math.ceil(fetchCount / pageSize)"
-			></v-pagination>
 		</div>
 	</div>
 </template>
@@ -123,27 +79,18 @@
 			selectedCardInfo: {},
 			activeState: true,
 			dataList: [],
+			selectionDateFrom: "",
+			selectionDateTo: "",
+			comparisonDateFrom: "",
+			comparisonDateTo: "",
 			showErrorMessage: true,
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
-				{ text: "Product", value: "country", width: 150 },
-				{ text: "Created By", value: "mortal_data.name", width: 150 },
-				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
-				{ text: "Company Name", value: "company_data.name", width: 200 },
-				{ text: "City", value: "city", width: 150 },
-				{ text: "Zone", value: "zone", width: 150 },
-				{ text: "Date of Travel", value: "date_of_travel", width: 150 },
-				{ text: "Inquiry Type", value: "business_types", width: 150 },
-				{ text: "Email Subject", value: "email_subject", width: 150 },
-				{ text: "File Status", value: "status", width: 150 },
-				{ text: "Follow Up", value: "reminder_date", width: 150 },
-				{ text: "Payment Status", value: "payment_status", width: 200 },
-				{ text: "Invoice No.", value: "invoice_no", width: 150 },
-				{ text: "Payment Type", value: "payment_type", width: 150 },
-				{ text: "Currency", value: "currency_type", width: 150 },
-				{ text: "Pending (Amount)", value: "amount_pending", width: 200 },
-				{ text: "Received (Amount)", value: "amount_received", width: 200 },
-				{ text: "Last Updated On", value: "record.updated_on", width: 200 },
+				{ text: "Month", value: "month_of_travel", width: 150 },
+				{ text: "Created By", value: "record_2", width: 200 },
+				{ text: "Date of Enquiry", value: "record_1", width: 200 },
+				{ text: "Amount Difference ($)", value: "diff", width: 200 },
+				{ text: "Percentage Difference", value: "perc_incr_decr", width: 150 },
 			],
 		}),
 		computed: {
@@ -153,7 +100,7 @@
 			},
 		},
 		methods: {
-			...mapActions("FollowUp", ["getFollowUp"]),
+			...mapActions("Reports", ["getYearlyComparison"]),
 			...mapMutations([]),
 			setDateRange() {
 				let tempArray = [];
@@ -197,37 +144,70 @@
 			},
 			getData() {
 				this.openLoaderDialog();
-				this.filter.date_from = moment(this.datePickerDate[0])
+				this.comparisonDateFrom = moment(this.datePickerDate[0])
 					.tz("Asia/Kolkata")
 					.startOf()
 					.toISOString();
 				if (this.datePickerDate[1]) {
-					this.filter.date_to = moment(this.datePickerDate[1])
+					this.comparisonDateTo = moment(this.datePickerDate[1])
 						.tz("Asia/Kolkata")
-						.endOf()
+						.endOf("month")
 						.toISOString();
 				} else {
-					this.filter.date_to = this.filter.date_from;
+					this.comparisonDateTo = this.comparisonDateFrom;
 				}
-				//To only get the Amount RECEIVED we need to filter out following conditions
-				this.filter.status = "CONFIRMED";
-				this.filter.payment_status = "RECEIVED";
-				this.filter.payment_type = "FULL PAYMENT";
 
-				this.getFollowUp({
+				this.selectionDateFrom = moment(this.yearlyRevenueMainDate[0])
+					.tz("Asia/Kolkata")
+					// .startOf()
+					.toISOString();
+				if (this.datePickerDate[1]) {
+					this.selectionDateTo = moment(this.yearlyRevenueMainDate[1])
+						.tz("Asia/Kolkata")
+						.endOf("month")
+						.toISOString();
+				} else {
+					this.selectionDateTo = this.selectionDateFrom;
+				}
+
+				// this.filter = this.yearlyRevenueFilter;
+				console.log(
+					"comparison_date_from: ",
+					this.comparisonDateFrom,
+					"comparison_date_to:",
+					this.comparisonDateTo,
+					"selection_date_from:",
+					this.selectionDateFrom,
+					"selection_date_to:",
+					this.selectionDateTo
+				);
+				// if (this.filter.status) delete this.filter.status;
+				// if (this.filter.payment_status) delete this.filter.payment_status;
+				// if (this.filter.payment_type) delete this.filter.payment_type;
+				// if (this.filter.date_from) delete this.filter.date_from;
+				// if (this.filter.date_to) delete this.filter.date_to;
+
+				this.getYearlyComparison({
 					filter: this.filter,
-					pageSize: this.pageSize,
-					pageNo: this.pageNo,
+					comparison_date_from: this.comparisonDateFrom,
+					comparison_date_to: this.comparisonDateTo,
+					selection_date_from: this.selectionDateFrom,
+					selection_date_to: this.selectionDateTo,
+					// pageSize: this.pageSize,
+					// pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
+					console.log("data", data);
 					this.dataList = data.list;
-					this.totalCount = data.totalCount;
+					console.log(this.dataList);
+					// this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
 					this.dataList = this.dataList.map((d, index) => ({
 						...d,
-						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
+						serial_number: index + 1,
 					}));
+					console.log(this.dataList);
 				});
 			},
 			updatedPageNo(page) {
