@@ -1,7 +1,7 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
-const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
-// const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
+// const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
+const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.103:1401/" : "http://192.168.1.103:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.31.6:1401/" : "http://192.168.31.6:1401/";
@@ -87,4 +87,7 @@ export default {
 
 	// FOLLOW UP ENDPOINT
 	FOLLOW_UP: BASE_URL + "FollowUps/v0.1/",
+
+	// REPORTS SECTION
+	YEARLY_COMPARISON: BASE_URL + "Reports/v0.1/yearly-comparison",
 };
