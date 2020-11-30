@@ -18,6 +18,16 @@
 				</v-tab-item>
 			</v-tabs-items>
 		</template>
+		<template v-if="id == 'travelAgent'">
+			<v-tabs grow v-model="tab">
+				<v-tab>Raw Data</v-tab>
+			</v-tabs>
+			<v-tabs-items class="tabItemWrapper" v-model="tab">
+				<v-tab-item>
+					<TravelAgentRaw v-bind="{ ...propsList }"></TravelAgentRaw>
+				</v-tab-item>
+			</v-tabs-items>
+		</template>
 	</div>
 </template>
 
@@ -26,6 +36,7 @@
 	import YearlyRevenueRaw from "./YearlyRevenueRaw";
 	import YearlyRevenueComparison from "./YearlyRevenueComparison";
 	import YearlyRevenueZone from "./YearlyRevenueZone";
+	import TravelAgentRaw from "./TravelAgentRaw";
 
 	export default {
 		name: "ReportsManager",
@@ -33,6 +44,7 @@
 			YearlyRevenueRaw,
 			YearlyRevenueComparison,
 			YearlyRevenueZone,
+			TravelAgentRaw,
 		},
 		created() {
 			this.setProps();
