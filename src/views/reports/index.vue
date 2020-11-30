@@ -22,7 +22,7 @@
 
 		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
 			<template v-slot:modalTitle>
-				<div v-if="selectedTarget.name">{{ selectedTarget.name }}</div>
+				<div v-if="selectedTarget.name">{{ selectedTarget.name }} Based Report</div>
 			</template>
 			<template v-slot:modalContent>
 				<ReportsManager v-bind="{ ...selectedTarget.props }"></ReportsManager>
