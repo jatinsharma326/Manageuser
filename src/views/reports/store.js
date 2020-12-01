@@ -3,6 +3,7 @@ import constants from "@/api";
 const initialState = () => ({
 	yearlyRevenueMainDate: [],
 	yearlyRevenueFilter: {},
+	currentTab: null,
 });
 export default {
 	namespaced: true,
@@ -22,6 +23,9 @@ export default {
 		},
 		setYearlyRevenueFilter(state, data) {
 			state.yearlyRevenueFilter = data;
+		},
+		setCurrentTab(state, data) {
+			state.currentTab = data;
 		},
 	},
 	actions: {
@@ -63,5 +67,6 @@ export default {
 	getters: {
 		yearlyRevenueMainDate: (state) => state.yearlyRevenueMainDate,
 		yearlyRevenueFilter: (state) => state.yearlyRevenueFilter,
+		currentTab: (state) => state.currentTab,
 	},
 };
