@@ -33,16 +33,23 @@
 						></v-text-field>
 					</template>
 					<v-date-picker range type="month" v-model="datePickerDate" scrollable>
-						<v-spacer></v-spacer>
-						<v-btn text color="primary" @click="resetDatePicker">
-							Reset
-						</v-btn>
-						<v-btn text color="primary" @click="cancelDatePicker">
-							Cancel
-						</v-btn>
-						<v-btn text color="primary" @click="submitDatePicker">
-							OK
-						</v-btn>
+						<div class="date-picker-action-section">
+							<div class="date-error-message" v-show="!showErrorMessage">
+								Date range can't be more than 12 months / Invalid Date
+							</div>
+							<div class="action-buttons">
+								<v-spacer></v-spacer>
+								<v-btn text color="primary" @click="resetDatePicker">
+									Reset
+								</v-btn>
+								<v-btn text color="primary" @click="cancelDatePicker">
+									Cancel
+								</v-btn>
+								<v-btn :disabled="!showErrorMessage" text color="primary" @click="submitDatePicker">
+									OK
+								</v-btn>
+							</div>
+						</div>
 					</v-date-picker>
 				</v-dialog>
 			</div>
@@ -127,6 +134,11 @@
 			selectedCardInfo: {},
 			activeState: true,
 			dataList: [],
+			datePickerDate: [],
+			tempDateValue: [],
+			dateDialog: false,
+			selectedDateRange: [],
+			showErrorMessage: true,
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Product", value: "country", width: 150 },
@@ -170,21 +182,53 @@
 				tempArray.push(startDate);
 				tempArray.push(endDate);
 				this.datePickerDate = tempArray;
+				this.selectedDateRange = tempArray;
+			},
+			isDateValid() {
+				if (this.datePickerDate.length == 2) {
+					let diffrenceInDates = moment(this.datePickerDate[1])
+						.tz("Asia/Kolkata")
+						.diff(moment(this.datePickerDate[0]).tz("Asia/Kolkata"), "months", true);
+					if (diffrenceInDates <= 11) {
+						return true;
+					}
+				}
+				return false;
+			},
+			submitDatePicker() {
+				if (this.isDateValid) {
+					this.$refs.dialog.save(this.datePickerDate);
+					this.selectedDateRange = this.datePickerDate;
+					this.getData();
+				} else {
+					console.log("Please Select a Correct Date Range");
+				}
+			},
+			dataSelector() {
+				this.tempDateValue = [...this.datePickerDate];
+				// console.log("Date picker clicked", this.tempDateValue);
+			},
+			cancelDatePicker() {
+				this.datePickerDate = [...this.tempDateValue];
+				this.selectedDateRange = this.datePickerDate;
+				this.dateDialog = false;
+			},
+			resetDatePicker() {
+				this.setDateRange();
+				this.$refs.dialog.save(this.datePickerDate);
+				this.getData();
+				this.dateDialog = false;
 			},
 			getData() {
 				this.openLoaderDialog();
 				this.filter.date_from = moment(this.datePickerDate[0])
 					.tz("Asia/Kolkata")
-					.startOf()
+					.startOf("month")
 					.toISOString();
-				if (this.datePickerDate[1]) {
-					this.filter.date_to = moment(this.datePickerDate[1])
-						.tz("Asia/Kolkata")
-						.endOf()
-						.toISOString();
-				} else {
-					this.filter.date_to = this.filter.date_from;
-				}
+				this.filter.date_to = moment(this.datePickerDate[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
 				//To only get the Amount RECEIVED we need to filter out following conditions
 				this.filter.status = "CONFIRMED";
 				this.filter.payment_status = "RECEIVED";
@@ -264,23 +308,15 @@
 			datePickerDate: {
 				deep: true,
 				async handler(nv, ov) {
-					// console.log("ov", ov, "nv", nv);
-					for (let valueOV of ov) {
-						for (let valueNV of nv) {
-							if (valueOV != valueNV) {
-								// this.$emit("mainDateRange", this.datePickerDate);
-								this.setYearlyRevenueMainDate(this.datePickerDate);
-							}
-						}
-					}
-					// this.filter = {};
-					// this.dataList = [];
-					// this.pageNo = 1;
-					// console.log("Company Info changed");
-					// this.getData();
-					// await this.getStates();
-					// this.setInputConfig(this.statesList);
-					// this.setSearchConfig(this.statesList);
+					console.log("Error check");
+					this.showErrorMessage = this.isDateValid();
+				},
+			},
+			selectedDateRange: {
+				deep: true,
+				handler(nv, ov) {
+					console.log("Set the Date");
+					this.setYearlyRevenueMainDate(this.datePickerDate);
 				},
 			},
 		},
