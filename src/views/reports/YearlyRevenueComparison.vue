@@ -56,10 +56,16 @@
 				</template>
 			</v-data-table>
 		</div>
+		<!-- {{ secondaryAxis }} -->
+		<div class="charts">
+			{{ render }}
+			<BarChart v-if="render" :myTabId="1" :chartData="chartData" :options="chartOptions"></BarChart>
+		</div>
 	</div>
 </template>
 
 <script>
+	import BarChart from "../../components/BarChart";
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import searchMixin from "../../mixins/searchMixin";
 	import datePickerMixin from "../../mixins/datePickerMixin";
@@ -70,31 +76,57 @@
 	export default {
 		name: "YearlyRevenueComparison",
 		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
-		components: {},
-		async created() {
-			this.setDateRange();
-			this.getData();
+		components: {
+			BarChart,
 		},
-		data: () => ({
-			selectedCardInfo: {},
-			activeState: true,
-			dataList: [],
-			selectionDateFrom: "",
-			selectionDateTo: "",
-			comparisonDateFrom: "",
-			comparisonDateTo: "",
-			showErrorMessage: true,
-			headers: [
-				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
-				{ text: "Month", value: "month_of_travel", width: 150 },
-				{ text: "Created By", value: "record_2", width: 200 },
-				{ text: "Date of Enquiry", value: "record_1", width: 200 },
-				{ text: "Amount Difference ($)", value: "diff", width: 200 },
-				{ text: "Percentage Difference", value: "perc_incr_decr", width: 150 },
-			],
-		}),
+		async created() {
+			// this.$set(this, "monthArr", []);
+			// this.$set(this, "ComparisonArr", []);
+			// this.$set(this, "selectionArr", []);
+			// this.$set(this, "secondaryAxis", []);
+			this.setDateRange();
+			await this.getData();
+			// this.$set(this, "monthArr", []);
+		},
+		data() {
+			return {
+				render: false,
+				dataList: [],
+
+				selectionDateFrom: "",
+				selectionDateTo: "",
+				comparisonDateFrom: "",
+				comparisonDateTo: "",
+
+				// chartLabel: [],
+				// ComparisonArr: [],
+				// selectionArr: [],
+
+				chartData: {},
+				chartOptions: {
+					responsive: true,
+					maintainAspectRatio: false,
+					// animation: {
+					// 	duration: 0,
+					// },
+					// hover: {
+					// 	animationDuration: 0,
+					// },
+					// responsiveAnimationDuration: 0,
+				},
+				showErrorMessage: true,
+				headers: [
+					{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+					{ text: "Month", value: "month_of_travel", width: 150 },
+					{ text: "Selection Date Range", value: "record_1", width: 200 },
+					{ text: "Comparison Date Range", value: "record_2", width: 200 },
+					{ text: "Amount Difference ($)", value: "diff", width: 200 },
+					{ text: "Percentage Difference", value: "perc_incr_decr", width: 150 },
+				],
+			};
+		},
 		computed: {
-			...mapGetters("Reports", ["yearlyRevenueMainDate", "yearlyRevenueFilter"]),
+			...mapGetters("Reports", ["yearlyRevenueMainDate", "yearlyRevenueFilter", "currentTab"]),
 			dateRangeText() {
 				return this.datePickerDate.join(" ~ ");
 			},
@@ -107,12 +139,12 @@
 				let startDate = moment(this.yearlyRevenueMainDate[0])
 					.tz("Asia/Kolkata")
 					.subtract(1, "year")
-					.startOf("year")
+					.startOf("month")
 					.format("YYYY-MM");
 				let endDate = moment(this.yearlyRevenueMainDate[1])
 					.tz("Asia/Kolkata")
 					.subtract(1, "year")
-					.endOf("year")
+					.endOf("month")
 					.format("YYYY-MM");
 				// let diffrenceInDates = currentMonth.diff(callMonth, "months", true);
 				tempArray.push(startDate);
@@ -128,15 +160,21 @@
 				}
 			},
 			isDateValid(newValue) {
-				let diffrenceInStartDates, diffrenceInEndDates;
-				diffrenceInStartDates = moment(this.yearlyRevenueMainDate[0])
+				// let diffrenceInStartDates, diffrenceInEndDates;
+				let diffrenceInStartDates = moment(this.yearlyRevenueMainDate[0])
 					.tz("Asia/Kolkata")
 					.diff(moment(newValue[0]).tz("Asia/Kolkata"), "months", true);
-				diffrenceInEndDates = moment(this.yearlyRevenueMainDate[1])
+				let diffrenceInEndDates = moment(this.yearlyRevenueMainDate[1])
 					.tz("Asia/Kolkata")
 					.diff(moment(newValue[1]).tz("Asia/Kolkata"), "months", true);
 
-				if (Number.isInteger(diffrenceInStartDates / 12) && Number.isInteger(diffrenceInEndDates / 12)) {
+				// console.log(diffrenceInStartDates, diffrenceInEndDates);
+				if (
+					Number.isInteger(diffrenceInStartDates / 12) &&
+					Number.isInteger(diffrenceInEndDates / 12) &&
+					diffrenceInStartDates != 0 &&
+					diffrenceInEndDates != 0
+				) {
 					return true;
 				} else {
 					return false;
@@ -144,6 +182,7 @@
 			},
 			getData() {
 				this.openLoaderDialog();
+				this.render = false;
 				this.comparisonDateFrom = moment(this.datePickerDate[0])
 					.tz("Asia/Kolkata")
 					.startOf()
@@ -170,44 +209,58 @@
 					this.selectionDateTo = this.selectionDateFrom;
 				}
 
-				// this.filter = this.yearlyRevenueFilter;
-				console.log(
-					"comparison_date_from: ",
-					this.comparisonDateFrom,
-					"comparison_date_to:",
-					this.comparisonDateTo,
-					"selection_date_from:",
-					this.selectionDateFrom,
-					"selection_date_to:",
-					this.selectionDateTo
-				);
-				// if (this.filter.status) delete this.filter.status;
-				// if (this.filter.payment_status) delete this.filter.payment_status;
-				// if (this.filter.payment_type) delete this.filter.payment_type;
-				// if (this.filter.date_from) delete this.filter.date_from;
-				// if (this.filter.date_to) delete this.filter.date_to;
-
 				this.getYearlyComparison({
 					filter: this.filter,
 					comparison_date_from: this.comparisonDateFrom,
 					comparison_date_to: this.comparisonDateTo,
 					selection_date_from: this.selectionDateFrom,
 					selection_date_to: this.selectionDateTo,
-					// pageSize: this.pageSize,
-					// pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					console.log("data", data);
-					this.dataList = data.list;
-					console.log(this.dataList);
-					// this.totalCount = data.totalCount;
-					this.fetchCount = data.fetchCount;
+					let chartLabel = [];
+					let comparisonArr = [];
+					let selectionArr = [];
+					// let chartDatasets = [];
 
+					this.dataList = data.list;
 					this.dataList = this.dataList.map((d, index) => ({
 						...d,
 						serial_number: index + 1,
 					}));
-					console.log(this.dataList);
+					for (data of this.dataList) {
+						if (data.month_of_travel !== "TOTAL") {
+							chartLabel.push(data.month_of_travel);
+							comparisonArr.push(data.record_1);
+							selectionArr.push(data.record_2);
+						}
+					}
+
+					let chartDatasets = [
+						{
+							label:
+								this.getFormattedDate(this.comparisonDateFrom, "MMM YYYY") +
+								" to " +
+								this.getFormattedDate(this.comparisonDateTo, "MMM YYYY"),
+							data: comparisonArr,
+							borderColor: "#acdcdc",
+							backgroundColor: "#acdcdc",
+						},
+						{
+							label:
+								this.getFormattedDate(this.selectionDateFrom, "MMM YYYY") +
+								" to " +
+								this.getFormattedDate(this.selectionDateTo, "MMM YYYY"),
+							data: selectionArr,
+							borderColor: "#ecdcdc",
+							backgroundColor: "ecdcdc",
+						},
+					];
+					console.log("chartDatasets", chartDatasets);
+					this.chartData = {
+						labels: chartLabel,
+						datasets: chartDatasets,
+					};
+					this.render = true;
 				});
 			},
 			updatedPageNo(page) {
@@ -218,13 +271,29 @@
 			datePickerDate: {
 				deep: true,
 				async handler(nv, ov) {
-					for (let valueOV of ov) {
-						for (let valueNV of nv) {
-							if (valueOV != valueNV) {
-								this.showErrorMessage = this.isDateValid(nv);
-							}
-						}
-					}
+					this.showErrorMessage = this.isDateValid(nv);
+				},
+			},
+			yearlyRevenueMainDate: {
+				deep: true,
+				async handler(nv, ov) {
+					this.setDateRange();
+					this.getData();
+				},
+			},
+			currentTab(nv) {
+				if (nv == 1) {
+					this.render = false;
+					setTimeout(() => {
+						this.render = true;
+					}, 0);
+				}
+			},
+			yearlyRevenueFilter: {
+				deep: true,
+				async handler(nv, ov) {
+					this.setDateRange();
+					this.getData();
 				},
 			},
 		},
