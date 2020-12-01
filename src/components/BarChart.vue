@@ -1,39 +1,28 @@
 <script>
-	import { Bar } from "vue-chartjs";
+	// import { Bar } from "vue-chartjs";
+	import { Bar, mixins } from "vue-chartjs";
+	import { mapGetters } from "vuex";
 	// var randomColor = require("randomcolor");
 
 	export default {
 		extends: Bar,
+		// mixins: [],
+		mixins: [mixins.reactiveProp],
 		props: {
-			mainAxis: {
-				type: Array,
-			},
-			secondaryAxis: {
-				type: Array,
+			chartData: {
+				type: Object,
 			},
 			options: {
 				type: Object,
 			},
-			// chartColors: {
-			// 	type: Object,
-			// },
+			myTabId: {
+				type: Number,
+			},
 		},
-		updated() {
-			// function getRandomColor() {
-			// 	var letters = "0123456789ABCDEF".split("");
-			// 	var color = "#";
-			// 	for (var i = 0; i < 6; i++) {
-			// 		color += letters[Math.floor(Math.random() * 16)];
-			// 	}
-			// 	return color;
-			// }
-			this.renderChart(
-				{
-					labels: this.mainAxis,
-					datasets: this.secondaryAxis,
-				},
-				this.options
-			);
+		mounted() {
+			this.renderChart(this.chartData, this.options);
 		},
+		computed: {},
+		watch: {},
 	};
 </script>
