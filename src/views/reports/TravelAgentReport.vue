@@ -10,7 +10,11 @@
 					:isOnlyAdvanceSearch="true"
 					:isAdvanceAFilter="true"
 					:filterConfig="selectedSearchConfig"
-				></Search>
+				>
+					<template v-slot:buttonSection>
+						<v-btn color="secondary" text @click.stop="downloadReport()">Download Report</v-btn>
+					</template>
+				</Search>
 			</div>
 			<div class="datepicker">
 				<v-dialog
@@ -46,7 +50,6 @@
 				</v-dialog>
 			</div>
 		</div>
-		{{ pageSize }}
 		<div v-if="totalCount === 0" class="content-error-message">
 			No Followup entries. Please add followup entries to see the reports
 		</div>
@@ -109,7 +112,7 @@
 			},
 		},
 		methods: {
-			...mapActions("Reports", ["getTravelAgentReport"]),
+			...mapActions("Reports", ["getTravelAgentReport", "downloadAgencyWiseReport"]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -207,6 +210,30 @@
 						listVariable: "zone",
 					});
 				}
+			},
+			downloadReport() {
+				this.datePickerDate.sort();
+				this.selectionDateFrom = moment(this.datePickerDate[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				if (this.datePickerDate[1]) {
+					this.selectionDateTo = moment(this.datePickerDate[1])
+						.tz("Asia/Kolkata")
+						.endOf("month")
+						.toISOString();
+				} else {
+					this.selectionDateTo = this.selectionDateFrom;
+				}
+
+				this.openLoaderDialog();
+				this.downloadAgencyWiseReport({
+					filter: this.filter,
+					selection_date_from: this.selectionDateFrom,
+					selection_date_to: this.selectionDateTo,
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
 			},
 			updatedPageNo(page) {
 				this.getData();
