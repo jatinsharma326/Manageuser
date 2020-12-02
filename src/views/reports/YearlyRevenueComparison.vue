@@ -66,7 +66,7 @@
 <script>
 	import BarChart from "../../components/BarChart";
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
-	import searchMixin from "../../mixins/searchMixin";
+	// import searchMixin from "../../mixins/searchMixin";
 	import datePickerMixin from "../../mixins/datePickerMixin";
 	import helperMixin from "../../mixins/helperMixins";
 	import moment from "moment-timezone";
@@ -74,7 +74,7 @@
 
 	export default {
 		name: "YearlyRevenueComparison",
-		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
+		mixins: [defaultCRUDMixin, datePickerMixin, helperMixin],
 		components: {
 			BarChart,
 		},
@@ -86,6 +86,7 @@
 			return {
 				render: false,
 				dataList: [],
+				pageSize: 20,
 
 				selectionDateFrom: "",
 				selectionDateTo: "",
@@ -170,12 +171,14 @@
 			getData() {
 				this.openLoaderDialog();
 				this.render = false;
-				this.comparisonDateFrom = moment(this.datePickerDate[0])
+				let comparisonDate = JSON.parse(JSON.stringify(this.datePickerDate));
+				comparisonDate.sort();
+				this.comparisonDateFrom = moment(comparisonDate[0])
 					.tz("Asia/Kolkata")
-					.startOf()
+					.startOf("month")
 					.toISOString();
 				if (this.datePickerDate[1]) {
-					this.comparisonDateTo = moment(this.datePickerDate[1])
+					this.comparisonDateTo = moment(comparisonDate[1])
 						.tz("Asia/Kolkata")
 						.endOf("month")
 						.toISOString();
@@ -183,18 +186,16 @@
 					this.comparisonDateTo = this.comparisonDateFrom;
 				}
 
-				this.selectionDateFrom = moment(this.yearlyRevenueMainDate[0])
+				let selectionDate = JSON.parse(JSON.stringify(this.yearlyRevenueMainDate));
+				selectionDate.sort();
+				this.selectionDateFrom = moment(selectionDate[0])
 					.tz("Asia/Kolkata")
-					// .startOf()
+					.startOf("month")
 					.toISOString();
-				if (this.datePickerDate[1]) {
-					this.selectionDateTo = moment(this.yearlyRevenueMainDate[1])
-						.tz("Asia/Kolkata")
-						.endOf("month")
-						.toISOString();
-				} else {
-					this.selectionDateTo = this.selectionDateFrom;
-				}
+				this.selectionDateTo = moment(selectionDate[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
 
 				this.getYearlyComparison({
 					filter: this.filter,
@@ -250,9 +251,9 @@
 					this.render = true;
 				});
 			},
-			updatedPageNo(page) {
-				this.getData();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 		},
 		watch: {
 			datePickerDate: {
@@ -281,6 +282,7 @@
 				async handler(nv, ov) {
 					this.setDateRange();
 					this.getData();
+					console.log("yearlyRevenueFilter", this.yearlyRevenueFilter);
 				},
 			},
 		},
