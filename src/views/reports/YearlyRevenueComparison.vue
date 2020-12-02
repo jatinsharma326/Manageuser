@@ -1,7 +1,10 @@
 <template>
 	<div class="yearlyComparison">
 		<div class="SearchbarWrapper">
-			<div class="searchbar"></div>
+			<div class="searchbar">
+				<v-btn color="secondary" text @click.stop="downloadReport()">Download Report</v-btn>
+				<v-btn color="secondary" text @click.stop="downloadChart()">Download Chart</v-btn>
+			</div>
 			<div class="datepicker">
 				<v-dialog
 					ref="dialog"
@@ -124,7 +127,7 @@
 			},
 		},
 		methods: {
-			...mapActions("Reports", ["getYearlyComparison"]),
+			...mapActions("Reports", ["getYearlyComparison", "downloadComparisonReport"]),
 			...mapMutations([]),
 			setDateRange() {
 				let tempArray = [];
@@ -260,6 +263,56 @@
 						datasets: chartDatasets,
 					};
 					this.render = true;
+				});
+			},
+			downloadReport() {
+				let comparisonDate = JSON.parse(JSON.stringify(this.datePickerDate));
+				comparisonDate.sort();
+				this.comparisonDateFrom = moment(comparisonDate[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				if (this.datePickerDate[1]) {
+					this.comparisonDateTo = moment(comparisonDate[1])
+						.tz("Asia/Kolkata")
+						.endOf("month")
+						.toISOString();
+				} else {
+					this.comparisonDateTo = this.comparisonDateFrom;
+				}
+
+				let selectionDate = JSON.parse(JSON.stringify(this.yearlyRevenueMainDate));
+				selectionDate.sort();
+				this.selectionDateFrom = moment(selectionDate[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				this.selectionDateTo = moment(selectionDate[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
+
+				let { business_types, countries, names } = this.yearlyRevenueFilter;
+				if (business_types) {
+					this.filter.business_types = business_types;
+				}
+				if (countries) {
+					this.filter.countries = countries;
+				}
+				if (names) {
+					this.filter.names = names;
+				}
+
+				this.openLoaderDialog();
+				this.downloadComparisonReport({
+					filter: this.filter,
+					comparison_date_from: this.comparisonDateFrom,
+					comparison_date_to: this.comparisonDateTo,
+					selection_date_from: this.selectionDateFrom,
+					selection_date_to: this.selectionDateTo,
+					type: "comparison",
+				}).then(() => {
+					this.closeLoaderDialog();
 				});
 			},
 			// updatedPageNo(page) {

@@ -1,5 +1,9 @@
 <template>
 	<div class="yearlyZone">
+		<div class="download-reports">
+			<v-btn color="secondary" text @click.stop="downloadReport()">Download Report</v-btn>
+			<v-btn color="secondary" text @click.stop="downloadChart()">Download Chart</v-btn>
+		</div>
 		<div class="leaves-table">
 			<v-data-table
 				:items-per-page="pageSize"
@@ -71,7 +75,7 @@
 			},
 		},
 		methods: {
-			...mapActions("Reports", ["getYearlyZone"]),
+			...mapActions("Reports", ["getYearlyZone", "downloadComparisonReport"]),
 			...mapMutations([]),
 			getData() {
 				this.openLoaderDialog();
@@ -164,6 +168,40 @@
 						datasets: chartDatasets,
 					};
 					this.render = true;
+				});
+			},
+			downloadReport() {
+				let selectionDate = JSON.parse(JSON.stringify(this.yearlyRevenueMainDate));
+				selectionDate.sort();
+
+				this.selectionDateFrom = moment(selectionDate[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				this.selectionDateTo = moment(selectionDate[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
+
+				let { business_types, countries, names } = this.yearlyRevenueFilter;
+				if (business_types) {
+					this.filter.business_types = business_types;
+				}
+				if (countries) {
+					this.filter.countries = countries;
+				}
+				if (names) {
+					this.filter.names = names;
+				}
+
+				this.openLoaderDialog();
+				this.downloadComparisonReport({
+					filter: this.filter,
+					selection_date_from: this.selectionDateFrom,
+					selection_date_to: this.selectionDateTo,
+					type: "zone",
+				}).then(() => {
+					this.closeLoaderDialog();
 				});
 			},
 		},

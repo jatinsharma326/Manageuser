@@ -11,7 +11,11 @@
 					:isOnlyAdvanceSearch="true"
 					:isAdvanceAFilter="true"
 					:filterConfig="selectedSearchConfig"
-				></Search>
+				>
+					<template v-slot:buttonSection>
+						<v-btn color="secondary" text @click.stop="downloadReport()">Download Report</v-btn>
+					</template>
+				</Search>
 			</div>
 			<div class="datepicker">
 				<v-dialog
@@ -169,7 +173,8 @@
 		},
 		methods: {
 			...mapActions("FollowUp", ["getFollowUp"]),
-			...mapMutations("Reports", ["setYearlyRevenueMainDate", "setYearlyRevenueFilter"]),
+			...mapActions("Reports", ["downloadComparisonReport"]),
+			...mapMutations("Reports", ["setYearlyRevenueMainDate", "setYearlyRevenueFilter", ,]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -324,6 +329,30 @@
 			},
 			updatedPageNo(page) {
 				this.getData();
+			},
+			downloadReport() {
+				let dateSelection = JSON.parse(JSON.stringify(this.datePickerDate));
+				dateSelection.sort();
+				this.filter.date_from = moment(dateSelection[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				this.filter.date_to = moment(dateSelection[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
+				//To only get the Amount RECEIVED we need to filter out following conditions
+				this.filter.status = "CONFIRMED";
+				this.filter.payment_status = "RECEIVED";
+				this.filter.payment_type = "FULL PAYMENT";
+
+				this.openLoaderDialog();
+				this.downloadComparisonReport({
+					filter: this.filter,
+					type: "raw",
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
 			},
 		},
 		watch: {
