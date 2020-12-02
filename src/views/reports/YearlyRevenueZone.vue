@@ -38,6 +38,7 @@
 			render: false,
 			dataList: [],
 			pageSize: 20,
+			filter: {},
 			selectionDateFrom: "",
 			selectionDateTo: "",
 			chartData: {},
@@ -75,19 +76,30 @@
 				this.openLoaderDialog();
 				this.render = false;
 
-				this.selectionDateFrom = moment(this.yearlyRevenueMainDate[0])
+				let selectionDate = JSON.parse(JSON.stringify(this.yearlyRevenueMainDate));
+				selectionDate.sort();
+
+				this.selectionDateFrom = moment(selectionDate[0])
 					.tz("Asia/Kolkata")
 					.startOf("month")
 					.toISOString();
-				this.selectionDateTo = moment(this.yearlyRevenueMainDate[1])
+				this.selectionDateTo = moment(selectionDate[1])
 					.tz("Asia/Kolkata")
 					.endOf("month")
 					.toISOString();
 
+				let { business_types, countries, names } = this.yearlyRevenueFilter;
+				if (business_types) {
+					this.filter.business_types = business_types;
+				}
+				if (countries) {
+					this.filter.countries = countries;
+				}
+				if (names) {
+					this.filter.names = names;
+				}
 				this.getYearlyZone({
-					filter: {
-						...this.yearlyRevenueFilter,
-					},
+					filter: this.filter,
 					selection_date_from: this.selectionDateFrom,
 					selection_date_to: this.selectionDateTo,
 				}).then((data) => {
