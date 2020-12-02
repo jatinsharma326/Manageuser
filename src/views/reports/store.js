@@ -1,4 +1,5 @@
 import constants from "@/api";
+import helpers from "../../components/helpers";
 
 const initialState = () => ({
 	yearlyRevenueMainDate: [],
@@ -165,6 +166,68 @@ export default {
 					console.log("Yo ", err);
 					fail(err.toString() || "Failed to load Agencywise Reports List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
+		downloadComparisonReport: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			let fileName = "report";
+			if (payload.type == "raw") {
+				fileName = "Raw Data";
+			}
+			if (payload.type == "comparison") {
+				console.log("Comparsion Report");
+				console.log("Helper", helpers.getFormattedDate(payload.comparison_date_from, "YYYY-MM"));
+				fileName =
+					"Comparison report ( " +
+					helpers.getFormattedDate(payload.comparison_date_from, "YYYY-MM") +
+					"_" +
+					helpers.getFormattedDate(payload.comparison_date_to, "YYYY-MM") +
+					" to " +
+					helpers.getFormattedDate(payload.selection_date_from, "YYYY-MM") +
+					"_" +
+					helpers.getFormattedDate(payload.selection_date_to, "YYYY-MM") +
+					" )";
+				console.log("File Name", fileName);
+			}
+			if (payload.type == "zone") {
+				fileName =
+					"Zone report from " +
+					helpers.getFormattedDate(payload.selection_date_from, "YYYY-MM") +
+					" to " +
+					helpers.getFormattedDate(payload.selection_date_to, "YYYY-MM");
+			}
+			delete payload.type;
+			console.log(payload);
+			return dispatch(
+				"fileDownload_API_Call",
+				{
+					method: "get",
+					params: payload,
+					url: constants.YEARLY_COMPARISON_DOWNLOAD,
+					responseType: "blob",
+				},
+				{ root: true }
+			)
+				.then(({ data, response }) => {
+					if (response.status === 200) {
+						commit("openSnackbar", { text: "Starting Download" }, { root: true });
+						const url = window.URL.createObjectURL(new Blob([data]));
+						const link = document.createElement("a");
+						link.href = url;
+						link.setAttribute("download", "Yearly Revenue " + fileName + ".xlsx");
+						document.body.appendChild(link);
+						link.click();
+						return;
+					} else {
+						commit("openSnackbar", { text: "Could not start download" }, { root: true });
+						fail(data.message || "Failed to start download");
+						return;
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					commit("openSnackbar", { text: "Could not start download" }, { root: true });
+					fail(err.toString() || "Failed to Download Report File");
 				});
 		},
 	},
