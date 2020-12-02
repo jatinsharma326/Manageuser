@@ -127,7 +127,7 @@
 			},
 		},
 		methods: {
-			...mapActions("Reports", ["getYearlyComparison", "downloadComparisonReport"]),
+			...mapActions("Reports", ["getYearlyComparison", "downloadYearlyComparisonReport"]),
 			...mapMutations([]),
 			setDateRange() {
 				let tempArray = [];

@@ -75,7 +75,7 @@
 			},
 		},
 		methods: {
-			...mapActions("Reports", ["getYearlyZone", "downloadComparisonReport"]),
+			...mapActions("Reports", ["getYearlyZone", "downloadYearlyZoneReport"]),
 			...mapMutations([]),
 			getData() {
 				this.openLoaderDialog();
@@ -195,7 +195,7 @@
 				}
 
 				this.openLoaderDialog();
-				this.downloadComparisonReport({
+				this.downloadYearlyZoneReport({
 					filter: this.filter,
 					selection_date_from: this.selectionDateFrom,
 					selection_date_to: this.selectionDateTo,

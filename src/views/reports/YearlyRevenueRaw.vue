@@ -173,7 +173,7 @@
 		},
 		methods: {
 			...mapActions("FollowUp", ["getFollowUp"]),
-			...mapActions("Reports", ["downloadComparisonReport"]),
+			...mapActions("Reports", ["downloadYearlyRawReport"]),
 			...mapMutations("Reports", ["setYearlyRevenueMainDate", "setYearlyRevenueFilter", ,]),
 			setDateRange() {
 				let tempArray = [];
@@ -347,9 +347,8 @@
 				this.filter.payment_type = "FULL PAYMENT";
 
 				this.openLoaderDialog();
-				this.downloadComparisonReport({
+				this.downloadYearlyRawReport({
 					filter: this.filter,
-					type: "raw",
 				}).then(() => {
 					this.closeLoaderDialog();
 				});
