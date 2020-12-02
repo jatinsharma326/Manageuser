@@ -297,7 +297,9 @@
 						isListInStore: false,
 						listItems: countriesList,
 					},
-					{
+				];
+				if (this.isAdminOrManagement) {
+					this.selectedSearchConfig.unshift({
 						name: "Created By",
 						key: "names",
 						multi: true,
@@ -305,9 +307,20 @@
 						defaultValue: [],
 						isListInStore: false,
 						listItems: userList,
-						classes: ["full"],
-					},
-				];
+					});
+				}
+
+				if (this.isAdminOrManagement || this.isOnlySalesAgent) {
+					this.selectedSearchConfig.push({
+						name: "Zone",
+						key: "zones",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: true,
+						listVariable: "zone",
+					});
+				}
 			},
 			updatedPageNo(page) {
 				this.getData();
