@@ -95,5 +95,10 @@ export default {
 	YEARLY_ZONE: BASE_URL + "Reports/v0.1/zone-wise",
 	TRAVEL_AGENT_REPORT: BASE_URL + "Reports/v0.1/agency-wise",
 	TARGET_REPORT: BASE_URL + "Reports/v0.1/target-revenue-comparison",
-	YEARLY_COMPARISON_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
+
+	// Download Reports
+	YEARLY_REVENUE_RAW_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-follow-up-raw-data-report",
+	YEARLY_REVENUE_COMPARISON_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
+	YEARLY_REVENUE_ZONE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
+	AGENCY_WISE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-agency-wise-follow-ups",
 };
