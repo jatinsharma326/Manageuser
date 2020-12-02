@@ -170,6 +170,7 @@
 			await this.getCountries();
 			//get companies is defined in commonAPIMixins which gets companiesList and modifiedCompanyList
 			promiseArray.push(this.getCompanies());
+			promiseArray.push(this.getCities());
 			promiseArray.push(this.getActiveCurrenciesList());
 			await Promise.all(promiseArray);
 			this.closeLoaderDialog();
@@ -178,7 +179,8 @@
 				this.companyList,
 				// this.modifiedCompanyIdsList,
 				this.countriesList,
-				this.activeCurrencyList
+				this.activeCurrencyList,
+				this.citiesList
 			);
 		},
 		data: () => ({
@@ -186,6 +188,7 @@
 			placeholder: "Search Followup Entry",
 			searchConfig: [],
 			inputConfig: [],
+			citiesList: [],
 			followUpList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
@@ -226,6 +229,7 @@
 		methods: {
 			...mapActions("FollowUp", [
 				"getActiveCurrencies",
+				"getCitiesList",
 				"getFollowUp",
 				"addFollowUp",
 				"editFollowUp",
@@ -252,6 +256,13 @@
 				} else {
 					return this.getCountryList();
 				}
+			},
+			getCities() {
+				return this.getCitiesList({
+					filter: {},
+				}).then((data) => {
+					this.citiesList = data.list;
+				});
 			},
 			getData() {
 				this.openLoaderDialog();
@@ -289,7 +300,8 @@
 				companyList = [],
 				// modifiedCompanyIdsList = [],
 				countriesList = [],
-				activeCurrencyList = []
+				activeCurrencyList = [],
+				citiesList = []
 			) {
 				this.searchConfig = [
 					{
@@ -319,9 +331,11 @@
 					{
 						name: "City",
 						key: "city",
-						type: "text",
-						inputType: "textfield",
-						defaultValue: "",
+						multi: false,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: citiesList,
 						classes: ["half"],
 					},
 					{
@@ -440,12 +454,14 @@
 					},
 					{
 						name: "City*",
-						type: "String",
+						type: "Dropdown",
 						key: "city",
 						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: citiesList,
 						validations: {
 							required,
-							minLength: minLength(1),
 						},
 					},
 					{
@@ -655,7 +671,6 @@
 						classes: ["half"],
 					});
 				}
-
 				if (this.isOnlySalesAgent) {
 					this.inputConfig.unshift({
 						name: "Zone*",
