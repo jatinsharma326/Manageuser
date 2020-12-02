@@ -63,6 +63,40 @@ export default {
 					};
 				});
 		},
+		getYearlyZone: ({ commit, dispatch }, params) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: params,
+					url: constants.YEARLY_ZONE,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load Targets");
+						return {
+							ok: false,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load Targets");
+					return {
+						ok: false,
+						list: [],
+					};
+				});
+		},
 	},
 	getters: {
 		yearlyRevenueMainDate: (state) => state.yearlyRevenueMainDate,
