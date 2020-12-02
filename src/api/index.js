@@ -93,4 +93,5 @@ export default {
 	// REPORTS SECTION
 	YEARLY_COMPARISON: BASE_URL + "Reports/v0.1/yearly-comparison",
 	YEARLY_ZONE: BASE_URL + "Reports/v0.1/zone-wise",
+	TRAVEL_AGENT_REPORT: BASE_URL + "Reports/v0.1/agency-wise",
 };
