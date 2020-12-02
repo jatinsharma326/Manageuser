@@ -55,6 +55,7 @@
 			},
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+				{ text: "Month", value: "month_of_travel", width: 150 },
 				{ text: "East", value: "east", width: 150 },
 				{ text: "West(Guj)", value: "west_guj", width: 150 },
 				{ text: "West", value: "west", width: 200 },
