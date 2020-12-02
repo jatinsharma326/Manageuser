@@ -1,5 +1,5 @@
 <template>
-	<div class="companyAddressWrapper">
+	<div class="yearlyZone">
 		<div class="leaves-table">
 			<v-data-table
 				:items-per-page="pageSize"
@@ -162,7 +162,7 @@
 				},
 			},
 			currentTab(nv) {
-				if (nv == 1) {
+				if (nv == 2) {
 					this.render = false;
 					setTimeout(() => {
 						this.render = true;
@@ -181,7 +181,7 @@
 </script>
 
 <style lang="scss" scopped>
-	.companyAddressWrapper {
+	.yearlyZone {
 		padding: 20px 5px;
 		height: 100%;
 	}
