@@ -2,6 +2,7 @@
 	<div class="searchWrapper">
 		<v-badge v-if="isOnlyAdvanceSearch" class="filter-button" dot overlap :value="areFiltersApplied">
 			<v-btn color="primary" text @click.stop="toggleAdvanceSearchSection()">{{ placeholder }}</v-btn>
+			<slot name="buttonSection"></slot>
 		</v-badge>
 		<v-text-field
 			v-else
