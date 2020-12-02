@@ -135,7 +135,7 @@ export default {
 
 		downloadReportFile: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
-			console.log(payload);
+			// console.log(payload);
 			return dispatch(
 				"fileDownload_API_Call",
 				{
