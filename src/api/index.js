@@ -1,12 +1,12 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
-// const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
+const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.103:1401/" : "http://192.168.1.103:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.31.6:1401/" : "http://192.168.31.6:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.43.67:1401/" : "http://192.168.43.67:1401/";
-const BASE_URL = isBuildVersion ? "http://192.168.1.35:1401/" : "http://192.168.1.35:1401/";
+// const BASE_URL = isBuildVersion ? "http://192.168.1.35:1401/" : "http://192.168.1.35:1401/";
 // const BASE_URL = isBuildVersion ? "https://3128e8a0ed71.ngrok.io/" : "https://3128e8a0ed71.ngrok.io/";
 
 export default {
@@ -95,4 +95,5 @@ export default {
 	YEARLY_ZONE: BASE_URL + "Reports/v0.1/zone-wise",
 	TRAVEL_AGENT_REPORT: BASE_URL + "Reports/v0.1/agency-wise",
 	TARGET_REPORT: BASE_URL + "Reports/v0.1/target-revenue-comparison",
+	YEARLY_COMPARISON_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
 };
