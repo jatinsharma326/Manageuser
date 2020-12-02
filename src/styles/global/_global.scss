@@ -209,3 +209,17 @@ body {
 	border: 1px solid $primary;
 	border-radius: 5px;
 }
+
+// Date picker Action Style. Mainly used in reports section
+.date-picker-action-section {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	.date-error-message {
+		color: $error;
+		padding: 10px;
+		text-align: center;
+	}
+}
