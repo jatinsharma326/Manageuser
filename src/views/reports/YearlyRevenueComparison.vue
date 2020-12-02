@@ -1,5 +1,5 @@
 <template>
-	<div class="companyAddressWrapper">
+	<div class="yearlyComparison">
 		<div class="SearchbarWrapper">
 			<div class="searchbar"></div>
 			<div class="datepicker">
@@ -23,8 +23,8 @@
 					</template>
 					<v-date-picker range type="month" v-model="datePickerDate" scrollable>
 						<div class="date-picker-action-section">
-							<div class="date-error-message" v-show="!showErrorMessage">
-								Date doesn't match range selected in previous tab
+							<div class="date-error-message" v-show="!errorMessage">
+								{{ dateErrorMessage }}
 							</div>
 							<div class="action-buttons">
 								<v-spacer></v-spacer>
@@ -34,7 +34,7 @@
 								<v-btn text color="primary" @click="cancelDatePicker">
 									Cancel
 								</v-btn>
-								<v-btn :disabled="!showErrorMessage" text color="primary" @click="submitDatePickerr">
+								<v-btn :disabled="!errorMessage" text color="primary" @click="submitDatePickerr">
 									OK
 								</v-btn>
 							</div>
@@ -91,6 +91,7 @@
 				selectionDateTo: "",
 				comparisonDateFrom: "",
 				comparisonDateTo: "",
+				dateErrorMessage: "",
 				chartData: {},
 				chartOptions: {
 					responsive: true,
@@ -103,7 +104,7 @@
 					// },
 					// responsiveAnimationDuration: 0,
 				},
-				showErrorMessage: true,
+				errorMessage: true,
 				headers: [
 					{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 					{ text: "Month", value: "month_of_travel", width: 150 },
@@ -149,7 +150,6 @@
 				}
 			},
 			isDateValid(newValue) {
-				// let diffrenceInStartDates, diffrenceInEndDates;
 				let diffrenceInStartDates = moment(this.yearlyRevenueMainDate[0])
 					.tz("Asia/Kolkata")
 					.diff(moment(newValue[0]).tz("Asia/Kolkata"), "months", true);
@@ -157,17 +157,15 @@
 					.tz("Asia/Kolkata")
 					.diff(moment(newValue[1]).tz("Asia/Kolkata"), "months", true);
 
-				// console.log(diffrenceInStartDates, diffrenceInEndDates);
-				if (
-					Number.isInteger(diffrenceInStartDates / 12) &&
-					Number.isInteger(diffrenceInEndDates / 12) &&
-					diffrenceInStartDates != 0 &&
-					diffrenceInEndDates != 0
-				) {
-					return true;
-				} else {
+				if (!Number.isInteger(diffrenceInStartDates / 12) || !Number.isInteger(diffrenceInEndDates / 12)) {
+					this.dateErrorMessage = "Date range doesn't match the main date Range";
 					return false;
 				}
+				if (diffrenceInStartDates == 0 && diffrenceInEndDates == 0) {
+					this.dateErrorMessage = "Date range can't be the same as main date Range";
+					return false;
+				}
+				return true;
 			},
 			getData() {
 				this.openLoaderDialog();
@@ -260,7 +258,7 @@
 			datePickerDate: {
 				deep: true,
 				async handler(nv, ov) {
-					this.showErrorMessage = this.isDateValid(nv);
+					this.errorMessage = this.isDateValid(nv);
 				},
 			},
 			yearlyRevenueMainDate: {
@@ -291,25 +289,8 @@
 </script>
 
 <style lang="scss" scopped>
-	.companyAddressWrapper {
+	.yearlyComparison {
 		padding: 20px 5px;
 		height: 100%;
-	}
-	.companyaddress-search-bar {
-		margin-top: 12px;
-		display: flex;
-		justify-content: center;
-	}
-	.date-picker-action-section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-
-		.date-error-message {
-			color: $error;
-			padding: 10px;
-			text-align: center;
-		}
 	}
 </style>
