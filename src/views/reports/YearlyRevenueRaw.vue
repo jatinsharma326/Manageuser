@@ -356,9 +356,4 @@
 		padding: 20px 5px;
 		height: 100%;
 	}
-	.companyaddress-search-bar {
-		margin-top: 12px;
-		display: flex;
-		justify-content: center;
-	}
 </style>
