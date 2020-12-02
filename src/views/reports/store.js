@@ -132,6 +132,41 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
+		getTargetReport: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.TARGET_REPORT,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load Agencywise Reports List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load Agencywise Reports List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
 	},
 	getters: {
 		yearlyRevenueMainDate: (state) => state.yearlyRevenueMainDate,
