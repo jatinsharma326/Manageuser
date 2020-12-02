@@ -115,14 +115,14 @@
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import searchMixin from "../../mixins/searchMixin";
-	import datePickerMixin from "../../mixins/datePickerMixin";
+	// import datePickerMixin from "../../mixins/datePickerMixin";
 	import helperMixin from "../../mixins/helperMixins";
 	import moment from "moment-timezone";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
 		name: "YearlyRevenueRaw",
-		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
+		mixins: [defaultCRUDMixin, searchMixin, helperMixin],
 		components: {},
 		async created() {
 			this.setDateRange();
@@ -195,7 +195,7 @@
 					let diffrenceInDates = moment(this.datePickerDate[1])
 						.tz("Asia/Kolkata")
 						.diff(moment(this.datePickerDate[0]).tz("Asia/Kolkata"), "months", true);
-					if (diffrenceInDates >= 11) {
+					if (diffrenceInDates > 11) {
 						this.dateErrorMessage = "Selected Date range can't exceed a year";
 						return false;
 					}
@@ -228,11 +228,13 @@
 			},
 			getData() {
 				this.openLoaderDialog();
-				this.filter.date_from = moment(this.datePickerDate[0])
+				let dateSelection = JSON.parse(JSON.stringify(this.datePickerDate));
+				dateSelection.sort();
+				this.filter.date_from = moment(dateSelection[0])
 					.tz("Asia/Kolkata")
 					.startOf("month")
 					.toISOString();
-				this.filter.date_to = moment(this.datePickerDate[1])
+				this.filter.date_to = moment(dateSelection[1])
 					.tz("Asia/Kolkata")
 					.endOf("month")
 					.toISOString();
