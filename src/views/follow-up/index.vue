@@ -330,8 +330,8 @@
 					},
 					{
 						name: "City",
-						key: "city",
-						multi: false,
+						key: "cities",
+						multi: true,
 						inputType: "dropdown",
 						defaultValue: [],
 						isListInStore: false,
