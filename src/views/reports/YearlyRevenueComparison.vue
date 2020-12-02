@@ -58,7 +58,6 @@
 		</div>
 		<!-- {{ secondaryAxis }} -->
 		<div class="charts">
-			{{ render }}
 			<BarChart v-if="render" :myTabId="1" :chartData="chartData" :options="chartOptions"></BarChart>
 		</div>
 	</div>
@@ -80,13 +79,8 @@
 			BarChart,
 		},
 		async created() {
-			// this.$set(this, "monthArr", []);
-			// this.$set(this, "ComparisonArr", []);
-			// this.$set(this, "selectionArr", []);
-			// this.$set(this, "secondaryAxis", []);
 			this.setDateRange();
 			await this.getData();
-			// this.$set(this, "monthArr", []);
 		},
 		data() {
 			return {
@@ -97,11 +91,6 @@
 				selectionDateTo: "",
 				comparisonDateFrom: "",
 				comparisonDateTo: "",
-
-				// chartLabel: [],
-				// ComparisonArr: [],
-				// selectionArr: [],
-
 				chartData: {},
 				chartOptions: {
 					responsive: true,
