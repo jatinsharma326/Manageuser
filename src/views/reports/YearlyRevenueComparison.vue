@@ -87,6 +87,7 @@
 				render: false,
 				dataList: [],
 				pageSize: 20,
+				filter: {},
 
 				selectionDateFrom: "",
 				selectionDateTo: "",
@@ -197,6 +198,16 @@
 					.endOf("month")
 					.toISOString();
 
+				let { business_types, countries, names } = this.yearlyRevenueFilter;
+				if (business_types) {
+					this.filter.business_types = business_types;
+				}
+				if (countries) {
+					this.filter.countries = countries;
+				}
+				if (names) {
+					this.filter.names = names;
+				}
 				this.getYearlyComparison({
 					filter: this.filter,
 					comparison_date_from: this.comparisonDateFrom,
