@@ -34,8 +34,8 @@
 					</template>
 					<v-date-picker range type="month" v-model="datePickerDate" scrollable>
 						<div class="date-picker-action-section">
-							<div class="date-error-message" v-show="!showErrorMessage">
-								Date range can't be more than 12 months / Invalid Date
+							<div class="date-error-message" v-show="!errorMessage">
+								{{ dateErrorMessage }}
 							</div>
 							<div class="action-buttons">
 								<v-spacer></v-spacer>
@@ -45,7 +45,7 @@
 								<v-btn text color="primary" @click="cancelDatePicker">
 									Cancel
 								</v-btn>
-								<v-btn :disabled="!showErrorMessage" text color="primary" @click="submitDatePicker">
+								<v-btn :disabled="!errorMessage" text color="primary" @click="submitDatePicker">
 									OK
 								</v-btn>
 							</div>
@@ -138,7 +138,8 @@
 			tempDateValue: [],
 			dateDialog: false,
 			selectedDateRange: [],
-			showErrorMessage: true,
+			dateErrorMessage: "",
+			errorMessage: true,
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Product", value: "country", width: 150 },
@@ -185,15 +186,21 @@
 				this.selectedDateRange = tempArray;
 			},
 			isDateValid() {
+				if (this.datePickerDate.length != 2) {
+					this.dateErrorMessage = "Please select 2 Months";
+					return false;
+				}
+
 				if (this.datePickerDate.length == 2) {
 					let diffrenceInDates = moment(this.datePickerDate[1])
 						.tz("Asia/Kolkata")
 						.diff(moment(this.datePickerDate[0]).tz("Asia/Kolkata"), "months", true);
-					if (diffrenceInDates <= 11) {
-						return true;
+					if (diffrenceInDates >= 11) {
+						this.dateErrorMessage = "Selected Date range can't exceed a year";
+						return false;
 					}
 				}
-				return false;
+				return true;
 			},
 			submitDatePicker() {
 				if (this.isDateValid) {
@@ -309,7 +316,7 @@
 				deep: true,
 				async handler(nv, ov) {
 					console.log("Error check");
-					this.showErrorMessage = this.isDateValid();
+					this.errorMessage = this.isDateValid();
 				},
 			},
 			selectedDateRange: {
