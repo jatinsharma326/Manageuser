@@ -159,6 +159,7 @@
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched Follow Up List" });
 					}
+					this.initializeToggleObject(data.list);
 					this.notificationsList = data.list;
 					this.columnOneTotalCount = data.totalCount;
 				});
