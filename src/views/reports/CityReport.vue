@@ -12,7 +12,13 @@
 					:filterConfig="selectedSearchConfig"
 				>
 					<template v-slot:buttonSection>
-						<v-btn color="secondary" text @click.stop="downloadReport()">Download Report</v-btn>
+						<v-btn
+							:disabled="checkDownloadButtonStatus"
+							color="secondary"
+							text
+							@click.stop="downloadReport()"
+							>Download Report</v-btn
+						>
 					</template>
 				</Search>
 			</div>
@@ -114,6 +120,12 @@
 		computed: {
 			dateRangeText() {
 				return this.datePickerDate.join(" ~ ");
+			},
+			checkDownloadButtonStatus() {
+				if (this.fetchCount == 0) {
+					return true;
+				}
+				return false;
 			},
 		},
 		methods: {

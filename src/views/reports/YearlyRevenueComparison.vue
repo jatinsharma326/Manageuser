@@ -2,8 +2,12 @@
 	<div class="yearlyComparison">
 		<div class="SearchbarWrapper">
 			<div class="searchbar">
-				<v-btn color="primary" text @click.stop="downloadReport()">Download Report</v-btn>
-				<v-btn color="secondary" text @click.stop="downloadChart()">Download Chart</v-btn>
+				<v-btn :disabled="checkDownloadButtonStatus" color="primary" text @click.stop="downloadReport()"
+					>Download Report</v-btn
+				>
+				<v-btn :disabled="checkDownloadButtonStatus" color="secondary" text @click.stop="downloadChart()"
+					>Download Chart</v-btn
+				>
 			</div>
 			<div class="datepicker">
 				<v-dialog
@@ -133,6 +137,12 @@
 			dateRangeText() {
 				return this.datePickerDate.join(" ~ ");
 			},
+			checkDownloadButtonStatus() {
+				if (this.fetchCount == 0) {
+					return true;
+				}
+				return false;
+			},
 		},
 		methods: {
 			...mapActions("Reports", ["getYearlyComparison", "downloadYearlyComparisonReport"]),
@@ -209,7 +219,7 @@
 					.endOf("month")
 					.toISOString();
 
-				let { business_types, countries, names } = this.yearlyRevenueFilter;
+				let { business_types, countries, names, zones } = this.yearlyRevenueFilter;
 				if (business_types) {
 					this.filter.business_types = business_types;
 				}
@@ -218,6 +228,9 @@
 				}
 				if (names) {
 					this.filter.names = names;
+				}
+				if (zones) {
+					this.filter.zones = zones;
 				}
 				this.getYearlyComparison({
 					filter: this.filter,
@@ -300,7 +313,7 @@
 					.endOf("month")
 					.toISOString();
 
-				let { business_types, countries, names } = this.yearlyRevenueFilter;
+				let { business_types, countries, names, zones } = this.yearlyRevenueFilter;
 				if (business_types) {
 					this.filter.business_types = business_types;
 				}
@@ -309,6 +322,9 @@
 				}
 				if (names) {
 					this.filter.names = names;
+				}
+				if (zones) {
+					this.filter.zones = zones;
 				}
 
 				this.openLoaderDialog();
