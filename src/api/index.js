@@ -101,4 +101,8 @@ export default {
 	YEARLY_REVENUE_COMPARISON_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
 	YEARLY_REVENUE_ZONE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
 	AGENCY_WISE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-agency-wise-follow-ups",
+
+	// VIRTUAL REACH ENDPOINT
+	VIRTUAL_REACH: BASE_URL + "VirtualReach/v0.1/",
+	VIRTUAL_REACH_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-virtual-reach",
 };
