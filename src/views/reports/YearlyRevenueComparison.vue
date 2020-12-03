@@ -312,7 +312,7 @@
 				}
 
 				this.openLoaderDialog();
-				this.downloadComparisonReport({
+				this.downloadYearlyComparisonReport({
 					filter: this.filter,
 					comparison_date_from: this.comparisonDateFrom,
 					comparison_date_to: this.comparisonDateTo,
