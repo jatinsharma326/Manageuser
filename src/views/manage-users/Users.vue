@@ -21,7 +21,9 @@
 			<div v-for="user in userList" :key="user._id" class="card-element">
 				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
 					<template v-slot:topLeft>
-						{{ user.usr_data.designation }}
+						<v-chip outlined x-small color="primary">
+							{{ user.usr_data.designation }}
+						</v-chip>
 					</template>
 					<template v-slot:topRight>
 						{{ getFormattedDate(user.usr_data.dob) }}
@@ -43,6 +45,11 @@
 							<v-btn @click="openInputForm(true, user)" color="secondary" text>
 								Edit
 							</v-btn>
+						</template>
+						<template v-else>
+							<div v-if="user.usr_data.phone_numbers && user.usr_data.phone_numbers.length">
+								{{ user.usr_data.phone_numbers.join(", ") }}
+							</div>
 						</template>
 					</template>
 					<template v-slot:expandCardContent>
