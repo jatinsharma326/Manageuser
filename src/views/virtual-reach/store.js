@@ -16,78 +16,14 @@ export default {
 		},
 	},
 	actions: {
-		getActiveCurrencies: ({ commit, dispatch }, payload) => {
+		getVirtualReach: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.ACTIVE_CURRENCIES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (data.ok) {
-						return {
-							ok: true,
-							list: data.data,
-						};
-					} else {
-						fail(data.message || "Failed to load All FollowUp List");
-						return {
-							ok: false,
-							list: [],
-						};
-					}
-				})
-				.catch((err) => {
-					console.log("Yo ", err);
-					fail(err.toString() || "Failed to All FollowUp List");
-					return { ok: false, list: [] };
-				});
-		},
-		getCitiesList: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "get",
-					params: payload,
-					url: constants.ALL_CITIES,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (data.ok) {
-						return {
-							ok: true,
-							list: data.data,
-							fetchCount: data.fetchCount,
-							totalCount: data.totalCount,
-						};
-					} else {
-						fail(data.message || "Failed to load Cities List");
-						return {
-							ok: false,
-							list: [],
-						};
-					}
-				})
-				.catch((err) => {
-					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load Cities List");
-					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
-				});
-		},
-		getFollowUp: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "get",
-					params: payload,
-					url: constants.FOLLOW_UP,
+					url: constants.VIRTUAL_REACH,
 				},
 				{ root: true }
 			)
@@ -100,7 +36,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load All FollowUp List");
+						fail(data.message || "Failed to load All VirtualReach List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -111,73 +47,73 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to All FollowUp List");
+					fail(err.toString() || "Failed to All VirtualReach List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		addFollowUp: ({ commit, dispatch }, payload) => {
+		addVirtualReach: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.FOLLOW_UP,
+					url: constants.VIRTUAL_REACH,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add FollowUp Entry");
+					if (!data.ok) fail(data.message || "Failed to add VirtualReach Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add FollowUp Entry");
+					fail(err.toString() || "Failed to add VirtualReach Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		editFollowUp: ({ commit, dispatch }, payload) => {
+		editVirtualReach: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.FOLLOW_UP,
+					url: constants.VIRTUAL_REACH,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit FollowUp entry");
+					if (!data.ok) fail(data.message || "Failed to edit VirtualReach entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit FollowUp Entry");
+					fail(err.toString() || "Failed to edit VirtualReach Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		deleteFollowUp: ({ commit, dispatch }, payload) => {
+		deleteVirtualReach: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "delete",
 					data: payload,
-					url: constants.FOLLOW_UP,
+					url: constants.VIRTUAL_REACH,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to Delete FollowUp Entry");
+					if (!data.ok) fail(data.message || "Failed to Delete VirtualReach Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to Delete FollowUp Entry");
+					fail(err.toString() || "Failed to Delete VirtualReach Entry");
 					return {
 						ok: false,
 						message: err.message,
