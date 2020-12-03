@@ -144,7 +144,7 @@ export default {
 						fail(data.message || "Failed to load GD Employee Birthday List");
 						return {
 							ok: false,
-							totalCount: data.totalCount,
+							totalCount: 0,
 							fetchCount: 0,
 							list: [],
 						};
