@@ -6,9 +6,6 @@
 				<v-autocomplete v-model="selectedYear" :items="yearList" outlined label="Select Year"></v-autocomplete>
 			</div>
 		</div>
-		{{ selectedYear }}
-		{{ selectionDateFrom }}
-		{{ selectionDateTo }}
 		<div v-if="totalCount === 0" class="content-error-message">
 			No Followup entries. Please add followup entries to see the reports
 		</div>
