@@ -2,7 +2,7 @@
 	<div class="yearlyComparison">
 		<div class="SearchbarWrapper">
 			<div class="searchbar">
-				<v-btn color="secondary" text @click.stop="downloadReport()">Download Report</v-btn>
+				<v-btn color="primary" text @click.stop="downloadReport()">Download Report</v-btn>
 				<v-btn color="secondary" text @click.stop="downloadChart()">Download Chart</v-btn>
 			</div>
 			<div class="datepicker">
@@ -50,12 +50,20 @@
 		<div class="leaves-table">
 			<v-data-table :items-per-page="pageSize" hide-default-footer :headers="headers" :items="dataList">
 				<template v-slot:[`header.record_1`]="{ header }">
-					{{ getFormattedDate(comparisonDateFrom, "MMM YYYY") }} to
-					{{ getFormattedDate(comparisonDateTo, "MMM YYYY") }}
+					{{
+						(header.text =
+							getFormattedDate(comparisonDateFrom, "MMM YYYY") +
+							" to " +
+							getFormattedDate(comparisonDateTo, "MMM YYYY")) + " ($)"
+					}}
 				</template>
 				<template v-slot:[`header.record_2`]="{ header }">
-					{{ getFormattedDate(selectionDateFrom, "MMM YYYY") }} to
-					{{ getFormattedDate(selectionDateTo, "MMM YYYY") }}
+					{{
+						(header.text =
+							getFormattedDate(selectionDateFrom, "MMM YYYY") +
+							" to " +
+							getFormattedDate(selectionDateTo, "MMM YYYY")) + " ($)"
+					}}
 				</template>
 			</v-data-table>
 		</div>
@@ -116,7 +124,7 @@
 					{ text: "Selection Date Range", value: "record_1", width: 200 },
 					{ text: "Comparison Date Range", value: "record_2", width: 200 },
 					{ text: "Amount Difference ($)", value: "diff", width: 200 },
-					{ text: "Percentage Difference", value: "perc_incr_decr", width: 150 },
+					{ text: "Percentage Difference (%)", value: "perc_incr_decr", width: 200 },
 				],
 			};
 		},
@@ -244,8 +252,8 @@
 								" to " +
 								this.getFormattedDate(this.comparisonDateTo, "MMM YYYY"),
 							data: comparisonArr,
-							borderColor: "#acdcdc",
-							backgroundColor: "#acdcdc",
+							borderColor: "RGB(255, 99, 132)",
+							backgroundColor: "RGB(255, 99, 132, 0.5)",
 						},
 						{
 							label:
@@ -253,8 +261,8 @@
 								" to " +
 								this.getFormattedDate(this.selectionDateTo, "MMM YYYY"),
 							data: selectionArr,
-							borderColor: "#ecdcdc",
-							backgroundColor: "ecdcdc",
+							borderColor: "RGB(54, 162, 235)",
+							backgroundColor: "RGB(54, 162, 235, 0.5)",
 						},
 					];
 					console.log("chartDatasets", chartDatasets);
@@ -314,6 +322,23 @@
 				}).then(() => {
 					this.closeLoaderDialog();
 				});
+			},
+			downloadChart() {
+				let fileName =
+					this.getFormattedDate(this.comparison_date_from, "YYYY-MM") +
+					"_" +
+					this.getFormattedDate(this.comparison_date_to, "YYYY-MM") +
+					" to " +
+					this.getFormattedDate(this.selection_date_from, "YYYY-MM") +
+					"_" +
+					this.getFormattedDate(this.selection_date_to, "YYYY-MM");
+
+				let canvas = document.querySelector(".charts canvas");
+				let dataURL = canvas.toDataURL();
+				let a = document.createElement("a");
+				a.href = dataURL;
+				a.download = "Yearly Revenue Comparison Chart from " + fileName + ".png";
+				a.click();
 			},
 			// updatedPageNo(page) {
 			// 	this.getData();
