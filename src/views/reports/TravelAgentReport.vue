@@ -100,8 +100,10 @@
 			selectionDateFrom: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
-				{ text: "Travel Agent", value: "agency_name", width: 150 },
-				{ text: "Revenue", value: "revenue_amount", width: 150 },
+				{ text: "Travel Agent", value: "agency_name", width: 200 },
+				{ text: "No. of Adults", value: "number_of_pax_adult", width: 150 },
+				{ text: "No. of Children", value: "number_of_pax_child", width: 150 },
+				{ text: "Revenue", value: "revenue_amount", width: 200 },
 				{ text: "Currency", value: "currency_type", width: 200 },
 				{ text: "Revenue ($)", value: "revenue_amount_in_usd", width: 200 },
 			],
