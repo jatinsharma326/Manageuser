@@ -1,4 +1,5 @@
 import constants from "@/api";
+import helpers from "../../components/helpers";
 
 const initialState = () => ({});
 export default {
@@ -118,6 +119,46 @@ export default {
 						ok: false,
 						message: err.message,
 					};
+				});
+		},
+		downloadVirtualReachFile: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			let dateRange =
+				helpers.getFormattedDate(payload.filter.date_from, "DD-MM-YYYY") +
+				" to " +
+				helpers.getFormattedDate(payload.filter.date_to, "DD-MM-YYYY");
+			return dispatch(
+				"fileDownload_API_Call",
+				{
+					method: "get",
+					params: {},
+					params: payload,
+					url: constants.VIRTUAL_REACH_DOWNLOAD,
+					responseType: "blob",
+				},
+				{ root: true }
+			)
+				.then(({ data, response }) => {
+					console.log(response);
+					if (response.status === 200) {
+						commit("openSnackbar", { text: "Starting Download" }, { root: true });
+						const url = window.URL.createObjectURL(new Blob([data]));
+						const link = document.createElement("a");
+						link.href = url;
+						link.setAttribute("download", "Virtual Reach from " + dateRange + ".xlsx");
+						document.body.appendChild(link);
+						link.click();
+						return;
+					} else {
+						commit("openSnackbar", { text: "Could not start download" }, { root: true });
+						fail(data.message || "Failed to start download");
+						return;
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					commit("openSnackbar", { text: "Could not start download" }, { root: true });
+					fail(err.toString() || "Failed to Download Core Data File");
 				});
 		},
 	},
