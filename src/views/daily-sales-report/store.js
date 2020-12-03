@@ -25,7 +25,7 @@ export default {
 				{
 					method: "get",
 					params: payload,
-					url: constants.DSR + URLparam + "/",
+					url: constants.DSR + "dsr/" + URLparam + "/",
 				},
 				{ root: true }
 			)
