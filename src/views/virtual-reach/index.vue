@@ -93,7 +93,7 @@
 				:length="Math.ceil(fetchCount / pageSize)"
 			></v-pagination>
 		</div>
-		<template v-if="isSalesTeamMember">
+		<template v-if="isOnlySalesAgent">
 			<UserForm
 				@formOutput="formOutput"
 				@closeForm="closeForm"
@@ -104,12 +104,42 @@
 				:formData="rowToEdit"
 				:isEditMode="isEditMode"
 			></UserForm>
-			<div class="floating-button">
+			<!-- <div class="floating-button">
 				<v-btn @click="openInputForm()" color="primary" dark fab>
 					<v-icon>mdi-plus</v-icon>
 				</v-btn>
-			</div>
+			</div> -->
 		</template>
+		<div class="floating-button">
+			<v-speed-dial v-model="fab" direction="top" :open-on-hover="true" transition="scale-transition">
+				<template v-slot:activator>
+					<v-btn v-model="fab" color="primary" dark fab>
+						<v-icon v-if="fab">
+							mdi-arrow-down-drop-circle
+						</v-icon>
+						<v-icon v-else>
+							mdi-arrow-up-drop-circle
+						</v-icon>
+					</v-btn>
+				</template>
+				<v-tooltip left>
+					<template v-if="isOnlySalesAgent" v-slot:activator="{ on, attrs }">
+						<v-btn @click="openInputForm()" color="secondary" dark small fab v-bind="attrs" v-on="on">
+							<v-icon>mdi-plus</v-icon>
+						</v-btn>
+					</template>
+					<span>Add Virtual Reach Entry</span>
+				</v-tooltip>
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-btn fab dark small color="tertiary" @click="downloadReach()" v-bind="attrs" v-on="on">
+							<v-icon>mdi-download</v-icon>
+						</v-btn>
+					</template>
+					<span>Download Virtual Reach</span>
+				</v-tooltip>
+			</v-speed-dial>
+		</div>
 	</div>
 </template>
 
@@ -143,6 +173,7 @@
 		data: () => ({
 			name: "Virtual Reach Entry",
 			placeholder: "Search Virtual Reach Entry",
+			fab: false,
 			searchConfig: [],
 			inputConfig: [],
 			citiesList: [],
@@ -171,6 +202,7 @@
 				"addVirtualReach",
 				"editVirtualReach",
 				"deleteVirtualReach",
+				"downloadVirtualReachFile",
 			]),
 			setDateRange() {
 				let tempArray = [];
@@ -337,6 +369,8 @@
 				formData.conducted_on_date = helpers.getISODate(formData.conducted_on_date);
 				if (!formData.reach) {
 					formData.reach = 0;
+				} else if (formData.reach < 0) {
+					formData.reach = 0;
 				} else {
 					formData.reach = Number(formData.reach);
 				}
@@ -392,6 +426,31 @@
 			},
 			updatedPageNo(page) {
 				this.getData();
+			},
+			downloadReach() {
+				this.openLoaderDialog();
+				let selectionDate = JSON.parse(JSON.stringify(this.datePickerDate));
+				selectionDate.sort();
+				console.log(selectionDate);
+				this.filter.date_from = moment(selectionDate[0])
+					.tz("Asia/Kolkata")
+					.startOf()
+					.toISOString();
+				if (selectionDate[1]) {
+					this.filter.date_to = moment(selectionDate[1])
+						.tz("Asia/Kolkata")
+						.endOf()
+						.toISOString();
+				} else {
+					this.filter.date_to = this.filter.date_from;
+				}
+
+				this.openLoaderDialog();
+				this.downloadVirtualReachFile({
+					filter: this.filter,
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
 			},
 		},
 		watch: {},
