@@ -191,6 +191,19 @@
 						iconColor: "#00a0ff",
 					});
 				}
+				if (
+					this.userType == this.SALES_AGENT ||
+					this.userType == this.ADMIN ||
+					this.userType == this.MANAGEMENT
+				) {
+					this.routeItems.push({
+						icon: "search",
+						title: "Virtual Reach",
+						route: "/virtual-reach",
+						highlight: "#00a0ff",
+						iconColor: "#00a0ff",
+					});
+				}
 			},
 			toggleNav() {
 				this.navigationToggle = !this.navigationToggle;
