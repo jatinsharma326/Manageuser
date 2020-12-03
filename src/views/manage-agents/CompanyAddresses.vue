@@ -349,7 +349,7 @@
 					this.pageNo = 1;
 					console.log("Company Info changed");
 					this.getAddresses();
-					await this.getStates();
+					// await this.getStates();
 					this.setInputConfig(this.storeStatesList);
 					this.setSearchConfig(this.storeStatesList);
 				},
