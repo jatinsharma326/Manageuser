@@ -46,7 +46,7 @@
 			</div>
 		</div>
 		<div v-if="totalCount === 0" class="content-error-message">
-			Please add a Followup Entry
+			Please add an Entry
 		</div>
 		<div v-else class="leaves-table">
 			<v-data-table
@@ -56,53 +56,15 @@
 				:expanded.sync="expanded"
 				show-expand
 				item-key="_id"
-				:items="followUpList"
+				:items="dataList"
 			>
-				<template v-slot:[`item.date_of_enquiry`]="{ item }">
-					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.company_data.defaulter`]="{ item }">
-					<template v-if="item.company_data.defaulter">
-						<v-chip small color="error">Yes</v-chip>
-					</template>
-					<template v-else>
-						-
-					</template>
-				</template>
-				<template v-slot:[`item.contact_number`]="{ item }">
-					{{ item.contact_number ? item.contact_number : "-" }}
-				</template>
-				<template v-slot:[`item.date_of_travel`]="{ item }">
-					{{ item.date_of_travel ? getFormattedDate(item.date_of_travel, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.reminder_date`]="{ item }">
-					{{ item.reminder_date ? getFormattedDate(item.reminder_date, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.payment_status`]="{ item }">
-					{{ item.payment_status ? item.payment_status : "-" }}
-				</template>
-				<template v-slot:[`item.invoice_no`]="{ item }">
-					{{ item.invoice_no ? item.invoice_no : "-" }}
-				</template>
-				<template v-slot:[`item.payment_type`]="{ item }">
-					{{ item.payment_type ? item.payment_type : "-" }}
-				</template>
-				<template v-slot:[`item.currency_type`]="{ item }">
-					{{ item.currency_type ? item.currency_type : "-" }}
-				</template>
-				<template v-slot:[`item.amount_pending`]="{ item }">
-					{{ item.amount_pending ? item.amount_pending : "-" }}
-				</template>
-				<template v-slot:[`item.amount_received`]="{ item }">
-					{{ item.amount_received ? item.amount_received : "-" }}
-				</template>
-				<template v-slot:[`item.record.updated_on`]="{ item }">
-					{{ item.record.updated_on ? getFormattedDate(item.record.updated_on, "MMMM Do YYYY dddd") : "-" }}
+				<template v-slot:[`item.conducted_on_date`]="{ item }">
+					{{ item.conducted_on_date ? getFormattedDate(item.conducted_on_date, "MMMM Do YYYY dddd") : "-" }}
 				</template>
 				<template v-slot:expanded-item="{ headers, item }">
 					<td class="expandable-section table-expanded-background " :colspan="headers.length">
-						<div class="expandable-section-title">Remark</div>
-						<div class="expandable-section-content" v-html="item.remark">{{}}</div>
+						<div class="expandable-section-title">Subject</div>
+						<div class="expandable-section-content" v-html="item.subject">{{}}</div>
 					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
@@ -165,69 +127,37 @@
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
-		name: "FollowUp",
+		name: "VirtualReach",
 		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin, datePickerMixin, commonAPICallsMixin],
 		async created() {
 			this.setDateRange();
 			this.getData();
 			this.openLoaderDialog();
-			let promiseArray = [];
 			if (this.isAdminOrManagement) {
 				await this.getUsers();
 			}
 			await this.getCountries();
-			//get companies is defined in commonAPIMixins which gets companiesList and modifiedCompanyList
-			promiseArray.push(this.getCompanies());
-			promiseArray.push(this.getCities());
-			promiseArray.push(this.getActiveCurrenciesList());
-			await Promise.all(promiseArray);
 			this.closeLoaderDialog();
-			this.setConfig(
-				this.userList,
-				this.companyList,
-				// this.modifiedCompanyIdsList,
-				this.countriesList,
-				this.activeCurrencyList,
-				this.citiesList
-			);
+			this.setConfig(this.userList, this.countriesList);
 		},
 		data: () => ({
-			name: "Followup Entry",
-			placeholder: "Search Followup Entry",
+			name: "Virtual Reach Entry",
+			placeholder: "Search Virtual Reach Entry",
 			searchConfig: [],
 			inputConfig: [],
 			citiesList: [],
-			followUpList: [],
+			dataList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+				{ text: "Created By", value: "name", width: 150 },
+				{ text: "Reach Out Type", value: "reach_out_type", width: 150 },
 				{ text: "Product", value: "country", width: 150 },
-				{ text: "Created By", value: "mortal_data.name", width: 150 },
-				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
-				{ text: "Company Name", value: "company_data.name", width: 200 },
-				{ text: "Defaulter", value: "company_data.defaulter", width: 200 },
-				{ text: "City", value: "city", width: 150 },
-				{ text: "Zone", value: "zone", width: 150 },
-				{ text: "Name of Contact", value: "contact_person", width: 200 },
-				{ text: "Contact No.", value: "contact_number", width: 150 },
-				{ text: "Date of Travel", value: "date_of_travel", width: 150 },
-				{ text: "Adult Pax", value: "number_of_pax_adult", width: 150 },
-				{ text: "No. of Nights", value: "no_of_nights", width: 150 },
-				{ text: "Child Pax", value: "number_of_pax_child", width: 150 },
-				{ text: "Inquiry Type", value: "business_types", width: 150 },
-				{ text: "Email Subject", value: "email_subject", width: 150 },
-				{ text: "File Status", value: "status", width: 150 },
-				{ text: "Follow Up", value: "reminder_date", width: 150 },
-				{ text: "Payment Status", value: "payment_status", width: 180 },
-				{ text: "Invoice No.", value: "invoice_no", width: 150 },
-				{ text: "Payment Type", value: "payment_type", width: 150 },
-				{ text: "Currency", value: "currency_type", width: 150 },
-				{ text: "Pending (Amount)", value: "amount_pending", width: 200 },
-				{ text: "Received (Amount)", value: "amount_received", width: 200 },
-				{ text: "Last Updated On", value: "record.updated_on", width: 200 },
+				{ text: "Conducted On", value: "conducted_on_date", width: 200 },
+				{ text: "Reach", value: "reach", width: 200 },
 				{ text: "", value: "actions" },
 			],
 			expanded: [],
-			keysToWatch: ["status", "payment_status"],
+			keysToWatch: [],
 		}),
 		computed: {
 			...mapGetters(["userData"]),
@@ -236,42 +166,25 @@
 			},
 		},
 		methods: {
-			...mapActions("FollowUp", [
-				"getActiveCurrencies",
-				"getCitiesList",
-				"getFollowUp",
-				"addFollowUp",
-				"editFollowUp",
-				"deleteFollowUp",
+			...mapActions("VirtualReach", [
+				"getVirtualReach",
+				"addVirtualReach",
+				"editVirtualReach",
+				"deleteVirtualReach",
 			]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
 					.tz("Asia/Kolkata")
-					// .startOf("month")
+					.startOf("month")
 					.format("YYYY-MM-DD");
 				let endDate = moment()
 					.tz("Asia/Kolkata")
-					.add(3, "month")
 					.endOf("month")
 					.format("YYYY-MM-DD");
 				tempArray.push(startDate);
 				tempArray.push(endDate);
 				this.datePickerDate = tempArray;
-			},
-			getCountries() {
-				if (this.userType == this.SALES_AGENT) {
-					this.countriesList = [...this.userData.usr_data.countries];
-				} else {
-					return this.getCountryList();
-				}
-			},
-			getCities() {
-				return this.getCitiesList({
-					filter: {},
-				}).then((data) => {
-					this.citiesList = data.list;
-				});
 			},
 			getData() {
 				this.openLoaderDialog();
@@ -288,31 +201,33 @@
 					this.filter.date_to = this.filter.date_from;
 				}
 
-				this.getFollowUp({
+				this.getVirtualReach({
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
-					this.followUpList = data.list;
+					this.dataList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.followUpList = this.followUpList.map((d, index) => ({
+					this.dataList = this.dataList.map((d, index) => ({
 						...d,
 						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
 					}));
 				});
 			},
-			setConfig(
-				userList = [],
-				companyList = [],
-				// modifiedCompanyIdsList = [],
-				countriesList = [],
-				activeCurrencyList = [],
-				citiesList = []
-			) {
+			setConfig(userList = [], countriesList = []) {
 				this.searchConfig = [
+					{
+						name: "Reach out Type",
+						key: "reach_out_types",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: ["WEBINAR", "PRODUCT TRAINING", "NEWSLETTERS", "EDM"],
+					},
 					{
 						name: "Product",
 						key: "countries",
@@ -321,125 +236,33 @@
 						defaultValue: [],
 						isListInStore: false,
 						listItems: countriesList,
-						classes: ["half"],
 					},
 					{
-						name: "Date of Enquiry",
-						key: "date_of_enquiry",
+						name: "Reach Conducted On",
+						key: "conducted_on_date",
 						inputType: "datePicker",
 						defaultValue: null,
-						classes: ["half"],
-					},
-					{
-						name: "Follow Up Date",
-						key: "reminder_date",
-						inputType: "datePicker",
-						defaultValue: null,
-						classes: ["half"],
-					},
-					{
-						name: "City",
-						key: "cities",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: citiesList,
-						classes: ["half"],
-					},
-					{
-						name: "Name of Contact",
-						key: "contact_person",
-						type: "text",
-						inputType: "textfield",
-						defaultValue: "",
-						classes: ["half"],
-					},
-					{
-						name: "Company",
-						key: "company_names",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: companyList,
-						itemText: "name",
-						itemValue: "name",
-						classes: ["half"],
-					},
-					{
-						name: "Inquiry Type",
-						key: "business_types",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: true,
-						listVariable: "businessType",
-						classes: ["half"],
-					},
-					{
-						name: "File Status",
-						key: "statuses",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: [
-							"NEW ENQUIRY",
-							"QUOTED",
-							"REQUOTE",
-							"BOOKING ON HOLD",
-							"CONFIRMED",
-							"FILE LOST",
-							"CANCELLED",
-						],
-						classes: ["half"],
-					},
-					{
-						name: "Payment Status",
-						key: "payment_statuses",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: ["PENDING", "RECEIVED", "REFUND"],
-						classes: ["half"],
-					},
-					{
-						name: "Payment Type",
-						key: "payment_types",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: [
-							"NONE",
-							"ADVANCE RECEIVED",
-							"INR FOR CONFIRMATION",
-							"FULL PAYMENT",
-							"CREDIT NOTE",
-							"EMAIL CONFIRMATION",
-						],
-						classes: ["half"],
-					},
-					{
-						name: "Currency",
-						key: "currency_types",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: activeCurrencyList,
-						classes: ["full"],
 					},
 				];
 
 				this.inputConfig = [
 					{
+						name: "Type of Reach Out*",
+						type: "Dropdown",
+						key: "reach_out_type",
+						width: "full",
+						multi: false,
+						isListInStore: false,
+						listItems: ["WEBINAR", "PRODUCT TRAINING", "NEWSLETTERS", "EDM"],
+						validations: {
+							required,
+						},
+					},
+					{
 						name: "Product*",
 						type: "Dropdown",
 						key: "country",
-						width: "half",
+						width: "full",
 						multi: false,
 						isListInStore: false,
 						listItems: countriesList,
@@ -448,90 +271,9 @@
 						},
 					},
 					{
-						name: "Company*",
-						type: "Dropdown",
-						key: "company_id",
-						width: "half",
-						multi: false,
-						isListInStore: false,
-						listItems: companyList,
-						itemText: "name",
-						itemValue: "_id",
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "City*",
-						type: "Dropdown",
-						key: "city",
-						width: "half",
-						multi: false,
-						isListInStore: false,
-						listItems: citiesList,
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Name of Contact*",
-						type: "String",
-						key: "contact_person",
-						width: "half",
-						validations: {
-							required,
-							minLength: minLength(1),
-						},
-					},
-					{
-						name: "Contact No.",
-						type: "String",
-						key: "contact_number",
-						width: "half",
-					},
-					{
-						name: "Date of Travel*",
-						type: "Date",
-						key: "date_of_travel",
-						width: "half",
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Adult Pax no.",
-						type: "Number",
-						key: "number_of_pax_adult",
-						width: "half",
-					},
-					{
-						name: "Child Pax no.",
-						type: "Number",
-						key: "number_of_pax_child",
-						width: "half",
-					},
-					{
-						name: "No. of Nights",
-						type: "Number",
-						key: "no_of_nights",
-						width: "half",
-					},
-					{
-						name: "Business Type*",
-						type: "Dropdown",
-						key: "business_types",
-						width: "half",
-						multi: true,
-						isListInStore: true,
-						listVariable: "businessType",
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Email Subject*",
+						name: "Subject*",
 						type: "TextArea",
-						key: "email_subject",
+						key: "subject",
 						width: "full",
 						validations: {
 							required,
@@ -539,135 +281,22 @@
 						},
 					},
 					{
-						name: "Status*",
-						type: "Dropdown",
-						key: "status",
+						name: "Conducted On*",
+						type: "Date",
+						key: "conducted_on_date",
 						width: "half",
-						multi: false,
-						// triggerKey: "status",
-						isListInStore: false,
-						listItems: [
-							"NEW ENQUIRY",
-							"QUOTED",
-							"REQUOTE",
-							"BOOKING ON HOLD",
-							"CONFIRMED",
-							"FILE LOST",
-							"CANCELLED",
-						],
 						validations: {
 							required,
 						},
 					},
 					{
-						name: "Follow up Date",
-						type: "Date",
-						key: "reminder_date",
-						width: "half",
-					},
-					{
-						name: "Any Remarks",
-						type: "TextArea",
-						key: "remark",
-						width: "full",
-					},
-					{
-						name: "Payment Status",
-						type: "Dropdown",
-						key: "payment_status",
-						width: "half",
-						multi: false,
-						isListInStore: false,
-						listItems: ["PENDING", "RECEIVED", "REFUND"],
-						disableTriggerKey: "status",
-						disableCheck: (data) => {
-							return this.checkDisableCondition(data);
-						},
-					},
-					{
-						name: "Invoice Number",
-						type: "String",
-						key: "invoice_no",
-						width: "half",
-						disableTriggerKey: "status",
-						disableCheck: (data) => this.checkDisableCondition(data),
-					},
-					{
-						name: "Payment Type",
-						type: "AsyncDropdownWithMoreInfo",
-						key: "payment_type",
-						width: "half",
-						subtitleContent: (item) => {
-							return "";
-						},
-						titleContent: (item) => {
-							return item;
-						},
-						triggerKey: "payment_status",
-						apiCall: (selection) => {
-							let subSelection = [];
-							let promise = new Promise(function(resolve, reject) {
-								if (selection == "RECEIVED") {
-									subSelection.push("ADVANCE RECEIVED", "INR FOR CONFIRMATION", "FULL PAYMENT");
-								} else if (selection == "REFUND") {
-									subSelection.push("NONE", "CREDIT NOTE", "EMAIL CONFIRMATION");
-								}
-								resolve(subSelection);
-							});
-							return promise;
-						},
-						disableTriggerKey: "status",
-						disableCheck: (data) => {
-							return this.checkDisableCondition(data);
-						},
-					},
-					{
-						name: "Currency",
-						type: "Dropdown",
-						key: "currency_type",
-						width: "full",
-						multi: false,
-						isListInStore: false,
-						listItems: activeCurrencyList,
-						disableTriggerKey: "status",
-						disableCheck: (data) => {
-							return this.checkDisableCondition(data);
-						},
-					},
-					{
-						name: "Amount Pending",
+						name: "Reach",
 						type: "Number",
-						key: "amount_pending",
+						key: "reach",
 						width: "half",
-						disableTriggerKey: "status",
-						disableCheck: (data) => {
-							return this.checkDisableCondition(data);
-						},
-					},
-					{
-						name: "Amount Received",
-						type: "Number",
-						key: "amount_received",
-						width: "half",
-						disableTriggerKey: "status",
-						disableCheck: (data) => {
-							return this.checkDisableCondition(data);
-						},
 					},
 				];
 
-				if (this.isAdminOrManagement || this.isOnlySalesAgent) {
-					this.searchConfig.push({
-						name: "Zone",
-						key: "zones",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: true,
-						listVariable: "zone",
-						classes: ["half"],
-					});
-				}
 				if (this.isAdminOrManagement) {
 					this.searchConfig.unshift({
 						name: "Created By",
@@ -680,19 +309,12 @@
 						classes: ["half"],
 					});
 				}
-				if (this.isOnlySalesAgent) {
-					this.inputConfig.unshift({
-						name: "Zone*",
-						type: "Dropdown",
-						key: "zone",
-						width: "half",
-						multi: false,
-						isListInStore: true,
-						listVariable: "zone",
-						validations: {
-							required,
-						},
-					});
+			},
+			getCountries() {
+				if (this.userType == this.SALES_AGENT) {
+					this.countriesList = [...this.userData.usr_data.countries];
+				} else {
+					return this.getCountryList();
 				}
 			},
 			queryString(data) {
@@ -712,57 +334,20 @@
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
 
-				if (this.isOnlyRemoteAgent) {
-					formData.zone = this.userData.usr_data.zone;
+				formData.conducted_on_date = helpers.getISODate(formData.conducted_on_date);
+				if (!formData.reach) {
+					formData.reach = 0;
+				} else {
+					formData.reach = Number(formData.reach);
 				}
 
-				if (!formData.amount_pending) {
-					formData.amount_pending = 0;
-				} else {
-					formData.amount_pending = Number(formData.amount_pending);
-				}
-				if (!formData.amount_received) {
-					formData.amount_received = 0;
-				} else {
-					formData.amount_received = Number(formData.amount_received);
-				}
-				if (!formData.no_of_nights || formData.no_of_nights < 0) {
-					formData.no_of_nights = 0;
-				} else {
-					formData.no_of_nights = Number(formData.no_of_nights);
-				}
-				if (!formData.number_of_pax_adult || formData.number_of_pax_adult < 0) {
-					formData.number_of_pax_adult = 0;
-				} else {
-					formData.number_of_pax_adult = Number(formData.number_of_pax_adult);
-				}
-				if (!formData.number_of_pax_child || formData.number_of_pax_child < 0) {
-					formData.number_of_pax_child = 0;
-				} else {
-					formData.number_of_pax_child = Number(formData.number_of_pax_child);
-				}
-
-				if (!formData.contact_number) formData.contact_number = "";
-				if (!formData.invoice_no) formData.invoice_no = "";
-				if (!formData.remark) formData.remark = "";
-
-				if (formData.reminder_date) {
-					formData.reminder_date = helpers.getISODate(formData.reminder_date);
-				}
-
-				if (formData.currency_type == "") formData.currency_type == null;
-				if (formData.payment_type == "") formData.payment_type == null;
-				if (formData.payment_status == "") formData.payment_status == null;
-
-				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
-				formData.month_of_travel = Number(this.getFormattedDate(formData.date_of_travel, "MM"));
 				console.log("Test console FormData", formData);
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addFollowUp(formData).then((data) => {
+					this.addVirtualReach(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Added FollowUp Entry" });
+							this.openSnackbar({ text: "Sucessfully Added Virtual Reach Entry" });
 							this.closeForm();
 							this.getData();
 						} else {
@@ -770,10 +355,10 @@
 						}
 					});
 				} else {
-					this.editFollowUp(formData).then((data) => {
+					this.editVirtualReach(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Edited FollowUp Entry" });
+							this.openSnackbar({ text: "Sucessfully Edited Virtual Reach Entry" });
 							this.closeForm();
 							this.getData();
 						} else {
@@ -789,15 +374,15 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			deleteEntry(call) {
-				if (window.confirm("Do you really want to Delete the FollowUp?")) {
+			deleteEntry(data) {
+				if (window.confirm("Do you really want to Delete the Virtual Reach?")) {
 					this.openLoaderDialog();
-					this.deleteFollowUp({
-						_id: call._id,
+					this.deleteVirtualReach({
+						_id: data._id,
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Deleted the FollowUp" });
+							this.openSnackbar({ text: "Sucessfully Deleted the Virtual Reach" });
 							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -808,20 +393,13 @@
 			updatedPageNo(page) {
 				this.getData();
 			},
-			checkDisableCondition(value) {
-				if (value == "CONFIRMED") {
-					return false;
-				} else {
-					return true;
-				}
-			},
 		},
 		watch: {},
 		props: {},
 	};
 </script>
 <style lang="scss">
-	.manageFollowUpWrapper {
+	.manageVirtualReachWrapper {
 		height: 100%;
 		.tabItemWrapper {
 			height: 100%;
