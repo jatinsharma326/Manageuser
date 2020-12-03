@@ -1,7 +1,7 @@
 <template>
 	<div class="yearlyZone">
 		<div class="download-reports">
-			<v-btn color="secondary" text @click.stop="downloadReport()">Download Report</v-btn>
+			<v-btn color="primary" text @click.stop="downloadReport()">Download Report</v-btn>
 			<v-btn color="secondary" text @click.stop="downloadChart()">Download Chart</v-btn>
 		</div>
 		<div class="leaves-table">
@@ -60,12 +60,12 @@
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Month", value: "month_of_travel", width: 150 },
-				{ text: "East", value: "east", width: 150 },
-				{ text: "West(Guj)", value: "west_guj", width: 150 },
-				{ text: "West", value: "west", width: 200 },
-				{ text: "South", value: "south", width: 200 },
-				{ text: "North", value: "north", width: 200 },
-				{ text: "Total", value: "total", width: 200 },
+				{ text: "East ($)", value: "east", width: 150 },
+				{ text: "West(Guj) ($)", value: "west_guj", width: 150 },
+				{ text: "West ($)", value: "west", width: 150 },
+				{ text: "South ($)", value: "south", width: 150 },
+				{ text: "North ($)", value: "north", width: 150 },
+				{ text: "Total ($)", value: "total", width: 200 },
 			],
 		}),
 		computed: {
@@ -134,32 +134,32 @@
 						{
 							label: "East",
 							data: eastArr,
-							borderColor: "#acdcdc",
-							backgroundColor: "#acdcdc",
+							borderColor: "RGB(255, 206, 86)",
+							backgroundColor: "RGB(255, 206, 86, 0.75)",
 						},
 						{
 							label: "West(Guj)",
 							data: westGujArr,
-							borderColor: "#ecdcdc",
-							backgroundColor: "ecdcdc",
+							borderColor: "RGB(255, 159, 64)",
+							backgroundColor: "RGB(255, 159, 64, 0.75)",
 						},
 						{
 							label: "West",
 							data: westArr,
-							borderColor: "#ecdcdc",
-							backgroundColor: "ecdcdc",
+							borderColor: "RGB(75, 192, 192)",
+							backgroundColor: "RGB(75, 192, 192, 0.75)",
 						},
 						{
 							label: "South",
 							data: southArr,
-							borderColor: "#ecdcdc",
-							backgroundColor: "ecdcdc",
+							borderColor: "RGB(54, 162, 235)",
+							backgroundColor: "RGB(54, 162, 235, 0.75)",
 						},
 						{
 							label: "North",
 							data: northArr,
-							borderColor: "#ecdcdc",
-							backgroundColor: "ecdcdc",
+							borderColor: "RGB(255, 99, 132)",
+							backgroundColor: "RGB(255, 99, 132, 0.75)",
 						},
 					];
 					// console.log("chartDatasets", chartDatasets);
@@ -203,6 +203,19 @@
 				}).then(() => {
 					this.closeLoaderDialog();
 				});
+			},
+			downloadChart() {
+				let fileName =
+					this.getFormattedDate(this.selection_date_from, "YYYY-MM") +
+					" to " +
+					this.getFormattedDate(this.selection_date_to, "YYYY-MM");
+
+				let canvas = document.querySelector(".charts canvas");
+				let dataURL = canvas.toDataURL();
+				let a = document.createElement("a");
+				a.href = dataURL;
+				a.download = "Yearly Revenue Zone Wise Chart from " + fileName + ".png";
+				a.click();
 			},
 		},
 		watch: {
