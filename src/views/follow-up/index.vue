@@ -61,6 +61,14 @@
 				<template v-slot:[`item.date_of_enquiry`]="{ item }">
 					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
 				</template>
+				<template v-slot:[`item.company_data.defaulter`]="{ item }">
+					<template v-if="item.company_data.defaulter">
+						<v-chip small color="error">Yes</v-chip>
+					</template>
+					<template v-else>
+						-
+					</template>
+				</template>
 				<template v-slot:[`item.contact_number`]="{ item }">
 					{{ item.contact_number ? item.contact_number : "-" }}
 				</template>
@@ -196,6 +204,7 @@
 				{ text: "Created By", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
 				{ text: "Company Name", value: "company_data.name", width: 200 },
+				{ text: "Defaulter", value: "company_data.defaulter", width: 200 },
 				{ text: "City", value: "city", width: 150 },
 				{ text: "Zone", value: "zone", width: 150 },
 				{ text: "Name of Contact", value: "contact_person", width: 200 },
