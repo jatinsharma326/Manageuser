@@ -1,9 +1,13 @@
 <template>
 	<div class="searchWrapper">
-		<v-badge v-if="isOnlyAdvanceSearch" class="filter-button" dot overlap :value="areFiltersApplied">
-			<v-btn color="primary" text @click.stop="toggleAdvanceSearchSection()">{{ placeholder }}</v-btn>
+		<template v-if="isOnlyAdvanceSearch">
+			<v-badge class="filter-button" dot overlap :value="areFiltersApplied">
+				<v-btn color="primary" text @click.stop="toggleAdvanceSearchSection()">
+					{{ placeholder }}
+				</v-btn>
+			</v-badge>
 			<slot name="buttonSection"></slot>
-		</v-badge>
+		</template>
 		<v-text-field
 			v-else
 			label="Search"
