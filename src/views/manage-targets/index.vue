@@ -31,7 +31,7 @@
 				<div v-if="selectedTarget.year">Targets for the Year {{ selectedTarget.year }}</div>
 			</template>
 			<template v-slot:modalContent>
-				<ProductTargets :targetYear="selectedTarget"></ProductTargets>
+				<ProductTargets v-if="viewMoreModal" :targetYear="selectedTarget"></ProductTargets>
 			</template>
 		</ViewMoreModal>
 

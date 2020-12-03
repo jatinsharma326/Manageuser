@@ -25,7 +25,7 @@
 				<div v-if="selectedTarget.name">{{ selectedTarget.name }} Based Report</div>
 			</template>
 			<template v-slot:modalContent>
-				<ReportsManager v-bind="{ ...selectedTarget.props }"></ReportsManager>
+				<ReportsManager v-if="viewMoreModal" v-bind="{ ...selectedTarget.props }"></ReportsManager>
 			</template>
 		</ViewMoreModal>
 	</div>

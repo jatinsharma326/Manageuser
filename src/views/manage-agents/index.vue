@@ -127,7 +127,7 @@
 				</div>
 			</template>
 			<template v-slot:modalContent>
-				<companyInfo :companyInfo="selectedCompanyInfo"></companyInfo>
+				<companyInfo v-if="viewMoreModal" :companyInfo="selectedCompanyInfo"></companyInfo>
 			</template>
 		</ViewMoreModal>
 

@@ -79,7 +79,7 @@
 				</div>
 			</template>
 			<template v-slot:modalContent>
-				<ReportView :monthInfo="selectedMonthInfo"></ReportView>
+				<ReportView v-if="viewMoreModal" :monthInfo="selectedMonthInfo"></ReportView>
 			</template>
 		</ViewMoreModal>
 		<!-- Below is the form for Add and Edit -->
