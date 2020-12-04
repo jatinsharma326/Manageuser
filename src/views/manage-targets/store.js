@@ -235,7 +235,6 @@ export default {
 				{ root: true }
 			)
 				.then((data) => {
-					console.log(data);
 					if (data.ok) {
 						return {
 							ok: true,
