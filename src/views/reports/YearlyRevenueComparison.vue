@@ -340,6 +340,7 @@
 				});
 			},
 			downloadChart() {
+				this.openLoaderDialog();
 				let fileName =
 					this.getFormattedDate(this.comparison_date_from, "YYYY-MM") +
 					"_" +
@@ -350,11 +351,16 @@
 					this.getFormattedDate(this.selection_date_to, "YYYY-MM");
 
 				let canvas = document.querySelector(".charts canvas");
+				let ctx = canvas.getContext("2d");
+				ctx.globalCompositeOperation = "destination-over";
+				ctx.fillStyle = "white";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
 				let dataURL = canvas.toDataURL();
 				let a = document.createElement("a");
 				a.href = dataURL;
 				a.download = "Yearly Revenue Comparison Chart from " + fileName + ".png";
 				a.click();
+				this.closeLoaderDialog();
 			},
 			// updatedPageNo(page) {
 			// 	this.getData();
