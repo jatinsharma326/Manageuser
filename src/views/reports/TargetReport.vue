@@ -58,7 +58,7 @@
 				{ text: "Product", value: "country", width: 200 },
 				{ text: "Revenue", value: "revenue_amount", width: 200 },
 				{ text: "Target", value: "target", width: 200 },
-				{ text: "Difference", value: "diff", width: 200 },
+				{ text: "To go", value: "diff", width: 200 },
 				{ text: "Currency", value: "currency_type", width: 200 },
 				{ text: "Revenue ($)", value: "revenue_amount_in_usd", width: 200 },
 				{ text: "Target ($)", value: "target_in_usd", width: 200 },
