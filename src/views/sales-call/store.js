@@ -25,7 +25,7 @@ export default {
 				{
 					method: "get",
 					params: payload,
-					url: constants.SALES_CALLS + "sales-call/" + URLparam + "/",
+					url: constants.SALES_CALLS + "sales-calls/" + URLparam + "/",
 				},
 				{ root: true }
 			)
