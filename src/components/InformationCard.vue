@@ -97,7 +97,9 @@
 <style lang="scss" scoped>
 	.informationCardWrapper {
 		position: relative;
-		// height: 100%; // Commenting this as this messes up Responsivness of the card
+		@include custom-min(767px) {
+			height: 100%; // Commenting this as this messes up Responsivness of the card
+		}
 	}
 
 	.expansionPanelWrapper {
