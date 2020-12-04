@@ -5,8 +5,15 @@
 				<v-card>
 					<v-card-title>
 						<span class="headline">Changelogs</span>
+						<v-spacer></v-spacer>
+						<div class="close-dialog" @click="closeModal()">
+							<v-btn fab color="error" text>
+								<v-icon>mdi-close</v-icon>
+							</v-btn>
+						</div>
 					</v-card-title>
-					<v-timeline dense>
+					<div class="content-error-message" v-if="fetchCount == 0">No Logs for {{ selectedInfo.name }}</div>
+					<v-timeline v-else dense>
 						<v-timeline-item
 							v-for="(log, index) in changelogsList"
 							:key="index"
@@ -22,9 +29,6 @@
 							View More
 						</v-btn>
 						<v-spacer></v-spacer>
-						<v-btn color="error" text @click="closeModal">
-							Close
-						</v-btn>
 					</v-card-actions>
 				</v-card>
 			</v-dialog>

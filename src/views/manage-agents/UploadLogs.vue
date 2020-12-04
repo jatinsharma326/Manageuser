@@ -5,8 +5,17 @@
 				<v-card class="uploadModalContentWrapper">
 					<v-card-title>
 						<span class="headline">Upload Logs</span>
+						<v-spacer></v-spacer>
+						<div class="close-dialog" @click="closeModal()">
+							<v-btn fab color="error" text>
+								<v-icon>mdi-close</v-icon>
+							</v-btn>
+						</div>
 					</v-card-title>
-					<v-timeline dense>
+					<div class="content-error-message" v-if="fetchCount == 0">
+						No upload logs at the moment. Please upload a file to see logs here.
+					</div>
+					<v-timeline v-else dense>
 						<v-timeline-item
 							v-for="(log, index) in logsList"
 							:key="index"
@@ -35,9 +44,9 @@
 							View More
 						</v-btn>
 						<v-spacer></v-spacer>
-						<v-btn color="error" text @click="closeModal">
+						<!-- <v-btn color="error" text @click="closeModal">
 							Close
-						</v-btn>
+						</v-btn> -->
 					</v-card-actions>
 				</v-card>
 			</v-dialog>
