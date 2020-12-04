@@ -106,7 +106,9 @@
 							countriesList,
 						},
 					},
-					{
+				];
+				if (!this.isOnlyRemoteAgent) {
+					this.config.push({
 						name: "Target",
 						id: "target",
 						props: {
@@ -116,8 +118,8 @@
 							userList,
 							countriesList,
 						},
-					},
-				];
+					});
+				}
 			},
 			openTargetsModal(targetData) {
 				this.selectedTarget = targetData;
