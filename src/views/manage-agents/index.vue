@@ -143,7 +143,7 @@
 		></UserForm>
 
 		<div class="floating-button">
-			<v-speed-dial v-model="fab" direction="top" :open-on-hover="hover" transition="scale-transition">
+			<v-speed-dial v-model="fab" direction="top" :open-on-hover="true" transition="scale-transition">
 				<template v-slot:activator>
 					<v-btn v-model="fab" color="primary" dark fab>
 						<v-icon v-if="fab">
@@ -225,7 +225,6 @@
 			toggleUploadlogModal: false,
 			selectedCompanyInfo: {},
 			fab: false,
-			hover: false,
 			uploadModal: false,
 			activeState: true,
 			companyList: [],
