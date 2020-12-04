@@ -8,7 +8,7 @@
 						<v-icon>{{ showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<div v-show="showColumnOne">
+				<div class="contentSectionWrapper" v-show="showColumnOne">
 					<div v-if="columnOneTotalCount === 0" class="content-error-message">
 						Please add Date of Birth for any travel agent.
 					</div>
@@ -43,12 +43,12 @@
 			</div>
 			<div class="column-two column">
 				<div class="title-section">
-					<div class="title">GD Empoyees Birthdays</div>
+					<div class="title">GD Employees Birthdays</div>
 					<v-btn color="tertiary" icon @click="showColumnTwo = !showColumnTwo">
 						<v-icon>{{ showColumnTwo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<div v-show="showColumnTwo">
+				<div class="contentSectionWrapper" v-show="showColumnTwo">
 					<div class="content-section">
 						<div
 							v-for="(person, index) in gloablDestinationsBirthdays"

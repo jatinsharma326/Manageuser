@@ -8,7 +8,7 @@
 						<v-icon>{{ showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<div v-show="showColumnOne">
+				<div class="contentSectionWrapper" v-show="showColumnOne">
 					<div v-if="columnOneTotalCount === 0" class="content-error-message">
 						No reminders for the followup section.
 					</div>
@@ -103,7 +103,7 @@
 						<v-icon>{{ showColumnTwo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<div v-show="showColumnTwo">
+				<div class="contentSectionWrapper" v-show="showColumnTwo">
 					<div v-if="columnTwoTotalCount === 0" class="content-error-message">
 						No reminders for the DSR section.
 					</div>
