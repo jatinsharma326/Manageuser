@@ -29,8 +29,8 @@
 		</v-navigation-drawer>
 
 		<v-app-bar color="primary" app fixed>
-			<v-btn fab small icon tile x-large>
-				<v-icon color="white" @click="toggleNav">mdi-menu</v-icon>
+			<v-btn icon x-large @click="toggleNav">
+				<v-icon color="white">mdi-menu</v-icon>
 			</v-btn>
 
 			<v-toolbar-title
