@@ -335,7 +335,6 @@
 				// var tempObj = {};
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
 				formData.email_ids = data.email_ids.map((data) => data.input);
-				console.log("Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -344,12 +343,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Employee Info" });
-							console.log("Add Partner Employee success");
 							this.getEmployees();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add Partner Employee failed");
 						}
 					});
 				} else {
@@ -357,12 +354,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Employee Info" });
-							console.log("Edit Partner Employee success");
 							this.getEmployees();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit Partner Employee failed");
 						}
 					});
 				}
@@ -377,7 +372,6 @@
 
 			// Implement the delete API
 			deleteEmployee(user) {
-				console.log(user);
 				if (window.confirm("Do you really want to Delete the Partner Employee?")) {
 					this.openLoaderDialog();
 					this.deletePartnerEmployees({
@@ -398,7 +392,6 @@
 			partnerInfo: {
 				deep: true,
 				handler(nv, ov) {
-					console.log("Handler");
 					this.filter = {};
 					this.employeesList = [];
 					this.getEmployees();

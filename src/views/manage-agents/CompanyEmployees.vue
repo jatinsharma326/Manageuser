@@ -165,11 +165,6 @@
 			await this.getStates();
 			this.setSearchConfig(this.statesList);
 		},
-		// updated() {
-		// 	if (this.toggleForm) {
-		// 		console.log("Updated");
-		// 	}
-		// },
 		data: () => ({
 			name: "Travel Agent Employee",
 			placeholder: "Search Travel Agent Employees",
@@ -479,7 +474,6 @@
 					this.filter = {};
 					this.employeeList = [];
 					this.pageNo = 1;
-					console.log("Company Info changed");
 					this.getCompanyEmployees();
 					await this.getAddresses();
 					this.setInputConfig(this.addressList);

@@ -366,7 +366,6 @@
 			 * - If found, an object is created with that name and conversion set to 1
 			 */
 			currencyValue(nv, ov) {
-				console.log("The nv", nv);
 				let tempObj = [];
 				let found;
 				for (let value of nv) {

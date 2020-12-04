@@ -230,7 +230,6 @@
 			},
 			dataSelector() {
 				this.tempDateValue = [...this.datePickerDate];
-				// console.log("Date picker clicked", this.tempDateValue);
 			},
 			cancelDatePicker() {
 				this.datePickerDate = [...this.tempDateValue];
@@ -294,7 +293,6 @@
 				this.getData();
 			},
 			setSearchConfig(countriesList = [], userList = []) {
-				// console.log(countriesList);
 				this.selectedSearchConfig = [
 					{
 						name: "Inquiry Type",
@@ -370,14 +368,12 @@
 			datePickerDate: {
 				deep: true,
 				async handler(nv, ov) {
-					console.log("Error check");
 					this.errorMessage = this.isDateValid();
 				},
 			},
 			selectedDateRange: {
 				deep: true,
 				handler(nv, ov) {
-					console.log("Set the Date");
 					this.setYearlyRevenueMainDate(this.datePickerDate);
 				},
 			},

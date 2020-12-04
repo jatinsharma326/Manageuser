@@ -191,7 +191,6 @@
 				formData.date_from = helpers.getISODate(formData.date_from);
 				formData.date_to = helpers.getISODate(formData.date_to);
 				formData.no_of_days = Number(formData.no_of_days);
-				console.log("Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {

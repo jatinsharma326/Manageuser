@@ -139,7 +139,6 @@ export default {
 				{ root: true }
 			)
 				.then(({ data, response }) => {
-					console.log(response);
 					if (response.status === 200) {
 						commit("openSnackbar", { text: "Starting Download" }, { root: true });
 						const url = window.URL.createObjectURL(new Blob([data]));

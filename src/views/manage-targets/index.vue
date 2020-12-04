@@ -100,7 +100,6 @@
 			},
 			formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
-				console.log("formData", formData);
 
 				if (!formData.reference_year) {
 					delete formData.reference_year;
@@ -141,7 +140,6 @@
 				};
 			},
 			deleteYear(target) {
-				console.log("Delete", target);
 				if (window.confirm("Do you really want to Delete the Year?")) {
 					this.openLoaderDialog();
 					this.deleteTargetYear({

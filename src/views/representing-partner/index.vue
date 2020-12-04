@@ -308,20 +308,16 @@
 					formData.logo = null;
 				}
 
-				console.log("Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addPartner(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Partner" });
-							console.log("Add Partner success");
 							this.getPartners();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add Partner failed");
 						}
 					});
 				} else {
@@ -329,12 +325,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Partner" });
-							console.log("Edit Partner success");
 							this.getPartners();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit Partner failed");
 						}
 					});
 				}
@@ -362,19 +356,16 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
-							console.log("Updated Partner status");
 							this.getPartners();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update Partner status");
 						}
 					});
 				}
 			},
 			openEmployeeModal(userData) {
 				this.selectedPartnerInfo = { ...userData };
-				// console.log(this.selectedPartnerInfo);
 				this.viewMoreModal = true;
 			},
 			setSearchConfig() {

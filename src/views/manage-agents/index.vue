@@ -370,19 +370,16 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Company Status" });
-							console.log("Updated Company status");
 							this.getCompanies();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update Company status");
 						}
 					});
 				}
 			},
 			openInformationModal(userData) {
 				this.selectedCompanyInfo = { ...userData };
-				// console.log(this.selectedCompanyInfo);
 				this.viewMoreModal = true;
 			},
 			toggleUploadModal(value) {

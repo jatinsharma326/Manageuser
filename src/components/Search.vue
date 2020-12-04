@@ -159,7 +159,6 @@
 			performBasicSearch() {
 				clearTimeout(this.searchTimeoutRef);
 				this.searchTimeoutRef = setTimeout(() => {
-					console.log(this.queryString);
 					this.$emit("queryString", this.queryString);
 				}, 500);
 			},

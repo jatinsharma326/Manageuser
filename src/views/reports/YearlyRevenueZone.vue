@@ -175,7 +175,6 @@
 							backgroundColor: "RGB(255, 99, 132, 0.75)",
 						},
 					];
-					// console.log("chartDatasets", chartDatasets);
 					this.chartData = {
 						labels: chartLabel,
 						datasets: chartDatasets,

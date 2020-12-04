@@ -287,7 +287,6 @@
 					}
 					this.initializeToggleObject(data.list);
 					this.followUpReminders = data.list;
-					console.log(data);
 					this.columnOneTotalCount = data.totalCount;
 				});
 			},

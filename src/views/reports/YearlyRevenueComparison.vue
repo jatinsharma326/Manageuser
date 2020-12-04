@@ -278,7 +278,6 @@
 							backgroundColor: "RGB(54, 162, 235, 0.5)",
 						},
 					];
-					console.log("chartDatasets", chartDatasets);
 					this.chartData = {
 						labels: chartLabel,
 						datasets: chartDatasets,
@@ -393,7 +392,6 @@
 				async handler(nv, ov) {
 					this.setDateRange();
 					this.getData();
-					console.log("yearlyRevenueFilter", this.yearlyRevenueFilter);
 				},
 			},
 		},

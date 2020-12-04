@@ -281,12 +281,11 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Added User Sucessfully" });
-							console.log("Add user success");
+
 							this.getUsers();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add user failed");
 						}
 					});
 				} else {
@@ -294,12 +293,11 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Edited User Sucessfuly" });
-							console.log("Edit user success");
+
 							this.getUsers();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit user failed");
 						}
 					});
 				}
@@ -330,12 +328,11 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Updated User Status" });
-							console.log("Updated user status");
+
 							this.getUsers();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update user status");
 						}
 					});
 				}
@@ -347,12 +344,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Reset Password" });
-							console.log("Sucessfully Reset Password");
 							this.getUsers();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Reset Password");
 						}
 					});
 				}

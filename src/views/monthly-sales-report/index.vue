@@ -501,20 +501,16 @@
 				formData.month_name = this.getMonthName(formData.month);
 				formData.mortal_id = this.userData.id;
 
-				console.log("Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addReportMonth(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Partner" });
-							console.log("Add Partner success");
 							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add Partner failed");
 						}
 					});
 				} else {
@@ -522,12 +518,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Partner" });
-							console.log("Edit Partner success");
 							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit Partner failed");
 						}
 					});
 				}
@@ -555,19 +549,16 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
-							console.log("Updated Partner status");
 							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update Partner status");
 						}
 					});
 				}
 			},
 			openMonthModal(monthData) {
 				this.selectedMonthInfo = { ...monthData };
-				// console.log(this.selectedMonthInfo);
 				this.viewMoreModal = true;
 			},
 			setSearchConfig(teamMember = [], countriesList = [], monthList = []) {

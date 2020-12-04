@@ -430,7 +430,6 @@
 				this.openLoaderDialog();
 				let selectionDate = JSON.parse(JSON.stringify(this.datePickerDate));
 				selectionDate.sort();
-				console.log(selectionDate);
 				this.filter.date_from = moment(selectionDate[0])
 					.tz("Asia/Kolkata")
 					.startOf()

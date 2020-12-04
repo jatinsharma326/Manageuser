@@ -611,9 +611,6 @@
 			},
 			keyUpdated(watchKey, nv, ov) {
 				for (let i of this.inputConfig) {
-					// if (i.disableCheck) {
-					// 	console.log("disableConfig and disable check", this.disableConfig, i.disableCheck);
-					// }
 					if (i.type == "MultiInputWithGroupKey" && watchKey == i.keyToGroup) {
 						if (!ov || !ov.length) {
 							this.formElements[i.key] = nv.map((e) => ({
