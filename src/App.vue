@@ -284,6 +284,10 @@
 
 	#navigation-list {
 		// background-color: $primary;
+
+		.v-list-item__content {
+			padding: 0px !important;
+		}
 		.v-list-group__header {
 			font-size: 16px;
 			&:not(.v-list-item--active) {
@@ -298,18 +302,29 @@
 		}
 
 		.list-title {
-			color: white;
+			display: block;
+			color: $accentFontColor;
+			padding: 12px;
+			width: 98%;
+			margin: 4px 0;
 		}
 
 		.selected-route {
-			color: $accent;
+			background-color: $accent;
+			border-radius: 6px;
+			color: black;
+			box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+				0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 		}
 
-		#basic-list-item {
-			.selected-route {
-				color: $accent;
-			}
-		}
+		// #basic-list-item {
+		// 	.selected-route {
+		// 		background-color: $accent;
+		// 		border-radius: 6px;
+		// 		box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+		// 			0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+		// 	}
+		// }
 
 		.list-group-title-dot {
 			height: 12px;
