@@ -238,8 +238,6 @@
 				var formData = JSON.parse(JSON.stringify(data));
 				formData.company_id = this.companyInfo._id;
 
-				// console.log("Test Console Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addAddress(formData).then((data) => {

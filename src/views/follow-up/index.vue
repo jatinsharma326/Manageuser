@@ -704,7 +704,7 @@
 				if (filterData.date_of_call) {
 					filterData.date_of_call = helpers.getISODate(filterData.date_of_call);
 				}
-				console.log("Test Console Advance Search Output", filterData);
+
 				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();
@@ -756,7 +756,7 @@
 
 				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
 				formData.month_of_travel = Number(this.getFormattedDate(formData.date_of_travel, "MM"));
-				console.log("Test console FormData", formData);
+
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addFollowUp(formData).then((data) => {

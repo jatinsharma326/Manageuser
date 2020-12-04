@@ -49,7 +49,6 @@ const commonAPICallsMixin = {
 				},
 			}).then((data) => {
 				this.companyList = data.list;
-				// console.log("Test Console Companies", this.companyList);
 				// this.modifiedCompanyList = data.list.map((e) => e.name);
 			});
 		},

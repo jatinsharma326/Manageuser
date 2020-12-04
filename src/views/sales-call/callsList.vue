@@ -225,7 +225,6 @@
 				if (filterData.date_of_call) {
 					filterData.date_of_call = helpers.getISODate(filterData.date_of_call);
 				}
-				console.log("Test Console Advance Search Output", filterData);
 				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();
@@ -239,7 +238,6 @@
 					formData.year = Number(moment(formData.date_of_call).format("YYYY"));
 				}
 
-				console.log("Test Console Before API call FormData Object", formData);
 				this.openLoaderDialog();
 				if (formData.company_id || formData.date_of_call) {
 					this.checkCallDetail({

@@ -98,7 +98,6 @@ export default {
 				{ root: true }
 			)
 				.then((data) => {
-					console.log("Test Console Pending Leaves", data);
 					if (data.ok) {
 						return {
 							ok: true,

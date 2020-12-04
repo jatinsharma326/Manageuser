@@ -134,7 +134,6 @@ export default {
 				{ root: true }
 			)
 				.then((data) => {
-					// console.log("Test Console Warning Main API", data);
 					if (data.ok) {
 						return {
 							ok: true,

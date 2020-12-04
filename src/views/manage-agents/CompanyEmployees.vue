@@ -338,7 +338,6 @@
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input).filter((e) => e != "");
 				formData.email_ids = data.email_ids.map((data) => data.input).filter((e) => e != "");
 
-				console.log("Test Console Before API call FormData Object", formData);
 				this.openLoaderDialog();
 				if (this.isEditMode) {
 					this.editCompanyEmployee(formData).then((data) => {

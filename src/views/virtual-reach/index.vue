@@ -358,7 +358,7 @@
 				if (filterData.date_of_call) {
 					filterData.date_of_call = helpers.getISODate(filterData.date_of_call);
 				}
-				console.log("Test Console Advance Search Output", filterData);
+
 				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();
@@ -375,7 +375,6 @@
 					formData.reach = Number(formData.reach);
 				}
 
-				console.log("Test console FormData", formData);
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addVirtualReach(formData).then((data) => {

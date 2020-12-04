@@ -417,7 +417,6 @@
 					if (!this.isEditMode) {
 						this.$emit("formOutput", this.formElements);
 					} else {
-						console.log("Test Console Form Output Inside Form", this.formElements);
 						this.$emit("formOutput", {
 							...this.formElements,
 							_id: this.formData._id,
@@ -519,7 +518,6 @@
 							// 	updated_on: "2020-10-29T07:44:40.388Z",
 							// };
 							if (this.formData[i.key]) {
-								console.log("Test Console ", this.formData[i.key]);
 								let tempObj = this.formData[i.key].map((e) => ({
 									groupKey: e[i.keyforGrouped],
 									input: i.multi
@@ -527,7 +525,6 @@
 										: [{ input: e[i.keyBeingGrouped] }],
 								}));
 								let tempObjRefForLoop = JSON.parse(JSON.stringify(tempObj));
-								console.log("Test Console Temp Obj", tempObjRefForLoop);
 								// tempObj Output -> [
 								// 	{ groupKey: "United States", input: [{ input: "+1 310 663 9484" }] },
 								// 	{ groupKey: "Canada", input: [{ input: "" }] },

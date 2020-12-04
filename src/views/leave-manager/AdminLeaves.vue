@@ -216,7 +216,7 @@
 				if (filterData.date_to) {
 					filterData.date_to = helpers.getISODate(filterData.date_to);
 				}
-				console.log("Test Console Advance Search Output", filterData);
+
 				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();

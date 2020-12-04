@@ -287,7 +287,7 @@
 				} else {
 					this.activeState = true;
 				}
-				// console.log("Test Console advance search filter obj", this.filter);
+
 				this.pageNo = 1;
 				this.getCompanies();
 			},
