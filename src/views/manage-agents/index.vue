@@ -83,7 +83,7 @@
 			</div>
 		</div>
 
-		<div class="paginationWrapper">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -131,7 +131,7 @@
 				</div>
 			</template>
 			<template v-slot:modalContent>
-				<companyInfo :companyInfo="selectedCompanyInfo"></companyInfo>
+				<companyInfo v-if="viewMoreModal" :companyInfo="selectedCompanyInfo"></companyInfo>
 			</template>
 		</ViewMoreModal>
 
@@ -147,7 +147,7 @@
 		></UserForm>
 
 		<div class="floating-button">
-			<v-speed-dial v-model="fab" direction="top" :open-on-hover="hover" transition="scale-transition">
+			<v-speed-dial v-model="fab" direction="top" :open-on-hover="true" transition="scale-transition">
 				<template v-slot:activator>
 					<v-btn v-model="fab" color="primary" dark fab>
 						<v-icon v-if="fab">
@@ -229,7 +229,6 @@
 			toggleUploadlogModal: false,
 			selectedCompanyInfo: {},
 			fab: false,
-			hover: false,
 			uploadModal: false,
 			activeState: true,
 			companyList: [],
@@ -257,7 +256,7 @@
 					this.activeCountriesList = data.list;
 				});
 			},
-			getData() {
+			getCompanies() {
 				this.openLoaderDialog();
 				this.filter.active = this.activeState;
 				this.getCompaniesList({
@@ -292,7 +291,7 @@
 				} else {
 					this.activeState = true;
 				}
-				// console.log("Test Console advance search filter obj", this.filter);
+
 				this.pageNo = 1;
 				this.getData();
 			},
@@ -375,19 +374,16 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Company Status" });
-							console.log("Updated Company status");
-							this.getData();
+							this.getCompanies();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update Company status");
 						}
 					});
 				}
 			},
 			openInformationModal(userData) {
 				this.selectedCompanyInfo = { ...userData };
-				// console.log(this.selectedCompanyInfo);
 				this.viewMoreModal = true;
 			},
 			toggleUploadModal(value) {

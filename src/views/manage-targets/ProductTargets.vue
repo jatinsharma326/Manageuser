@@ -169,7 +169,6 @@
 			getCountryList() {
 				// this.openLoaderDialog();
 				return this.getActiveCountries().then((data) => {
-					console.log("countries List", data);
 					// this.closeLoaderDialog();
 					this.countriesList = data.list;
 				});
@@ -245,7 +244,6 @@
 				var formData = JSON.parse(JSON.stringify(data));
 				formData.financial_year_id = this.targetYear._id;
 				formData.target = Number(formData.target);
-				console.log("Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -276,7 +274,6 @@
 				};
 			},
 			deleteTarget(target) {
-				console.log("Delete", target);
 				if (window.confirm("Do you really want to Delete the target row")) {
 					this.openLoaderDialog();
 					this.deleteTargetForYear({
@@ -302,7 +299,6 @@
 			productTargetList: {
 				deep: true,
 				handler(nv, ov) {
-					console.log("Handler", nv, ov);
 					if (ov.length) {
 						this.targetsHaveUpdated = true;
 					} else {

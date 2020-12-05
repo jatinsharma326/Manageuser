@@ -1,8 +1,13 @@
 <template>
 	<div class="searchWrapper">
-		<v-badge v-if="isOnlyAdvanceSearch" class="filter-button" dot overlap :value="areFiltersApplied">
-			<v-btn color="primary" text @click.stop="toggleAdvanceSearchSection()">{{ placeholder }}</v-btn>
-		</v-badge>
+		<template v-if="isOnlyAdvanceSearch">
+			<v-badge class="filter-button" dot overlap :value="areFiltersApplied">
+				<v-btn color="primary" text @click.stop="toggleAdvanceSearchSection()">
+					{{ placeholder }}
+				</v-btn>
+			</v-badge>
+			<slot name="buttonSection"></slot>
+		</template>
 		<v-text-field
 			v-else
 			label="Search"
@@ -154,7 +159,6 @@
 			performBasicSearch() {
 				clearTimeout(this.searchTimeoutRef);
 				this.searchTimeoutRef = setTimeout(() => {
-					console.log(this.queryString);
 					this.$emit("queryString", this.queryString);
 				}, 500);
 			},

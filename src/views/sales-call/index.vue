@@ -27,7 +27,7 @@
 			await this.getCompanies();
 			await this.getUsers();
 			this.closeLoaderDialog();
-			this.setConfig(this.companyList, this.userList, this.storeStatesList, this.modifiedCompanyList);
+			this.setConfig(this.companyList, this.userList, this.storeStatesList);
 		},
 		data: () => ({
 			tab: "",
@@ -39,7 +39,7 @@
 		},
 		methods: {
 			...mapActions("ManageAgents", ["getAddressList"]),
-			setConfig(companyList = [], userList = [], statesList = [], modifiedCompanyList = []) {
+			setConfig(companyList = [], userList = [], statesList = []) {
 				this.tabConfig = [
 					{
 						name: "Sales Call",
@@ -95,19 +95,6 @@
 									titleContent: (item) => {
 										return item.name;
 									},
-									apiCall: (company_id) => {
-										// // return function getAddresses() {
-										// return this.getAddressList({
-										// 	filter: {
-										// 		company_id: company_id,
-										// 	},
-										// }).then((data) => {
-										// 	return {
-										// 		data,
-										// 	};
-										// });
-										// // };
-									},
 									key: "company_id",
 									width: "half",
 									multi: false,
@@ -155,7 +142,9 @@
 									inputType: "dropdown",
 									defaultValue: [],
 									isListInStore: false,
-									listItems: modifiedCompanyList,
+									listItems: companyList,
+									itemText: "name",
+									itemValue: "name",
 								},
 								{
 									name: "Branch Name",
@@ -201,7 +190,9 @@
 									inputType: "dropdown",
 									defaultValue: [],
 									isListInStore: false,
-									listItems: modifiedCompanyList,
+									listItems: companyList,
+									itemText: "name",
+									itemValue: "name",
 								},
 								{
 									name: "Branch Name",

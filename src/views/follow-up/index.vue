@@ -61,6 +61,14 @@
 				<template v-slot:[`item.date_of_enquiry`]="{ item }">
 					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
 				</template>
+				<template v-slot:[`item.company_data.defaulter`]="{ item }">
+					<template v-if="item.company_data.defaulter">
+						<v-chip small color="error">Yes</v-chip>
+					</template>
+					<template v-else>
+						-
+					</template>
+				</template>
 				<template v-slot:[`item.contact_number`]="{ item }">
 					{{ item.contact_number ? item.contact_number : "-" }}
 				</template>
@@ -115,7 +123,7 @@
 			</v-data-table>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -170,6 +178,7 @@
 			await this.getCountries();
 			//get companies is defined in commonAPIMixins which gets companiesList and modifiedCompanyList
 			promiseArray.push(this.getCompanies());
+			promiseArray.push(this.getCities());
 			promiseArray.push(this.getActiveCurrenciesList());
 			await Promise.all(promiseArray);
 			this.closeLoaderDialog();
@@ -178,7 +187,8 @@
 				this.companyList,
 				// this.modifiedCompanyIdsList,
 				this.countriesList,
-				this.activeCurrencyList
+				this.activeCurrencyList,
+				this.citiesList
 			);
 		},
 		data: () => ({
@@ -186,6 +196,7 @@
 			placeholder: "Search Followup Entry",
 			searchConfig: [],
 			inputConfig: [],
+			citiesList: [],
 			followUpList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
@@ -193,6 +204,7 @@
 				{ text: "Created By", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
 				{ text: "Company Name", value: "company_data.name", width: 200 },
+				{ text: "Defaulter", value: "company_data.defaulter", width: 200 },
 				{ text: "City", value: "city", width: 150 },
 				{ text: "Zone", value: "zone", width: 150 },
 				{ text: "Name of Contact", value: "contact_person", width: 200 },
@@ -226,6 +238,7 @@
 		methods: {
 			...mapActions("FollowUp", [
 				"getActiveCurrencies",
+				"getCitiesList",
 				"getFollowUp",
 				"addFollowUp",
 				"editFollowUp",
@@ -252,6 +265,13 @@
 				} else {
 					return this.getCountryList();
 				}
+			},
+			getCities() {
+				return this.getCitiesList({
+					filter: {},
+				}).then((data) => {
+					this.citiesList = data.list;
+				});
 			},
 			getData() {
 				this.openLoaderDialog();
@@ -289,7 +309,8 @@
 				companyList = [],
 				// modifiedCompanyIdsList = [],
 				countriesList = [],
-				activeCurrencyList = []
+				activeCurrencyList = [],
+				citiesList = []
 			) {
 				this.searchConfig = [
 					{
@@ -318,10 +339,12 @@
 					},
 					{
 						name: "City",
-						key: "city",
-						type: "text",
-						inputType: "textfield",
-						defaultValue: "",
+						key: "cities",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: citiesList,
 						classes: ["half"],
 					},
 					{
@@ -440,12 +463,14 @@
 					},
 					{
 						name: "City*",
-						type: "String",
+						type: "Dropdown",
 						key: "city",
 						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: citiesList,
 						validations: {
 							required,
-							minLength: minLength(1),
 						},
 					},
 					{
@@ -655,7 +680,6 @@
 						classes: ["half"],
 					});
 				}
-
 				if (this.isOnlySalesAgent) {
 					this.inputConfig.unshift({
 						name: "Zone*",
@@ -680,7 +704,7 @@
 				if (filterData.date_of_call) {
 					filterData.date_of_call = helpers.getISODate(filterData.date_of_call);
 				}
-				console.log("Test Console Advance Search Output", filterData);
+
 				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();
@@ -732,7 +756,7 @@
 
 				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
 				formData.month_of_travel = Number(this.getFormattedDate(formData.date_of_travel, "MM"));
-				console.log("Test console FormData", formData);
+
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addFollowUp(formData).then((data) => {

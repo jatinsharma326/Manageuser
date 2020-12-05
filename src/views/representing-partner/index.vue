@@ -92,7 +92,7 @@
 			</div>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -113,7 +113,7 @@
 				</div>
 			</template>
 			<template v-slot:modalContent>
-				<partnerEmployees :partnerInfo="selectedPartnerInfo"></partnerEmployees>
+				<partnerEmployees v-if="viewMoreModal" :partnerInfo="selectedPartnerInfo"></partnerEmployees>
 			</template>
 		</ViewMoreModal>
 
@@ -162,65 +162,7 @@
 			selectedPartnerInfo: {},
 			activeState: true,
 			keysToWatch: ["countries"],
-			partnerList: [
-				// {
-				//   _id: "5f8579099618e43f60826225",
-				//   name: "Allied Partners",
-				//   proprietor_info: "Info 1",
-				//   business_types: ["FIT", "GIT"],
-				//   countries: ["United States", "Egypt"],
-				//   emergency_contacts: [
-				//     {
-				//       country: "United States",
-				//       contacts: ["123456789", "987654321"],
-				//     },
-				//   ],
-				//   logo: "",
-				//   record: {
-				//     created_on: "2020-10-13T09:53:13.958Z",
-				//     updated_on: "2020-10-13T11:01:45.456Z",
-				//     active: false,
-				//   },
-				// },
-				// {
-				//   _id: "5f857a9ad8a96c2e4ca6e7c5",
-				//   name: "Allied Partneras",
-				//   proprietor_info: "Info 1",
-				//   business_types: ["FIT", "GIT"],
-				//   countries: ["United States", "Egypt"],
-				//   emergency_contacts: [
-				//     {
-				//       country: "Egypt",
-				//       contacts: ["123456789", "987654321"],
-				//     },
-				//   ],
-				//   logo: "",
-				//   record: {
-				//     created_on: "2020-10-13T09:59:54.919Z",
-				//     updated_on: "2020-10-13T09:59:54.919Z",
-				//     active: true,
-				//   },
-				// },
-				// {
-				//   _id: "5f8582dc382e8941905682c8",
-				//   name: "Allied P",
-				//   proprietor_info: "Info 1",
-				//   business_types: ["FIT", "GIT"],
-				//   countries: ["United States", "Egypt"],
-				//   emergency_contacts: [
-				//     {
-				//       country: "Egypt",
-				//       contacts: ["123456789", "987654321"],
-				//     },
-				//   ],
-				//   logo: "",
-				//   record: {
-				//     created_on: "2020-10-13T10:35:08.048Z",
-				//     updated_on: "2020-10-13T10:35:08.048Z",
-				//     active: true,
-				//   },
-				// },
-			],
+			partnerList: [],
 			inputConfig: [
 				{
 					name: "Partner Name*",
@@ -366,20 +308,16 @@
 					formData.logo = null;
 				}
 
-				console.log("Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addPartner(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Partner" });
-							console.log("Add Partner success");
 							this.getPartners();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add Partner failed");
 						}
 					});
 				} else {
@@ -387,12 +325,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Partner" });
-							console.log("Edit Partner success");
 							this.getPartners();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit Partner failed");
 						}
 					});
 				}
@@ -420,19 +356,16 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
-							console.log("Updated Partner status");
 							this.getPartners();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update Partner status");
 						}
 					});
 				}
 			},
 			openEmployeeModal(userData) {
 				this.selectedPartnerInfo = { ...userData };
-				// console.log(this.selectedPartnerInfo);
 				this.viewMoreModal = true;
 			},
 			setSearchConfig() {

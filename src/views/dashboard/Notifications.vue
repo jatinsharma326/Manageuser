@@ -8,7 +8,7 @@
 						<v-icon>{{ showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<div v-show="showColumnOne">
+				<div class="contentSectionWrapper" v-show="showColumnOne">
 					<div v-if="columnOneTotalCount === 0" class="content-error-message">
 						No Notifications for the DSR section.
 					</div>
@@ -159,6 +159,7 @@
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched Follow Up List" });
 					}
+					this.initializeToggleObject(data.list);
 					this.notificationsList = data.list;
 					this.columnOneTotalCount = data.totalCount;
 				});

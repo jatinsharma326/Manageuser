@@ -60,7 +60,7 @@
 			</div>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -286,8 +286,6 @@
 				}
 				formData.no_of_days = Number(formData.no_of_days);
 
-				console.log("Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addFamTrip(formData).then((data) => {
@@ -400,7 +398,6 @@
 					this.filter = {};
 					this.tripList = [];
 					this.pageNo = 1;
-					console.log("Company Info changed");
 					this.getFamTrip();
 					await this.getEmployees();
 					await this.getCountryList();

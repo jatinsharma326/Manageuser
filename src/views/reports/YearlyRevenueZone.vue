@@ -1,56 +1,14 @@
 <template>
-	<div class="companyAddressWrapper">
-		<div class="SearchbarWrapper">
-			<div class="searchbar">
-				<Search
-					@queryString="queryString"
-					@filterObject="advanceSearch"
-					@clearFilter="advanceSearch"
-					:placeholder="placeholder"
-					:isAdvanceSearch="true"
-					:isOnlyAdvanceSearch="true"
-					:isAdvanceAFilter="true"
-					:filterConfig="selectedSearchConfig"
-				></Search>
-			</div>
-			<div class="datepicker">
-				<v-dialog
-					ref="dialog"
-					v-model="dateDialog"
-					:return-value.sync="datePickerDate"
-					persistent
-					width="290px"
-				>
-					<template v-slot:activator="{ on, attrs }">
-						<v-text-field
-							v-model="dateRangeText"
-							label="Date Range"
-							readonly
-							outlined
-							@click="dataSelector"
-							v-bind="attrs"
-							v-on="on"
-						></v-text-field>
-					</template>
-					<v-date-picker range type="month" v-model="datePickerDate" scrollable>
-						<v-spacer></v-spacer>
-						<v-btn text color="primary" @click="resetDatePicker">
-							Reset
-						</v-btn>
-						<v-btn text color="primary" @click="cancelDatePicker">
-							Cancel
-						</v-btn>
-						<v-btn text color="primary" @click="submitDatePicker">
-							OK
-						</v-btn>
-					</v-date-picker>
-				</v-dialog>
-			</div>
+	<div class="yearlyZone">
+		<div class="download-reports">
+			<v-btn :disabled="checkDownloadButtonStatus" color="primary" text @click.stop="downloadReport()"
+				>Download Report</v-btn
+			>
+			<v-btn :disabled="checkDownloadButtonStatus" color="secondary" text @click.stop="downloadChart()"
+				>Download Chart</v-btn
+			>
 		</div>
-		<div v-if="totalCount === 0" class="content-error-message">
-			No Followup entries. Please add followup entries to see the reports
-		</div>
-		<div v-else class="leaves-table">
+		<div class="leaves-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer
@@ -58,54 +16,16 @@
 				item-key="_id"
 				:items="dataList"
 			>
-				<template v-slot:[`item.date_of_enquiry`]="{ item }">
-					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.contact_number`]="{ item }">
-					{{ item.contact_number ? item.contact_number : "-" }}
-				</template>
-				<template v-slot:[`item.date_of_travel`]="{ item }">
-					{{ item.date_of_travel ? getFormattedDate(item.date_of_travel, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.reminder_date`]="{ item }">
-					{{ item.reminder_date ? getFormattedDate(item.reminder_date, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.payment_status`]="{ item }">
-					{{ item.payment_status ? item.payment_status : "-" }}
-				</template>
-				<template v-slot:[`item.invoice_no`]="{ item }">
-					{{ item.invoice_no ? item.invoice_no : "-" }}
-				</template>
-				<template v-slot:[`item.payment_type`]="{ item }">
-					{{ item.payment_type ? item.payment_type : "-" }}
-				</template>
-				<template v-slot:[`item.currency_type`]="{ item }">
-					{{ item.currency_type ? item.currency_type : "-" }}
-				</template>
-				<template v-slot:[`item.amount_pending`]="{ item }">
-					{{ item.amount_pending ? item.amount_pending : "-" }}
-				</template>
-				<template v-slot:[`item.amount_received`]="{ item }">
-					{{ item.amount_received ? item.amount_received : "-" }}
-				</template>
-				<template v-slot:[`item.record.updated_on`]="{ item }">
-					{{ item.record.updated_on ? getFormattedDate(item.record.updated_on, "MMMM Do YYYY dddd") : "-" }}
-				</template>
 			</v-data-table>
 		</div>
-
-		<div class="text-center">
-			<v-pagination
-				@input="updatedPageNo"
-				v-if="isPaginationRequired"
-				v-model="pageNo"
-				:length="Math.ceil(fetchCount / pageSize)"
-			></v-pagination>
+		<div class="charts">
+			<BarChart v-if="render" :myTabId="1" :chartData="chartData" :options="chartOptions"></BarChart>
 		</div>
 	</div>
 </template>
 
 <script>
+	import BarChart from "../../components/BarChart";
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import searchMixin from "../../mixins/searchMixin";
 	import datePickerMixin from "../../mixins/datePickerMixin";
@@ -115,194 +35,232 @@
 
 	export default {
 		name: "YearlyRevenueZone",
-		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
-		components: {},
+		mixins: [defaultCRUDMixin, helperMixin],
+		components: {
+			BarChart,
+		},
 		async created() {
-			this.setDateRange();
 			this.getData();
-			this.setSearchConfig(this.countriesList, this.userList);
 		},
 		data: () => ({
-			selectedCardInfo: {},
-			activeState: true,
+			render: false,
 			dataList: [],
+			pageSize: 20,
+			filter: {},
+			selectionDateFrom: "",
+			selectionDateTo: "",
+			chartData: {},
+			chartOptions: {
+				responsive: true,
+				maintainAspectRatio: false,
+				// animation: {
+				// 	duration: 0,
+				// },
+				// hover: {
+				// 	animationDuration: 0,
+				// },
+				// responsiveAnimationDuration: 0,
+			},
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
-				{ text: "Product", value: "country", width: 150 },
-				{ text: "Created By", value: "mortal_data.name", width: 150 },
-				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
-				{ text: "Company Name", value: "company_data.name", width: 200 },
-				{ text: "City", value: "city", width: 150 },
-				{ text: "Zone", value: "zone", width: 150 },
-				{ text: "Date of Travel", value: "date_of_travel", width: 150 },
-				{ text: "Inquiry Type", value: "business_types", width: 150 },
-				{ text: "Email Subject", value: "email_subject", width: 150 },
-				{ text: "File Status", value: "status", width: 150 },
-				{ text: "Follow Up", value: "reminder_date", width: 150 },
-				{ text: "Payment Status", value: "payment_status", width: 200 },
-				{ text: "Invoice No.", value: "invoice_no", width: 150 },
-				{ text: "Payment Type", value: "payment_type", width: 150 },
-				{ text: "Currency", value: "currency_type", width: 150 },
-				{ text: "Pending (Amount)", value: "amount_pending", width: 200 },
-				{ text: "Received (Amount)", value: "amount_received", width: 200 },
-				{ text: "Last Updated On", value: "record.updated_on", width: 200 },
+				{ text: "Month", value: "month_of_travel", width: 150 },
+				{ text: "East ($)", value: "east", width: 150 },
+				{ text: "West(Guj) ($)", value: "west_guj", width: 150 },
+				{ text: "West ($)", value: "west", width: 150 },
+				{ text: "South ($)", value: "south", width: 150 },
+				{ text: "North ($)", value: "north", width: 150 },
+				{ text: "Total ($)", value: "total", width: 200 },
 			],
 		}),
 		computed: {
+			...mapGetters("Reports", ["yearlyRevenueMainDate", "yearlyRevenueFilter", "currentTab"]),
 			dateRangeText() {
 				return this.datePickerDate.join(" ~ ");
 			},
+			checkDownloadButtonStatus() {
+				if (this.fetchCount == 0) {
+					return true;
+				}
+				return false;
+			},
 		},
 		methods: {
-			...mapActions("FollowUp", ["getFollowUp"]),
+			...mapActions("Reports", ["getYearlyZone", "downloadYearlyZoneReport"]),
 			...mapMutations([]),
-			setDateRange() {
-				let tempArray = [];
-				let startDate = moment()
-					.tz("Asia/Kolkata")
-					.startOf("year")
-					.format("YYYY-MM");
-				let endDate = moment()
-					.tz("Asia/Kolkata")
-					.endOf("year")
-					.format("YYYY-MM");
-				tempArray.push(startDate);
-				tempArray.push(endDate);
-				this.datePickerDate = tempArray;
-			},
 			getData() {
 				this.openLoaderDialog();
-				this.filter.date_from = moment(this.datePickerDate[0])
-					.tz("Asia/Kolkata")
-					.startOf()
-					.toISOString();
-				if (this.datePickerDate[1]) {
-					this.filter.date_to = moment(this.datePickerDate[1])
-						.tz("Asia/Kolkata")
-						.endOf()
-						.toISOString();
-				} else {
-					this.filter.date_to = this.filter.date_from;
-				}
-				//To only get the Amount RECEIVED we need to filter out following conditions
-				this.filter.status = "CONFIRMED";
-				this.filter.payment_status = "RECEIVED";
-				this.filter.payment_type = "FULL PAYMENT";
+				this.render = false;
 
-				this.getFollowUp({
+				let selectionDate = JSON.parse(JSON.stringify(this.yearlyRevenueMainDate));
+				selectionDate.sort();
+
+				this.selectionDateFrom = moment(selectionDate[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				this.selectionDateTo = moment(selectionDate[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
+
+				let { business_types, countries, names, zones } = this.yearlyRevenueFilter;
+				if (business_types) {
+					this.filter.business_types = business_types;
+				}
+				if (countries) {
+					this.filter.countries = countries;
+				}
+				if (names) {
+					this.filter.names = names;
+				}
+				if (zones) {
+					this.filter.zones = zones;
+				}
+				this.getYearlyZone({
 					filter: this.filter,
-					pageSize: this.pageSize,
-					pageNo: this.pageNo,
+					selection_date_from: this.selectionDateFrom,
+					selection_date_to: this.selectionDateTo,
 				}).then((data) => {
 					this.closeLoaderDialog();
+					let chartLabel = [];
+					let northArr = [];
+					let southArr = [];
+					let eastArr = [];
+					let westArr = [];
+					let westGujArr = [];
 					this.dataList = data.list;
-					this.totalCount = data.totalCount;
-					this.fetchCount = data.fetchCount;
-
 					this.dataList = this.dataList.map((d, index) => ({
 						...d,
-						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
+						serial_number: index + 1,
 					}));
+					for (data of this.dataList) {
+						if (data.month_of_travel !== "TOTAL") {
+							chartLabel.push(data.month_of_travel);
+							northArr.push(data.north);
+							southArr.push(data.south);
+							eastArr.push(data.east);
+							westArr.push(data.west);
+							westGujArr.push(data.west_guj);
+						}
+					}
+					let chartDatasets = [
+						{
+							label: "East",
+							data: eastArr,
+							borderColor: "RGB(255, 206, 86)",
+							backgroundColor: "RGB(255, 206, 86, 0.75)",
+						},
+						{
+							label: "West(Guj)",
+							data: westGujArr,
+							borderColor: "RGB(255, 159, 64)",
+							backgroundColor: "RGB(255, 159, 64, 0.75)",
+						},
+						{
+							label: "West",
+							data: westArr,
+							borderColor: "RGB(75, 192, 192)",
+							backgroundColor: "RGB(75, 192, 192, 0.75)",
+						},
+						{
+							label: "South",
+							data: southArr,
+							borderColor: "RGB(54, 162, 235)",
+							backgroundColor: "RGB(54, 162, 235, 0.75)",
+						},
+						{
+							label: "North",
+							data: northArr,
+							borderColor: "RGB(255, 99, 132)",
+							backgroundColor: "RGB(255, 99, 132, 0.75)",
+						},
+					];
+					this.chartData = {
+						labels: chartLabel,
+						datasets: chartDatasets,
+					};
+					this.render = true;
 				});
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getData();
-			},
-			advanceSearch(filterObject) {
-				this.filter = { ...filterObject };
-				if (this.filter.active) {
-					this.activeState = false;
-				} else {
-					this.activeState = true;
+			downloadReport() {
+				let selectionDate = JSON.parse(JSON.stringify(this.yearlyRevenueMainDate));
+				selectionDate.sort();
+
+				this.selectionDateFrom = moment(selectionDate[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				this.selectionDateTo = moment(selectionDate[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
+
+				let { business_types, countries, names, zones } = this.yearlyRevenueFilter;
+				if (business_types) {
+					this.filter.business_types = business_types;
 				}
-				this.pageNo = 1;
-				this.getData();
+				if (countries) {
+					this.filter.countries = countries;
+				}
+				if (names) {
+					this.filter.names = names;
+				}
+				if (zones) {
+					this.filter.zones = zones;
+				}
+
+				this.openLoaderDialog();
+				this.downloadYearlyZoneReport({
+					filter: this.filter,
+					selection_date_from: this.selectionDateFrom,
+					selection_date_to: this.selectionDateTo,
+					type: "zone",
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
 			},
-			setSearchConfig(countriesList = [], userList = []) {
-				// console.log(countriesList);
-				this.selectedSearchConfig = [
-					{
-						name: "Inquiry Type",
-						key: "business_types",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: true,
-						listVariable: "businessType",
-					},
-					{
-						name: "Product",
-						key: "countries",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: countriesList,
-					},
-					{
-						name: "Created By",
-						key: "names",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: userList,
-						classes: ["full"],
-					},
-				];
-			},
-			updatedPageNo(page) {
-				this.getData();
+			downloadChart() {
+				let fileName =
+					this.getFormattedDate(this.selection_date_from, "YYYY-MM") +
+					" to " +
+					this.getFormattedDate(this.selection_date_to, "YYYY-MM");
+
+				let canvas = document.querySelector(".charts canvas");
+				let dataURL = canvas.toDataURL();
+				let a = document.createElement("a");
+				a.href = dataURL;
+				a.download = "Yearly Revenue Zone Wise Chart from " + fileName + ".png";
+				a.click();
 			},
 		},
 		watch: {
-			datePickerDate: {
+			yearlyRevenueMainDate: {
 				deep: true,
 				async handler(nv, ov) {
-					// console.log("ov", ov, "nv", nv);
-					for (let valueOV of ov) {
-						for (let valueNV of nv) {
-							if (valueOV != valueNV) {
-								this.$emit("mainDateRange", this.datePickerDate);
-							}
-						}
-					}
-					// this.filter = {};
-					// this.dataList = [];
-					// this.pageNo = 1;
-					// console.log("Company Info changed");
-					// this.getData();
-					// await this.getStates();
-					// this.setInputConfig(this.statesList);
-					// this.setSearchConfig(this.statesList);
+					this.getData();
 				},
 			},
-			// companyInfo: {
-			// 	deep: true,
-			// 	async handler(nv, ov) {
-			// 		this.filter = {};
-			// 		this.dataList = [];
-			// 		this.pageNo = 1;
-			// 		console.log("Company Info changed");
-			// 		this.getData();
-			// 		await this.getStates();
-			// 		this.setInputConfig(this.statesList);
-			// 		this.setSearchConfig(this.statesList);
-			// 	},
-			// },
+			currentTab(nv) {
+				if (nv == 2) {
+					this.render = false;
+					setTimeout(() => {
+						this.render = true;
+					}, 0);
+				}
+			},
+			yearlyRevenueFilter: {
+				deep: true,
+				async handler(nv, ov) {
+					this.getData();
+				},
+			},
 		},
-		props: {
-			name: { required: true, type: String },
-			placeholder: { required: false, type: String },
-			userList: { required: false, type: Array, default: () => [] },
-			countriesList: { required: false, type: Array, default: () => [] },
-		},
+		props: {},
 	};
 </script>
 
 <style lang="scss" scopped>
-	.companyAddressWrapper {
+	.yearlyZone {
 		padding: 20px 5px;
 		height: 100%;
 	}

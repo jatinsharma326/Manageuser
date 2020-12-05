@@ -122,50 +122,7 @@
 			}
 		},
 		data: () => ({
-			employeesList: [
-				// {
-				//   _id: "5f8e8f36bbaf403c3cf40e47",
-				//   representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
-				//   name: "Sachin Tendulkar",
-				//   designation: "SS",
-				//   country: "United States",
-				//   phone_numbers: ["123", "321300"],
-				//   email_id: ["eassa@tese.com", "fasda@fcsa.in"],
-				//   record: {
-				//     created_on: "2020-10-20T07:18:14.082Z",
-				//     updated_on: "2020-10-20T07:18:14.082Z",
-				//     active: true,
-				//   },
-				// },
-				// {
-				//   _id: "5f8e8f36bbaf403c3cf41e47",
-				//   representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
-				//   name: "Sachin Tendulkar",
-				//   designation: "SS",
-				//   country: "Egypt",
-				//   phone_numbers: ["123", "321300"],
-				//   email_id: ["eassa@tese.com", "fasda@fcsa.in"],
-				//   record: {
-				//     created_on: "2020-10-20T07:18:14.082Z",
-				//     updated_on: "2020-10-20T07:18:14.082Z",
-				//     active: true,
-				//   },
-				// },
-				// {
-				//   _id: "5f8e8f36bbaf413c3cf40e47",
-				//   representing_partner_id: "5f857a9ad8a96c2e4ca6e7c5",
-				//   name: "Sachin Tendulkar",
-				//   designation: "SS",
-				//   country: "United States",
-				//   phone_numbers: ["123", "321300"],
-				//   email_id: ["eassa@tese.com", "fasda@fcsa.in"],
-				//   record: {
-				//     created_on: "2020-10-20T07:18:14.082Z",
-				//     updated_on: "2020-10-20T07:18:14.082Z",
-				//     active: true,
-				//   },
-				// },
-			],
+			employeesList: [],
 			countriesWithEmployee: [],
 			search_text: "",
 			placeholder: "Search Employees",
@@ -378,7 +335,6 @@
 				// var tempObj = {};
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input);
 				formData.email_ids = data.email_ids.map((data) => data.input);
-				console.log("Before API call FormData Object", formData);
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
@@ -387,12 +343,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Employee Info" });
-							console.log("Add Partner Employee success");
 							this.getEmployees();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add Partner Employee failed");
 						}
 					});
 				} else {
@@ -400,12 +354,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Employee Info" });
-							console.log("Edit Partner Employee success");
 							this.getEmployees();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit Partner Employee failed");
 						}
 					});
 				}
@@ -420,7 +372,6 @@
 
 			// Implement the delete API
 			deleteEmployee(user) {
-				console.log(user);
 				if (window.confirm("Do you really want to Delete the Partner Employee?")) {
 					this.openLoaderDialog();
 					this.deletePartnerEmployees({
@@ -441,7 +392,6 @@
 			partnerInfo: {
 				deep: true,
 				handler(nv, ov) {
-					console.log("Handler");
 					this.filter = {};
 					this.employeesList = [];
 					this.getEmployees();

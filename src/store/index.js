@@ -16,6 +16,7 @@ import MSR from "../views/monthly-sales-report/store";
 import FollowUp from "../views/follow-up/store";
 import Dashboard from "../views/dashboard/store";
 import Reports from "../views/reports/store";
+import VirtualReach from "../views/virtual-reach/store";
 
 Vue.use(Vuex);
 
@@ -97,6 +98,7 @@ export default new Vuex.Store({
 		FollowUp,
 		Dashboard,
 		Reports,
+		VirtualReach,
 	},
 
 	state: initialState(),

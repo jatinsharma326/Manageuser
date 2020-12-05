@@ -52,7 +52,7 @@
 			</div>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -238,8 +238,6 @@
 				var formData = JSON.parse(JSON.stringify(data));
 				formData.company_id = this.companyInfo._id;
 
-				// console.log("Test Console Before API call FormData Object", formData);
-
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
 					this.addAddress(formData).then((data) => {
@@ -347,9 +345,9 @@
 					this.filter = {};
 					this.addressList = [];
 					this.pageNo = 1;
-					console.log("Company Info changed");
+
 					this.getAddresses();
-					await this.getStates();
+					// await this.getStates();
 					this.setInputConfig(this.storeStatesList);
 					this.setSearchConfig(this.storeStatesList);
 				},

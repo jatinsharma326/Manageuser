@@ -6,6 +6,7 @@ const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.ord
 // const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.31.6:1401/" : "http://192.168.31.6:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.43.67:1401/" : "http://192.168.43.67:1401/";
+// const BASE_URL = isBuildVersion ? "http://192.168.1.35:1401/" : "http://192.168.1.35:1401/";
 // const BASE_URL = isBuildVersion ? "https://3128e8a0ed71.ngrok.io/" : "https://3128e8a0ed71.ngrok.io/";
 
 export default {
@@ -25,6 +26,7 @@ export default {
 	ALL_CURRENCIES: BASE_URL + "Global/v0.1/currencies",
 	ACTIVE_COUNTRIES: BASE_URL + "Partners/v0.1/active-countries",
 	ALL_STATES: BASE_URL + "Global/v0.1/states",
+	ALL_CITIES: BASE_URL + "Global/v0.1/cities",
 	ACTIVE_CURRENCIES: BASE_URL + "Global/v0.1/active-currencies",
 
 	//API ENDPOINT FOR MANAGE USER DATA
@@ -87,4 +89,20 @@ export default {
 
 	// FOLLOW UP ENDPOINT
 	FOLLOW_UP: BASE_URL + "FollowUps/v0.1/",
+
+	// REPORTS SECTION
+	YEARLY_COMPARISON: BASE_URL + "Reports/v0.1/yearly-comparison",
+	YEARLY_ZONE: BASE_URL + "Reports/v0.1/zone-wise",
+	TRAVEL_AGENT_REPORT: BASE_URL + "Reports/v0.1/agency-wise",
+	TARGET_REPORT: BASE_URL + "Reports/v0.1/target-revenue-comparison",
+
+	// Download Reports
+	YEARLY_REVENUE_RAW_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-follow-up-raw-data-report",
+	YEARLY_REVENUE_COMPARISON_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
+	YEARLY_REVENUE_ZONE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
+	AGENCY_WISE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-agency-wise-follow-ups",
+
+	// VIRTUAL REACH ENDPOINT
+	VIRTUAL_REACH: BASE_URL + "VirtualReach/v0.1/",
+	VIRTUAL_REACH_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-virtual-reach",
 };

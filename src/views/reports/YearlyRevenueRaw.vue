@@ -11,7 +11,17 @@
 					:isOnlyAdvanceSearch="true"
 					:isAdvanceAFilter="true"
 					:filterConfig="selectedSearchConfig"
-				></Search>
+				>
+					<template v-slot:buttonSection>
+						<v-btn
+							:disabled="checkDownloadButtonStatus"
+							color="secondary"
+							text
+							@click.stop="downloadReport()"
+							>Download Report</v-btn
+						>
+					</template>
+				</Search>
 			</div>
 			<div class="datepicker">
 				<v-dialog
@@ -33,16 +43,23 @@
 						></v-text-field>
 					</template>
 					<v-date-picker range type="month" v-model="datePickerDate" scrollable>
-						<v-spacer></v-spacer>
-						<v-btn text color="primary" @click="resetDatePicker">
-							Reset
-						</v-btn>
-						<v-btn text color="primary" @click="cancelDatePicker">
-							Cancel
-						</v-btn>
-						<v-btn text color="primary" @click="submitDatePicker">
-							OK
-						</v-btn>
+						<div class="date-picker-action-section">
+							<div class="date-error-message" v-show="!errorMessage">
+								{{ dateErrorMessage }}
+							</div>
+							<div class="action-buttons">
+								<v-spacer></v-spacer>
+								<v-btn text color="primary" @click="resetDatePicker">
+									Reset
+								</v-btn>
+								<v-btn text color="primary" @click="cancelDatePicker">
+									Cancel
+								</v-btn>
+								<v-btn :disabled="!errorMessage" text color="primary" @click="submitDatePicker">
+									OK
+								</v-btn>
+							</div>
+						</div>
 					</v-date-picker>
 				</v-dialog>
 			</div>
@@ -94,7 +111,7 @@
 			</v-data-table>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -108,14 +125,14 @@
 <script>
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import searchMixin from "../../mixins/searchMixin";
-	import datePickerMixin from "../../mixins/datePickerMixin";
+	// import datePickerMixin from "../../mixins/datePickerMixin";
 	import helperMixin from "../../mixins/helperMixins";
 	import moment from "moment-timezone";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
 		name: "YearlyRevenueRaw",
-		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
+		mixins: [defaultCRUDMixin, searchMixin, helperMixin],
 		components: {},
 		async created() {
 			this.setDateRange();
@@ -127,6 +144,12 @@
 			selectedCardInfo: {},
 			activeState: true,
 			dataList: [],
+			datePickerDate: [],
+			tempDateValue: [],
+			dateDialog: false,
+			selectedDateRange: [],
+			dateErrorMessage: "",
+			errorMessage: true,
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Product", value: "country", width: 150 },
@@ -153,10 +176,17 @@
 			dateRangeText() {
 				return this.datePickerDate.join(" ~ ");
 			},
+			checkDownloadButtonStatus() {
+				if (this.fetchCount == 0) {
+					return true;
+				}
+				return false;
+			},
 		},
 		methods: {
 			...mapActions("FollowUp", ["getFollowUp"]),
-			...mapMutations("Reports", ["setYearlyRevenueMainDate", "setYearlyRevenueFilter"]),
+			...mapActions("Reports", ["downloadYearlyRawReport"]),
+			...mapMutations("Reports", ["setYearlyRevenueMainDate", "setYearlyRevenueFilter", ,]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -170,27 +200,66 @@
 				tempArray.push(startDate);
 				tempArray.push(endDate);
 				this.datePickerDate = tempArray;
+				this.selectedDateRange = tempArray;
+			},
+			isDateValid() {
+				if (this.datePickerDate.length != 2) {
+					this.dateErrorMessage = "Please select 2 Months";
+					return false;
+				}
+
+				if (this.datePickerDate.length == 2) {
+					let diffrenceInDates = moment(this.datePickerDate[1])
+						.tz("Asia/Kolkata")
+						.diff(moment(this.datePickerDate[0]).tz("Asia/Kolkata"), "months", true);
+					if (diffrenceInDates > 11) {
+						this.dateErrorMessage = "Selected Date range can't exceed a year";
+						return false;
+					}
+				}
+				return true;
+			},
+			submitDatePicker() {
+				if (this.isDateValid) {
+					this.$refs.dialog.save(this.datePickerDate);
+					this.selectedDateRange = this.datePickerDate;
+					this.getData();
+				} else {
+					console.log("Please Select a Correct Date Range");
+				}
+			},
+			dataSelector() {
+				this.tempDateValue = [...this.datePickerDate];
+			},
+			cancelDatePicker() {
+				this.datePickerDate = [...this.tempDateValue];
+				this.selectedDateRange = this.datePickerDate;
+				this.dateDialog = false;
+			},
+			resetDatePicker() {
+				this.setDateRange();
+				this.$refs.dialog.save(this.datePickerDate);
+				this.getData();
+				this.dateDialog = false;
 			},
 			getData() {
 				this.openLoaderDialog();
-				this.filter.date_from = moment(this.datePickerDate[0])
+				let dateSelection = JSON.parse(JSON.stringify(this.datePickerDate));
+				dateSelection.sort();
+				this.filter.date_from = moment(dateSelection[0])
 					.tz("Asia/Kolkata")
-					.startOf()
+					.startOf("month")
 					.toISOString();
-				if (this.datePickerDate[1]) {
-					this.filter.date_to = moment(this.datePickerDate[1])
-						.tz("Asia/Kolkata")
-						.endOf()
-						.toISOString();
-				} else {
-					this.filter.date_to = this.filter.date_from;
-				}
+				this.filter.date_to = moment(dateSelection[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
 				//To only get the Amount RECEIVED we need to filter out following conditions
 				this.filter.status = "CONFIRMED";
 				this.filter.payment_status = "RECEIVED";
 				this.filter.payment_type = "FULL PAYMENT";
 
-				this.setYearlyRevenueFilter(this.filter);
+				// this.setYearlyRevenueFilter(this.filter);
 
 				this.getFollowUp({
 					filter: this.filter,
@@ -224,7 +293,6 @@
 				this.getData();
 			},
 			setSearchConfig(countriesList = [], userList = []) {
-				// console.log(countriesList);
 				this.selectedSearchConfig = [
 					{
 						name: "Inquiry Type",
@@ -244,7 +312,9 @@
 						isListInStore: false,
 						listItems: countriesList,
 					},
-					{
+				];
+				if (this.isAdminOrManagement) {
+					this.selectedSearchConfig.unshift({
 						name: "Created By",
 						key: "names",
 						multi: true,
@@ -252,35 +322,59 @@
 						defaultValue: [],
 						isListInStore: false,
 						listItems: userList,
-						classes: ["full"],
-					},
-				];
+					});
+				}
+
+				if (this.isAdminOrManagement || this.isOnlySalesAgent) {
+					this.selectedSearchConfig.push({
+						name: "Zone",
+						key: "zones",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: true,
+						listVariable: "zone",
+					});
+				}
 			},
 			updatedPageNo(page) {
 				this.getData();
+			},
+			downloadReport() {
+				let dateSelection = JSON.parse(JSON.stringify(this.datePickerDate));
+				dateSelection.sort();
+				this.filter.date_from = moment(dateSelection[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				this.filter.date_to = moment(dateSelection[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
+				//To only get the Amount RECEIVED we need to filter out following conditions
+				this.filter.status = "CONFIRMED";
+				this.filter.payment_status = "RECEIVED";
+				this.filter.payment_type = "FULL PAYMENT";
+
+				this.openLoaderDialog();
+				this.downloadYearlyRawReport({
+					filter: this.filter,
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
 			},
 		},
 		watch: {
 			datePickerDate: {
 				deep: true,
 				async handler(nv, ov) {
-					// console.log("ov", ov, "nv", nv);
-					for (let valueOV of ov) {
-						for (let valueNV of nv) {
-							if (valueOV != valueNV) {
-								// this.$emit("mainDateRange", this.datePickerDate);
-								this.setYearlyRevenueMainDate(this.datePickerDate);
-							}
-						}
-					}
-					// this.filter = {};
-					// this.dataList = [];
-					// this.pageNo = 1;
-					// console.log("Company Info changed");
-					// this.getData();
-					// await this.getStates();
-					// this.setInputConfig(this.statesList);
-					// this.setSearchConfig(this.statesList);
+					this.errorMessage = this.isDateValid();
+				},
+			},
+			selectedDateRange: {
+				deep: true,
+				handler(nv, ov) {
+					this.setYearlyRevenueMainDate(this.datePickerDate);
 				},
 			},
 		},
@@ -297,10 +391,5 @@
 	.companyAddressWrapper {
 		padding: 20px 5px;
 		height: 100%;
-	}
-	.companyaddress-search-bar {
-		margin-top: 12px;
-		display: flex;
-		justify-content: center;
 	}
 </style>

@@ -1,4 +1,5 @@
 import constants from "@/api";
+import helpers from "../../components/helpers";
 
 const initialState = () => ({});
 export default {
@@ -16,14 +17,14 @@ export default {
 		},
 	},
 	actions: {
-		getMonthList: ({ commit, dispatch }, payload) => {
+		getVirtualReach: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.MSR,
+					url: constants.VIRTUAL_REACH,
 				},
 				{ root: true }
 			)
@@ -36,7 +37,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load Partner List");
+						fail(data.message || "Failed to load All VirtualReach List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -47,135 +48,92 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load Partner List");
+					fail(err.toString() || "Failed to All VirtualReach List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		getReportList: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			return dispatch(
-				"apiCall",
-				{
-					method: "get",
-					params: payload,
-					url: constants.MSR_REPORT_LIST,
-				},
-				{ root: true }
-			)
-				.then((data) => {
-					if (data.ok) {
-						return {
-							ok: true,
-							totalCount: data.totalCount,
-							fetchCount: data.fetchCount,
-							list: data.data,
-						};
-					} else {
-						fail(data.message || "Failed to load MSR Report List");
-						return {
-							ok: false,
-							totalCount: data.totalCount,
-							fetchCount: 0,
-							list: [],
-						};
-					}
-				})
-				.catch((err) => {
-					console.log("Yo ", err);
-					fail(err.toString() || "Failed to load MSR Report List");
-					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
-				});
-		},
-		addReportMonth: ({ commit, dispatch }, payload) => {
+		addVirtualReach: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.MSR,
+					url: constants.VIRTUAL_REACH,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add Partner");
+					if (!data.ok) fail(data.message || "Failed to add VirtualReach Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add Partner");
+					fail(err.toString() || "Failed to add VirtualReach Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		editReportMonth: ({ commit, dispatch }, payload) => {
+		editVirtualReach: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.MSR,
+					url: constants.VIRTUAL_REACH,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit Partner");
+					if (!data.ok) fail(data.message || "Failed to edit VirtualReach entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit Partner");
+					fail(err.toString() || "Failed to edit VirtualReach Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-
-		downloadReportFile: ({ commit, dispatch }, payload) => {
+		deleteVirtualReach: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
-				"fileDownload_API_Call",
+				"apiCall",
 				{
-					method: "get",
-					params: payload,
-					url: constants.MSR_REPORT_FILE,
-					responseType: "blob",
+					method: "delete",
+					data: payload,
+					url: constants.VIRTUAL_REACH,
 				},
 				{ root: true }
 			)
-				.then(({ data, response }) => {
-					if (response.status === 200) {
-						commit("openSnackbar", { text: "Starting Download" }, { root: true });
-						const url = window.URL.createObjectURL(new Blob([data]));
-						const link = document.createElement("a");
-						link.href = url;
-
-						link.setAttribute("download", "MSR for " + payload.country + ".xlsx");
-						document.body.appendChild(link);
-						link.click();
-						return;
-					} else {
-						commit("openSnackbar", { text: "Could not start download" }, { root: true });
-						fail(data.message || "Failed to start download");
-						return;
-					}
+				.then((data) => {
+					if (!data.ok) fail(data.message || "Failed to Delete VirtualReach Entry");
+					return data;
 				})
 				.catch((err) => {
-					console.log("Yo ", err);
-					commit("openSnackbar", { text: "Could not start download" }, { root: true });
-					fail(err.toString() || "Failed to Download Report File");
+					fail(err.toString() || "Failed to Delete VirtualReach Entry");
+					return {
+						ok: false,
+						message: err.message,
+					};
 				});
 		},
-		downloadCompleteReportFile: ({ commit, dispatch }, payload) => {
+		downloadVirtualReachFile: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
+			let dateRange =
+				helpers.getFormattedDate(payload.filter.date_from, "DD-MM-YYYY") +
+				" to " +
+				helpers.getFormattedDate(payload.filter.date_to, "DD-MM-YYYY");
 			return dispatch(
 				"fileDownload_API_Call",
 				{
 					method: "get",
+					params: {},
 					params: payload,
-					url: constants.MSR_REPORT_FILE_ALL_PRODUCT,
+					url: constants.VIRTUAL_REACH_DOWNLOAD,
 					responseType: "blob",
 				},
 				{ root: true }
@@ -186,8 +144,7 @@ export default {
 						const url = window.URL.createObjectURL(new Blob([data]));
 						const link = document.createElement("a");
 						link.href = url;
-
-						link.setAttribute("download", "MSR for all Products.xlsx");
+						link.setAttribute("download", "Virtual Reach from " + dateRange + ".xlsx");
 						document.body.appendChild(link);
 						link.click();
 						return;
@@ -200,7 +157,7 @@ export default {
 				.catch((err) => {
 					console.log("Yo ", err);
 					commit("openSnackbar", { text: "Could not start download" }, { root: true });
-					fail(err.toString() || "Failed to Download Report File");
+					fail(err.toString() || "Failed to Download Core Data File");
 				});
 		},
 	},

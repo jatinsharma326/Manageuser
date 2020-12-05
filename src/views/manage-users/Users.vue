@@ -21,7 +21,9 @@
 			<div v-for="user in userList" :key="user._id" class="card-element">
 				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
 					<template v-slot:topLeft>
-						{{ user.usr_data.designation }}
+						<v-chip outlined x-small color="primary">
+							{{ user.usr_data.designation }}
+						</v-chip>
 					</template>
 					<template v-slot:topRight>
 						{{ getFormattedDate(user.usr_data.dob) }}
@@ -43,6 +45,11 @@
 							<v-btn @click="openInputForm(true, user)" color="secondary" text>
 								Edit
 							</v-btn>
+						</template>
+						<template v-else>
+							<div v-if="user.usr_data.phone_numbers && user.usr_data.phone_numbers.length">
+								{{ user.usr_data.phone_numbers.join(", ") }}
+							</div>
 						</template>
 					</template>
 					<template v-slot:expandCardContent>
@@ -146,7 +153,7 @@
 			</div>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -274,12 +281,11 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Added User Sucessfully" });
-							console.log("Add user success");
+
 							this.getUsers();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Add user failed");
 						}
 					});
 				} else {
@@ -287,12 +293,11 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Edited User Sucessfuly" });
-							console.log("Edit user success");
+
 							this.getUsers();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Edit user failed");
 						}
 					});
 				}
@@ -323,12 +328,11 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Updated User Status" });
-							console.log("Updated user status");
+
 							this.getUsers();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Update user status");
 						}
 					});
 				}
@@ -340,12 +344,10 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Reset Password" });
-							console.log("Sucessfully Reset Password");
 							this.getUsers();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
-							console.log("Failed to Reset Password");
 						}
 					});
 				}

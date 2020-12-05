@@ -8,13 +8,13 @@
 			</v-tabs>
 			<v-tabs-items class="tabItemWrapper" v-model="tab">
 				<v-tab-item>
-					<YearlyRevenueRaw v-bind="{ ...propsList }"></YearlyRevenueRaw>
+					<YearlyRevenueRaw @switchTab="switchTab" v-bind="{ ...propsList }"></YearlyRevenueRaw>
 				</v-tab-item>
 				<v-tab-item>
-					<YearlyRevenueComparison></YearlyRevenueComparison>
+					<YearlyRevenueComparison @switchTab="switchTab"></YearlyRevenueComparison>
 				</v-tab-item>
 				<v-tab-item>
-					<YearlyRevenueZone></YearlyRevenueZone>
+					<YearlyRevenueZone @switchTab="switchTab"></YearlyRevenueZone>
 				</v-tab-item>
 			</v-tabs-items>
 		</template>
@@ -89,6 +89,7 @@
 		},
 		methods: {
 			...mapActions([]),
+			...mapMutations("Reports", ["setCurrentTab"]),
 			setProps() {
 				this.propsList = {
 					name: this.name,
@@ -97,8 +98,15 @@
 					countriesList: this.countriesList,
 				};
 			},
+			switchTab(tabId) {
+				this.tab = tabId;
+			},
 		},
-		watch: {},
+		watch: {
+			tab(nv) {
+				this.setCurrentTab(nv);
+			},
+		},
 		props: {
 			name: { required: true, type: String },
 			id: { required: true, type: String },

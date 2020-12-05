@@ -111,7 +111,7 @@
 			</div>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -165,11 +165,6 @@
 			await this.getStates();
 			this.setSearchConfig(this.statesList);
 		},
-		// updated() {
-		// 	if (this.toggleForm) {
-		// 		console.log("Updated");
-		// 	}
-		// },
 		data: () => ({
 			name: "Travel Agent Employee",
 			placeholder: "Search Travel Agent Employees",
@@ -338,7 +333,6 @@
 				formData.phone_numbers = data.phone_numbers.map((data) => data.input).filter((e) => e != "");
 				formData.email_ids = data.email_ids.map((data) => data.input).filter((e) => e != "");
 
-				console.log("Test Console Before API call FormData Object", formData);
 				this.openLoaderDialog();
 				if (this.isEditMode) {
 					this.editCompanyEmployee(formData).then((data) => {
@@ -480,7 +474,6 @@
 					this.filter = {};
 					this.employeeList = [];
 					this.pageNo = 1;
-					console.log("Company Info changed");
 					this.getCompanyEmployees();
 					await this.getAddresses();
 					this.setInputConfig(this.addressList);

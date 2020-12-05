@@ -25,7 +25,7 @@ export default {
 				{
 					method: "get",
 					params: payload,
-					url: constants.SALES_CALLS + URLparam + "/",
+					url: constants.SALES_CALLS + "sales-calls/" + URLparam + "/",
 				},
 				{ root: true }
 			)
@@ -134,7 +134,6 @@ export default {
 				{ root: true }
 			)
 				.then((data) => {
-					// console.log("Test Console Warning Main API", data);
 					if (data.ok) {
 						return {
 							ok: true,

@@ -8,7 +8,7 @@
 						<v-icon>{{ showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<div v-show="showColumnOne">
+				<div class="contentSectionWrapper" v-show="showColumnOne">
 					<div v-if="columnOneTotalCount === 0" class="content-error-message">
 						No reminders for the followup section.
 					</div>
@@ -103,7 +103,7 @@
 						<v-icon>{{ showColumnTwo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
 				</div>
-				<div v-show="showColumnTwo">
+				<div class="contentSectionWrapper" v-show="showColumnTwo">
 					<div v-if="columnTwoTotalCount === 0" class="content-error-message">
 						No reminders for the DSR section.
 					</div>
@@ -263,7 +263,7 @@
 			getDSRRemindersList() {
 				this.openLoaderDialog();
 				return this.getDSRReminders({
-					pageSize: this.columnOnePageSize,
+					pageSize: this.columnTwoPageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
@@ -272,21 +272,22 @@
 					}
 					this.initializeToggleObject(data.list);
 					this.DSRReminders = data.list;
-					this.columnOneTotalCount = data.totalCount;
+					this.columnTwoTotalCount = data.totalCount;
 				});
 			},
 			getFollowUpRemindersList() {
 				this.openLoaderDialog();
 				this.getFollowUpReminders({
-					pageSize: this.columnTwoPageSize,
+					pageSize: this.columnOnePageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched Follow Up List" });
 					}
+					this.initializeToggleObject(data.list);
 					this.followUpReminders = data.list;
-					this.columnTwoTotalCount = data.totalCount;
+					this.columnOneTotalCount = data.totalCount;
 				});
 			},
 			initializeToggleObject(list) {

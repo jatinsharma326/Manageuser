@@ -10,7 +10,17 @@
 					:isOnlyAdvanceSearch="true"
 					:isAdvanceAFilter="true"
 					:filterConfig="selectedSearchConfig"
-				></Search>
+				>
+					<template v-slot:buttonSection>
+						<v-btn
+							:disabled="checkDownloadButtonStatus"
+							color="secondary"
+							text
+							@click.stop="downloadReport()"
+							>Download Report</v-btn
+						>
+					</template>
+				</Search>
 			</div>
 			<div class="datepicker">
 				<v-dialog
@@ -57,43 +67,10 @@
 				item-key="_id"
 				:items="dataList"
 			>
-				<template v-slot:[`item.date_of_enquiry`]="{ item }">
-					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.contact_number`]="{ item }">
-					{{ item.contact_number ? item.contact_number : "-" }}
-				</template>
-				<template v-slot:[`item.date_of_travel`]="{ item }">
-					{{ item.date_of_travel ? getFormattedDate(item.date_of_travel, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.reminder_date`]="{ item }">
-					{{ item.reminder_date ? getFormattedDate(item.reminder_date, "MMMM Do YYYY dddd") : "-" }}
-				</template>
-				<template v-slot:[`item.payment_status`]="{ item }">
-					{{ item.payment_status ? item.payment_status : "-" }}
-				</template>
-				<template v-slot:[`item.invoice_no`]="{ item }">
-					{{ item.invoice_no ? item.invoice_no : "-" }}
-				</template>
-				<template v-slot:[`item.payment_type`]="{ item }">
-					{{ item.payment_type ? item.payment_type : "-" }}
-				</template>
-				<template v-slot:[`item.currency_type`]="{ item }">
-					{{ item.currency_type ? item.currency_type : "-" }}
-				</template>
-				<template v-slot:[`item.amount_pending`]="{ item }">
-					{{ item.amount_pending ? item.amount_pending : "-" }}
-				</template>
-				<template v-slot:[`item.amount_received`]="{ item }">
-					{{ item.amount_received ? item.amount_received : "-" }}
-				</template>
-				<template v-slot:[`item.record.updated_on`]="{ item }">
-					{{ item.record.updated_on ? getFormattedDate(item.record.updated_on, "MMMM Do YYYY dddd") : "-" }}
-				</template>
 			</v-data-table>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -114,11 +91,10 @@
 
 	export default {
 		name: "TravelAgentRaw",
-		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin, helperMixin],
+		mixins: [defaultCRUDMixin, searchMixin, datePickerMixin],
 		components: {},
 		async created() {
 			this.setDateRange();
-			// this.setYearlyRevenueMainDate(this.datePickerDate);
 			this.getData();
 			this.setSearchConfig(this.countriesList, this.userList);
 		},
@@ -126,35 +102,31 @@
 			selectedCardInfo: {},
 			activeState: true,
 			dataList: [],
+			selectionDateTo: [],
+			selectionDateFrom: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
-				{ text: "Product", value: "country", width: 150 },
-				{ text: "Created By", value: "mortal_data.name", width: 150 },
-				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
-				{ text: "Company Name", value: "company_data.name", width: 200 },
-				{ text: "City", value: "city", width: 150 },
-				{ text: "Zone", value: "zone", width: 150 },
-				{ text: "Date of Travel", value: "date_of_travel", width: 150 },
-				{ text: "Inquiry Type", value: "business_types", width: 150 },
-				{ text: "Email Subject", value: "email_subject", width: 150 },
-				{ text: "File Status", value: "status", width: 150 },
-				{ text: "Follow Up", value: "reminder_date", width: 150 },
-				{ text: "Payment Status", value: "payment_status", width: 200 },
-				{ text: "Invoice No.", value: "invoice_no", width: 150 },
-				{ text: "Payment Type", value: "payment_type", width: 150 },
-				{ text: "Currency", value: "currency_type", width: 150 },
-				{ text: "Pending (Amount)", value: "amount_pending", width: 200 },
-				{ text: "Received (Amount)", value: "amount_received", width: 200 },
-				{ text: "Last Updated On", value: "record.updated_on", width: 200 },
+				{ text: "Travel Agent", value: "agency_name", width: 200 },
+				{ text: "No. of Adults", value: "number_of_pax_adult", width: 150 },
+				{ text: "No. of Children", value: "number_of_pax_child", width: 150 },
+				{ text: "Revenue", value: "revenue_amount", width: 200 },
+				{ text: "Currency", value: "currency_type", width: 200 },
+				{ text: "Revenue ($)", value: "revenue_amount_in_usd", width: 200 },
 			],
 		}),
 		computed: {
 			dateRangeText() {
 				return this.datePickerDate.join(" ~ ");
 			},
+			checkDownloadButtonStatus() {
+				if (this.fetchCount == 0) {
+					return true;
+				}
+				return false;
+			},
 		},
 		methods: {
-			...mapActions("FollowUp", ["getFollowUp"]),
+			...mapActions("Reports", ["getTravelAgentReport", "downloadAgencyWiseReport"]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -171,23 +143,26 @@
 			},
 			getData() {
 				this.openLoaderDialog();
-				this.filter.date_from = moment(this.datePickerDate[0])
+				this.datePickerDate.sort();
+				this.selectionDateFrom = moment(this.datePickerDate[0])
 					.tz("Asia/Kolkata")
-					.startOf()
+					.startOf("month")
 					.toISOString();
 				if (this.datePickerDate[1]) {
-					this.filter.date_to = moment(this.datePickerDate[1])
+					this.selectionDateTo = moment(this.datePickerDate[1])
 						.tz("Asia/Kolkata")
-						.endOf()
+						.endOf("month")
 						.toISOString();
 				} else {
-					this.filter.date_to = this.filter.date_from;
+					this.selectionDateTo = this.selectionDateFrom;
 				}
 
-				this.getFollowUp({
+				this.getTravelAgentReport({
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
+					selection_date_from: this.selectionDateFrom,
+					selection_date_to: this.selectionDateTo,
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.dataList = data.list;
@@ -202,11 +177,6 @@
 			},
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
-				if (this.filter.active) {
-					this.activeState = false;
-				} else {
-					this.activeState = true;
-				}
 				this.pageNo = 1;
 				this.getData();
 			},
@@ -230,7 +200,9 @@
 						isListInStore: false,
 						listItems: countriesList,
 					},
-					{
+				];
+				if (this.isAdminOrManagement) {
+					this.selectedSearchConfig.unshift({
 						name: "Created By",
 						key: "names",
 						multi: true,
@@ -238,9 +210,9 @@
 						defaultValue: [],
 						isListInStore: false,
 						listItems: userList,
-						classes: ["full"],
-					},
-				];
+					});
+				}
+
 				if (this.isAdminOrManagement || this.isOnlySalesAgent) {
 					this.selectedSearchConfig.push({
 						name: "Zone",
@@ -250,9 +222,32 @@
 						defaultValue: [],
 						isListInStore: true,
 						listVariable: "zone",
-						// classes: ["half"],
 					});
 				}
+			},
+			downloadReport() {
+				this.datePickerDate.sort();
+				this.selectionDateFrom = moment(this.datePickerDate[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				if (this.datePickerDate[1]) {
+					this.selectionDateTo = moment(this.datePickerDate[1])
+						.tz("Asia/Kolkata")
+						.endOf("month")
+						.toISOString();
+				} else {
+					this.selectionDateTo = this.selectionDateFrom;
+				}
+
+				this.openLoaderDialog();
+				this.downloadAgencyWiseReport({
+					filter: this.filter,
+					selection_date_from: this.selectionDateFrom,
+					selection_date_to: this.selectionDateTo,
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
 			},
 			updatedPageNo(page) {
 				this.getData();

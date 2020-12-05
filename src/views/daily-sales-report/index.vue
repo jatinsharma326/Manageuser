@@ -38,7 +38,7 @@
 				this.companyList,
 				this.userList,
 				this.storeStatesList,
-				this.modifiedCompanyList,
+				// this.modifiedCompanyList,
 				this.countriesList,
 				this.callsList
 			);
@@ -81,7 +81,7 @@
 				companyList = [],
 				userList = [],
 				statesList = [],
-				modifiedCompanyList = [],
+				// modifiedCompanyList = [],
 				activeCountriesList = [],
 				callsList = []
 			) {
@@ -124,7 +124,9 @@
 						inputType: "dropdown",
 						defaultValue: [],
 						isListInStore: false,
-						listItems: modifiedCompanyList,
+						listItems: companyList,
+						itemText: "name",
+						itemValue: "name",
 						classes: ["half"],
 					},
 					{

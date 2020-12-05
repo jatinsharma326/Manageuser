@@ -77,7 +77,7 @@
 			</v-data-table>
 		</div>
 
-		<div class="text-center">
+		<div class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
 				v-if="isPaginationRequired"
@@ -225,7 +225,6 @@
 				if (filterData.date_of_call) {
 					filterData.date_of_call = helpers.getISODate(filterData.date_of_call);
 				}
-				console.log("Test Console Advance Search Output", filterData);
 				this.filter = { ...filterData };
 				this.pageNo = 1;
 				this.getData();
@@ -239,7 +238,6 @@
 					formData.year = Number(moment(formData.date_of_call).format("YYYY"));
 				}
 
-				console.log("Test Console Before API call FormData Object", formData);
 				this.openLoaderDialog();
 				if (formData.company_id || formData.date_of_call) {
 					this.checkCallDetail({
@@ -248,7 +246,6 @@
 						date_of_call: formData.date_of_call,
 					}).then((data) => {
 						if (data.ok && data.data && data.data.length) {
-							console.log("1", data.data);
 							if (
 								window.confirm(
 									`${data.data.map((e) => e.mortal_data.name).join(", ")} also ${

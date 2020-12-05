@@ -50,7 +50,13 @@
 				</v-card-actions>
 			</div>
 		</v-card>
-		<v-card class="expansionPanelWrapper">
+		<v-card
+			class="expansionPanelWrapper"
+			:class="{
+				'disabled-card': isCardDisabled,
+				'defaulted-card': isDefaulter,
+			}"
+		>
 			<v-expand-transition>
 				<div v-show="show">
 					<v-divider></v-divider>
@@ -97,7 +103,9 @@
 <style lang="scss" scoped>
 	.informationCardWrapper {
 		position: relative;
-		height: 100%;
+		@include custom-min(767px) {
+			height: 100%; // Commenting this as this messes up Responsivness of the card
+		}
 	}
 
 	.expansionPanelWrapper {
@@ -176,6 +184,18 @@
 	.informationCardWrapper {
 		.v-btn {
 			padding: 0 12px !important;
+		}
+	}
+	.expansionPanelWrapper {
+		&.defaulted-card {
+			.v-list-item {
+				background-color: #ffecec;
+			}
+		}
+		&.disabled-card {
+			.v-list-item {
+				background-color: #eee;
+			}
 		}
 	}
 </style>

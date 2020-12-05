@@ -29,8 +29,8 @@
 		</v-navigation-drawer>
 
 		<v-app-bar color="primary" app fixed>
-			<v-btn fab small icon tile x-large>
-				<v-icon color="white" @click="toggleNav">mdi-menu</v-icon>
+			<v-btn icon x-large @click="toggleNav">
+				<v-icon color="white">mdi-menu</v-icon>
 			</v-btn>
 
 			<v-toolbar-title
@@ -191,6 +191,19 @@
 						iconColor: "#00a0ff",
 					});
 				}
+				if (
+					this.userType == this.SALES_AGENT ||
+					this.userType == this.ADMIN ||
+					this.userType == this.MANAGEMENT
+				) {
+					this.routeItems.push({
+						icon: "search",
+						title: "Virtual Reach",
+						route: "/virtual-reach",
+						highlight: "#00a0ff",
+						iconColor: "#00a0ff",
+					});
+				}
 			},
 			toggleNav() {
 				this.navigationToggle = !this.navigationToggle;
@@ -271,6 +284,10 @@
 
 	#navigation-list {
 		// background-color: $primary;
+
+		.v-list-item__content {
+			padding: 0px !important;
+		}
 		.v-list-group__header {
 			font-size: 16px;
 			&:not(.v-list-item--active) {
@@ -285,18 +302,29 @@
 		}
 
 		.list-title {
-			color: white;
+			display: block;
+			color: $accentFontColor;
+			padding: 12px;
+			width: 98%;
+			margin: 4px 0;
 		}
 
 		.selected-route {
-			color: $accent;
+			background-color: $accent;
+			border-radius: 6px;
+			color: black;
+			box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+				0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 		}
 
-		#basic-list-item {
-			.selected-route {
-				color: $accent;
-			}
-		}
+		// #basic-list-item {
+		// 	.selected-route {
+		// 		background-color: $accent;
+		// 		border-radius: 6px;
+		// 		box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+		// 			0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+		// 	}
+		// }
 
 		.list-group-title-dot {
 			height: 12px;

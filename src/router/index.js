@@ -76,6 +76,12 @@ const routes = [
 		component: () => import("../views/manage-targets"),
 		meta: { policy: [10, 20] },
 	},
+	{
+		path: "/virtual-reach",
+		name: "Virtual Reach",
+		component: () => import("../views/virtual-reach"),
+		meta: { policy: [10, 20, 30] },
+	},
 ];
 
 const router = new VueRouter({
