@@ -386,10 +386,7 @@
 					},
 				];
 			},
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
+
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				this.pageNo = 1;
@@ -495,9 +492,6 @@
 					this.selectedSearchConfig.push(userObject);
 				}
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
 		},
 		watch: {
 			selectedYear(nv, ov) {

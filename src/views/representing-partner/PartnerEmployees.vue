@@ -220,10 +220,7 @@
 					this.employeesList = data.list;
 				});
 			},
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
+
 			advanceSearch(filterObject) {
 				// make changes here to the filterObject
 				this.filter = { ...filterObject };

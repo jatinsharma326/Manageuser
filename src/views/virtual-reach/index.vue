@@ -352,10 +352,7 @@
 					return this.getCountryList();
 				}
 			},
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
+
 			advanceSearch(filterObject) {
 				var filterData = JSON.parse(JSON.stringify(filterObject));
 				if (filterData.date_of_call) {
@@ -426,9 +423,7 @@
 					});
 				}
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
+
 			downloadReach() {
 				this.openLoaderDialog();
 				let selectionDate = JSON.parse(JSON.stringify(this.datePickerDate));

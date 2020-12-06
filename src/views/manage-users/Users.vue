@@ -312,9 +312,7 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
+
 			disableUser(data) {
 				if (
 					window.confirm(

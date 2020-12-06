@@ -246,9 +246,6 @@
 					});
 				}
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
 		},
 		watch: {},
 		props: {},

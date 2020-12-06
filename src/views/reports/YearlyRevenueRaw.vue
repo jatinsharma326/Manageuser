@@ -280,10 +280,7 @@
 					}));
 				});
 			},
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
+
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -340,9 +337,7 @@
 					});
 				}
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
+
 			downloadReport() {
 				let dateSelection = JSON.parse(JSON.stringify(this.datePickerDate));
 				dateSelection.sort();

@@ -270,10 +270,7 @@
 					},
 				];
 			},
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
+
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				this.pageNo = 1;
@@ -374,9 +371,7 @@
 			// 		},
 			// 	];
 			// },
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
+
 			deleteEntry(entry) {
 				if (window.confirm("Do you really want to Delete the Fam Trip Entry?")) {
 					this.openLoaderDialog();

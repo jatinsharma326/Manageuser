@@ -279,10 +279,7 @@
 			openUploadlogsModal(company) {
 				this.toggleUploadlogModal = true;
 			},
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
+
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -563,9 +560,7 @@
 					},
 				];
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
+
 			uploadFileFunc(formData) {
 				return this.uploadTravelAgents(formData);
 			},

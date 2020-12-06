@@ -195,10 +195,7 @@
 					}
 				});
 			},
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
+
 			advanceSearch(filterObject) {
 				// make changes here to the filterObject
 				var filterData = JSON.parse(JSON.stringify(filterObject));
@@ -264,9 +261,6 @@
 					},
 				];
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
 		},
 		watch: {},
 		props: {},

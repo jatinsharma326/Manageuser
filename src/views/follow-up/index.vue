@@ -698,10 +698,7 @@
 					});
 				}
 			},
-			// queryString(data) {
-			// 	this.filter["search_text"] = data;
-			// 	this.getData();
-			// },
+
 			advanceSearch(filterObject) {
 				var filterData = JSON.parse(JSON.stringify(filterObject));
 				if (filterData.date_of_call) {
@@ -808,9 +805,7 @@
 					});
 				}
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
+
 			checkDisableCondition(value) {
 				if (value == "CONFIRMED") {
 					return false;
