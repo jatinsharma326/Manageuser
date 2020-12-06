@@ -99,7 +99,7 @@ export default {
 	// Download Reports
 	YEARLY_REVENUE_RAW_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-follow-up-raw-data-report",
 	YEARLY_REVENUE_COMPARISON_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
-	YEARLY_REVENUE_ZONE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-yearly-comparison-report",
+	YEARLY_REVENUE_ZONE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-zone-wise-follow-ups",
 	AGENCY_WISE_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-agency-wise-follow-ups",
 
 	// VIRTUAL REACH ENDPOINT

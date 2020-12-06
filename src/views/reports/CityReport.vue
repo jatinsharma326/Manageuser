@@ -165,7 +165,10 @@
 						.endOf("month")
 						.toISOString();
 				} else {
-					this.selectionDateTo = this.selectionDateFrom;
+					this.selectionDateTo = moment(this.datePickerDate[0])
+						.tz("Asia/Kolkata")
+						.endOf("month")
+						.toISOString();
 				}
 
 				this.getTravelAgentReport({
