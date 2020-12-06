@@ -153,13 +153,16 @@
 			</div>
 		</div>
 
-		<div class="paginationWrapper text-center">
+		<div v-if="isPaginationRequired" class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
-				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
+				:total-visible="7"
 			></v-pagination>
+			<div class="page-size-dropdown">
+				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
+			</div>
 		</div>
 
 		<UserForm
@@ -197,7 +200,7 @@
 			userList: [],
 		}),
 		created() {
-			this.getUsers();
+			this.getData();
 			this.setSearchConfig();
 		},
 		computed: {
@@ -206,7 +209,7 @@
 		methods: {
 			...mapActions("UserManagement", ["getUserList", "addUser", "editUser", "resetPassword"]),
 
-			getUsers() {
+			getData() {
 				this.openLoaderDialog();
 				this.getUserList({
 					filter: {
@@ -237,10 +240,10 @@
 				}
 				return "";
 			},
-			queryString(data) {
-				this.search_text = data;
-				this.getUsers();
-			},
+			// queryString(data) {
+			// 	this.search_text = data;
+			// 	this.getData();
+			// },
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -248,7 +251,7 @@
 				} else {
 					this.activeState = true;
 				}
-				this.getUsers();
+				this.getData();
 			},
 			formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
@@ -282,7 +285,7 @@
 						if (data.ok) {
 							this.openSnackbar({ text: "Added User Sucessfully" });
 
-							this.getUsers();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -294,7 +297,7 @@
 						if (data.ok) {
 							this.openSnackbar({ text: "Edited User Sucessfuly" });
 
-							this.getUsers();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -309,9 +312,9 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			updatedPageNo(page) {
-				this.getUsers();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 			disableUser(data) {
 				if (
 					window.confirm(
@@ -329,7 +332,7 @@
 						if (data.ok) {
 							this.openSnackbar({ text: "Updated User Status" });
 
-							this.getUsers();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -344,7 +347,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Reset Password" });
-							this.getUsers();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });

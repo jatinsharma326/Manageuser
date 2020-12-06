@@ -111,13 +111,16 @@
 			</div>
 		</div>
 
-		<div class="paginationWrapper text-center">
+		<div v-if="isPaginationRequired" class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
-				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
+				:total-visible="7"
 			></v-pagination>
+			<div class="page-size-dropdown">
+				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
+			</div>
 		</div>
 
 		<ChangeLogModal
@@ -159,7 +162,7 @@
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, helperMixin],
 		components: { ChangeLogModal },
 		async created() {
-			this.getCompanyEmployees();
+			this.getData();
 			await this.getAddresses();
 			this.setInputConfig(this.addressList);
 			await this.getStates();
@@ -190,7 +193,7 @@
 				"editCompanyEmployee",
 			]),
 			...mapMutations("ManageAgents", ["setEmployeeList"]),
-			getCompanyEmployees(callMutation = false) {
+			getData(callMutation = false) {
 				this.openLoaderDialog();
 				this.filter.company_id = this.companyInfo._id;
 				this.filter.active = this.activeState;
@@ -309,10 +312,10 @@
 					},
 				];
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getCompanyEmployees();
-			},
+			// queryString(data) {
+			// 	this.filter["search_text"] = data;
+			// 	this.getData();
+			// },
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -321,7 +324,7 @@
 					this.activeState = true;
 				}
 				this.pageNo = 1;
-				this.getCompanyEmployees();
+				this.getData();
 			},
 			async formOutput(data) {
 				// formData.company_address_id = formData.branch_name;
@@ -339,7 +342,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Travel Agent Employee" });
-							this.getCompanyEmployees(true);
+							this.getData(true);
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -400,7 +403,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Travel Agent Employee Status" });
-							this.getCompanyEmployees();
+							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
 						}
@@ -451,15 +454,15 @@
 					},
 				];
 			},
-			updatedPageNo(page) {
-				this.getCompanyEmployees();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 			addCompanyEmployeeWrapper(formData) {
 				this.addCompanyEmployee(formData).then((data) => {
 					this.closeLoaderDialog();
 					if (data.ok) {
 						this.openSnackbar({ text: "Sucessfully Added Travel Agent Employee" });
-						this.getCompanyEmployees(true);
+						this.getData(true);
 						this.closeForm();
 					} else {
 						this.openSnackbar({ text: data.message });
@@ -474,7 +477,7 @@
 					this.filter = {};
 					this.employeeList = [];
 					this.pageNo = 1;
-					this.getCompanyEmployees();
+					this.getData();
 					await this.getAddresses();
 					this.setInputConfig(this.addressList);
 					await this.getStates();

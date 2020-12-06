@@ -85,13 +85,16 @@
 			</v-data-table>
 		</div>
 
-		<div class="paginationWrapper text-center">
+		<div v-if="isPaginationRequired" class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
-				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
+				:total-visible="7"
 			></v-pagination>
+			<div class="page-size-dropdown">
+				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
+			</div>
 		</div>
 		<template v-if="isOnlySalesAgent">
 			<UserForm
@@ -349,10 +352,10 @@
 					return this.getCountryList();
 				}
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getData();
-			},
+			// queryString(data) {
+			// 	this.filter["search_text"] = data;
+			// 	this.getData();
+			// },
 			advanceSearch(filterObject) {
 				var filterData = JSON.parse(JSON.stringify(filterObject));
 				if (filterData.date_of_call) {
@@ -423,9 +426,9 @@
 					});
 				}
 			},
-			updatedPageNo(page) {
-				this.getData();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 			downloadReach() {
 				this.openLoaderDialog();
 				let selectionDate = JSON.parse(JSON.stringify(this.datePickerDate));

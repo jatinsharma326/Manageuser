@@ -83,14 +83,13 @@
 			</div>
 		</div>
 
-		<div class="paginationWrapper text-center">
+		<div v-if="isPaginationRequired" class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
-				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
+				:total-visible="7"
 			></v-pagination>
-			{{ pageSize }}
 			<div class="page-size-dropdown">
 				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
 			</div>
@@ -256,7 +255,7 @@
 					this.activeCountriesList = data.list;
 				});
 			},
-			getCompanies() {
+			getData() {
 				this.openLoaderDialog();
 				this.filter.active = this.activeState;
 				this.getCompaniesList({
@@ -280,10 +279,10 @@
 			openUploadlogsModal(company) {
 				this.toggleUploadlogModal = true;
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getData();
-			},
+			// queryString(data) {
+			// 	this.filter["search_text"] = data;
+			// 	this.getData();
+			// },
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -374,7 +373,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Company Status" });
-							this.getCompanies();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -564,9 +563,9 @@
 					},
 				];
 			},
-			updatedPageNo(page) {
-				this.getData();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 			uploadFileFunc(formData) {
 				return this.uploadTravelAgents(formData);
 			},
@@ -594,15 +593,15 @@
 </script>
 
 <style lang="scss" scopped>
-	.paginationWrapper {
-		padding: 10px;
-		display: flex;
-		justify-content: space-between;
+	// .paginationWrapper {
+	// 	padding: 10px;
+	// 	display: flex;
+	// 	justify-content: space-between;
 
-		.page-size-dropdown {
-			max-width: 150px;
-		}
-	}
+	// 	.page-size-dropdown {
+	// 		max-width: 150px;
+	// 	}
+	// }
 	.agentsWrapper {
 		padding: 20px 5px;
 		height: 100%;

@@ -361,9 +361,6 @@
 				a.click();
 				this.closeLoaderDialog();
 			},
-			// updatedPageNo(page) {
-			// 	this.getData();
-			// },
 		},
 		watch: {
 			datePickerDate: {

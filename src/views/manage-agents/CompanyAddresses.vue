@@ -52,13 +52,16 @@
 			</div>
 		</div>
 
-		<div class="paginationWrapper text-center">
+		<div v-if="isPaginationRequired" class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
-				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
+				:total-visible="7"
 			></v-pagination>
+			<div class="page-size-dropdown">
+				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
+			</div>
 		</div>
 
 		<ChangeLogModal
@@ -99,7 +102,7 @@
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
 		components: { ChangeLogModal },
 		async created() {
-			this.getAddresses();
+			this.getData();
 			// await this.getStates();
 			this.setInputConfig(this.storeStatesList);
 			this.setSearchConfig(this.storeStatesList);
@@ -119,7 +122,7 @@
 		methods: {
 			...mapActions("ManageAgents", ["getAddressList", "addAddress", "editAddress"]),
 			...mapMutations("ManageAgents", ["setAddressList"]),
-			getAddresses(callMutation = false) {
+			getData(callMutation = false) {
 				this.openLoaderDialog();
 				this.filter.company_id = this.companyInfo._id;
 				this.filter.active = this.activeState;
@@ -220,10 +223,10 @@
 					},
 				];
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getAddresses();
-			},
+			// queryString(data) {
+			// 	this.filter["search_text"] = data;
+			// 	this.getData();
+			// },
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -232,7 +235,7 @@
 					this.activeState = true;
 				}
 				this.pageNo = 1;
-				this.getAddresses();
+				this.getData();
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
@@ -244,7 +247,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Address" });
-							this.getAddresses(true);
+							this.getData(true);
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -255,7 +258,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Address" });
-							this.getAddresses(true);
+							this.getData(true);
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -286,7 +289,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Address Status" });
-							this.getAddresses();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -334,9 +337,9 @@
 					},
 				];
 			},
-			updatedPageNo(page) {
-				this.getAddresses();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 		},
 		watch: {
 			companyInfo: {
@@ -346,7 +349,7 @@
 					this.addressList = [];
 					this.pageNo = 1;
 
-					this.getAddresses();
+					this.getData();
 					// await this.getStates();
 					this.setInputConfig(this.storeStatesList);
 					this.setSearchConfig(this.storeStatesList);

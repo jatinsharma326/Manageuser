@@ -60,13 +60,16 @@
 			</div>
 		</div>
 
-		<div class="paginationWrapper text-center">
+		<div v-if="isPaginationRequired" class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
-				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
+				:total-visible="7"
 			></v-pagination>
+			<div class="page-size-dropdown">
+				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
+			</div>
 		</div>
 
 		<!-- :keysToWatch="keysToWatch" -->
@@ -102,7 +105,7 @@
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin, helperMixin],
 		components: {},
 		async created() {
-			this.getFamTrip();
+			this.getData();
 			await this.getEmployees();
 			await this.getCountryList();
 			this.setInputConfig(this.employeeList, this.countriesList);
@@ -143,7 +146,7 @@
 				"deleteFamTrip",
 			]),
 			...mapActions("ManageTargets", ["getActiveCountries"]),
-			getFamTrip() {
+			getData() {
 				this.openLoaderDialog();
 				this.filter.company_id = this.companyInfo._id;
 				this.getFamTripList({
@@ -267,14 +270,14 @@
 					},
 				];
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getFamTrip();
-			},
+			// queryString(data) {
+			// 	this.filter["search_text"] = data;
+			// 	this.getData();
+			// },
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				this.pageNo = 1;
-				this.getFamTrip();
+				this.getData();
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
@@ -292,7 +295,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Fam Trip" });
-							this.getFamTrip();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -303,7 +306,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Fam Trip" });
-							this.getFamTrip();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -335,7 +338,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Fam Trip Status" });
-							this.getFamTrip();
+							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
 						}
@@ -371,9 +374,9 @@
 			// 		},
 			// 	];
 			// },
-			updatedPageNo(page) {
-				this.getFamTrip();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 			deleteEntry(entry) {
 				if (window.confirm("Do you really want to Delete the Fam Trip Entry?")) {
 					this.openLoaderDialog();
@@ -383,7 +386,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Deleted the Entry" });
-							this.getFamTrip();
+							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
 						}
@@ -398,7 +401,7 @@
 					this.filter = {};
 					this.tripList = [];
 					this.pageNo = 1;
-					this.getFamTrip();
+					this.getData();
 					await this.getEmployees();
 					await this.getCountryList();
 					this.setInputConfig(this.employeeList, this.countriesList);

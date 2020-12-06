@@ -92,13 +92,16 @@
 			</div>
 		</div>
 
-		<div class="paginationWrapper text-center">
+		<div v-if="isPaginationRequired" class="paginationWrapper text-center">
 			<v-pagination
 				@input="updatedPageNo"
-				v-if="isPaginationRequired"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
+				:total-visible="7"
 			></v-pagination>
+			<div class="page-size-dropdown">
+				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
+			</div>
 		</div>
 
 		<ViewMoreModal @closeModal="viewMoreModal = false" :toggleModal="viewMoreModal">
@@ -153,7 +156,7 @@
 			PartnerEmployees,
 		},
 		created() {
-			this.getPartners();
+			this.getData();
 			this.setSearchConfig();
 		},
 		data: () => ({
@@ -247,7 +250,7 @@
 		computed: {},
 		methods: {
 			...mapActions("PartnerManagement", ["getPartnerList", "addPartner", "editPartner"]),
-			getPartners() {
+			getData() {
 				this.openLoaderDialog();
 				this.filter.active = this.activeState;
 				this.getPartnerList({
@@ -263,10 +266,10 @@
 					// this.partnerList = data.list;
 				});
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getPartners();
-			},
+			// queryString(data) {
+			// 	this.filter["search_text"] = data;
+			// 	this.getData();
+			// },
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -275,7 +278,7 @@
 					this.activeState = true;
 				}
 				this.pageNo = 1;
-				this.getPartners();
+				this.getData();
 			},
 			async formOutput(data) {
 				var tempFile = data.logo;
@@ -314,7 +317,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Partner" });
-							this.getPartners();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -325,7 +328,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Partner" });
-							this.getPartners();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -356,7 +359,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
-							this.getPartners();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -408,9 +411,9 @@
 					},
 				];
 			},
-			updatedPageNo(page) {
-				this.getPartners();
-			},
+			// updatedPageNo(page) {
+			// 	this.getData();
+			// },
 		},
 	};
 </script>

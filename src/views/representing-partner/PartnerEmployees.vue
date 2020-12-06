@@ -115,7 +115,7 @@
 		name: "PartnerEmployee",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
 		created() {
-			this.getEmployees();
+			this.getData();
 			if (this.partnerInfo.countries) {
 				this.setSearchConfig(this.partnerInfo.countries);
 				this.setInputConfig(this.partnerInfo.countries);
@@ -200,7 +200,7 @@
 				"editPartnerEmployees",
 				"deletePartnerEmployees",
 			]),
-			getEmployees() {
+			getData() {
 				this.openLoaderDialog();
 				this.filter.representing_partner_id = this.partnerInfo._id;
 				this.getPartnerEmployeesList({
@@ -220,15 +220,15 @@
 					this.employeesList = data.list;
 				});
 			},
-			queryString(data) {
-				this.filter["search_text"] = data;
-				this.getEmployees();
-			},
+			// queryString(data) {
+			// 	this.filter["search_text"] = data;
+			// 	this.getData();
+			// },
 			advanceSearch(filterObject) {
 				// make changes here to the filterObject
 				this.filter = { ...filterObject };
 				this.pageNo = 1;
-				this.getEmployees();
+				this.getData();
 			},
 			setSearchConfig(countries = []) {
 				/*
@@ -343,7 +343,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Added Employee Info" });
-							this.getEmployees();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -354,7 +354,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Edited Employee Info" });
-							this.getEmployees();
+							this.getData();
 							this.closeForm();
 						} else {
 							this.openSnackbar({ text: data.message });
@@ -380,7 +380,7 @@
 						this.closeLoaderDialog();
 						if (data.ok) {
 							this.openSnackbar({ text: "Sucessfully Deleted Employee" });
-							this.getEmployees();
+							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
 						}
@@ -394,7 +394,7 @@
 				handler(nv, ov) {
 					this.filter = {};
 					this.employeesList = [];
-					this.getEmployees();
+					this.getData();
 					if (nv.countries) {
 						this.setSearchConfig(nv.countries);
 						this.setInputConfig(this.partnerInfo.countries);
