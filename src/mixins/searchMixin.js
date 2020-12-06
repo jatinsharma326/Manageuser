@@ -46,10 +46,18 @@ const searchMixins = {
 				return data.list;
 			}
 		},
+		updatedPageNo(page) {
+			this.getData();
+		},
+		queryString(data) {
+			this.filter["search_text"] = data;
+			this.getData();
+		},
 	},
 	watch: {
 		pageSize: function(nv, ov) {
 			if (nv != ov) {
+				this.pageNo = 1;
 				this.getData();
 			}
 		},
