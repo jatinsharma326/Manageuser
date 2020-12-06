@@ -154,8 +154,5 @@ export default {
 				});
 		},
 	},
-	getters: {
-		// masterData: (state) => state.masterData,
-		// masterDataCount: (state) => state.masterDataCount,
-	},
+	getters: {},
 };
