@@ -257,7 +257,13 @@ body {
 }
 
 .paginationWrapper {
-	padding: 10px 0 40px 0;
+	padding: 10px 10px 40px 10px;
+	display: flex;
+	justify-content: space-between;
+
+	.page-size-dropdown {
+		max-width: 150px;
+	}
 }
 
 // ScrollBar Styles to make it look like macbook (Will only work on modern browsers)
