@@ -257,12 +257,22 @@ body {
 }
 
 .paginationWrapper {
-	padding: 10px 10px 40px 10px;
+	padding: 10px 10px 30px 10px;
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
 
+	@include custom-max(600px) {
+		justify-content: center;
+	}
+	.pagination-component {
+		margin-top: 10px;
+	}
 	.page-size-dropdown {
 		max-width: 150px;
+		margin-top: 10px;
+		// @include custom-max(600px) {
+		// }
 	}
 }
 
