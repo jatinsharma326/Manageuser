@@ -116,7 +116,8 @@
 				@input="updatedPageNo"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
-				:total-visible="7"
+				:total-visible="paginationTotalVisible"
+				class="pagination-component"
 			></v-pagination>
 			<div class="page-size-dropdown">
 				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
