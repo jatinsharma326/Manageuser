@@ -1,8 +1,16 @@
 <template>
 	<v-app>
-		<v-navigation-drawer v-model="navigationToggle" color="primary" hide-overlay fixed app>
+		<v-navigation-drawer
+			class="navigationDrawerWrapper"
+			v-model="navigationToggle"
+			color="primary"
+			hide-overlay
+			fixed
+			app
+		>
 			<div class="title-wrapper">Global Destinations</div>
-			<v-list color="primary" id="navigation-list" flat>
+			<!-- <v-list color="primary" id="navigation-list" flat> -->
+			<v-list id="navigation-list" flat>
 				<template v-for="(navItem, index) of routeItems">
 					<v-list-item
 						:key="navItem.route + '' + index"
@@ -28,7 +36,7 @@
 			</v-list>
 		</v-navigation-drawer>
 
-		<v-app-bar color="primary" app fixed>
+		<v-app-bar class="toolbarWrapper" color="primary" app fixed>
 			<v-btn icon x-large @click="toggleNav">
 				<v-icon color="white">mdi-menu</v-icon>
 			</v-btn>
@@ -274,6 +282,13 @@
 		color: white;
 		padding-top: 24px;
 		padding-bottom: 54px;
+	}
+
+	.toolbarWrapper {
+		background: linear-gradient(90deg, rgba(55, 182, 201, 1) 0%, rgba(166, 206, 68, 1) 100%);
+	}
+	.navigationDrawerWrapper {
+		background: linear-gradient(180deg, rgba(55, 182, 201, 1) 0%, rgba(166, 206, 68, 1) 100%);
 	}
 
 	.snackbarComponentWrapper {
