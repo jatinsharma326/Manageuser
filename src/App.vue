@@ -285,7 +285,7 @@
 	}
 
 	.toolbarWrapper {
-		background: linear-gradient(90deg, rgba(55, 182, 201, 1) 0%, rgba(166, 206, 68, 1) 100%);
+		// background: linear-gradient(90deg, rgba(55, 182, 201, 1) 0%, rgba(166, 206, 68, 1) 100%);
 	}
 	.navigationDrawerWrapper {
 		background: linear-gradient(180deg, rgba(55, 182, 201, 1) 0%, rgba(166, 206, 68, 1) 100%);

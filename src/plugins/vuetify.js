@@ -7,7 +7,8 @@ export default new Vuetify({
 	theme: {
 		themes: {
 			light: {
-				primary: "#00887a", // Primary Green (Mainly for header and navbar)
+				// primary: "#00887a", // Primary Green (Mainly for header and navbar)
+				primary: "#37b6c9", // Primary Green (Mainly for header and navbar)
 				primaryFontColor: "#2B4266", // font navy blue, font color on the overview screen
 				secondary: "#77a6f7", // light purple,
 				secondaryFontColor: "#112d32", // font gray, font color on the master screen for the muted text
