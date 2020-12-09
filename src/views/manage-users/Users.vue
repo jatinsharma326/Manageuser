@@ -209,15 +209,12 @@
 		},
 		methods: {
 			...mapActions("UserManagement", ["getUserList", "addUser", "editUser", "resetPassword"]),
-
 			getData() {
 				this.openLoaderDialog();
+				this.filter.type = this.type;
+				this.filter.active = this.activeState;
 				this.getUserList({
-					filter: {
-						type: this.type,
-						search_text: this.search_text,
-						active: this.activeState,
-					},
+					filter: this.filter,
 					active: this.activeState,
 					type: this.type,
 					pageSize: this.pageSize,
