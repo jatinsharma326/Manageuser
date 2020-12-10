@@ -98,7 +98,7 @@
 				}).then((data) => {
 					this.closeLoaderDialog();
 					this.reportsList = data.list.dsr_data;
-					// this.totalCount = data.totalCount;
+					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
 					this.reportsList = this.reportsList.map((d, index) => ({
