@@ -11,7 +11,9 @@
 		>
 			<div class="top-content-wrapper">
 				<div class="subtitle color-secondary fw-600 text-uppercase">
-					<slot name="topLeft"></slot>
+					<v-chip outlined x-small color="primary">
+						<slot name="topLeft"></slot>
+					</v-chip>
 				</div>
 				<div class="subtitle text-right color-secondary fw-600 text-uppercase">
 					<slot name="topRight"></slot>
