@@ -8,7 +8,7 @@
 			fixed
 			app
 		>
-			<div class="title-wrapper">Global Destinations</div>
+			<div class="logo-wrapper"><img src="./assets/Global_Destination_Logo.png" alt="" /></div>
 			<!-- <v-list color="primary" id="navigation-list" flat> -->
 			<v-list id="navigation-list" flat>
 				<template v-for="(navItem, index) of routeItems">
@@ -274,14 +274,25 @@
 	};
 </script>
 <style lang="scss" scoped>
-	.title-wrapper {
-		// transform: translateX(-50%);
-		text-align: center;
+	// .title-wrapper {
+	// 	// transform: translateX(-50%);
+	// 	text-align: center;
+	// 	width: 100%;
+	// 	font-size: 20px;
+	// 	color: white;
+	// 	padding-top: 24px;
+	// 	padding-bottom: 54px;
+	// }
+
+	.logo-wrapper {
+		// background-color: white;
 		width: 100%;
-		font-size: 20px;
-		color: white;
-		padding-top: 24px;
-		padding-bottom: 54px;
+		height: auto;
+		padding: 10px;
+		img {
+			height: 100%;
+			width: 100%;
+		}
 	}
 
 	.toolbarWrapper {
