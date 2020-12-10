@@ -21,9 +21,9 @@
 			<div v-for="user in userList" :key="user._id" class="card-element">
 				<InformationCard :expandCard="true" :isCardDisabled="!user.record.active">
 					<template v-slot:topLeft>
-						<v-chip outlined x-small color="primary">
-							{{ user.usr_data.designation }}
-						</v-chip>
+						<!-- <v-chip outlined x-small color="primary"> -->
+						{{ user.usr_data.designation }}
+						<!-- </v-chip> -->
 					</template>
 					<template v-slot:topRight>
 						{{ getFormattedDate(user.usr_data.dob) }}
