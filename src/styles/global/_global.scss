@@ -10,7 +10,7 @@
 
 // This is to give a background color to everything in the system (It specefically fixes when Expansion cards are expanded at the end of a page, they leave a white background as the actual container doesnt expand)
 body {
-	background-color: #00887a13;
+	background-color: $background;
 }
 
 // To change the Font color throughout the application body doesnt do anything Every font changes because of  .v-application
@@ -191,7 +191,8 @@ body {
 		position: absolute;
 		width: 94%;
 		transform: translate(3%, -50%);
-		background-color: lightgray;
+		background-color: $primary;
+		color: lightcyan;
 		border-radius: 3px;
 		padding: 15px;
 		box-shadow: 0 12px 20px -10px rgba(211, 211, 211, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12),
