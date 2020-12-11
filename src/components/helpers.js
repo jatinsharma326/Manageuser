@@ -40,7 +40,7 @@ let URLtoFile = (url, fileName, contentType) => {
 			try {
 				// const contentType = response.headers.get("content-type");
 				const blob = await response.blob();
-				return new File([blob], fileName, { contentType });
+				return new File([blob], fileName, { type: contentType });
 			} catch (e) {
 				console.log(e);
 				return null;
