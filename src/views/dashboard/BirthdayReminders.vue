@@ -3,7 +3,7 @@
 		<div class="dashboardColumnWrapper">
 			<div class="column-one column">
 				<div class="title-section">
-					<div class="title">Travel Agent Birthdays</div>
+					<div class="title">Agent Birthdays</div>
 					<v-btn color="tertiary" icon @click="showColumnOne = !showColumnOne">
 						<v-icon>{{ showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
@@ -43,7 +43,7 @@
 			</div>
 			<div class="column-two column">
 				<div class="title-section">
-					<div class="title">GD Employees Birthdays</div>
+					<div class="title">Teams Birthdays</div>
 					<v-btn color="tertiary" icon @click="showColumnTwo = !showColumnTwo">
 						<v-icon>{{ showColumnTwo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
