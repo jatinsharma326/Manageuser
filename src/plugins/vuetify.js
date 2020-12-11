@@ -15,7 +15,7 @@ export default new Vuetify({
 				tertiary: "#355280", // light navy blue, this is for the expanded state of the menu item
 				tertiaryFontColor: "#ececec", // light gray,
 				accent: "#f3d250", // yellow , this is the selected state of the link
-				error: "#FF5D5D", // red
+				error: "#940000", // red
 			},
 			// light: {
 			// 	primary: '#2B4266', // navy blue
