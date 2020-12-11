@@ -111,7 +111,7 @@
 			accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
 			@closeModal="closeUploadModal"
 			:toggleModal="uploadModal"
-			title="Bulk Upload Travel Agents"
+			title="Bulk Upload Agents"
 			:uploadFunction="uploadFileFunc"
 			:downloadSampleFunc="downloadSampleFileFunc"
 			:process_id="process_id"
@@ -223,7 +223,7 @@
 			this.setInputConfig(this.activeCountriesList);
 		},
 		data: () => ({
-			name: "Travel Agents",
+			name: "Agents",
 			placeholder: "Search Companies",
 			toggleChangelogModal: false,
 			toggleUploadlogModal: false,

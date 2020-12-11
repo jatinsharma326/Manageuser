@@ -106,7 +106,7 @@
 				},
 				{
 					icon: "file_copy",
-					title: "Travel Agents",
+					title: "Agents",
 					route: "/manage-agents",
 					highlight: false,
 				},
