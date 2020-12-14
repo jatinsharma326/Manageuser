@@ -157,4 +157,30 @@
 			padding-bottom: 10px;
 		}
 	}
+
+	.breathing {
+		animation: breathing 5s ease-out infinite normal;
+	}
+
+	@keyframes breathing {
+		0% {
+			transform: scale(1);
+		}
+
+		25% {
+			transform: scale(1.05);
+		}
+
+		50% {
+			transform: scale(1);
+		}
+
+		75% {
+			transform: scale(1.05);
+		}
+
+		100% {
+			transform: scale(1);
+		}
+	}
 </style>
