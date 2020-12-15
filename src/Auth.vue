@@ -1,9 +1,6 @@
 <template>
 	<div class="authWrapper">
-		<div class="auth-page-title">
-			Global Destinations CRM <br />
-			V 6.2.1
-		</div>
+		<div class="logo-wrapper"><img src="./assets/Global_Destination_Logo.png" alt="" /></div>
 		<div class="auth-input-wrapper">
 			<div class="form-title">Login</div>
 			<div class="auth-form">
@@ -83,4 +80,4 @@
 	};
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -6,6 +6,17 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
+
+	.logo-wrapper {
+		width: 340px;
+		height: auto;
+		margin-bottom: 20px;
+		img {
+			height: 100%;
+			width: 100%;
+		}
+	}
 
 	.auth-page-title {
 		color: white;
