@@ -18,7 +18,7 @@
 							:key="index + '_travelAgentEmployee'"
 							class="card-element"
 						>
-							<InformationCard :expandCard="false">
+							<InformationCard :isBirthDate="checkForBirthDate(person.birth_date)" :expandCard="false">
 								<template v-slot:topLeft>
 									{{ person.company_data.name }}
 								</template>
@@ -55,7 +55,7 @@
 							:key="index + '_GDEmployee'"
 							class="card-element"
 						>
-							<InformationCard :expandCard="false">
+							<InformationCard :isBirthDate="checkForBirthDate(person.birth_date)" :expandCard="false">
 								<template v-slot:topLeft>
 									{{ person.usr_data.designation }}
 								</template>
@@ -86,6 +86,7 @@
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import InformationCard from "../../components/InformationCard";
 	import helperMixin from "../../mixins/helperMixins";
+	import moment from "moment-timezone";
 	export default {
 		name: "BirthdayReminders",
 		mixins: [helperMixin],
@@ -116,6 +117,20 @@
 			loadMoreColumnTwo() {
 				this.columnTwoPageSize = this.columnTwoPageSize + 20;
 				this.getGDEmployeeBirthdayList();
+			},
+			checkForBirthDate(date) {
+				let dateToCheck = moment(date)
+					.tz("Asia/Kolkata")
+					.format("DD-MM-YYYY");
+				let dateToday = moment()
+					.tz("Asia/Kolkata")
+					.format("DD-MM-YYYY");
+				console.log("dateToCheck", dateToCheck);
+				console.log("dateToday", dateToday);
+				if (dateToday == dateToCheck) {
+					return true;
+				}
+				return false;
 			},
 			getAgentBirthdayList() {
 				this.openLoaderDialog();
@@ -156,6 +171,13 @@
 		.card-element:last-child {
 			padding-bottom: 10px;
 		}
+	}
+
+	.birthday-gif {
+		background-image: url("../../assets/BirthdayGIF.gif");
+		background-repeat: no-repeat;
+		background-size: contain;
+		background-position: right;
 	}
 
 	.breathing {

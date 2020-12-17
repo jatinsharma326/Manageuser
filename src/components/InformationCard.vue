@@ -5,6 +5,7 @@
 				'remove-bottom-border-radius': show,
 				'disabled-card': isCardDisabled,
 				'defaulted-card': isDefaulter,
+				'birthday-gif': isBirthDate,
 			}"
 			class="information-card"
 			min-width="300px"
@@ -94,6 +95,11 @@
 				default: false,
 			},
 			isDefaulter: {
+				required: false,
+				type: Boolean,
+				default: false,
+			},
+			isBirthDate: {
 				required: false,
 				type: Boolean,
 				default: false,
