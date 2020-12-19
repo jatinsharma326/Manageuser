@@ -91,6 +91,7 @@
 		mixins: [helperMixin],
 		components: { InformationCard },
 		created() {
+			this.getDateRange();
 			this.getAdminBulletinList();
 			this.getNoticeBoardList();
 		},
@@ -98,6 +99,8 @@
 			showColumnOne: true,
 			showColumnTwo: true,
 			pageNo: 1,
+			startDate: "",
+			endDate: "",
 			columnOnePageSize: 20,
 			columnTwoPageSize: 20,
 			columnOneTotalCount: "",
@@ -109,7 +112,14 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("AdminBulletin", ["getAdminBulletin"]),
 			...mapActions("NoticeBoard", ["getNoticeBoard"]),
-
+			getDateRange() {
+				this.startDate = moment()
+					.tz("Asia/Kolkata")
+					.startOf("month");
+				this.endDate = moment()
+					.tz("Asia/Kolkata")
+					.endOf("month");
+			},
 			loadMoreColumnOne() {
 				this.columnOnePageSize = this.columnOnePageSize + 20;
 				this.getAdminBulletinList();
@@ -121,6 +131,10 @@
 			getAdminBulletinList() {
 				this.openLoaderDialog();
 				this.getAdminBulletin({
+					filter: {
+						date_from: this.startDate,
+						date_to: this.endDate,
+					},
 					pageSize: this.columnOnePageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
@@ -135,6 +149,10 @@
 			getNoticeBoardList() {
 				this.openLoaderDialog();
 				this.getNoticeBoard({
+					filter: {
+						date_from: this.startDate,
+						date_to: this.endDate,
+					},
 					pageSize: this.columnTwoPageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
