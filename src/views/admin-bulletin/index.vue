@@ -1,15 +1,8 @@
 <template>
-	<div class="reportListWrapper">
+	<div class="adminBulletinWrapper">
 		<div class="SearchbarWrapper">
 			<div class="searchbar">
-				<Search
-					@queryString="queryString"
-					@filterObject="advanceSearch"
-					@clearFilter="advanceSearch"
-					:placeholder="placeholder"
-					:isAdvanceSearch="true"
-					:filterConfig="searchConfig"
-				></Search>
+				<Search @queryString="queryString" :placeholder="placeholder" :isAdvanceSearch="false"></Search>
 			</div>
 			<div class="datepicker">
 				<v-dialog
@@ -53,22 +46,32 @@
 				:items-per-page="pageSize"
 				hide-default-footer
 				:headers="headers"
-				:expanded.sync="expanded"
-				show-expand
 				item-key="_id"
 				:items="dataList"
 			>
-				<template v-slot:[`item.conducted_on_date`]="{ item }">
-					{{ item.conducted_on_date ? getFormattedDate(item.conducted_on_date, "MMMM Do YYYY dddd") : "-" }}
+				<template v-slot:[`item.date_of_creation`]="{ item }">
+					{{ item.date_of_creation ? getFormattedDate(item.date_of_creation, "dddd, MMMM Do YYYY") : "-" }}
 				</template>
-				<template v-slot:expanded-item="{ headers, item }">
-					<td class="expandable-section table-expanded-background " :colspan="headers.length">
-						<div class="expandable-section-title">Subject</div>
-						<div class="expandable-section-content" v-html="item.subject">{{}}</div>
-					</td>
+				<template v-slot:[`item.mortals_on_leave`]="{ item }">
+					{{ item.mortals_on_leave.length ? item.mortals_on_leave.join(", ") : "-" }}
+				</template>
+				<template v-slot:[`item.half_day_sales_calls`]="{ item }">
+					{{ item.half_day_sales_calls.length ? item.half_day_sales_calls.join(", ") : "-" }}
+				</template>
+				<template v-slot:[`item.full_day_sales_calls`]="{ item }">
+					{{ item.full_day_sales_calls.length ? item.full_day_sales_calls.join(", ") : "-" }}
+				</template>
+				<template v-slot:[`item.outstation_sales_calls`]="{ item }">
+					{{ item.outstation_sales_calls.length ? item.outstation_sales_calls.join(", ") : "-" }}
+				</template>
+				<template v-slot:[`item.running_late`]="{ item }">
+					{{ item.running_late.length ? item.running_late.join(", ") : "-" }}
+				</template>
+				<template v-slot:[`item.bulletin`]="{ item }">
+					{{ item.bulletin ? item.bulletin : "-" }}
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
-					<template v-if="isSalesTeamMember">
+					<template>
 						<v-menu bottom left>
 							<template v-slot:activator="{ on, attrs }">
 								<v-btn icon v-bind="attrs" v-on="on">
@@ -97,52 +100,22 @@
 				<v-autocomplete v-model="pageSize" :items="pageSizeList" auto-select-first solo dense></v-autocomplete>
 			</div>
 		</div>
-		<template v-if="isOnlySalesAgent">
-			<UserForm
-				@formOutput="formOutput"
-				@closeForm="closeForm"
-				:name="name"
-				:inputConfig="inputConfig"
-				:keysToWatch="keysToWatch"
-				:toggleForm="toggleForm"
-				:formData="rowToEdit"
-				:isEditMode="isEditMode"
-			></UserForm>
-			<!-- <div class="floating-button">
-				<v-btn @click="openInputForm()" color="primary" dark fab>
-					<v-icon>mdi-plus</v-icon>
-				</v-btn>
-			</div> -->
-		</template>
+
+		<UserForm
+			@formOutput="formOutput"
+			@closeForm="closeForm"
+			:name="name"
+			:inputConfig="inputConfig"
+			:keysToWatch="keysToWatch"
+			:toggleForm="toggleForm"
+			:formData="rowToEdit"
+			:isEditMode="isEditMode"
+		></UserForm>
+
 		<div class="floating-button">
-			<v-speed-dial v-model="fab" direction="top" :open-on-hover="true" transition="scale-transition">
-				<template v-slot:activator>
-					<v-btn v-model="fab" color="primary" dark fab>
-						<v-icon v-if="fab">
-							mdi-arrow-down-drop-circle
-						</v-icon>
-						<v-icon v-else>
-							mdi-arrow-up-drop-circle
-						</v-icon>
-					</v-btn>
-				</template>
-				<v-tooltip left>
-					<template v-if="isOnlySalesAgent" v-slot:activator="{ on, attrs }">
-						<v-btn @click="openInputForm()" color="secondary" dark small fab v-bind="attrs" v-on="on">
-							<v-icon>mdi-plus</v-icon>
-						</v-btn>
-					</template>
-					<span>Add Virtual Reach Entry</span>
-				</v-tooltip>
-				<v-tooltip left>
-					<template v-slot:activator="{ on, attrs }">
-						<v-btn fab dark small color="tertiary" @click="downloadReach()" v-bind="attrs" v-on="on">
-							<v-icon>mdi-download</v-icon>
-						</v-btn>
-					</template>
-					<span>Download Virtual Reach</span>
-				</v-tooltip>
-			</v-speed-dial>
+			<v-btn @click="openInputForm()" color="primary" dark fab>
+				<v-icon>mdi-plus</v-icon>
+			</v-btn>
 		</div>
 	</div>
 </template>
@@ -161,37 +134,31 @@
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 
 	export default {
-		name: "VirtualReach",
+		name: "AdminBulletin",
 		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin, datePickerMixin, commonAPICallsMixin],
 		async created() {
 			this.setDateRange();
 			this.getData();
-			this.openLoaderDialog();
-			if (this.isAdminOrManagement) {
-				await this.getUsers();
-			}
-			await this.getCountries();
-			this.closeLoaderDialog();
-			this.setConfig(this.userList, this.countriesList);
+			await this.getUsers();
+			this.setConfig(this.userList);
 		},
 		data: () => ({
-			name: "Virtual Reach Entry",
-			placeholder: "Search Virtual Reach Entry",
-			fab: false,
+			name: "Notice Board Entry",
+			placeholder: "Search Notice Board Entry",
 			searchConfig: [],
 			inputConfig: [],
-			citiesList: [],
 			dataList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
-				{ text: "Created By", value: "name", width: 150 },
-				{ text: "Reach Out Type", value: "reach_out_type", width: 150 },
-				{ text: "Product", value: "country", width: 150 },
-				{ text: "Conducted On", value: "conducted_on_date", width: 200 },
-				{ text: "Reach", value: "reach", width: 200 },
-				{ text: "", value: "actions" },
+				{ text: "Date of Creation", value: "date_of_creation", width: 200 },
+				{ text: "On Leave", value: "mortals_on_leave", width: 200 },
+				{ text: "Half Day Sales Call", value: "half_day_sales_calls", width: 200 },
+				{ text: "Full Day Sales Call", value: "full_day_sales_calls", width: 200 },
+				{ text: "Outstation Sales Call", value: "outstation_sales_calls", width: 200 },
+				{ text: "Running Late", value: "running_late", width: 200 },
+				{ text: "Bulletin Content", value: "bulletin", width: 200 },
+				{ text: "", value: "actions", width: 100 },
 			],
-			expanded: [],
 			keysToWatch: [],
 		}),
 		computed: {
@@ -201,12 +168,11 @@
 			},
 		},
 		methods: {
-			...mapActions("VirtualReach", [
-				"getVirtualReach",
-				"addVirtualReach",
-				"editVirtualReach",
-				"deleteVirtualReach",
-				"downloadVirtualReachFile",
+			...mapActions("AdminBulletin", [
+				"getAdminBulletin",
+				"addAdminBulletin",
+				"editAdminBulletin",
+				"deleteAdminBulletin",
 			]),
 			setDateRange() {
 				let tempArray = [];
@@ -237,7 +203,7 @@
 					this.filter.date_to = this.filter.date_from;
 				}
 
-				this.getVirtualReach({
+				this.getAdminBulletin({
 					filter: this.filter,
 					pageSize: this.pageSize,
 					pageNo: this.pageNo,
@@ -253,135 +219,89 @@
 					}));
 				});
 			},
-			setConfig(userList = [], countriesList = []) {
-				this.searchConfig = [
-					{
-						name: "Reach out Type",
-						key: "reach_out_types",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: ["WEBINAR", "PRODUCT TRAINING", "NEWSLETTERS", "EDM"],
-					},
-					{
-						name: "Product",
-						key: "countries",
-						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
-						isListInStore: false,
-						listItems: countriesList,
-					},
-					{
-						name: "Reach Conducted On",
-						key: "conducted_on_date",
-						inputType: "datePicker",
-						defaultValue: null,
-					},
-				];
-
+			setConfig(userList = []) {
 				this.inputConfig = [
 					{
-						name: "Type of Reach Out*",
+						name: "On Leave",
 						type: "Dropdown",
-						key: "reach_out_type",
-						width: "full",
-						multi: false,
-						isListInStore: false,
-						listItems: ["WEBINAR", "PRODUCT TRAINING", "NEWSLETTERS", "EDM"],
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Product*",
-						type: "Dropdown",
-						key: "country",
-						width: "full",
-						multi: false,
-						isListInStore: false,
-						listItems: countriesList,
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Subject*",
-						type: "TextArea",
-						key: "subject",
-						width: "full",
-						validations: {
-							required,
-							minLength: minLength(2),
-						},
-					},
-					{
-						name: "Conducted On*",
-						type: "Date",
-						key: "conducted_on_date",
+						key: "mortals_on_leave",
 						width: "half",
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Reach",
-						type: "Number",
-						key: "reach",
-						width: "half",
-					},
-				];
-
-				if (this.isAdminOrManagement) {
-					this.searchConfig.unshift({
-						name: "Created By",
-						key: "names",
 						multi: true,
-						inputType: "dropdown",
-						defaultValue: [],
 						isListInStore: false,
 						listItems: userList,
-						classes: ["half"],
-					});
-				}
-			},
-			getCountries() {
-				if (this.userType == this.SALES_AGENT) {
-					this.countriesList = [...this.userData.usr_data.countries];
-				} else {
-					return this.getCountryList();
-				}
-			},
-
-			advanceSearch(filterObject) {
-				var filterData = JSON.parse(JSON.stringify(filterObject));
-				if (filterData.date_of_call) {
-					filterData.date_of_call = helpers.getISODate(filterData.date_of_call);
-				}
-
-				this.filter = { ...filterData };
-				this.pageNo = 1;
-				this.getData();
+					},
+					{
+						name: "Half Day Sales Call",
+						type: "Dropdown",
+						key: "half_day_sales_calls",
+						width: "half",
+						multi: true,
+						isListInStore: false,
+						listItems: userList,
+					},
+					{
+						name: "Full Day Sales Call",
+						type: "Dropdown",
+						key: "full_day_sales_calls",
+						width: "half",
+						multi: true,
+						isListInStore: false,
+						listItems: userList,
+					},
+					{
+						name: "Outstation Sales Call",
+						type: "Dropdown",
+						key: "outstation_sales_calls",
+						width: "half",
+						multi: true,
+						isListInStore: false,
+						listItems: userList,
+					},
+					{
+						name: "Running Late",
+						type: "Dropdown",
+						key: "running_late",
+						width: "half",
+						multi: true,
+						isListInStore: false,
+						listItems: userList,
+					},
+					{
+						name: "Content",
+						type: "TextArea",
+						key: "bulletin",
+						width: "full",
+					},
+				];
 			},
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
 
-				formData.conducted_on_date = helpers.getISODate(formData.conducted_on_date);
-				if (!formData.reach) {
-					formData.reach = 0;
-				} else if (formData.reach < 0) {
-					formData.reach = 0;
-				} else {
-					formData.reach = Number(formData.reach);
+				if (!formData.bulletin) {
+					formData.bulletin = "";
+				}
+				if (!formData.full_day_sales_calls) {
+					formData.full_day_sales_calls = [];
+				}
+				if (!formData.half_day_sales_calls) {
+					formData.half_day_sales_calls = [];
+				}
+				if (!formData.mortals_on_leave) {
+					formData.mortals_on_leave = [];
+				}
+				if (!formData.outstation_sales_calls) {
+					formData.outstation_sales_calls = [];
+				}
+				if (!formData.running_late) {
+					formData.running_late = [];
 				}
 
 				this.openLoaderDialog();
 				if (!this.isEditMode) {
-					this.addVirtualReach(formData).then((data) => {
+					this.addAdminBulletin(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Added Virtual Reach Entry" });
+							this.openSnackbar({ text: "Sucessfully Added Notice Board Entry" });
 							this.closeForm();
 							this.getData();
 						} else {
@@ -389,10 +309,10 @@
 						}
 					});
 				} else {
-					this.editVirtualReach(formData).then((data) => {
+					this.editAdminBulletin(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Edited Virtual Reach Entry" });
+							this.openSnackbar({ text: "Sucessfully Edited Notice Board Entry" });
 							this.closeForm();
 							this.getData();
 						} else {
@@ -409,45 +329,20 @@
 				};
 			},
 			deleteEntry(data) {
-				if (window.confirm("Do you really want to Delete the Virtual Reach?")) {
+				if (window.confirm("Do you really want to Delete the Notice Board Entry?")) {
 					this.openLoaderDialog();
-					this.deleteVirtualReach({
+					this.deleteAdminBulletin({
 						_id: data._id,
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Deleted the Virtual Reach" });
+							this.openSnackbar({ text: "Sucessfully Deleted the Notice Board Entry" });
 							this.getData();
 						} else {
 							this.openSnackbar({ text: data.message });
 						}
 					});
 				}
-			},
-
-			downloadReach() {
-				this.openLoaderDialog();
-				let selectionDate = JSON.parse(JSON.stringify(this.datePickerDate));
-				selectionDate.sort();
-				this.filter.date_from = moment(selectionDate[0])
-					.tz("Asia/Kolkata")
-					.startOf()
-					.toISOString();
-				if (selectionDate[1]) {
-					this.filter.date_to = moment(selectionDate[1])
-						.tz("Asia/Kolkata")
-						.endOf()
-						.toISOString();
-				} else {
-					this.filter.date_to = this.filter.date_from;
-				}
-
-				this.openLoaderDialog();
-				this.downloadVirtualReachFile({
-					filter: this.filter,
-				}).then(() => {
-					this.closeLoaderDialog();
-				});
 			},
 		},
 		watch: {},
@@ -479,22 +374,22 @@
 			flex-shrink: 0;
 		}
 	}
-	.reportListWrapper {
+	.adminBulletinWrapper {
 		.leaves-table {
 			margin: 10px;
 			padding: 10px;
 			border: 1px solid $primary;
 			border-radius: 5px;
 		}
-		.expandable-section {
-			padding: 1em !important;
-			.expandable-section-title {
-				font-size: 16px;
-				font-weight: 600;
-			}
-			.expandable-section-content {
-				white-space: pre-wrap;
-			}
-		}
+		// .expandable-section {
+		// 	padding: 1em !important;
+		// 	.expandable-section-title {
+		// 		font-size: 16px;
+		// 		font-weight: 600;
+		// 	}
+		// 	.expandable-section-content {
+		// 		white-space: pre-wrap;
+		// 	}
+		// }
 	}
 </style>

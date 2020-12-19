@@ -17,14 +17,14 @@ export default {
 		},
 	},
 	actions: {
-		getVirtualReach: ({ commit, dispatch }, payload) => {
+		getAdminBulletin: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "get",
 					params: payload,
-					url: constants.VIRTUAL_REACH,
+					url: constants.ADMIN_BULLETIN,
 				},
 				{ root: true }
 			)
@@ -37,7 +37,7 @@ export default {
 							list: data.data,
 						};
 					} else {
-						fail(data.message || "Failed to load All VirtualReach List");
+						fail(data.message || "Failed to load All AdminBulletin List");
 						return {
 							ok: false,
 							totalCount: data.totalCount,
@@ -48,116 +48,77 @@ export default {
 				})
 				.catch((err) => {
 					console.log("Yo ", err);
-					fail(err.toString() || "Failed to All VirtualReach List");
+					fail(err.toString() || "Failed to All AdminBulletin List");
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
-		addVirtualReach: ({ commit, dispatch }, payload) => {
+		addAdminBulletin: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "post",
 					data: payload,
-					url: constants.VIRTUAL_REACH,
+					url: constants.ADMIN_BULLETIN,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to add VirtualReach Entry");
+					if (!data.ok) fail(data.message || "Failed to add AdminBulletin Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to add VirtualReach Entry");
+					fail(err.toString() || "Failed to add AdminBulletin Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		editVirtualReach: ({ commit, dispatch }, payload) => {
+		editAdminBulletin: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "put",
 					data: payload,
-					url: constants.VIRTUAL_REACH,
+					url: constants.ADMIN_BULLETIN,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to edit VirtualReach entry");
+					if (!data.ok) fail(data.message || "Failed to edit AdminBulletin entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to edit VirtualReach Entry");
+					fail(err.toString() || "Failed to edit AdminBulletin Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
 				});
 		},
-		deleteVirtualReach: ({ commit, dispatch }, payload) => {
+		deleteAdminBulletin: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",
 				{
 					method: "delete",
 					data: payload,
-					url: constants.VIRTUAL_REACH,
+					url: constants.ADMIN_BULLETIN,
 				},
 				{ root: true }
 			)
 				.then((data) => {
-					if (!data.ok) fail(data.message || "Failed to Delete VirtualReach Entry");
+					if (!data.ok) fail(data.message || "Failed to Delete AdminBulletin Entry");
 					return data;
 				})
 				.catch((err) => {
-					fail(err.toString() || "Failed to Delete VirtualReach Entry");
+					fail(err.toString() || "Failed to Delete AdminBulletin Entry");
 					return {
 						ok: false,
 						message: err.message,
 					};
-				});
-		},
-		downloadVirtualReachFile: ({ commit, dispatch }, payload) => {
-			let fail = (msg) => commit("failure", msg);
-			let dateRange =
-				helpers.getFormattedDate(payload.filter.date_from, "DD-MM-YYYY") +
-				" to " +
-				helpers.getFormattedDate(payload.filter.date_to, "DD-MM-YYYY");
-			return dispatch(
-				"fileDownload_API_Call",
-				{
-					method: "get",
-					params: {},
-					params: payload,
-					url: constants.VIRTUAL_REACH_DOWNLOAD,
-					responseType: "blob",
-				},
-				{ root: true }
-			)
-				.then(({ data, response }) => {
-					if (response.status === 200) {
-						commit("openSnackbar", { text: "Starting Download" }, { root: true });
-						const url = window.URL.createObjectURL(new Blob([data]));
-						const link = document.createElement("a");
-						link.href = url;
-						link.setAttribute("download", "Virtual Reach from " + dateRange + ".xlsx");
-						document.body.appendChild(link);
-						link.click();
-						return;
-					} else {
-						commit("openSnackbar", { text: "Could not start download" }, { root: true });
-						fail(data.message || "Failed to start download");
-						return;
-					}
-				})
-				.catch((err) => {
-					console.log("Yo ", err);
-					commit("openSnackbar", { text: "Could not start download" }, { root: true });
-					fail(err.toString() || "Failed to Download Core Data File");
 				});
 		},
 	},
