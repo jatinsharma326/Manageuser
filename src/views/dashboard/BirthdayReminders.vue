@@ -125,8 +125,8 @@
 				let dateToday = moment()
 					.tz("Asia/Kolkata")
 					.format("DD-MM-YYYY");
-				console.log("dateToCheck", dateToCheck);
-				console.log("dateToday", dateToday);
+				// console.log("dateToCheck", dateToCheck);
+				// console.log("dateToday", dateToday);
 				if (dateToday == dateToCheck) {
 					return true;
 				}

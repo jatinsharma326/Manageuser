@@ -191,7 +191,7 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "resetState", "openSnackbar", "closeSnackbar"]),
 			setRouteItems() {
 				if (this.userType == this.ADMIN || this.userType == this.MANAGEMENT) {
-					let temArray = [
+					let tempArray = [
 						{
 							icon: "search",
 							title: "Set Targets",
@@ -214,7 +214,8 @@
 							iconColor: "#00a0ff",
 						},
 					];
-					this.routeItems.concat(temArray);
+					this.routeItems = this.routeItems.concat(tempArray);
+					console.log("route items", this.routeItems);
 				}
 				if (
 					this.userType == this.SALES_AGENT ||
