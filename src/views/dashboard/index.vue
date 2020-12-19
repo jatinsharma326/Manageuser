@@ -16,6 +16,7 @@
 	import Followups from "./Followups";
 	import BirthdayReminders from "./BirthdayReminders";
 	import Notifications from "./Notifications";
+	import DashboardNotices from "./Notices";
 
 	export default {
 		name: "Dashboard",
@@ -23,6 +24,7 @@
 			Followups,
 			BirthdayReminders,
 			Notifications,
+			DashboardNotices,
 		},
 		created() {
 			this.setTabConfig();
@@ -58,6 +60,13 @@
 					name: "Birthdays",
 					id: "birthdays",
 					component: "BirthdayReminders",
+					props: {},
+				});
+
+				this.tabConfig.unshift({
+					name: "Notices",
+					id: "notices",
+					component: "DashboardNotices",
 					props: {},
 				});
 			},
