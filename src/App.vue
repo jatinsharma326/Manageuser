@@ -191,13 +191,30 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "resetState", "openSnackbar", "closeSnackbar"]),
 			setRouteItems() {
 				if (this.userType == this.ADMIN || this.userType == this.MANAGEMENT) {
-					this.routeItems.push({
-						icon: "search",
-						title: "Set Targets",
-						route: "/targets",
-						highlight: "#00a0ff",
-						iconColor: "#00a0ff",
-					});
+					let temArray = [
+						{
+							icon: "search",
+							title: "Set Targets",
+							route: "/targets",
+							highlight: "#00a0ff",
+							iconColor: "#00a0ff",
+						},
+						{
+							icon: "search",
+							title: "Admin Bulletin",
+							route: "/admin-bulletin",
+							highlight: "#00a0ff",
+							iconColor: "#00a0ff",
+						},
+						{
+							icon: "search",
+							title: "Notice Board",
+							route: "/notice-board",
+							highlight: "#00a0ff",
+							iconColor: "#00a0ff",
+						},
+					];
+					this.routeItems.concat(temArray);
 				}
 				if (
 					this.userType == this.SALES_AGENT ||

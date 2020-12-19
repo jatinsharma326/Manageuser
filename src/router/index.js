@@ -82,6 +82,18 @@ const routes = [
 		component: () => import("../views/virtual-reach"),
 		meta: { policy: [10, 20, 30] },
 	},
+	{
+		path: "/admin-bulletin",
+		name: "Admin bulletin",
+		component: () => import("../views/admin-bulletin"),
+		meta: { policy: [10, 20] },
+	},
+	{
+		path: "/notice-board",
+		name: "Notice Board",
+		component: () => import("../views/notice-board"),
+		meta: { policy: [10, 20] },
+	},
 ];
 
 const router = new VueRouter({

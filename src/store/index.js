@@ -17,6 +17,8 @@ import FollowUp from "../views/follow-up/store";
 import Dashboard from "../views/dashboard/store";
 import Reports from "../views/reports/store";
 import VirtualReach from "../views/virtual-reach/store";
+import AdminBulletin from "../views/admin-bulletin/store";
+import NoticeBoard from "../views/notice-board/store";
 
 Vue.use(Vuex);
 
@@ -99,6 +101,8 @@ export default new Vuex.Store({
 		Dashboard,
 		Reports,
 		VirtualReach,
+		AdminBulletin,
+		NoticeBoard,
 	},
 
 	state: initialState(),
