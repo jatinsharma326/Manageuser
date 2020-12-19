@@ -105,4 +105,10 @@ export default {
 	// VIRTUAL REACH ENDPOINT
 	VIRTUAL_REACH: BASE_URL + "VirtualReach/v0.1/",
 	VIRTUAL_REACH_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-virtual-reach",
+
+	// VIRTUAL REACH ENDPOINT
+	NOTICE_BOARD: BASE_URL + "Bulletins/v0.1/management-bulletins",
+
+	// VIRTUAL REACH ENDPOINT
+	ADMIN_BULLETIN: BASE_URL + "Bulletins/v0.1/admin-bulletins",
 };
