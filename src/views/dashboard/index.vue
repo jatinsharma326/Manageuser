@@ -35,7 +35,9 @@
 		},
 		async created() {
 			this.getDateRange();
+			this.openLoaderDialog();
 			await this.checkNotifications();
+			this.closeLoaderDialog();
 			this.setTabConfig(this.noticesBadge, this.birthdayBadge, this.followupBadge, this.dsrNotificationBadge);
 		},
 		data: () => ({
@@ -49,6 +51,7 @@
 			dsrNotificationBadge: false,
 		}),
 		methods: {
+			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("AdminBulletin", ["getAdminBulletin"]),
 			...mapActions("NoticeBoard", ["getNoticeBoard"]),
 			...mapActions("Dashboard", [
@@ -67,8 +70,8 @@
 					.endOf("month");
 				this.dateToday = moment().tz("Asia/Kolkata");
 			},
-			checkNotifications() {
-				return this.getAdminBulletin({
+			async checkNotifications() {
+				await this.getAdminBulletin({
 					filter: {
 						date_from: this.startDate,
 						date_to: this.endDate,
@@ -76,13 +79,14 @@
 					pageSize: 1,
 					pageNo: 1,
 				}).then((data) => {
-					if (data.ok) {
+					console.log("DATA", data.list[0]);
+					if (data.ok && data.list.length) {
 						console.log(this.isSelectedDateCurrentDate(data.list[0].date_of_creation));
 						this.noticesBadge = this.isSelectedDateCurrentDate(data.list[0].date_of_creation);
 					}
 				});
 
-				return this.getNoticeBoard({
+				await this.getNoticeBoard({
 					filter: {
 						date_from: this.startDate,
 						date_to: this.endDate,
@@ -90,48 +94,48 @@
 					pageSize: 1,
 					pageNo: 1,
 				}).then((data) => {
-					if (data.ok && !this.noticesBadge) {
+					if (data.ok && !this.noticesBadge && data.list.length) {
 						console.log(this.isSelectedDateCurrentDate(data.list[0].date_of_creation));
 						this.noticesBadge = this.isSelectedDateCurrentDate(data.list[0].date_of_creation);
 					}
 				});
 
-				return this.getAgentBirthdays({
+				await this.getAgentBirthdays({
 					pageSize: 1,
 					pageNo: 1,
 				}).then((data) => {
-					if (data.ok) {
+					if (data.ok && data.list.length) {
 						console.log(this.isSelectedDateCurrentDate(data.list[0].birth_date));
 						this.birthdayBadge = this.isSelectedDateCurrentDate(data.list[0].birth_date);
 					}
 				});
 
-				return this.getGDEmployeeBirthdays({
+				await this.getGDEmployeeBirthdays({
 					pageSize: 1,
 					pageNo: 1,
 				}).then((data) => {
-					if (data.ok && !this.birthdayBadge) {
+					if (data.ok && !this.birthdayBadge && data.list.length) {
 						console.log(this.isSelectedDateCurrentDate(data.list[0].birth_date));
 						this.birthdayBadge = this.isSelectedDateCurrentDate(data.list[0].birth_date);
 					}
 				});
 
 				if (this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT) {
-					return this.getDSRReminders({
+					await this.getDSRReminders({
 						pageSize: 1,
 						pageNo: 1,
 					}).then((data) => {
-						if (data.ok) {
+						if (data.ok && data.list.length) {
 							console.log(this.isSelectedDateCurrentDate(data.list[0].follow_up_on_date));
 							this.followupBadge = this.isSelectedDateCurrentDate(data.list[0].follow_up_on_date);
 						}
 					});
 
-					return this.getFollowUpReminders({
+					await this.getFollowUpReminders({
 						pageSize: 1,
 						pageNo: 1,
 					}).then((data) => {
-						if (data.ok && !this.followupBadge) {
+						if (data.ok && !this.followupBadge && data.list.length) {
 							console.log(this.isSelectedDateCurrentDate(data.list[0].reminder_date));
 							this.followupBadge = this.isSelectedDateCurrentDate(data.list[0].reminder_date);
 						}
@@ -139,11 +143,11 @@
 				}
 
 				if (this.userType == this.SALES_AGENT) {
-					return this.getDSRNotification({
+					await this.getDSRNotification({
 						pageSize: 1,
 						pageNo: 1,
 					}).then((data) => {
-						if (data.ok && !this.dsrNotificationBadges) {
+						if (data.ok && data.list.length) {
 							console.log(this.isSelectedDateCurrentDate(data.list[0].sales_call_data.date_of_call));
 							this.dsrNotificationBadges = this.isSelectedDateCurrentDate(
 								data.list[0].sales_call_data.date_of_call
