@@ -11,6 +11,9 @@ const helperMixins = {
 		daysUntil(dateToCheckAgainst, todayMessage) {
 			return helpers.daysUntil(dateToCheckAgainst, todayMessage);
 		},
+		isSelectedDateCurrentDate(date) {
+			return helpers.isSelectedDateCurrentDate(date);
+		},
 	},
 };
 

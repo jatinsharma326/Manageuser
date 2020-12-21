@@ -55,7 +55,10 @@
 							:key="index + '_GDEmployee'"
 							class="card-element"
 						>
-							<InformationCard :isBirthDate="checkForBirthDate(person.birth_date)" :expandCard="false">
+							<InformationCard
+								:isBirthDate="isSelectedDateCurrentDate(person.birth_date)"
+								:expandCard="false"
+							>
 								<template v-slot:topLeft>
 									{{ person.usr_data.designation }}
 								</template>
@@ -125,8 +128,6 @@
 				let dateToday = moment()
 					.tz("Asia/Kolkata")
 					.format("DD-MM-YYYY");
-				// console.log("dateToCheck", dateToCheck);
-				// console.log("dateToday", dateToday);
 				if (dateToday == dateToCheck) {
 					return true;
 				}

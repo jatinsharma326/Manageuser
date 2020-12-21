@@ -83,6 +83,18 @@ export default {
 			return dateToday.to(dateToCheck);
 		}
 	},
+	isSelectedDateCurrentDate(date) {
+		let dateToCheck = moment(date)
+			.tz("Asia/Kolkata")
+			.format("DD-MM-YYYY");
+		let dateToday = moment()
+			.tz("Asia/Kolkata")
+			.format("DD-MM-YYYY");
+		if (dateToday == dateToCheck) {
+			return true;
+		}
+		return false;
+	},
 	traverseObject,
 	toBase64,
 	URLtoFile,

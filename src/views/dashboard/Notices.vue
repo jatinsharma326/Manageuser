@@ -24,19 +24,26 @@
 								</template>
 								<template v-slot:moreInfo>
 									<div v-if="entry.mortals_on_leave.length">
-										{{ entry.mortals_on_leave.join(", ") }} are on a leave.
+										{{ entry.mortals_on_leave.join(", ") }}
+										{{ entry.mortals_on_leave.length == 1 ? "is" : "are" }} on a leave.
 									</div>
 									<div v-if="entry.half_day_sales_calls.length">
-										{{ entry.half_day_sales_calls.join(", ") }} are on a half day sales call.
+										{{ entry.half_day_sales_calls.join(", ") }}
+										{{ entry.half_day_sales_calls.length == 1 ? "is" : "are" }} on a half day sales
+										call.
 									</div>
 									<div v-if="entry.full_day_sales_calls.length">
-										{{ entry.full_day_sales_calls.join(", ") }} are on a full day sales.
+										{{ entry.full_day_sales_calls.join(", ") }}
+										{{ entry.full_day_sales_calls.length == 1 ? "is" : "are" }} on a full day sales.
 									</div>
 									<div v-if="entry.outstation_sales_calls.length">
-										{{ entry.outstation_sales_calls.join(", ") }} are on a outstation sales call.
+										{{ entry.outstation_sales_calls.join(", ") }}
+										{{ entry.outstation_sales_calls.length == 1 ? "is" : "are" }} on a outstation
+										sales call.
 									</div>
 									<div v-if="entry.running_late.length">
-										{{ entry.running_late.join(", ") }} are running late.
+										{{ entry.running_late.join(", ") }}
+										{{ entry.running_late.length == 1 ? "is" : "are" }} running late.
 									</div>
 									<div v-if="entry.bulletin">{{ entry.bulletin }}</div>
 								</template>
@@ -112,6 +119,9 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("AdminBulletin", ["getAdminBulletin"]),
 			...mapActions("NoticeBoard", ["getNoticeBoard"]),
+			console(data) {
+				console.log(data.length);
+			},
 			getDateRange() {
 				this.startDate = moment()
 					.tz("Asia/Kolkata")

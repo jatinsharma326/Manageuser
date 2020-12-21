@@ -1,7 +1,11 @@
 <template>
 	<div class="DashboardWrapper">
 		<v-tabs grow v-model="tab">
-			<v-tab v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">{{ ele.name }}</v-tab>
+			<v-tab v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">
+				<v-badge :value="ele.displayBadge" color="primary" dot>
+					{{ ele.name }}
+				</v-badge>
+			</v-tab>
 		</v-tabs>
 		<v-tabs-items class="tabItemWrapper" v-model="tab">
 			<v-tab-item v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">
@@ -17,29 +21,144 @@
 	import BirthdayReminders from "./BirthdayReminders";
 	import Notifications from "./Notifications";
 	import DashboardNotices from "./Notices";
+	import helperMixin from "../../mixins/helperMixins";
+	import moment from "moment-timezone";
 
 	export default {
 		name: "Dashboard",
+		mixins: [helperMixin],
 		components: {
 			Followups,
 			BirthdayReminders,
 			Notifications,
 			DashboardNotices,
 		},
-		created() {
-			this.setTabConfig();
+		async created() {
+			this.getDateRange();
+			await this.checkNotifications();
+			this.setTabConfig(this.noticesBadge, this.birthdayBadge, this.followupBadge, this.dsrNotificationBadge);
 		},
 		data: () => ({
 			tabConfig: [],
 			tab: "",
+			startDate: "",
+			endDate: "",
+			noticesBadge: false,
+			birthdayBadge: false,
+			followupBadge: false,
+			dsrNotificationBadge: false,
 		}),
 		methods: {
-			setTabConfig() {
+			...mapActions("AdminBulletin", ["getAdminBulletin"]),
+			...mapActions("NoticeBoard", ["getNoticeBoard"]),
+			...mapActions("Dashboard", [
+				"getDSRReminders",
+				"getFollowUpReminders",
+				"getAgentBirthdays",
+				"getGDEmployeeBirthdays",
+				"getDSRNotification",
+			]),
+			getDateRange() {
+				this.startDate = moment()
+					.tz("Asia/Kolkata")
+					.startOf("month");
+				this.endDate = moment()
+					.tz("Asia/Kolkata")
+					.endOf("month");
+				this.dateToday = moment().tz("Asia/Kolkata");
+			},
+			checkNotifications() {
+				return this.getAdminBulletin({
+					filter: {
+						date_from: this.startDate,
+						date_to: this.endDate,
+					},
+					pageSize: 1,
+					pageNo: 1,
+				}).then((data) => {
+					if (data.ok) {
+						console.log(this.isSelectedDateCurrentDate(data.list[0].date_of_creation));
+						this.noticesBadge = this.isSelectedDateCurrentDate(data.list[0].date_of_creation);
+					}
+				});
+
+				return this.getNoticeBoard({
+					filter: {
+						date_from: this.startDate,
+						date_to: this.endDate,
+					},
+					pageSize: 1,
+					pageNo: 1,
+				}).then((data) => {
+					if (data.ok && !this.noticesBadge) {
+						console.log(this.isSelectedDateCurrentDate(data.list[0].date_of_creation));
+						this.noticesBadge = this.isSelectedDateCurrentDate(data.list[0].date_of_creation);
+					}
+				});
+
+				return this.getAgentBirthdays({
+					pageSize: 1,
+					pageNo: 1,
+				}).then((data) => {
+					if (data.ok) {
+						console.log(this.isSelectedDateCurrentDate(data.list[0].birth_date));
+						this.birthdayBadge = this.isSelectedDateCurrentDate(data.list[0].birth_date);
+					}
+				});
+
+				return this.getGDEmployeeBirthdays({
+					pageSize: 1,
+					pageNo: 1,
+				}).then((data) => {
+					if (data.ok && !this.birthdayBadge) {
+						console.log(this.isSelectedDateCurrentDate(data.list[0].birth_date));
+						this.birthdayBadge = this.isSelectedDateCurrentDate(data.list[0].birth_date);
+					}
+				});
+
+				if (this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT) {
+					return this.getDSRReminders({
+						pageSize: 1,
+						pageNo: 1,
+					}).then((data) => {
+						if (data.ok) {
+							console.log(this.isSelectedDateCurrentDate(data.list[0].follow_up_on_date));
+							this.followupBadge = this.isSelectedDateCurrentDate(data.list[0].follow_up_on_date);
+						}
+					});
+
+					return this.getFollowUpReminders({
+						pageSize: 1,
+						pageNo: 1,
+					}).then((data) => {
+						if (data.ok && !this.followupBadge) {
+							console.log(this.isSelectedDateCurrentDate(data.list[0].reminder_date));
+							this.followupBadge = this.isSelectedDateCurrentDate(data.list[0].reminder_date);
+						}
+					});
+				}
+
+				if (this.userType == this.SALES_AGENT) {
+					return this.getDSRNotification({
+						pageSize: 1,
+						pageNo: 1,
+					}).then((data) => {
+						if (data.ok && !this.dsrNotificationBadges) {
+							console.log(this.isSelectedDateCurrentDate(data.list[0].sales_call_data.date_of_call));
+							this.dsrNotificationBadges = this.isSelectedDateCurrentDate(
+								data.list[0].sales_call_data.date_of_call
+							);
+						}
+					});
+				}
+			},
+			setTabConfig(noticesBadge, birthdayBadge, followupBadge, dsrNotificationBadge) {
 				let followupTabObj = {
 					name: "Follow Ups",
 					id: "followups",
 					component: "Followups",
 					props: {},
+					displayBadge: followupBadge,
 				};
 
 				if (this.userType == this.SALES_AGENT) {
@@ -50,6 +169,7 @@
 							id: "notifications",
 							component: "Notifications",
 							props: {},
+							displayBadge: dsrNotificationBadge,
 						},
 					];
 				} else if (this.userType == this.REMOTE_SALES_AGENT) {
@@ -61,6 +181,7 @@
 					id: "birthdays",
 					component: "BirthdayReminders",
 					props: {},
+					displayBadge: birthdayBadge,
 				});
 
 				this.tabConfig.unshift({
@@ -68,6 +189,7 @@
 					id: "notices",
 					component: "DashboardNotices",
 					props: {},
+					displayBadge: noticesBadge,
 				});
 			},
 		},
