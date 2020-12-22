@@ -65,7 +65,10 @@
 					</v-btn>
 				</div>
 				<div class="contentSectionWrapper" v-show="showColumnTwo">
-					<div class="content-section">
+					<div v-if="columnTwoTotalCount === 0" class="content-error-message">
+						No Notice Board Entry
+					</div>
+					<div v-else class="content-section">
 						<div v-for="(entry, index) in noticeBoard" :key="index + '_noticeBoard'" class="card-element">
 							<InformationCard :expandCard="false">
 								<template v-slot:topLeft>
