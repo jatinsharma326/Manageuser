@@ -222,7 +222,7 @@
 					this.userType == this.ADMIN ||
 					this.userType == this.MANAGEMENT
 				) {
-					this.routeItems.push({
+					this.routeItems.splice(6, 0, {
 						icon: "search",
 						title: "Virtual Reach",
 						route: "/virtual-reach",
