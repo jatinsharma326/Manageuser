@@ -177,7 +177,7 @@
 			:isEditMode="isEditMode"
 		></UserForm>
 
-		<div v-if="isOnlyAdmin" class="floating-button">
+		<div v-if="isAdminOrManagement" class="floating-button">
 			<v-btn @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
