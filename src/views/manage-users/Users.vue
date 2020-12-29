@@ -35,7 +35,7 @@
 						{{ getMainContentSubtitle(user) }}
 					</template>
 					<template v-slot:actionButtons>
-						<template v-if="userType == ADMIN">
+						<template v-if="isAdminOrManagement">
 							<v-btn @click="userPasswordReset(user)" color="orange " text>
 								Reset
 							</v-btn>

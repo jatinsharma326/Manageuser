@@ -1,17 +1,45 @@
 <template>
 	<div class="settingsWrapper">
-		<div v-if="isAdmin" class="settings-row">
+		<div class="settings-row">
 			<div class="settings-key">
-				<div class="key-title">Total Number of paid leaves</div>
-				<div class="key-subtitle">
-					Total number of paid leaves for the next financial year
-				</div>
+				<div class="key-title">Old Password</div>
 			</div>
 			<div class="settings-value text-field">
-				<v-text-field v-model="totalPaidLeaves" label="No of Leaves"></v-text-field>
+				<v-text-field v-model="oldPassword" label="Old Password" name="oldPassword"></v-text-field>
 			</div>
 		</div>
-		<div v-if="isAdmin" class="settings-row">
+		<div class="settings-row">
+			<div class="settings-key">
+				<div class="key-title">New Password</div>
+			</div>
+			<div class="settings-value text-field">
+				<v-text-field
+					v-model="newPassword"
+					label="New Password"
+					name="newPassword"
+					:rules="passwordRules"
+					ref="newPassword"
+				/>
+
+				<v-text-field
+					v-model="confirmPassword"
+					label="Confirm Password"
+					name="confirmPassword"
+					:rules="confirmPasswordRules"
+					ref="confirmPassword"
+				/>
+				<v-btn
+					:disabled="
+						!($refs.newPassword && $refs.newPassword.valid && $refs.confirmPassword.valid && oldPassword)
+					"
+					color="primary"
+					@click="updatePassword()"
+					class="submit-button password-change"
+					>Update Password</v-btn
+				>
+			</div>
+		</div>
+		<div v-if="isAdminOrManagement" class="settings-row">
 			<div class="settings-key">
 				<div class="key-title">Currency</div>
 				<div class="key-subtitle">
@@ -59,47 +87,17 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="!isAdmin" class="settings-row">
+		<div v-if="isAdminOrManagement" class="settings-row">
 			<div class="settings-key">
-				<div class="key-title">Old Password</div>
+				<div class="key-title">Total Number of paid leaves</div>
+				<div class="key-subtitle">
+					Total number of paid leaves for the next financial year
+				</div>
 			</div>
 			<div class="settings-value text-field">
-				<v-text-field v-model="oldPassword" label="Old Password" name="oldPassword"></v-text-field>
+				<v-text-field v-model="totalPaidLeaves" label="No of Leaves"></v-text-field>
 			</div>
 		</div>
-		<div v-if="!isAdmin" class="settings-row">
-			<div class="settings-key">
-				<div class="key-title">New Password</div>
-			</div>
-			<div class="settings-value text-field">
-				<v-text-field
-					v-model="newPassword"
-					label="New Password"
-					name="newPassword"
-					:rules="passwordRules"
-					ref="newPassword"
-				/>
-
-				<v-text-field
-					v-model="confirmPassword"
-					label="Confirm Password"
-					name="confirmPassword"
-					:rules="confirmPasswordRules"
-					ref="confirmPassword"
-				/>
-				<v-btn
-					v-if="!isAdmin"
-					:disabled="
-						!($refs.newPassword && $refs.newPassword.valid && $refs.confirmPassword.valid && oldPassword)
-					"
-					color="primary"
-					@click="updatePassword()"
-					class="submit-button password-change"
-					>SUBMIT</v-btn
-				>
-			</div>
-		</div>
-
 		<div class="settings-row">
 			<div class="settings-key">
 				<div class="key-title">Policies</div>
@@ -108,7 +106,7 @@
 				</div>
 			</div>
 			<div class="settings-value text-field">
-				<div v-if="isAdmin" class="file-input">
+				<div v-if="isAdminOrManagement" class="file-input">
 					<v-file-input
 						v-model="file"
 						class="file-picker"
@@ -119,7 +117,7 @@
 				</div>
 				<div class="upload-actions">
 					<v-btn
-						v-if="isAdmin"
+						v-if="isAdminOrManagement"
 						outlined
 						:disabled="!showProgress && file ? false : true"
 						color="primary"
@@ -130,11 +128,13 @@
 					<v-btn color="green" class="action-button" v-if="policies" @click="downloadPoliciesF()" text
 						>Download</v-btn
 					>
-					<div v-if="!policies && !isAdmin">There is no policy file.</div>
+					<div v-if="!policies && !isAdminOrManagement">There is no policy file.</div>
 				</div>
 			</div>
 		</div>
-		<v-btn v-if="isAdmin" color="primary" class="submit-button" @click="editAdminSettings()">SUBMIT</v-btn>
+		<v-btn v-if="isAdminOrManagement" color="primary" class="submit-button" @click="editAdminSettings()"
+			>Submit Settings</v-btn
+		>
 	</div>
 </template>
 
@@ -145,7 +145,7 @@
 		name: "Settings",
 		components: {},
 		created() {
-			if (this.isAdmin) {
+			if (this.isAdminOrManagement) {
 				this.getSettings();
 			} else {
 				this.setRules();
@@ -182,8 +182,8 @@
 		computed: {
 			...mapGetters(["REMOTE_SALES_AGENT", "SALES_AGENT", "MANAGEMENT", "ADMIN", "userType", "userData"]),
 			...mapGetters(["uploadPercentage", "allCurrencies"]),
-			isAdmin: function() {
-				return this.userType == this.ADMIN;
+			isAdminOrManagement: function() {
+				return this.userType == this.ADMIN || this.userType == this.MANAGEMENT;
 			},
 			isSalesTeam: function() {
 				return this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT;
