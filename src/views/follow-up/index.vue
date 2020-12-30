@@ -564,6 +564,20 @@
 						},
 					},
 					{
+						name: "Competitor Name",
+						type: "String",
+						key: "competitor_name",
+						width: "half",
+						disableTriggerKey: "status",
+						disableCheck: (data) => {
+							if (data == "FILE LOST") {
+								return false;
+							} else {
+								return true;
+							}
+						},
+					},
+					{
 						name: "Follow up Date",
 						type: "Date",
 						key: "reminder_date",
