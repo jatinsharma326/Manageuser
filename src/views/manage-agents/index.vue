@@ -29,6 +29,9 @@
 					<template v-slot:topLeft>
 						{{ company.business_types.join(", ") }}
 					</template>
+					<template v-if="company.iata_code" v-slot:topRight>
+						{{ company.iata_code }}
+					</template>
 					<template v-slot:mainContent>
 						{{ company.name }}
 					</template>
@@ -39,6 +42,9 @@
 						<div class="big-grade">
 							{{ company.admin_grade ? company.admin_grade : "-" }}
 						</div>
+					</template>
+					<template v-if="company.remarks" v-slot:moreInfo>
+						{{ company.remarks }}
 					</template>
 					<template v-slot:actionButtons>
 						<template>
@@ -58,6 +64,51 @@
 					</template>
 					<template v-slot:expandCardContent>
 						<v-list class="gradeListWrapper">
+							<v-list-item>
+								<v-list-item-icon>
+									<v-icon color="secondary">
+										mdi-map-marker
+									</v-icon>
+								</v-list-item-icon>
+
+								<v-list-item-content>
+									<v-list-item-title>{{ company.zone }}</v-list-item-title>
+									<v-list-item-subtitle>Zone</v-list-item-subtitle>
+								</v-list-item-content>
+							</v-list-item>
+
+							<v-divider inset></v-divider>
+
+							<v-list-item>
+								<v-list-item-icon>
+									<v-icon color="secondary">
+										mdi-map-marker
+									</v-icon>
+								</v-list-item-icon>
+
+								<v-list-item-content>
+									<v-list-item-title>{{ company.state }}</v-list-item-title>
+									<v-list-item-subtitle>State</v-list-item-subtitle>
+								</v-list-item-content>
+							</v-list-item>
+
+							<v-divider inset></v-divider>
+
+							<v-list-item>
+								<v-list-item-icon>
+									<v-icon color="secondary">
+										mdi-map-marker
+									</v-icon>
+								</v-list-item-icon>
+
+								<v-list-item-content>
+									<v-list-item-title>{{ company.city }}</v-list-item-title>
+									<v-list-item-subtitle>City</v-list-item-subtitle>
+								</v-list-item-content>
+							</v-list-item>
+
+							<v-divider inset></v-divider>
+
 							<template v-for="(grade, index) in company.grading">
 								<v-list-item :key="company._id + '+' + index">
 									<v-list-item-icon class="smallGradeWrapper">
@@ -139,7 +190,7 @@
 			@formOutput="formOutput"
 			@closeForm="closeForm"
 			:name="name"
-			:inputConfig="isAdminOrManagement ? adminInputConfig : salesInputConfig"
+			:inputConfig="inputConfig"
 			:keysToWatch="keysToWatch"
 			:toggleForm="toggleForm"
 			:formData="rowToEdit"
@@ -200,7 +251,7 @@
 	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
 	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
-	import { mapActions } from "vuex";
+	import { mapActions, mapGetters } from "vuex";
 	import companyInfo from "./CompanyInfo";
 	import ViewMoreModal from "../../components/ViewMoreModal";
 	import ChangeLogModal from "../../components/ChangeLog";
@@ -218,9 +269,15 @@
 		},
 		async created() {
 			this.getData();
-			this.setSearchConfig();
-			await this.getCountryList();
-			this.setInputConfig(this.activeCountriesList);
+			// this.setSearchConfig();
+
+			let promiseArray = [];
+			promiseArray.push(this.getCountryList());
+			promiseArray.push(this.getCities());
+
+			await Promise.all(promiseArray);
+
+			this.setConfig(this.activeCountriesList, this.storeStatesList, this.citiesList);
 		},
 		data: () => ({
 			name: "Agents",
@@ -234,11 +291,13 @@
 			companyList: [],
 			keysToWatch: ["countries"],
 			activeCountriesList: [],
-			adminInputConfig: [],
-			salesInputConfig: [],
+			inputConfig: [],
+			citiesList: [],
 			process_id: "",
 		}),
-		computed: {},
+		computed: {
+			...mapGetters("ManageAgents", ["storeStatesList"]),
+		},
 		methods: {
 			...mapActions("ManageAgents", [
 				"getChangelogsList",
@@ -250,6 +309,7 @@
 				"uploadTravelAgents",
 				"downloadSample",
 			]),
+			...mapActions("FollowUp", ["getCitiesList"]),
 			...mapActions("ManageTargets", ["getActiveCountries"]),
 			getCountryList() {
 				return this.getActiveCountries().then((data) => {
@@ -303,6 +363,12 @@
 				}
 				if (formData.website === null) {
 					formData.website = "";
+				}
+				if (formData.iata_code === null) {
+					formData.iata_code = "";
+				}
+				if (formData.remarks === null) {
+					formData.remarks = "";
 				}
 
 				// loop over the Grading objects to convert it into theh backend format
@@ -399,12 +465,123 @@
 					this.uploadModal = value;
 				}
 			},
-			setSearchConfig() {
-				/*
-				 * Name of Partner - Text field - string or number - can this be empty?
-				 * Business Type - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-				 * Countries - Dropdown multi Autocomplete - need some default filter provision. - can be empty in this case but not in specific cases
-				 */
+			// setSearchConfig() {},
+			setConfig(activeCountriesList = [], statesList = [], citiesList = []) {
+				this.inputConfig = [
+					{
+						name: "Company Name*",
+						type: "String",
+						key: "name",
+						width: "half",
+						validations: {
+							required,
+							minLength: minLength(1),
+						},
+					},
+					{
+						name: "Website Info",
+						type: "String",
+						key: "website",
+						width: "half",
+					},
+					{
+						name: "Defaulter?",
+						type: "Switch",
+						key: "defaulter",
+						width: "half",
+					},
+					{
+						name: "Zone*",
+						type: "Dropdown",
+						key: "zone",
+						width: "half",
+						multi: false,
+						isListInStore: true,
+						listVariable: "zone",
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "State*",
+						type: "Dropdown",
+						key: "state",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: statesList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "City*",
+						type: "Dropdown",
+						key: "city",
+						width: "half",
+						multi: false,
+						isListInStore: false,
+						listItems: citiesList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "IATA Code",
+						type: "String",
+						key: "iata_code",
+						width: "half",
+					},
+					{
+						name: "Business Type*",
+						type: "Dropdown",
+						key: "business_types",
+						width: "full",
+						multi: true,
+						isListInStore: true,
+						listVariable: "businessType",
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Remarks",
+						type: "TextArea",
+						key: "remarks",
+						width: "full",
+					},
+					{
+						name: "Countries*",
+						type: "Dropdown",
+						key: "countries",
+						width: "full",
+						multi: true,
+						isListInStore: false,
+						listItems: activeCountriesList,
+						validations: {
+							required,
+						},
+					},
+					{
+						name: "Grade",
+						type: "MultiInputWithGroupKey",
+						key: "grading",
+						width: "full",
+						keyToGroup: "countries",
+						keyforGrouped: "country",
+						keyBeingGrouped: "grade",
+					},
+				];
+
+				if (this.isAdminOrManagement) {
+					this.inputConfig.unshift({
+						name: "Admin Grade",
+						type: "String",
+						key: "admin_grade",
+						width: "half",
+					});
+				}
+
 				this.selectedSearchConfig = [
 					{
 						name: "Company Name",
@@ -430,6 +607,37 @@
 						defaultValue: [],
 						isListInStore: true,
 						listVariable: "countries",
+						classes: ["half"],
+					},
+					{
+						name: "Zone",
+						key: "zones",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: true,
+						listVariable: "zone",
+						classes: ["half"],
+					},
+					{
+						name: "State",
+						key: "states",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: statesList,
+						classes: ["half"],
+					},
+					{
+						name: "City",
+						key: "cities",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: citiesList,
+						classes: ["half"],
 					},
 					{
 						name: "Show Disabled Users",
@@ -439,129 +647,13 @@
 					},
 				];
 			},
-			setInputConfig(activeCountriesList = []) {
-				this.adminInputConfig = [
-					{
-						name: "Company Name*",
-						type: "String",
-						key: "name",
-						width: "half",
-						validations: {
-							required,
-							minLength: minLength(1),
-						},
-					},
-					{
-						name: "Website Info",
-						type: "String",
-						key: "website",
-						width: "half",
-					},
-					{
-						name: "Admin Grade",
-						type: "String",
-						key: "admin_grade",
-						width: "half",
-					},
-					{
-						name: "Defaulter?",
-						type: "Switch",
-						key: "defaulter",
-						width: "half",
-					},
-					{
-						name: "Business Type*",
-						type: "Dropdown",
-						key: "business_types",
-						width: "full",
-						multi: true,
-						isListInStore: true,
-						listVariable: "businessType",
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Countries*",
-						type: "Dropdown",
-						key: "countries",
-						width: "full",
-						multi: true,
-						isListInStore: false,
-						listItems: activeCountriesList,
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Grade",
-						type: "MultiInputWithGroupKey",
-						key: "grading",
-						width: "full",
-						keyToGroup: "countries",
-						keyforGrouped: "country",
-						keyBeingGrouped: "grade",
-					},
-				];
-				this.salesInputConfig = [
-					{
-						name: "Company Name*",
-						type: "String",
-						key: "name",
-						width: "half",
-						validations: {
-							required,
-							minLength: minLength(1),
-						},
-					},
-					{
-						name: "Website Info*",
-						type: "String",
-						key: "website",
-						width: "half",
-					},
-					{
-						name: "Business Type*",
-						type: "Dropdown",
-						key: "business_types",
-						width: "half",
-						multi: true,
-						isListInStore: true,
-						listVariable: "businessType",
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Defaulter?",
-						type: "Switch",
-						key: "defaulter",
-						width: "half",
-					},
-					{
-						name: "Countries*",
-						type: "Dropdown",
-						key: "countries",
-						width: "full",
-						multi: true,
-						isListInStore: false,
-						listItems: activeCountriesList,
-						validations: {
-							required,
-						},
-					},
-					{
-						name: "Grade",
-						type: "MultiInputWithGroupKey",
-						key: "grading",
-						width: "full",
-						keyToGroup: "countries",
-						keyforGrouped: "country",
-						keyBeingGrouped: "grade",
-					},
-				];
+			getCities() {
+				return this.getCitiesList({
+					filter: {},
+				}).then((data) => {
+					this.citiesList = data.list;
+				});
 			},
-
 			uploadFileFunc(formData) {
 				return this.uploadTravelAgents(formData);
 			},
