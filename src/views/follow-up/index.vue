@@ -220,6 +220,7 @@
 				{ text: "Inquiry Type", value: "business_types", width: 150 },
 				{ text: "Email Subject", value: "email_subject", width: 150 },
 				{ text: "File Status", value: "status", width: 150 },
+				{ text: "Competitor Name", value: "competitor_name", width: 200 },
 				{ text: "Follow Up", value: "reminder_date", width: 150 },
 				{ text: "Payment Status", value: "payment_status", width: 180 },
 				{ text: "Invoice No.", value: "invoice_no", width: 150 },
