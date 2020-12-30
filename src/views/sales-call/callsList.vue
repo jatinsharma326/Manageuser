@@ -45,6 +45,11 @@
 				</v-dialog>
 			</div>
 		</div>
+		<div v-if="type == 'all_sales_call' && isAdminOrManagement" class="download-button">
+			<v-btn color="secondary" text>
+				Download Call
+			</v-btn>
+		</div>
 		<div v-if="totalCount === 0" class="content-error-message">
 			Please add a sales call Entry
 		</div>
@@ -103,6 +108,7 @@
 				:isEditMode="isEditMode"
 			></UserForm>
 		</template>
+
 		<div class="floating-button">
 			<v-btn v-if="type == 'sales_call'" @click="openInputForm()" color="primary" dark fab>
 				<v-icon>mdi-plus</v-icon>
