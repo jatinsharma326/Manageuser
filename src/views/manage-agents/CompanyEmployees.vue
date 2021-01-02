@@ -221,6 +221,7 @@
 						company_id: this.companyInfo._id,
 						active: true,
 					},
+					active: true,
 				}).then((data) => {
 					this.addressList = data.list;
 				});

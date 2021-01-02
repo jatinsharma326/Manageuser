@@ -211,6 +211,7 @@
 												company_id: call.company_id,
 												active: true,
 											},
+											active: true,
 										}).then((data) => {
 											return data.list;
 										});

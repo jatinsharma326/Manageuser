@@ -47,6 +47,7 @@ const commonAPICallsMixin = {
 				filter: {
 					active: true,
 				},
+				active: true,
 			}).then((data) => {
 				this.companyList = data.list;
 				// this.modifiedCompanyList = data.list.map((e) => e.name);
