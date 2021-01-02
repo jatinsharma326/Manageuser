@@ -1,4 +1,5 @@
 import constants from "@/api";
+import helpers from "../../components/helpers";
 
 const initialState = () => ({});
 export default {
@@ -151,6 +152,52 @@ export default {
 					console.log("Yo ", err);
 					fail(err.toString() || "Failed to get Employee Details");
 					return { ok: false, data: {} };
+				});
+		},
+		downloadSalesCall: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+
+			let fileName =
+				"Sales from " +
+				helpers.getFormattedDate(payload.filter.date_from, "YYYY-MM-DD") +
+				" to " +
+				helpers.getFormattedDate(payload.filter.date_to, "YYYY-MM-DD");
+			let URLparam = payload.callType;
+
+			delete payload.callType;
+			// delete payload.date_from;
+			// delete payload.date_to;
+
+			return dispatch(
+				"fileDownload_API_Call",
+				{
+					method: "get",
+					params: payload,
+					url: constants.DOWNLOAD_SALES_CALLS + "/" + URLparam + "/",
+					responseType: "blob",
+				},
+				{ root: true }
+			)
+				.then(({ data, response }) => {
+					if (response.status === 200) {
+						commit("openSnackbar", { text: "Starting Download" }, { root: true });
+						const url = window.URL.createObjectURL(new Blob([data]));
+						const link = document.createElement("a");
+						link.href = url;
+						link.setAttribute("download", fileName + ".xlsx");
+						document.body.appendChild(link);
+						link.click();
+						return;
+					} else {
+						commit("openSnackbar", { text: "Could not start download" }, { root: true });
+						fail(data.message || "Failed to start download");
+						return;
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					commit("openSnackbar", { text: "Could not start download" }, { root: true });
+					fail(err.toString() || "Failed to Download Sales Call File");
 				});
 		},
 	},

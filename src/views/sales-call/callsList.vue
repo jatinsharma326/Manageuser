@@ -46,7 +46,7 @@
 			</div>
 		</div>
 		<div v-if="type == 'all_sales_call' && isAdminOrManagement" class="download-button">
-			<v-btn color="secondary" text>
+			<v-btn @click="downloadCalls" color="secondary" text>
 				Download Call
 			</v-btn>
 		</div>
@@ -174,6 +174,7 @@
 				"editSalesCall",
 				"deleteSalesCall",
 				"checkCallDetail",
+				"downloadSalesCall",
 			]),
 			getData() {
 				this.openLoaderDialog();
@@ -225,7 +226,6 @@
 					return false;
 				}
 			},
-
 			advanceSearch(filterObject) {
 				// make changes here to the filterObject
 				var filterData = JSON.parse(JSON.stringify(filterObject));
@@ -244,7 +244,6 @@
 					formData.month = Number(moment(formData.date_of_call).format("MM"));
 					formData.year = Number(moment(formData.date_of_call).format("YYYY"));
 				}
-
 				this.openLoaderDialog();
 				if (formData.company_id || formData.date_of_call) {
 					this.checkCallDetail({
@@ -363,6 +362,32 @@
 						}
 					});
 				}
+			},
+			downloadCalls() {
+				// if (this.isSalesTeamMember && this.type == "sales_call") {
+				// 	this.filter.mortal_id = this.userData.id;
+				// }
+				// this.filter.date_from = moment(this.datePickerDate[0])
+				// 	.tz("Asia/Kolkata")
+				// 	.startOf()
+				// 	.toISOString();
+				// if (this.datePickerDate[1]) {
+				// 	this.filter.date_to = moment(this.datePickerDate[1])
+				// 		.tz("Asia/Kolkata")
+				// 		.endOf()
+				// 		.toISOString();
+				// } else {
+				// 	this.filter.date_to = this.filter.date_from;
+				// }
+
+				this.openLoaderDialog();
+				this.downloadSalesCall({
+					filter: this.filter,
+					callType: this.type,
+					type: "zone",
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
 			},
 		},
 		watch: {},
