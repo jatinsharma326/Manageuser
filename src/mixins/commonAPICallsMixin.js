@@ -23,14 +23,18 @@ const commonAPICallsMixin = {
 					this.getUserList({
 						filter: {
 							type: "sales_agent",
+							active: true,
 						},
+						active: true,
 					})
 				);
 				promiseArray.push(
 					this.getUserList({
 						filter: {
 							type: "remote_sales_agent",
+							active: true,
 						},
+						active: true,
 					})
 				);
 				let users = await Promise.all(promiseArray);
@@ -48,6 +52,7 @@ const commonAPICallsMixin = {
 					active: true,
 				},
 				active: true,
+				list: true,
 			}).then((data) => {
 				this.companyList = data.list;
 				// this.modifiedCompanyList = data.list.map((e) => e.name);
