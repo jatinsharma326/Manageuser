@@ -70,6 +70,7 @@ export default {
 	// SALES CALL ENDPOINT
 	SALES_CALLS: BASE_URL + "SalesCalls/v0.1/",
 	DUPLICATE_CALL_WARNING: BASE_URL + "SalesCalls/v0.1/warning",
+	DOWNLOAD_SALES_CALLS: BASE_URL + "DownloadReports/v0.1/download-sales-calls",
 
 	// DAILY SALES REPORT ENDPOINT
 	DSR: BASE_URL + "DSR/v0.1/",
