@@ -669,7 +669,7 @@
 			downloadSampleFileFunc(formData) {
 				return new Promise((res, rej) => {
 					const link = document.createElement("a");
-					link.href = "https://global-destinations-bucket.s3-us-west-2.amazonaws.com/travelAgents.xlsx";
+					link.href = "https://global-destinations-bucket.s3-us-west-2.amazonaws.com/travelAg.xlsx";
 					link.setAttribute("download", "sample.xlsx"); //or any other extension
 					document.body.appendChild(link);
 					link.click();
