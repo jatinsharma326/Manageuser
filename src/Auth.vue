@@ -20,64 +20,67 @@
 </template>
 
 <script>
-	import { required, email } from "vuelidate/lib/validators";
-	import { mapActions } from "vuex";
-	export default {
-		name: "Auth",
-		components: {},
-		created() {},
-		mounted() {},
-		data: () => ({
-			showError: false,
-			errorText: false,
-			email: "",
-			password: "",
-			loaderDialog: false,
-		}),
-		methods: {
-			...mapActions(["login"]),
-			/*
-			 * validates the input when the login button is pressed and intiates login for the user.
-			 * if successful then emits startSession
-			 * else provides appropriate error
-			 */
-			async loginUser() {
-				this.showError = false;
-				this.$v.$touch();
-				if (this.$v.$invalid) {
-					if (this.$v.email.$invalid) {
-						this.errorText = "Please enter a valid email";
-					} else if (this.$v.password.$invalid) {
-						this.errorText = "Please enter a password";
-					}
-					this.showError = true;
-				} else {
-					// make login api call here
-					this.loaderDialog = true;
-					let result = await this.login({
-						username: this.email,
-						password: this.password,
-					});
-					if (!result.ok) {
-						this.showError = true;
-						this.errorText = "Invalid username or password";
-					} else {
-						this.$emit("startSession", {});
-					}
-					this.loaderDialog = false;
+import { required, email } from "vuelidate/lib/validators"
+import { mapActions } from "vuex"
+import packageJson from "../package.json"
+export default {
+	name: "Auth",
+	components: {},
+	created() {
+		console.log("Version: ", packageJson.version)
+	},
+	mounted() {},
+	data: () => ({
+		showError: false,
+		errorText: false,
+		email: "",
+		password: "",
+		loaderDialog: false,
+	}),
+	methods: {
+		...mapActions(["login"]),
+		/*
+		 * validates the input when the login button is pressed and intiates login for the user.
+		 * if successful then emits startSession
+		 * else provides appropriate error
+		 */
+		async loginUser() {
+			this.showError = false
+			this.$v.$touch()
+			if (this.$v.$invalid) {
+				if (this.$v.email.$invalid) {
+					this.errorText = "Please enter a valid email"
+				} else if (this.$v.password.$invalid) {
+					this.errorText = "Please enter a password"
 				}
-			},
+				this.showError = true
+			} else {
+				// make login api call here
+				this.loaderDialog = true
+				let result = await this.login({
+					username: this.email,
+					password: this.password,
+				})
+				if (!result.ok) {
+					this.showError = true
+					this.errorText = "Invalid username or password"
+				} else {
+					this.$emit("startSession", {})
+				}
+				this.loaderDialog = false
+			}
 		},
-		validations: {
-			email: {
-				required,
-				email,
-			},
-			password: {
-				required,
-			},
+	},
+	validations: {
+		email: {
+			required,
+			email,
 		},
-	};
+		password: {
+			required,
+		},
+	},
+}
 </script>
 
 <style lang="scss" scoped></style>
