@@ -20,3 +20,11 @@ jobs:
           ssh_host: ${{ secrets.HOST }}
           source: 'dist/'
           target: '~/global-destination-backend/web-app/'
+      - name: SCP Files to GD Prod server
+        uses: lbejiuk/scp_action@v1
+        with:
+          public_key: ${{ secrets.PROD_SSH_KEY }}
+          ssh_username: ${{ secrets.USERNAME }}
+          ssh_host: ${{ secrets.PROD_HOST }}
+          source: 'dist/'
+          target: '~/global-destination-backend/web-app/'
