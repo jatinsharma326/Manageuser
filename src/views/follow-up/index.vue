@@ -761,6 +761,7 @@
 				if (!formData.contact_number) formData.contact_number = "";
 				if (!formData.invoice_no) formData.invoice_no = "";
 				if (!formData.remark) formData.remark = "";
+				if (!formData.competitor_name) formData.competitor_name = "";
 
 				if (formData.reminder_date) {
 					formData.reminder_date = helpers.getISODate(formData.reminder_date);
