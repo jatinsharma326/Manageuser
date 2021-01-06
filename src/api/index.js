@@ -1,6 +1,6 @@
-const isBuildVersion = process.env.NODE_ENV === "production";
+const isBuildVersion = process.env.NODE_ENV === "production"
 
-const BASE_URL = isBuildVersion ? "https://gd.orderstack.xyz/" : "https://gd.orderstack.xyz/";
+const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://gd.orderstack.xyz/"
 // const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.103:1401/" : "http://192.168.1.103:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
@@ -112,4 +112,4 @@ export default {
 
 	// VIRTUAL REACH ENDPOINT
 	ADMIN_BULLETIN: BASE_URL + "Bulletins/v0.1/admin-bulletins",
-};
+}
