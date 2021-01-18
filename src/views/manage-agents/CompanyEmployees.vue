@@ -193,7 +193,7 @@ export default {
   async created() {
     this.getData();
     await this.getAddresses();
-    this.setInputConfig(this.addressList);
+    this.setInputConfig(this.addressList, this.companyInfo.business_types);
     await this.getStates();
     this.setSearchConfig(this.statesList);
   },
@@ -265,7 +265,7 @@ export default {
       this.selectedCardInfo = { ...info };
       this.toggleChangelogModal = true;
     },
-    setInputConfig(addressList = []) {
+    setInputConfig(addressList = [], businessTypes = []) {
       this.inputConfig = [
         {
           name: "Employee Name*",
@@ -287,6 +287,7 @@ export default {
           name: "Business Type*",
           type: "Dropdown",
           key: "business_types",
+          initialValue: businessTypes,
           width: "half",
           multi: true,
           isListInStore: true,
@@ -522,19 +523,19 @@ export default {
         this.pageNo = 1;
         this.getData();
         await this.getAddresses();
-        this.setInputConfig(this.addressList);
+        this.setInputConfig(this.addressList, this.companyInfo.business_types);
         await this.getStates();
         this.setSearchConfig(this.statesList);
         // if (nv.countries) {
         // 	this.setSearchConfig(nv.countries);
-        // 	this.setInputConfig(this.partnerInfo.countries);
+        // 	this.setInputConfig(this.partnerInfo.countries, this.companyInfo.business_types);
         // }
       },
     },
     storeAddressList: {
       deep: true,
       handler(nv, ov) {
-        this.setInputConfig(nv);
+        this.setInputConfig(nv, this.companyInfo.business_types);
       },
     },
   },
