@@ -67,6 +67,14 @@
                 text
                 ><v-icon>mdi-information-outline</v-icon></v-btn
               >
+              <v-btn
+                v-if="isAdminOrManagement"
+                @click="deleteTravelAgentEntry(company)"
+                color="red darken-3"
+                outlined
+              >
+                DELETE
+              </v-btn>
               <v-btn @click="disableCompany(company)" color="error" text>
                 {{ company.record.active ? "Disable" : "Enable" }}
               </v-btn>
@@ -368,6 +376,7 @@ export default {
       "deleteSpawnProcess",
       "uploadTravelAgents",
       "downloadSample",
+      "deleteTravelAgent",
     ]),
     ...mapActions("FollowUp", ["getCitiesList"]),
     ...mapActions("ManageTargets", ["getActiveCountries"]),
@@ -504,6 +513,22 @@ export default {
             this.openSnackbar({ text: "Sucessfully Updated Company Status" });
             this.getData();
             this.closeForm();
+          } else {
+            this.openSnackbar({ text: data.message });
+          }
+        });
+      }
+    },
+    deleteTravelAgentEntry(entry) {
+      if (window.confirm("Do you really want to Delete the Travel Agent?")) {
+        this.openLoaderDialog();
+        this.deleteTravelAgent({
+          _id: entry._id,
+        }).then((data) => {
+          this.closeLoaderDialog();
+          if (data.ok) {
+            this.openSnackbar({ text: "Sucessfully Deleted the Travel Agent" });
+            this.getData();
           } else {
             this.openSnackbar({ text: data.message });
           }
