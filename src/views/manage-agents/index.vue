@@ -45,7 +45,13 @@
             {{ company.website }}
           </template>
           <template v-slot:mainContentRight>
-            <div class="big-grade">
+            <div
+              class="big-grade"
+              :class="{
+                'admin-grade-is-p':
+                  company.admin_grade === 'P' || company.admin_grade === 'p',
+              }"
+            >
               {{ company.admin_grade ? company.admin_grade : "-" }}
             </div>
           </template>
