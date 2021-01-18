@@ -20,13 +20,13 @@
 						>
 							<InformationCard :isBirthDate="checkForBirthDate(person.birth_date)" :expandCard="false">
 								<template v-slot:topLeft>
-									{{ person.company_data.name }}
+									{{ person.name }}
 								</template>
 								<template v-slot:topRight>
 									{{ getFormattedDate(person.birth_date, "DD/MM") }}
 								</template>
 								<template v-slot:mainContent>
-									{{ person.name + " ( " + person.designation + " )" }}
+									{{ person.proprietor_info }}
 								</template>
 								<template v-slot:mainContentSubtitle>
 									{{ daysUntil(person.birth_date, "Today 🎂🎉 ") }}
@@ -43,7 +43,7 @@
 			</div>
 			<div class="column-two column">
 				<div class="title-section">
-					<div class="title">Teams Birthdays</div>
+					<div class="title">Partner Employee Birthdays</div>
 					<v-btn color="tertiary" icon @click="showColumnTwo = !showColumnTwo">
 						<v-icon>{{ showColumnTwo ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
 					</v-btn>
@@ -51,7 +51,7 @@
 				<div class="contentSectionWrapper" v-show="showColumnTwo">
 					<div class="content-section">
 						<div
-							v-for="(person, index) in gloablDestinationsBirthdays"
+							v-for="(person, index) in partnerEmployeeBirthdays"
 							:key="index + '_GDEmployee'"
 							class="card-element"
 						>
@@ -60,13 +60,13 @@
 								:expandCard="false"
 							>
 								<template v-slot:topLeft>
-									{{ person.usr_data.designation }}
+									{{ person.representing_partner_data.name }}
 								</template>
 								<template v-slot:topRight>
 									{{ getFormattedDate(person.birth_date, "DD/MM") }}
 								</template>
 								<template v-slot:mainContent>
-									{{ person.usr_data.name }}
+									{{ person.name }}
 								</template>
 								<template v-slot:mainContentSubtitle>
 									{{ daysUntil(person.birth_date, "Today 🎂🎉 ") }}
@@ -91,12 +91,12 @@
 	import helperMixin from "../../mixins/helperMixins";
 	import moment from "moment-timezone";
 	export default {
-		name: "BirthdayReminders",
+		name: "PartnerBirthdayReminders",
 		mixins: [helperMixin],
 		components: { InformationCard },
 		created() {
-			this.getAgentBirthdayList();
-			this.getGDEmployeeBirthdayList();
+			this.getPartnerBirthdayList();
+			this.getPartnerEmployeeBirthdayList();
 		},
 		data: () => ({
 			showColumnOne: true,
@@ -107,19 +107,19 @@
 			columnOneTotalCount: "",
 			columnTwoTotalCount: "",
 			partnerBirthdays: [],
-			gloablDestinationsBirthdays: [],
+			partnerEmployeeBirthdays: [],
 		}),
 		methods: {
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
-			...mapActions("Dashboard", ["getAgentBirthdays", "getGDEmployeeBirthdays"]),
+			...mapActions("Dashboard", ["getPartnerBirthdays", "getPartnerEmployeeBirthdays"]),
 
 			loadMoreColumnOne() {
 				this.columnOnePageSize = this.columnOnePageSize + 20;
-				this.getAgentBirthdayList();
+				this.getPartnerBirthdayList();
 			},
 			loadMoreColumnTwo() {
 				this.columnTwoPageSize = this.columnTwoPageSize + 20;
-				this.getGDEmployeeBirthdayList();
+				this.getPartnerEmployeeBirthdayList();
 			},
 			checkForBirthDate(date) {
 				let dateToCheck = moment(date)
@@ -133,9 +133,9 @@
 				}
 				return false;
 			},
-			getAgentBirthdayList() {
+			getPartnerBirthdayList() {
 				this.openLoaderDialog();
-				this.getAgentBirthdays({
+				this.getPartnerBirthdays({
 					pageSize: this.columnOnePageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
@@ -147,9 +147,9 @@
 					this.columnOneTotalCount = data.totalCount;
 				});
 			},
-			getGDEmployeeBirthdayList() {
+			getPartnerEmployeeBirthdayList() {
 				this.openLoaderDialog();
-				this.getGDEmployeeBirthdays({
+				this.getPartnerEmployeeBirthdays({
 					pageSize: this.columnTwoPageSize,
 					pageNo: this.pageNo,
 				}).then((data) => {
@@ -159,7 +159,7 @@
 							text: "Failed to Fetched Employee Birthday List",
 						});
 					}
-					this.gloablDestinationsBirthdays = data.list;
+					this.partnerEmployeeBirthdays = data.list;
 					this.columnTwoTotalCount = data.totalCount;
 				});
 			},

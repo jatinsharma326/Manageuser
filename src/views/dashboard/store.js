@@ -86,6 +86,76 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
+		getPartnerBirthdays: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.PARTNER_BIRTHDAYS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load Partner Birthday List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load Partner Birthday List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
+		getPartnerEmployeeBirthdays: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.PARTNER_EMPLOYEE_BIRTHDAYS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							totalCount: data.totalCount,
+							fetchCount: data.fetchCount,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load Partner Employee Birthday List");
+						return {
+							ok: false,
+							totalCount: data.totalCount,
+							fetchCount: 0,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load Partner EMployee Birthday List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
 		getDSRReminders: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
