@@ -279,7 +279,7 @@ export default {
       formData.dob = helpers.getISODate(formData.dob);
       formData.doj = helpers.getISODate(formData.doj);
       if (formData.doe) {
-        formData.doe = helpers.getISODate(formData.dob);
+        formData.doe = helpers.getISODate(formData.doe);
       }
 
       if (formData.countries) {
