@@ -5,6 +5,7 @@
 				<v-tab>Raw Data</v-tab>
 				<v-tab>Yearly Comparison</v-tab>
 				<v-tab>Zone Wise Summary</v-tab>
+				<v-tab>Business Type Summary</v-tab>
 			</v-tabs>
 			<v-tabs-items class="tabItemWrapper" v-model="tab">
 				<v-tab-item>
@@ -15,6 +16,9 @@
 				</v-tab-item>
 				<v-tab-item>
 					<YearlyRevenueZone @switchTab="switchTab"></YearlyRevenueZone>
+				</v-tab-item>
+				<v-tab-item>
+					<YearlyRevenueBusinessType @switchTab="switchTab"></YearlyRevenueBusinessType>
 				</v-tab-item>
 			</v-tabs-items>
 		</template>
@@ -60,6 +64,7 @@
 	import YearlyRevenueRaw from "./YearlyRevenueRaw";
 	import YearlyRevenueComparison from "./YearlyRevenueComparison";
 	import YearlyRevenueZone from "./YearlyRevenueZone";
+	import YearlyRevenueBusinessType from "./YearlyRevenueBusinessType";
 	import TravelAgentReport from "./TravelAgentReport";
 	import ZoneReport from "./ZoneReport";
 	import CityReport from "./CityReport";
