@@ -78,6 +78,18 @@
                   <v-list-item-title>{{ contact }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
+              <v-list-item
+                v-for="(contact, index) in employee.landline_numbers"
+                :key="employee._id + '+' + index"
+              >
+                <v-list-item-icon>
+                  <v-icon color="secondary"> mdi-phone-classic </v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-content>
+                  <v-list-item-title>{{ contact }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
 
               <v-list-item
                 v-for="(email, index) in employee.email_ids"
@@ -344,6 +356,12 @@ export default {
           width: "half",
         },
         {
+          name: "Landline Numbers",
+          type: "MultiInput",
+          key: "landline_numbers",
+          width: "half",
+        },
+        {
           name: "DOB",
           type: "Date",
           key: "dob",
@@ -372,6 +390,9 @@ export default {
       formData.phone_numbers = data.phone_numbers
         .map((data) => data.input)
         .filter((e) => e != "");
+      formData.landline_numbers = data.landline_numbers
+        .map((data) => data.input)
+        .filter((e) => e != "");
       formData.email_ids = data.email_ids
         .map((data) => data.input)
         .filter((e) => e != "");
@@ -392,13 +413,18 @@ export default {
         });
       } else {
         // In the case of adding a travel agent employee
-        if (formData.phone_numbers.length || formData.email_ids.length) {
+        if (
+          formData.phone_numbers.length ||
+          formData.email_ids.length ||
+          formData.landline_numbers.length
+        ) {
           this.checkEmployeeDetail({
             company_id: formData.company_id,
             phone_numbers: formData.phone_numbers,
+            landline_numbers: formData.landline_numbers,
             email_ids: formData.email_ids,
           }).then((data) => {
-            if (data.ok && data.data) {
+            if (data.ok && Object.keys(data.data).length) {
               if (
                 window.confirm(
                   `Possible Duplicate Employee "${data.data.name}" (${data.data.designation}) already exists. Are you sure you want to continue.`
