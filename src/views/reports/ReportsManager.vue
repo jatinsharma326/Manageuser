@@ -76,6 +76,7 @@
 			YearlyRevenueRaw,
 			YearlyRevenueComparison,
 			YearlyRevenueZone,
+			YearlyRevenueBusinessType,
 			TravelAgentReport,
 			ZoneReport,
 			CityReport,
