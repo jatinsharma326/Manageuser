@@ -26,6 +26,17 @@
 					}}</v-icon>
 				</v-badge>
 			</template>
+			<template v-slot:prepend-inner>
+				<v-badge dot overlap :value="areFiltersApplied">
+					<v-icon
+						color="error"
+						:disabled="checkClearButtonsDisableStatus"
+						@click.stop="isAdvanceSearch ? clearFilters(false) : clearBasicInputField()"
+					>
+						mdi-close
+					</v-icon>
+				</v-badge>
+			</template>
 		</v-text-field>
 		<v-expand-transition v-if="isAdvanceSearch">
 			<div v-show="menu">
@@ -149,6 +160,17 @@
 					return "mdi-magnify";
 				}
 			},
+			checkClearButtonsDisableStatus() {
+				// console.log(this.areFiltersApplied);
+				if (this.queryString == "" && !this.areFiltersApplied) {
+					// console.log("Entered this If");
+					return true;
+				}
+				// else if (this.areFiltersApplied) {
+				// 	return true;
+				// }
+				return false;
+			},
 		},
 		methods: {
 			checkForClass(classes) {
@@ -156,6 +178,7 @@
 					return classes;
 				}
 			},
+
 			performBasicSearch() {
 				clearTimeout(this.searchTimeoutRef);
 				this.searchTimeoutRef = setTimeout(() => {
@@ -166,12 +189,18 @@
 				this.filterObject[key] = null;
 				this.dateMenuRef[key] = false;
 			},
-			clearFilters() {
+			clearFilters(shouldAdvanceSearchToggle = true) {
 				this.queryString = "";
 				this.initialiseFilterElements();
 				this.areFiltersApplied = false;
-				this.toggleAdvanceSearchSection();
+				if (shouldAdvanceSearchToggle) {
+					this.toggleAdvanceSearchSection();
+				}
 				this.$emit("filterObject", {});
+			},
+			clearBasicInputField() {
+				this.queryString = "";
+				this.$emit("queryString", this.queryString);
 			},
 			performAdvanceSearch() {
 				for (let key in this.filterObject) {
