@@ -1,14 +1,14 @@
 <template>
 	<div class="yearlyZone">
 		<div class="download-reports">
-			<v-btn :disabled="checkDownloadButtonStatus" color="primary" text @click.stop="downloadReport()"
+			<!-- <v-btn :disabled="checkDownloadButtonStatus" color="primary" text @click.stop="downloadReport()"
 				>Download Report</v-btn
-			>
+			> -->
 			<v-btn :disabled="checkDownloadButtonStatus" color="secondary" text @click.stop="downloadChart()"
 				>Download Chart</v-btn
 			>
 		</div>
-		<div class="leaves-table">
+		<!-- <div class="leaves-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer
@@ -17,7 +17,7 @@
 				:items="dataList"
 			>
 			</v-data-table>
-		</div>
+		</div> -->
 		<div class="charts">
 			<PieChart v-if="render" :myTabId="1" :chartData="chartData" :options="chartOptions"></PieChart>
 		</div>
@@ -73,7 +73,7 @@
 			},
 		},
 		methods: {
-			...mapActions("Reports", ["getYearlyZone", "downloadYearlyZoneReport"]),
+			...mapActions("Reports", ["getYearlyBusinessType", "downloadYearlyZoneReport"]),
 			...mapMutations([]),
 			getData() {
 				this.openLoaderDialog();
@@ -104,7 +104,7 @@
 				if (zones) {
 					this.filter.zones = zones;
 				}
-				this.getYearlyZone({
+				this.getYearlyBusinessType({
 					filter: this.filter,
 					selection_date_from: this.selectionDateFrom,
 					selection_date_to: this.selectionDateTo,
@@ -117,10 +117,20 @@
 					// let westArr = [];
 					// let westGujArr = [];
 					this.dataList = data.list;
-					this.dataList = this.dataList.map((d, index) => ({
-						...d,
-						serial_number: index + 1,
-					}));
+					console.log("this.dataList", this.dataList);
+					let labelArray = [];
+					let dataArray = [];
+					this.dataList = this.dataList.map((d, index) => {
+						labelArray.push(d.business_type);
+						dataArray.push(d.total_revenue);
+
+						return {
+							...d,
+							serial_number: index + 1,
+						};
+					});
+					console.log("labelArray", labelArray);
+					console.log("dataArray", dataArray);
 					// for (data of this.dataList) {
 					// 	if (data.month_of_travel !== "TOTAL") {
 					// 		chartLabel.push(data.month_of_travel);
@@ -133,56 +143,55 @@
 					// }
 					let chartDatasets = [
 						{
-							label: ["FIT", "GIT", "BIT"],
-							data: [123, 123, 456, 678],
+							data: dataArray,
 							borderColor: "RGB(255, 206, 86)",
 							backgroundColor: "RGB(255, 206, 86, 0.75)",
 						},
 					];
 					this.chartData = {
-						labels: chartLabel,
+						labels: labelArray,
 						datasets: chartDatasets,
 					};
 					this.render = true;
 				});
 			},
-			downloadReport() {
-				let selectionDate = JSON.parse(JSON.stringify(this.yearlyRevenueMainDate));
-				selectionDate.sort();
+			// downloadReport() {
+			// 	let selectionDate = JSON.parse(JSON.stringify(this.yearlyRevenueMainDate));
+			// 	selectionDate.sort();
 
-				this.selectionDateFrom = moment(selectionDate[0])
-					.tz("Asia/Kolkata")
-					.startOf("month")
-					.toISOString();
-				this.selectionDateTo = moment(selectionDate[1])
-					.tz("Asia/Kolkata")
-					.endOf("month")
-					.toISOString();
+			// 	this.selectionDateFrom = moment(selectionDate[0])
+			// 		.tz("Asia/Kolkata")
+			// 		.startOf("month")
+			// 		.toISOString();
+			// 	this.selectionDateTo = moment(selectionDate[1])
+			// 		.tz("Asia/Kolkata")
+			// 		.endOf("month")
+			// 		.toISOString();
 
-				let { business_types, countries, names, zones } = this.yearlyRevenueFilter;
-				if (business_types) {
-					this.filter.business_types = business_types;
-				}
-				if (countries) {
-					this.filter.countries = countries;
-				}
-				if (names) {
-					this.filter.names = names;
-				}
-				if (zones) {
-					this.filter.zones = zones;
-				}
+			// 	let { business_types, countries, names, zones } = this.yearlyRevenueFilter;
+			// 	if (business_types) {
+			// 		this.filter.business_types = business_types;
+			// 	}
+			// 	if (countries) {
+			// 		this.filter.countries = countries;
+			// 	}
+			// 	if (names) {
+			// 		this.filter.names = names;
+			// 	}
+			// 	if (zones) {
+			// 		this.filter.zones = zones;
+			// 	}
 
-				this.openLoaderDialog();
-				this.downloadYearlyZoneReport({
-					filter: this.filter,
-					selection_date_from: this.selectionDateFrom,
-					selection_date_to: this.selectionDateTo,
-					type: "zone",
-				}).then(() => {
-					this.closeLoaderDialog();
-				});
-			},
+			// 	this.openLoaderDialog();
+			// 	this.downloadYearlyZoneReport({
+			// 		filter: this.filter,
+			// 		selection_date_from: this.selectionDateFrom,
+			// 		selection_date_to: this.selectionDateTo,
+			// 		type: "zone",
+			// 	}).then(() => {
+			// 		this.closeLoaderDialog();
+			// 	});
+			// },
 			downloadChart() {
 				let fileName =
 					this.getFormattedDate(this.selection_date_from, "YYYY-MM") +
