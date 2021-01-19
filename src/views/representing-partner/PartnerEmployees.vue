@@ -32,9 +32,6 @@
               :key="user._id"
             >
               <InformationCard :expandCard="true">
-                <template v-slot:topRight>
-                  {{ user.dob ? getFormattedDate(user.dob, "DD/MM") : "-" }}
-                </template>
                 <template v-slot:mainContent>
                   {{ user.name }}
                 </template>
@@ -89,6 +86,18 @@
 
                       <v-list-item-content>
                         <v-list-item-title>{{ email }}</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-list-item-title
+                          >DOB:
+                          {{
+                            user.dob
+                              ? getFormattedDate(user.dob, "DD/MM")
+                              : "--/--"
+                          }}</v-list-item-title
+                        >
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>

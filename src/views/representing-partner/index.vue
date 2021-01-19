@@ -32,9 +32,9 @@
           <template v-slot:topLeft>
             {{ user.business_types.join(", ") }}
           </template>
-          <template v-slot:topRight>
+          <!-- <template v-slot:topRight>
             {{ user.dob ? getFormattedDate(user.dob, "DD/MM") : "-" }}
-          </template>
+          </template> -->
           <template v-slot:mainContent>
             {{ user.name }}
           </template>
@@ -106,6 +106,16 @@
 
                 <v-list-item-content>
                   <v-list-item-title>{{ email }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title
+                    >DOB:
+                    {{
+                      user.dob ? getFormattedDate(user.dob, "DD/MM") : "--/--"
+                    }}</v-list-item-title
+                  >
                 </v-list-item-content>
               </v-list-item>
             </v-list>
