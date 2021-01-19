@@ -95,6 +95,26 @@
               </v-list-item>
 
               <v-list-item
+                v-for="(contact, index) in user.emergency_landline_numbers"
+                :key="user._id + '+' + index + '+' + contact.landline_numbers"
+                two-line
+              >
+                <v-list-item-icon>
+                  <v-icon color="secondary"> mdi-phone-classic </v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-content>
+                  <v-list-item-title>{{
+                    contact.landline_numbers.join(", ")
+                  }}</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    contact.country
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+                <!-- <v-divider inset></v-divider> -->
+              </v-list-item>
+
+              <v-list-item
                 v-for="(email, index) in user.email_ids"
                 :key="user._id + '+' + index + 'Email'"
               >
@@ -303,6 +323,16 @@ export default {
         keyBeingGrouped: "contacts",
       },
       {
+        name: "Landline Numbers",
+        type: "MultiInputWithGroupKey",
+        multi: true,
+        key: "emergency_landline_numbers",
+        width: "half",
+        keyToGroup: "countries",
+        keyforGrouped: "country",
+        keyBeingGrouped: "landline_numbers",
+      },
+      {
         name: "Proprietor DOB",
         type: "Date",
         key: "dob",
@@ -352,12 +382,13 @@ export default {
         .filter((e) => e != "");
       formData.logo = tempFile;
       var tempArray = [];
+      var tempArrayLandline = [];
       var tempObj = {};
       if (formData.dob) {
         formData.dob = helpers.getISODate(formData.dob);
       }
 
-      // loop over the emergency contacts objects to convert it into theh backend format
+      // loop over the emergency contacts objects to convert it into the backend format
       for (let contact of formData.emergency_contacts) {
         tempObj = {};
         for (let num of contact.input) {
@@ -372,6 +403,22 @@ export default {
         }
       }
       formData.emergency_contacts = tempArray;
+
+      // for emergency_landline_numbers
+      for (let contact of formData.emergency_landline_numbers) {
+        tempObj = {};
+        for (let num of contact.input) {
+          if (num.input != "") {
+            tempObj["country"] = contact.groupKey;
+            if (!tempObj["landline_numbers"]) tempObj["landline_numbers"] = [];
+            tempObj["landline_numbers"].push(num.input);
+          }
+        }
+        if (Object.keys(tempObj).length) {
+          tempArrayLandline.push(tempObj);
+        }
+      }
+      formData.emergency_landline_numbers = tempArrayLandline;
 
       // remove logo key if it's empty
       if (formData.logo) {
