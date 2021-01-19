@@ -1,6 +1,6 @@
-const isBuildVersion = process.env.NODE_ENV === "production"
+const isBuildVersion = process.env.NODE_ENV === "production";
 
-const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://gd.orderstack.xyz/"
+const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://gd.orderstack.xyz/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.103:1401/" : "http://192.168.1.103:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
@@ -31,8 +31,12 @@ export default {
 
 	//API ENDPOINT FOR MANAGE USER DATA
 	MANAGE_USERS: BASE_URL + "Mortals/v0.1/",
+
+	//API ENDPOINT FOR PARTNER
 	MANAGE_PARTNER: BASE_URL + "Partners/v0.1/",
+	PARTNER_BIRTHDAYS: BASE_URL + "Partners/v0.1/birthday-reminder",
 	MANAGE_PARTNER_EMPLOYEES: BASE_URL + "RepEmployees/v0.1/",
+	PARTNER_EMPLOYEE_BIRTHDAYS: BASE_URL + "RepEmployees/v0.1/birthday-reminder",
 
 	// GLOBAL SETTINGS END POINT
 	GLOBAL_SETTINGS: BASE_URL + "Admin/v0.1/global-settings",
@@ -112,4 +116,4 @@ export default {
 
 	// VIRTUAL REACH ENDPOINT
 	ADMIN_BULLETIN: BASE_URL + "Bulletins/v0.1/admin-bulletins",
-}
+};

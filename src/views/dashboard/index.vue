@@ -19,6 +19,7 @@
 	import { mapActions, mapGetters, mapMutations } from "vuex";
 	import Followups from "./Followups";
 	import BirthdayReminders from "./BirthdayReminders";
+	import PartnerBirthdayReminders from "./PartnerBirthdayReminders";
 	import Notifications from "./Notifications";
 	import DashboardNotices from "./Notices";
 	import helperMixin from "../../mixins/helperMixins";
@@ -30,6 +31,7 @@
 		components: {
 			Followups,
 			BirthdayReminders,
+			PartnerBirthdayReminders,
 			Notifications,
 			DashboardNotices,
 		},
@@ -38,7 +40,7 @@
 			this.openLoaderDialog();
 			await this.checkNotifications();
 			this.closeLoaderDialog();
-			this.setTabConfig(this.noticesBadge, this.birthdayBadge, this.followupBadge, this.dsrNotificationBadge);
+			this.setTabConfig();
 		},
 		data: () => ({
 			tabConfig: [],
@@ -59,6 +61,8 @@
 				"getFollowUpReminders",
 				"getAgentBirthdays",
 				"getGDEmployeeBirthdays",
+				"getPartnerBirthdays",
+				"getPartnerEmployeeBirthdays",
 				"getDSRNotification",
 			]),
 			getDateRange() {
@@ -120,6 +124,26 @@
 					}
 				});
 
+				await this.getPartnerBirthdays({
+					pageSize: 1,
+					pageNo: 1,
+				}).then((data) => {
+					if (data.ok && data.list.length) {
+						console.log(this.isSelectedDateCurrentDate(data.list[0].birth_date));
+						this.partnerBirthdayBadge = this.isSelectedDateCurrentDate(data.list[0].birth_date);
+					}
+				});
+
+				await this.getPartnerEmployeeBirthdays({
+					pageSize: 1,
+					pageNo: 1,
+				}).then((data) => {
+					if (data.ok && !this.birthdayBadge && data.list.length) {
+						console.log(this.isSelectedDateCurrentDate(data.list[0].birth_date));
+						this.partnerBirthdayBadge = this.isSelectedDateCurrentDate(data.list[0].birth_date);
+					}
+				});
+
 				if (this.userType == this.SALES_AGENT || this.userType == this.REMOTE_SALES_AGENT) {
 					await this.getDSRReminders({
 						pageSize: 1,
@@ -156,13 +180,13 @@
 					});
 				}
 			},
-			setTabConfig(noticesBadge, birthdayBadge, followupBadge, dsrNotificationBadge) {
+			setTabConfig() {
 				let followupTabObj = {
 					name: "Follow Ups",
 					id: "followups",
 					component: "Followups",
 					props: {},
-					displayBadge: followupBadge,
+					displayBadge: this.followupBadge,
 				};
 
 				if (this.userType == this.SALES_AGENT) {
@@ -173,7 +197,7 @@
 							id: "notifications",
 							component: "Notifications",
 							props: {},
-							displayBadge: dsrNotificationBadge,
+							displayBadge: this.dsrNotificationBadge,
 						},
 					];
 				} else if (this.userType == this.REMOTE_SALES_AGENT) {
@@ -185,7 +209,15 @@
 					id: "birthdays",
 					component: "BirthdayReminders",
 					props: {},
-					displayBadge: birthdayBadge,
+					displayBadge: this.birthdayBadge,
+				});
+
+				this.tabConfig.push({
+					name: "Partner Birthdays",
+					id: "partnerBirthdays",
+					component: "PartnerBirthdayReminders",
+					props: {},
+					displayBadge: this.partnerBirthdayBadge,
 				});
 
 				this.tabConfig.unshift({
@@ -193,7 +225,7 @@
 					id: "notices",
 					component: "DashboardNotices",
 					props: {},
-					displayBadge: noticesBadge,
+					displayBadge: this.noticesBadge,
 				});
 			},
 		},
