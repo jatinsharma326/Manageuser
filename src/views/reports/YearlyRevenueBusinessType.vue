@@ -144,8 +144,22 @@
 					let chartDatasets = [
 						{
 							data: dataArray,
-							borderColor: "RGB(255, 206, 86)",
-							backgroundColor: "RGB(255, 206, 86, 0.75)",
+							borderColor: [
+								"RGB(240, 182, 127",
+								"RGB(254, 95, 85)",
+								"RGB(60, 21, 24)",
+								"RGB(46, 134, 171)",
+								"RGB(105, 20, 14)",
+								"RGB(0, 38, 38)",
+							],
+							backgroundColor: [
+								"RGB(240, 182, 127, 0.75)",
+								"RGB(254, 95, 85, 0.75)",
+								"RGB(60, 21, 24, 0.75)",
+								"RGB(46, 134, 171, 0.75)",
+								"RGB(105, 20, 14, 0.75)",
+								"RGB(0, 38, 38, 0.75)",
+							],
 						},
 					];
 					this.chartData = {
