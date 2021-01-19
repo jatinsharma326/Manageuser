@@ -100,6 +100,7 @@ export default {
 	YEARLY_ZONE: BASE_URL + "Reports/v0.1/zone-wise",
 	TRAVEL_AGENT_REPORT: BASE_URL + "Reports/v0.1/agency-wise",
 	TARGET_REPORT: BASE_URL + "Reports/v0.1/target-revenue-comparison",
+	YEARLY_BUSINESS_TYPE: BASE_URL + "Reports/v0.1/business-types-wise-total-revenue",
 
 	// Download Reports
 	YEARLY_REVENUE_RAW_DOWNLOAD: BASE_URL + "DownloadReports/v0.1/download-follow-up-raw-data-report",

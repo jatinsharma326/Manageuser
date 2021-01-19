@@ -98,6 +98,40 @@ export default {
 					};
 				});
 		},
+		getYearlyBusinessType: ({ commit, dispatch }, params) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: params,
+					url: constants.YEARLY_BUSINESS_TYPE,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+						};
+					} else {
+						fail(data.message || "Failed to load Business Type");
+						return {
+							ok: false,
+							list: [],
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to load Business Type");
+					return {
+						ok: false,
+						list: [],
+					};
+				});
+		},
 		getTravelAgentReport: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
