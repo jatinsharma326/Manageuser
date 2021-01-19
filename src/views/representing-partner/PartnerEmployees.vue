@@ -74,6 +74,20 @@
                         <v-list-item-title>{{ number }}</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
+                    <v-list-item
+                      v-for="(number, index) in user.landline_numbers"
+                      :key="user._id + '+' + index"
+                    >
+                      <v-list-item-icon>
+                        <v-icon v-if="index == 0" color="secondary">
+                          mdi-phone-classic
+                        </v-icon>
+                      </v-list-item-icon>
+
+                      <v-list-item-content>
+                        <v-list-item-title>{{ number }}</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
 
                     <v-divider inset></v-divider>
 
@@ -209,6 +223,12 @@ export default {
             },
           },
         },
+      },
+      {
+        name: "Landline Numbers",
+        type: "MultiInput",
+        key: "landline_numbers",
+        width: "half",
       },
       {
         name: "Email*",
@@ -349,6 +369,12 @@ export default {
           },
         },
         {
+          name: "Landline Numbers",
+          type: "MultiInput",
+          key: "landline_numbers",
+          width: "half",
+        },
+        {
           name: "Email*",
           type: "MultiInput",
           key: "email_ids",
@@ -377,6 +403,9 @@ export default {
       // var tempArray = [];
       // var tempObj = {};
       formData.phone_numbers = data.phone_numbers.map((data) => data.input);
+      formData.landline_numbers = data.landline_numbers.map(
+        (data) => data.input
+      );
       formData.email_ids = data.email_ids.map((data) => data.input);
       if (formData.dob) {
         formData.dob = helpers.getISODate(formData.dob);
