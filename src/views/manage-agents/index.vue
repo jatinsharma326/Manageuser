@@ -67,13 +67,21 @@
                 text
                 ><v-icon>mdi-information-outline</v-icon></v-btn
               >
-              <v-btn
+              <!-- <v-btn
                 v-if="isAdminOrManagement"
                 @click="deleteTravelAgentEntry(company)"
                 color="red darken-3"
                 outlined
               >
                 DELETE
+              </v-btn> -->
+              <v-btn
+                large
+                icon
+                v-if="isAdminOrManagement"
+                @click="deleteTravelAgentEntry(company)"
+              >
+                <v-icon color="red darken-3">mdi-delete</v-icon>
               </v-btn>
               <v-btn @click="disableCompany(company)" color="error" text>
                 {{ company.record.active ? "Disable" : "Enable" }}
