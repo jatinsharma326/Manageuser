@@ -89,7 +89,13 @@
                                             v-for="(
                                                 number, index
                                             ) in user.landline_numbers"
-                                            :key="user._id + '+' + index"
+                                            :key="
+                                                user._id +
+                                                '+' +
+                                                index +
+                                                '+' +
+                                                user.landline_numbers
+                                            "
                                         >
                                             <v-list-item-icon>
                                                 <v-icon
@@ -203,11 +209,11 @@ export default {
         employeesList: [],
         countriesWithEmployee: [],
         search_text: "",
-        placeholder: "Search Employees",
-        name: "Representing Partner Employees",
+        placeholder: "Search Team Members",
+        name: "Representing Partner Team Member",
         inputConfig: [
             {
-                name: "Employee Name*",
+                name: "Name*",
                 type: "String",
                 key: "name",
                 width: "half",
@@ -352,7 +358,7 @@ export default {
         setInputConfig(countries = []) {
             this.inputConfig = [
                 {
-                    name: "Employee Name*",
+                    name: "Name*",
                     type: "String",
                     key: "name",
                     width: "half",
@@ -436,9 +442,12 @@ export default {
             formData.phone_numbers = data.phone_numbers.map(
                 (data) => data.input
             );
-            formData.landline_numbers = data.landline_numbers.map(
-                (data) => data.input
-            );
+
+            console.log(formData.landline_numbers[0].input);
+            formData.landline_numbers =
+                formData.landline_numbers[0].input !== ""
+                    ? data.landline_numbers.map((data) => data.input)
+                    : [];
             formData.email_ids = data.email_ids.map((data) => data.input);
             if (formData.dob) {
                 formData.dob = helpers.getISODate(formData.dob);
