@@ -434,18 +434,20 @@ export default {
             formData.emergency_contacts = tempArray;
 
             // for emergency_landline_numbers
-            for (let contact of formData.emergency_landline_numbers) {
-                tempObj = {};
-                for (let num of contact.input) {
-                    if (num.input != "") {
-                        tempObj["country"] = contact.groupKey;
-                        if (!tempObj["landline_numbers"])
-                            tempObj["landline_numbers"] = [];
-                        tempObj["landline_numbers"].push(num.input);
+            if (formData.emergency_landline_numbers) {
+                for (let contact of formData.emergency_landline_numbers) {
+                    tempObj = {};
+                    for (let num of contact.input) {
+                        if (num.input != "") {
+                            tempObj["country"] = contact.groupKey;
+                            if (!tempObj["landline_numbers"])
+                                tempObj["landline_numbers"] = [];
+                            tempObj["landline_numbers"].push(num.input);
+                        }
                     }
-                }
-                if (Object.keys(tempObj).length) {
-                    tempArrayLandline.push(tempObj);
+                    if (Object.keys(tempObj).length) {
+                        tempArrayLandline.push(tempObj);
+                    }
                 }
             }
             formData.emergency_landline_numbers = tempArrayLandline;
