@@ -216,7 +216,7 @@
 				let dataURL = canvas.toDataURL();
 				let a = document.createElement("a");
 				a.href = dataURL;
-				a.download = "Yearly Revenue Zone Wise Chart from " + fileName + ".png";
+				a.download = "Yearly Revenue Business Type Chart from " + fileName + ".png";
 				a.click();
 			},
 		},
@@ -228,7 +228,7 @@
 				},
 			},
 			currentTab(nv) {
-				if (nv == 2) {
+				if (nv == 3) {
 					this.render = false;
 					setTimeout(() => {
 						this.render = true;
