@@ -43,7 +43,12 @@
                         {{ user.name }}
                     </template>
                     <template v-slot:mainContentSubtitle>
-                        {{ user.proprietor_info }}
+                        {{
+                            user.proprietor_info +
+                            (user.designation
+                                ? " ( " + user.designation + " )"
+                                : "")
+                        }}
                     </template>
                     <template v-slot:mainContentRight>
                         <div class="card-image">
@@ -317,6 +322,16 @@ export default {
                 ],
             },
             {
+                name: "Designation",
+                type: "String",
+                key: "designation",
+                width: "half",
+                // validations: {
+                //     required,
+                //     minLength: minLength(1),
+                // },
+            },
+            {
                 name: "Email",
                 type: "MultiInput",
                 key: "email_ids",
@@ -409,6 +424,7 @@ export default {
             formData.email_ids = formData.email_ids
                 .map((data) => data.input)
                 .filter((e) => e != "");
+            if (!formData.designation) formData.designation = "";
             formData.logo = tempFile;
             var tempArray = [];
             var tempArrayLandline = [];
@@ -434,18 +450,20 @@ export default {
             formData.emergency_contacts = tempArray;
 
             // for emergency_landline_numbers
-            for (let contact of formData.emergency_landline_numbers) {
-                tempObj = {};
-                for (let num of contact.input) {
-                    if (num.input != "") {
-                        tempObj["country"] = contact.groupKey;
-                        if (!tempObj["landline_numbers"])
-                            tempObj["landline_numbers"] = [];
-                        tempObj["landline_numbers"].push(num.input);
+            if (formData.emergency_landline_numbers) {
+                for (let contact of formData.emergency_landline_numbers) {
+                    tempObj = {};
+                    for (let num of contact.input) {
+                        if (num.input != "") {
+                            tempObj["country"] = contact.groupKey;
+                            if (!tempObj["landline_numbers"])
+                                tempObj["landline_numbers"] = [];
+                            tempObj["landline_numbers"].push(num.input);
+                        }
                     }
-                }
-                if (Object.keys(tempObj).length) {
-                    tempArrayLandline.push(tempObj);
+                    if (Object.keys(tempObj).length) {
+                        tempArrayLandline.push(tempObj);
+                    }
                 }
             }
             formData.emergency_landline_numbers = tempArrayLandline;
