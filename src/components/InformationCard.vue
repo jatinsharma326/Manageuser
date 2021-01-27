@@ -205,5 +205,9 @@
 				background-color: #eee;
 			}
 		}
+		.v-list-item__title,
+		.v-list-item__subtitle {
+			white-space: normal;
+		}
 	}
 </style>
