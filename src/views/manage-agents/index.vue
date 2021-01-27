@@ -1,7 +1,7 @@
 <template>
 	<div class="agentsWrapper primary-background-color">
 		<!-- <Users v-bind="{ ...ele.props }"></Users> -->
-		<v-row class="px-6 manageagents-search-bar" justify="center" align="center">
+		<v-row class="px-6 manageagents-search-bar" justify="space-around" align="center">
 			<v-col cols="12" sm="8" md="6">
 				<!-- @queryString="queryString" -->
 				<Search
@@ -213,6 +213,24 @@
 					{{ selectedCompanyInfo.business_types.join("/ ") }}
 				</div>
 			</template>
+			<template v-slot:toolbarActions>
+				<v-icon
+					:disabled="hidePreviousIcon"
+					class="previous-button-viewmore-modal"
+					color="accent"
+					@click="previousItem()"
+					x-large
+					>mdi-arrow-left-bold</v-icon
+				>
+				<v-icon
+					:disabled="hideNextIcon"
+					class="next-button-viewmore-modal"
+					color="accent"
+					@click="nextItem()"
+					x-large
+					>mdi-arrow-right-bold</v-icon
+				>
+			</template>
 			<template v-slot:modalContent>
 				<companyInfo v-if="viewMoreModal" :companyInfo="selectedCompanyInfo"></companyInfo>
 			</template>
@@ -341,6 +359,23 @@
 		}),
 		computed: {
 			...mapGetters("ManageAgents", ["storeStatesList"]),
+			hidePreviousIcon() {
+				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
+				// console.log("selectedCompanyIndex", selectedCompanyIndex);
+				if (selectedCompanyIndex == 0) {
+					return true;
+				}
+				return false;
+			},
+			hideNextIcon() {
+				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
+				// console.log("selectedCompanyIndex", selectedCompanyIndex);
+				// console.log("this.pageSize", this.pageSize);
+				if (selectedCompanyIndex == this.pageSize - 1) {
+					return true;
+				}
+				return false;
+			},
 		},
 		methods: {
 			...mapActions("ManageAgents", [
@@ -741,7 +776,18 @@
 				}
 				this.toggleUploadModal(false);
 			},
-			// Huzefa to check
+			previousItem() {
+				console.log("Previous Item");
+				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
+				console.log("selectedCompanyIndex", selectedCompanyIndex);
+				this.selectedCompanyInfo = this.companyList[selectedCompanyIndex - 1];
+			},
+			nextItem() {
+				console.log("Next Item");
+				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
+				console.log("selectedCompanyIndex", selectedCompanyIndex);
+				this.selectedCompanyInfo = this.companyList[selectedCompanyIndex + 1];
+			},
 			downloadSampleFileFunc(formData) {
 				return new Promise((res, rej) => {
 					const link = document.createElement("a");
@@ -799,5 +845,17 @@
 	.agentsWrapper .v-list-item__title,
 	.v-list-item__subtitle {
 		white-space: normal;
+	}
+	.toolbarWrapper {
+		.v-toolbar__content {
+			.v-toolbar__items {
+				.previous-button-viewmore-modal {
+					margin: 12px;
+				}
+				.next-button-viewmore-modal {
+					margin: 12px;
+				}
+			}
+		}
 	}
 </style>
