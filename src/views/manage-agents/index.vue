@@ -842,10 +842,6 @@
 </style>
 
 <style lang="scss">
-	.agentsWrapper .v-list-item__title,
-	.v-list-item__subtitle {
-		white-space: normal;
-	}
 	.toolbarWrapper {
 		.v-toolbar__content {
 			.v-toolbar__items {

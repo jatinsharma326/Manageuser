@@ -521,10 +521,3 @@
 		margin-top: 12px;
 	}
 </style>
-
-<style lang="scss">
-	.MSRWrapper .v-list-item__title,
-	.v-list-item__subtitle {
-		white-space: normal;
-	}
-</style>
