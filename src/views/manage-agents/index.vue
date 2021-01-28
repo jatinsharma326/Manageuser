@@ -214,22 +214,41 @@
 				</div>
 			</template>
 			<template v-slot:toolbarActions>
-				<v-icon
-					:disabled="hidePreviousIcon"
-					class="previous-button-viewmore-modal"
-					color="accent"
-					@click="previousItem()"
-					x-large
-					>mdi-arrow-left-bold</v-icon
-				>
-				<v-icon
-					:disabled="hideNextIcon"
-					class="next-button-viewmore-modal"
-					color="accent"
-					@click="nextItem()"
-					x-large
-					>mdi-arrow-right-bold</v-icon
-				>
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-icon
+							:disabled="hidePreviousIcon"
+							class="previous-button-viewmore-modal"
+							color="accent"
+							@click="previousItem()"
+							v-bind="attrs"
+							v-on="on"
+							x-large
+							>mdi-arrow-left-bold</v-icon
+						>
+					</template>
+					<span v-if="companyList[selectedCompanyIndex - 1]">{{
+						companyList[selectedCompanyIndex - 1].name
+					}}</span>
+				</v-tooltip>
+
+				<v-tooltip left>
+					<template v-slot:activator="{ on, attrs }">
+						<v-icon
+							:disabled="hideNextIcon"
+							class="next-button-viewmore-modal"
+							color="accent"
+							@click="nextItem()"
+							v-bind="attrs"
+							v-on="on"
+							x-large
+							>mdi-arrow-right-bold</v-icon
+						>
+					</template>
+					<span v-if="companyList[selectedCompanyIndex + 1]">{{
+						companyList[selectedCompanyIndex + 1].name
+					}}</span>
+				</v-tooltip>
 			</template>
 			<template v-slot:modalContent>
 				<companyInfo v-if="viewMoreModal" :companyInfo="selectedCompanyInfo"></companyInfo>
@@ -312,6 +331,7 @@
 			ChangeLogModal,
 			UploadModal,
 			UploadLogs,
+			ViewMoreModal,
 		},
 		async created() {
 			this.getData();
@@ -331,6 +351,7 @@
 			toggleChangelogModal: false,
 			toggleUploadlogModal: false,
 			selectedCompanyInfo: {},
+			selectedCompanyIndex: 0,
 			fab: false,
 			uploadModal: false,
 			activeState: true,
@@ -360,18 +381,18 @@
 		computed: {
 			...mapGetters("ManageAgents", ["storeStatesList"]),
 			hidePreviousIcon() {
-				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
+				// let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
 				// console.log("selectedCompanyIndex", selectedCompanyIndex);
-				if (selectedCompanyIndex == 0) {
+				if (this.selectedCompanyIndex == 0) {
 					return true;
 				}
 				return false;
 			},
 			hideNextIcon() {
-				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
+				// let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
 				// console.log("selectedCompanyIndex", selectedCompanyIndex);
 				// console.log("this.pageSize", this.pageSize);
-				if (selectedCompanyIndex == this.pageSize - 1) {
+				if (this.selectedCompanyIndex == this.pageSize - 1) {
 					return true;
 				}
 				return false;
@@ -425,7 +446,6 @@
 			openUploadlogsModal(company) {
 				this.toggleUploadlogModal = true;
 			},
-
 			advanceSearch(filterObject) {
 				this.filter = { ...filterObject };
 				if (this.filter.active) {
@@ -556,6 +576,7 @@
 			},
 			openInformationModal(userData) {
 				this.selectedCompanyInfo = { ...userData };
+				this.selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
 				this.viewMoreModal = true;
 			},
 			toggleUploadModal(value) {
@@ -777,12 +798,14 @@
 				this.toggleUploadModal(false);
 			},
 			previousItem() {
-				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
-				this.selectedCompanyInfo = this.companyList[selectedCompanyIndex - 1];
+				// let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
+				this.selectedCompanyInfo = this.companyList[this.selectedCompanyIndex - 1];
+				this.selectedCompanyIndex = this.selectedCompanyIndex - 1;
 			},
 			nextItem() {
-				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
-				this.selectedCompanyInfo = this.companyList[selectedCompanyIndex + 1];
+				// let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
+				this.selectedCompanyInfo = this.companyList[this.selectedCompanyIndex + 1];
+				this.selectedCompanyIndex = this.selectedCompanyIndex + 1;
 			},
 			downloadSampleFileFunc(formData) {
 				return new Promise((res, rej) => {
