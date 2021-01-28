@@ -777,15 +777,11 @@
 				this.toggleUploadModal(false);
 			},
 			previousItem() {
-				console.log("Previous Item");
 				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
-				console.log("selectedCompanyIndex", selectedCompanyIndex);
 				this.selectedCompanyInfo = this.companyList[selectedCompanyIndex - 1];
 			},
 			nextItem() {
-				console.log("Next Item");
 				let selectedCompanyIndex = this.companyList.findIndex((e) => e._id === this.selectedCompanyInfo._id);
-				console.log("selectedCompanyIndex", selectedCompanyIndex);
 				this.selectedCompanyInfo = this.companyList[selectedCompanyIndex + 1];
 			},
 			downloadSampleFileFunc(formData) {
