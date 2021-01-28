@@ -514,9 +514,6 @@
 			-webkit-box-orient: vertical;
 		}
 	}
-	.card-image img {
-		max-width: 100%;
-	}
 	.managepartners-search-bar {
 		margin-top: 12px;
 	}

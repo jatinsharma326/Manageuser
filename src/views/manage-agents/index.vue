@@ -803,23 +803,9 @@
 </script>
 
 <style lang="scss" scopped>
-	// .paginationWrapper {
-	// 	padding: 10px;
-	// 	display: flex;
-	// 	justify-content: space-between;
-
-	// 	.page-size-dropdown {
-	// 		max-width: 150px;
-	// 	}
-	// }
 	.agentsWrapper {
 		padding: 20px 5px;
 		height: 100%;
-		// display: flex;
-		// flex-direction: column;
-	}
-	.card-image img {
-		max-width: 100%;
 	}
 	.manageagents-search-bar {
 		margin-top: 12px;

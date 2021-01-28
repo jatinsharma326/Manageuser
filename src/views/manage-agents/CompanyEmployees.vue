@@ -539,9 +539,6 @@
 		// display: flex;
 		// flex-direction: column;
 	}
-	.card-image img {
-		max-width: 100%;
-	}
 	.companyemployee-search-bar {
 		margin-top: 12px;
 		display: flex;

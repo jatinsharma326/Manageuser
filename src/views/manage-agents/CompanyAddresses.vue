@@ -382,15 +382,10 @@
 	.companyAddressWrapper {
 		padding: 20px 5px;
 		height: 100%;
-		// display: flex;
-		// flex-direction: column;
 
 		.branch-name {
 			text-transform: none;
 		}
-	}
-	.card-image img {
-		max-width: 100%;
 	}
 	.companyaddress-search-bar {
 		margin-top: 12px;
