@@ -4,6 +4,7 @@
 			<v-col cols="12" sm="8" md="6"> -->
 		<div class="famtrip-search-bar">
 			<Search
+				ref="companyFamTripSearch"
 				@queryString="queryString"
 				@filterObject="advanceSearch"
 				@clearFilter="advanceSearch"
@@ -407,7 +408,9 @@
 					this.filter = {};
 					this.tripList = [];
 					this.pageNo = 1;
-					this.getData();
+					this.$refs.companyFamTripSearch.clearFilters(false);
+
+					// this.getData();
 					await this.getEmployees();
 					await this.getCountryList();
 					this.setInputConfig(this.employeeList, this.countriesList);

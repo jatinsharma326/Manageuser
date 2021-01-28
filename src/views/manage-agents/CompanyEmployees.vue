@@ -4,6 +4,7 @@
 			<v-col cols="12" sm="8" md="6"> -->
 		<div class="companyemployee-search-bar">
 			<Search
+				ref="companyEmployeesSearch"
 				@queryString="queryString"
 				@filterObject="advanceSearch"
 				@clearFilter="advanceSearch"
@@ -508,7 +509,9 @@
 					this.filter = {};
 					this.employeeList = [];
 					this.pageNo = 1;
-					this.getData();
+					this.$refs.companyEmployeesSearch.clearFilters(false);
+
+					// this.getData();
 					await this.getAddresses();
 					this.setInputConfig(this.addressList, this.companyInfo.business_types);
 					await this.getStates();

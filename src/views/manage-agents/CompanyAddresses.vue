@@ -4,6 +4,7 @@
 			<v-col cols="12" sm="8" md="6"> -->
 		<div class="companyaddress-search-bar">
 			<Search
+				ref="companyAddressesSearch"
 				@queryString="queryString"
 				@filterObject="advanceSearch"
 				@clearFilter="advanceSearch"
@@ -364,8 +365,9 @@
 					this.filter = {};
 					this.addressList = [];
 					this.pageNo = 1;
+					this.$refs.companyAddressesSearch.clearFilters(false);
 
-					this.getData();
+					// this.getData();
 					// await this.getStates();
 					this.setInputConfig(this.storeStatesList, this.citiesList);
 					this.setSearchConfig(this.storeStatesList);
