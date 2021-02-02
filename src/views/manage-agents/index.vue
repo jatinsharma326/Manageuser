@@ -431,10 +431,12 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.companyList = this.companyList.map((d, index) => ({
-						...d,
-						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
-					}));
+					if (this.companyList.length) {
+						this.companyList = this.companyList.map((d, index) => ({
+							...d,
+							serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
+						}));
+					}
 					// this.companyList = data.list;
 				});
 			},
