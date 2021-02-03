@@ -205,10 +205,12 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.callsList = this.callsList.map((d, index) => ({
-						...d,
-						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
-					}));
+					if (this.callsList.length) {
+						this.callsList = this.callsList.map((d, index) => ({
+							...d,
+							serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
+						}));
+					}
 				});
 			},
 			canUserEdit(item) {

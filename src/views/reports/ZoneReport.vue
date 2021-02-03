@@ -178,10 +178,12 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.dataList = this.dataList.map((d, index) => ({
-						...d,
-						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
-					}));
+					if (this.dataList.length) {
+						this.dataList = this.dataList.map((d, index) => ({
+							...d,
+							serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
+						}));
+					}
 				});
 			},
 			advanceSearch(filterObject) {

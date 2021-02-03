@@ -157,7 +157,9 @@
 					this.leavesList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
-					this.leavesList = this.leavesList.map((d, index) => ({ ...d, serial_number: index + 1 }));
+					if (this.leavesList.length) {
+						this.leavesList = this.leavesList.map((d, index) => ({ ...d, serial_number: index + 1 }));
+					}
 				});
 			},
 			acceptAction(leave) {

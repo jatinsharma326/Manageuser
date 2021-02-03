@@ -72,7 +72,7 @@
 				@input="updatedPageNo"
 				v-model="pageNo"
 				:length="Math.ceil(fetchCount / pageSize)"
-								:total-visible="paginationTotalVisible"
+				:total-visible="paginationTotalVisible"
 				class="pagination-component"
 			></v-pagination>
 			<div class="page-size-dropdown">
@@ -175,7 +175,12 @@
 					this.leavesList = data.list;
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
-					this.leavesList = this.leavesList.map((d, index) => ({ ...d, serial_number: index + 1 }));
+					if (this.leavesList.length) {
+						this.leavesList = this.leavesList.map((d, index) => ({
+							...d,
+							serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
+						}));
+					}
 				});
 			},
 			fetchPendingLeaves() {

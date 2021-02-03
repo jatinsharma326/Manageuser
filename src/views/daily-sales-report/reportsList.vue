@@ -223,10 +223,12 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.reportsList = this.reportsList.map((d, index) => ({
-						...d,
-						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
-					}));
+					if (this.reportsList.length) {
+						this.reportsList = this.reportsList.map((d, index) => ({
+							...d,
+							serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
+						}));
+					}
 				});
 			},
 			canUserEdit(item) {

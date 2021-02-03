@@ -158,10 +158,12 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.productTargetList = this.productTargetList.map((d, index) => ({
-						...d,
-						serial_number: index + 1,
-					}));
+					if (this.productTargetList.length) {
+						this.productTargetList = this.productTargetList.map((d, index) => ({
+							...d,
+							serial_number: index + 1,
+						}));
+					}
 
 					this.initialTargetList = JSON.parse(JSON.stringify(this.productTargetList));
 				});

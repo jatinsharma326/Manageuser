@@ -117,20 +117,23 @@
 					// let westArr = [];
 					// let westGujArr = [];
 					this.dataList = data.list;
-					console.log("this.dataList", this.dataList);
+					// console.log("this.dataList", this.dataList);
 					let labelArray = [];
 					let dataArray = [];
-					this.dataList = this.dataList.map((d, index) => {
-						labelArray.push(d.business_type);
-						dataArray.push(d.total_revenue);
 
-						return {
-							...d,
-							serial_number: index + 1,
-						};
-					});
-					console.log("labelArray", labelArray);
-					console.log("dataArray", dataArray);
+					if (this.dataList.length) {
+						this.dataList = this.dataList.map((d, index) => {
+							labelArray.push(d.business_type);
+							dataArray.push(d.total_revenue);
+
+							return {
+								...d,
+								serial_number: index + 1,
+							};
+						});
+					}
+					// console.log("labelArray", labelArray);
+					// console.log("dataArray", dataArray);
 					// for (data of this.dataList) {
 					// 	if (data.month_of_travel !== "TOTAL") {
 					// 		chartLabel.push(data.month_of_travel);

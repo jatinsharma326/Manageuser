@@ -303,10 +303,12 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.followUpList = this.followUpList.map((d, index) => ({
-						...d,
-						serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
-					}));
+					if (this.followUpList.length) {
+						this.followUpList = this.followUpList.map((d, index) => ({
+							...d,
+							serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
+						}));
+					}
 				});
 			},
 			setConfig(

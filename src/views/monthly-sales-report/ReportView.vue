@@ -101,10 +101,12 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					this.reportsList = this.reportsList.map((d, index) => ({
-						...d,
-						serial_number: index + 1,
-					}));
+					if (this.reportsList.length) {
+						this.reportsList = this.reportsList.map((d, index) => ({
+							...d,
+							serial_number: index + 1,
+						}));
+					}
 				});
 			},
 			downloadReport() {
