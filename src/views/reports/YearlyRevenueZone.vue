@@ -19,7 +19,7 @@
 			</v-data-table>
 		</div>
 		<div class="charts">
-			<BarChart v-if="render" :myTabId="1" :chartData="chartData" :options="chartOptions"></BarChart>
+			<BarChart v-if="render" :chartData="chartData" :options="chartOptions"></BarChart>
 		</div>
 	</div>
 </template>
