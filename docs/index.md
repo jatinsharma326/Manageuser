@@ -465,24 +465,203 @@ Methods being used is listed below
 3. **getCountryList()** - This Function return a list of all countries in the System
 4. **getActiveCurrenciesList()** - This Function return a list of all active currency list in the System
 
-## commonAPICallsMixin.js
+## datePickerMixin.js
 
-This mixin is a collection of common API Calls.
+This mixin is a collection of Date picker related Functions
 
 List of the Components Using this is listed below
 
 -   admin-bulletin\index.vue
--   daily-sales-report\index.vue
+-   daily-sales-report\reportsList.vue
 -   follow-up\index.vue
--   monthly-sales-report\index.vue
 -   notice-board\index.vue
--   reports\index.vue
+-   reports\CityReport.vue
+-   reports\TravelAgentReport.vue
+-   reports\YearlyRevenueBusinessType.vue
+-   reports\YearlyRevenueComparison.vue
+-   reports\YearlyRevenueRaw.vue
+-   reports\YearlyRevenueZone.vue
+-   reports\ZoneReport.vue
 -   sales-call\index.vue
 -   virtual-reach\index.vue
 
 Methods being used is listed below
 
-1. **getUsers()** - This Function return a list of all Sales Users in the System.
-2. **getCompanies()** - This Function return a list of all active companies in the System
-3. **getCountryList()** - This Function return a list of all countries in the System
-4. **getActiveCurrenciesList()** - This Function return a list of all active currency list in the System
+1. **dataSelector()** -
+2. **cancelDatePicker()** - Sets the datepicker date to what it was before opening the date picker dialog. and close the date picker modal
+3. **submitDatePicker()** - This Function saves the updated selected date and makes a getData API call which fetches data based on updated date.
+4. **resetDatePicker()** - This Function calls setDateRange() which sets the date to initial value. It also makes a getData API call to get updated data based on default date range, and closes the date picker if open.
+5. **setDateRange()** - This Function sets the date range from start of the current month to the end of current month
+
+## defaultCRUDMixins.js
+
+This mixin is a collection of Date picker related Functions
+
+List of the Components Using this is listed below
+
+-   admin-bulletin\index.vue
+-   daily-sales-report\index.vue
+-   daily-sales-report\reportsList.vue
+-   follow-up\index.vue
+-   leave-manager\AdminLeaves.vue
+-   leave-manager\index.vue
+-   leave-manager\SalesLeave.vue
+-   manage-agents\CompanyAddresses.vue
+-   manage-agents\CompanyEmployees.vue
+-   manage-agents\CompanyFamTrip.vue
+-   manage-agents\index.vue
+-   manage-targets\index.vue
+-   manage-targets\ProductTargets.vue
+-   manage-users\Users.vue
+-   monthly-sales-report\index.vue
+-   monthly-sales-report\ReportView.vue
+-   notice-board\index.vue
+-   reports\CityReport.vue
+-   reports\index.vue
+-   reports\TargetReport.vue
+-   reports\TravelAgentReport.vue
+-   reports\YearlyRevenueBusinessType.vue
+-   reports\YearlyRevenueComparison.vue
+-   reports\YearlyRevenueRaw.vue
+-   reports\YearlyRevenueZone.vue
+-   reports\ZoneReport.vue
+-   representing-partner\index.vue
+-   representing-partner\PartnerEmployees.vue
+-   sales-call\callsList.vue
+-   sales-call\index.vue
+-   virtual-reach\index.vue
+
+Computed functions being being used is listed below
+
+1. **isAdminOrManagement()** - When called this computed function returns true if the signed in user is an ADMIN or MANAGEMENT user
+2. **isSalesTeamMember()** - When called this computed function returns true if the signed in user is a SALES TEAM or REMOTE SALES TEAM user
+3. **isOnlySalesAgent()** - When called this computed function returns true if the signed in user is a SALES TEAM user
+4. **isOnlyRemoteAgent()** - When called this computed function returns true if the signed in user is a REMOTE SALES TEAM user
+5. **isOnlyAdmin()** - When called this computed function returns true if the signed in user is an ADMIN user
+
+"openLoaderDialog", "closeLoaderDialog", "openSnackbar" mutations are mapped to this mixin
+
+InformationCard, ViewMoreModal are modals that are imported in this mixin
+
+## helperMixins.js
+
+This mixin is a collection of methods that use functions from helper.js. This is done so that these methods can be used in the dom directly after importing this mixin
+
+List of the Components Using this is listed below
+
+-   admin-bulletin\index.vue
+-   daily-sales-report\reportsList.vue
+-   dashboard\BirthdayReminders.vue:
+-   dashboard\Followups.vue:
+-   dashboard\index.vue:
+-   dashboard\Notices.vue:
+-   dashboard\Notifications.vue:
+-   dashboard\PartnerBirthdayReminders.vue:
+-   follow-up\index.vue
+-   leave-manager\AdminLeaves.vue
+-   leave-manager\index.vue
+-   leave-manager\SalesLeave.vue
+-   manage-agents\CompanyEmployees.vue
+-   manage-agents\CompanyFamTrip.vue
+-   manage-agents\index.vue
+-   manage-agents\UploadLogs.vue
+-   manage-users\Users.vue
+-   monthly-sales-report\ReportView.vue
+-   notice-board\index.vue
+-   reports\CityReport.vue
+-   reports\TargetReport.vue
+-   reports\TravelAgentReport.vue
+-   reports\YearlyRevenueBusinessType.vue
+-   reports\YearlyRevenueComparison.vue
+-   reports\YearlyRevenueRaw.vue
+-   reports\YearlyRevenueZone.vue
+-   reports\ZoneReport.vue
+-   representing-partner\index.vue
+-   representing-partner\PartnerEmployees.vue
+-   sales-call\callsList.vue
+-   virtual-reach\index.vue
+
+Computed functions being being used is listed below
+
+1. **getFormattedDate(date, format)** - This function can be used to get a formatted date. The date to be formatted is sent as the first argument. Format is sent as the second argument. By default the format is "DD/MM/YYYY"
+2. **daysUntil(dateToCheckAgainst, todayMessage)** - The date for which days until needs to be checked is passed as the first param. As the second param we can set a custom message for when dateToCheckAgainst is equal to todays date.
+3. **isSelectedDateCurrentDate(date)** - The date passed to this function is ealuated with todays date and returns true if they are the same.
+
+## inputFormMixins.js
+
+This mixin is a collection of everything basic required to use the input form
+
+List of the Components Using this is listed below
+
+-   admin-bulletin\index.vue
+-   daily-sales-report\reportsList.vue
+-   follow-up\index.vue
+-   leave-manager\SalesLeave.vue
+-   manage-agents\CompanyAddresses.vue
+-   manage-agents\CompanyEmployees.vue
+-   manage-agents\CompanyFamTrip.vue
+-   manage-agents\index.vue
+-   manage-targets\index.vue
+-   manage-targets\ProductTargets.vue
+-   manage-users\Users.vue
+-   monthly-sales-report\index.vue
+-   notice-board\index.vue
+-   representing-partner\index.vue
+-   representing-partner\PartnerEmployees.vue
+-   sales-call\callsList.vue
+-   virtual-reach\index.vue
+
+Computed functions being being used is listed below
+
+1. **openInputForm(mode , data)** - This is called to open the input form. for ADD form just call the function. For EDIT form mode is set to true and form data is passed as the second argument.
+2. **closeForm()** - Calling this function resets the rowToEdit and isEditMode and closes the input form modal
+
+Form component is imported in this mixin
+
+## searchMixin.js
+
+This mixin contains everything required for search to work it also has a function that evaluates what error needs to be displayed based on the data coming in.
+
+List of the Components Using this is listed below
+
+-   components\ChangeLog.vue
+-   admin-bulletin\index.vue
+-   daily-sales-report\reportsList.vue
+-   follow-up\index.vue
+-   leave-manager\AdminLeaves.vue
+-   leave-manager\SalesLeave.vue
+-   manage-agents\CompanyAddresses.vue
+-   manage-agents\CompanyEmployees.vue
+-   manage-agents\CompanyFamTrip.vue
+-   manage-agents\index.vue
+-   manage-agents\UploadLogs.vue
+-   manage-targets\ProductTargets.vue
+-   manage-users\Users.vue
+-   monthly-sales-report\index.vue
+-   monthly-sales-report\ReportView.vue
+-   notice-board\index.vue
+-   reports\CityReport.vue
+-   reports\TargetReport.vue
+-   reports\TravelAgentReport.vue
+-   reports\YearlyRevenueBusinessType.vue
+-   reports\YearlyRevenueComparison.vue
+-   reports\YearlyRevenueRaw.vue
+-   reports\YearlyRevenueZone.vue
+-   reports\ZoneReport.vue
+-   representing-partner\index.vue
+-   representing-partner\PartnerEmployees.vue
+-   sales-call\callsList.vue
+-   virtual-reach\index.vue
+
+Computed and Method functions being being used is listed below
+
+1. **isPaginationRequired()** - This computed function divides the fetchcount with the pagesize to determine if pagination needs to be displayed or not.
+2. **checkForErrorMessage(data, key)** - Returns appropriate error message based on the fetched data. Data(i.e the list of data) that is recived from the server is passed as the first param. Second param is to indicate for what this function was called.
+3. **updatedPageNo()** - This gets called whenever page number is updated. It fetches the data based on updated page number.
+4. **queryString()** - This function can be used with emit of query string from the search component when a basic search needs to be performed.
+
+"openSnackbar" mutations are mapped to this mixin
+
+## pageContentCheckMixin.js
+
+This mixin is not being used anywhere. Content of this mixin are also present in searchMixin.js.
