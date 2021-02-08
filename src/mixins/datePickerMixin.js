@@ -17,7 +17,6 @@ const datePickerMixin = {
 			this.dateDialog = false;
 		},
 		submitDatePicker() {
-			// Ask taher how exactly does the .save work and should we just close modal
 			this.$refs.dialog.save(this.datePickerDate);
 			this.getData();
 		},
