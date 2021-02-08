@@ -1,12 +1,9 @@
 <script>
-	// import { Bar } from "vue-chartjs";
 	import { Bar, mixins } from "vue-chartjs";
-	import { mapGetters } from "vuex";
-	// var randomColor = require("randomcolor");
+	// import { mapGetters } from "vuex";
 
 	export default {
 		extends: Bar,
-		// mixins: [],
 		mixins: [mixins.reactiveProp],
 		props: {
 			chartData: {
@@ -15,9 +12,9 @@
 			options: {
 				type: Object,
 			},
-			myTabId: {
-				type: Number,
-			},
+			// myTabId: {
+			// 	type: Number,
+			// },
 		},
 		mounted() {
 			this.renderChart(this.chartData, this.options);
