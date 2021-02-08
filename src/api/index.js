@@ -1,7 +1,7 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
-const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://gd.orderstack.xyz/";
-// const BASE_URL = isBuildVersion ? "http://192.168.1.157:1401/" : "http://192.168.1.157:1401/";
+const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://crmglobaldestinations.in/";
+// const BASE_URL = isBuildVersion ? "https://crmglobaldestinations.in/" : "https://crmglobaldestinations.in/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.103:1401/" : "http://192.168.1.103:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
 // const BASE_URL = isBuildVersion ? "http://192.168.31.6:1401/" : "http://192.168.31.6:1401/";
