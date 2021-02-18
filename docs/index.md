@@ -665,3 +665,165 @@ Computed and Method functions being being used is listed below
 ## pageContentCheckMixin.js
 
 This mixin is not being used anywhere. Content of this mixin are also present in searchMixin.js.
+
+# Plugins
+
+## vuetify.js
+
+This is where colors for vuetify components have been defined
+
+# Views
+
+Listed Below are some commonly used functions
+
+1. Computed
+
+-   dateRangeText: Joins the selected date with ' ~ '
+
+2. Methods
+
+-   getData(): Basic fetch call to get required data.
+-   setConfig(): Sets input config / Search Config, or Both.
+-   formOutput(): This is where form output is manipulated for whatever is required for the API Call. After manipulation POST(Add) or PUT(Edit) API function is called.
+-   getEditRowObject(): Adds \_id and updated_on to the data thats passed to the input form.
+-   deleteEntry(): Calls DELETE API call to delete the selected entry
+
+## admin-bulletin
+
+This Component is only visible to the admin and management users. It can be used to set daily bulletin which is then visible on the dashboard
+
+### index.vue
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   helperMixin
+-   searchMixin
+-   datePickerMixin
+-   commonAPICallsMixin
+
+2. Computed
+
+-   dateRangeText: Joins the selected date with ' ~ '
+
+3. Methods
+
+-   setDateRange(): Sets the Date Range from Start of month to End of month.
+-   getData(): Basic fetch call to get Admin Bulletin data.
+-   setConfig(): Sets input config for the admin bulletin form.
+-   formOutput(): This is where form output is checked and then addAdminBulletin or editAdminBulletin API function is called.
+-   getEditRowObject(): Adds \_id and updated_on to the data thats passed to the input form.
+-   deleteEntry(): Calls deleteAdminBulletin() API call to delete the selected entry
+
+## daily-sales-report
+
+Daily sales report section is accessible to all the users in system where my DSR section is only visible to sales and remote sales agent. My DSR Consists of all the sales report made by the user that is logged in. All DSR consists of DSR made by all the system users.
+
+### index.vue
+
+This File Creates the tab structure and passes data to the component in the tab accordingly.
+
+1. Component
+
+-   daily-sales-report/reportsList.vue
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   commonAPICallsMixin
+
+2. Methods
+
+-   getSalesCallList(): Basic fetch call to get all Sales call made by the logged in user this is the passed to setConfig. As the list of sales call is required to make a DSR.
+-   setConfig(): Sets Tab config for the DSR section. This tab config consists of the props data, input config, search config that needs to be passed to reportsList.vue Component.
+
+### reportsList.vue
+
+This component gets rendedred as TAB item. When this component gets rendered as 'My DSR' it fetches data for for the specific logged in User. While when rendered as 'ALL DSR' fetches data for all the user. Header Needs to be set for the columns that need to be visible
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   helperMixin
+-   searchMixin
+-   datePickerMixin
+
+2. Computed
+
+-   dateRangeText: Joins the selected date with ' ~ '
+
+3. Methods
+
+-   getData(), advanceSearch(), formOutput(), getEditRowObject()
+-   canUserEdit(): Checks if the DSR Entry fits into the Edit period. The current Edit period is two months in the past and 1 month in future. For example if the current month is February, the call date can be from December of previous year to March.
+-   deleteCall() - Same as deleteEntry()
+
+4. Props
+
+-   name: This is passed to the form component and is the name displayed on the top of the form
+-   type: receives 'my_dsr' or 'all_dsr' to render different elements.
+-   placeholder: This is placeholder for the search input
+-   inputConfig: Config to set the form
+-   searchConfig: Config to set the advance search
+
+## dashboard
+
+This Renders system dashboard which shows DSRNotification, Travel Agent Birthdays, System User Birthdays, Partner Birthdays, Notice Board To show message set by admin or managemnt,followup set for DSR and followup section
+
+### index.vue
+
+This File Creates the tab structure and passes data to the component in the tab accordingly.
+
+1. Component
+
+-   dashboard/Followups
+-   dashboard/BirthdayReminders
+-   dashboard/PartnerBirthdayReminders
+-   dashboard/Notifications
+-   dashboard/DashboardNotices
+
+2. Mixins
+
+-   helperMixin
+
+3. Methods
+
+-   getDateRange(): This sets value for the start and end of the month
+-   checkNotifications():With the help of date set in getDateRange function, API functions are called these have a page size of 1 to signify to send just one item. Date of this item is checked, If its todays date then displayBadge in config is set to true and a notification bubble appears on that specefic tab config
+-   setTabConfig(): Sets Tab config
+    -   It renders all the tabs for Sales users
+    -   It doesnt render Notification.vue for the remote sales users.
+    -   It doesnt render Notification.vue and Followup.vue for Admin/Management User
+
+### BirthdayReminders.vue, Followups.vue, Notices.vue, Notification.vue, PartnerBirthdayReminders.vue
+
+All of these Components are rendered in the index.vue files where
+
+-   BirthdayReminders.vue: Displays Travel Agent Birthdays in Column One and System User Birthdays in the second tab
+-   PartnerBirthdayReminders.vue: Displays Partner Birthdays
+-   Followups.vue: Displays the followup set in DSR and Followup section
+-   Notices.vue: Displays a Message set by Admin User and Management User Each
+-   Notification.vue: This displays DSR Notification, i.e whenever another system user adds a DSR with logged in users country
+
+1. Mixins
+
+-   helperMixin
+
+2. Methods
+
+-   Gets basic Data using
+    -   getAgentBirthdayList()
+    -   getGDEmployeeBirthdayList()
+    -   getDSRRemindersList()
+    -   getFollowUpRemindersList()
+    -   getAdminBulletinList()
+    -   getNoticeBoardList()
+    -   getDSRNotificationList()
+    -   getPartnerBirthdayList()
+    -   getPartnerEmployeeBirthdayList()
+-   loadMoreColumnOne(): Loads 20 more values for column one
+-   loadMoreColumnTwo(): Loads 20 more values for column two
+-   checkForBirthDate(): For BirthdayReminders.vue & PartnerBirthdayRemonders.vue , checks if the informationCard to which this function is attached to, is for today. If true then with the help of classes a gif is set as an background image to that informationCard.
+-   initializeToggleObject(), toggleReadmore(), setClass(): In Followups.vue & Notifications.vue, Sets a Toggle for MoreInfo section of the info card
