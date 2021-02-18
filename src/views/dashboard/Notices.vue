@@ -122,9 +122,6 @@
 			...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
 			...mapActions("AdminBulletin", ["getAdminBulletin"]),
 			...mapActions("NoticeBoard", ["getNoticeBoard"]),
-			console(data) {
-				console.log(data.length);
-			},
 			getDateRange() {
 				this.startDate = moment()
 					.tz("Asia/Kolkata")
