@@ -1,9 +1,7 @@
 <template>
 	<div class="agentsWrapper primary-background-color">
-		<!-- <Users v-bind="{ ...ele.props }"></Users> -->
 		<v-row class="px-6 manageagents-search-bar" justify="space-around" align="center">
 			<v-col cols="12" sm="8" md="6">
-				<!-- @queryString="queryString" -->
 				<Search
 					@queryString="queryString"
 					@filterObject="advanceSearch"
