@@ -687,6 +687,7 @@ Listed Below are some commonly used functions
 -   formOutput(): This is where form output is manipulated for whatever is required for the API Call. After manipulation POST(Add) or PUT(Edit) API function is called.
 -   getEditRowObject(): Adds \_id and updated_on to the data thats passed to the input form.
 -   deleteEntry(): Calls DELETE API call to delete the selected entry
+-   disableEntry(): Calls EDIT API call to disable the selected entry
 
 ## admin-bulletin
 
@@ -827,3 +828,249 @@ All of these Components are rendered in the index.vue files where
 -   loadMoreColumnTwo(): Loads 20 more values for column two
 -   checkForBirthDate(): For BirthdayReminders.vue & PartnerBirthdayRemonders.vue , checks if the informationCard to which this function is attached to, is for today. If true then with the help of classes a gif is set as an background image to that informationCard.
 -   initializeToggleObject(), toggleReadmore(), setClass(): In Followups.vue & Notifications.vue, Sets a Toggle for MoreInfo section of the info card
+
+## follow-up
+
+Only the Sales and Remote Sales Users can add a followup.
+
+### index.vue
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   helperMixin
+-   searchMixin
+-   datePickerMixin
+-   commonAPICallsMixin
+
+2. Computed
+
+-   dateRangeText: Joins the selected date with ' ~ '
+
+3. Methods
+
+-   getData(), setConfig(), advanceSearch(), formOutput(), getEditRowObject(), deleteEntry()
+-   setDateRange(): Sets the Date Range from Start of month to End of 3rd month from the current month.
+-   getCountries(): If Uses the sales user Countries if Sales User. Fetches List of all Countries is Remote Sales User
+-   getCities(): Fetches list of all cities in the database
+-   checkDisableCondition(): Disables certain config based on the condition check in this function. Returns true or false based on the condition
+
+## leave-manager
+
+In this section sales and remote sales team member can apply for leave. And Admin/Management can approve or reject those leaves
+
+### index.vue
+
+This just checks the logged in user type and accordingly displays the component to the user
+
+### AdminLeaves.vue
+
+This section is visible to Admin/ Management Users. Where they can accept or reject
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   helperMixin
+-   searchMixin
+-   datePickerMixin
+-   commonAPICallsMixin
+
+2. Computed
+
+-   dateRangeText: Joins the selected date with ' ~ '
+
+3. Methods
+
+-   getData(), setConfig(), advanceSearch()
+-   getUsers(): Gets list of all SalesTeam Users (Sales and Remote sales user both).
+-   isDateBefore(): checks if the date passed is before todays date (Currently Not being Used in this section)
+-   acceptAction(): Accepts the leave
+-   rejectAction(): Rejects the leave
+
+### SalesLeave.vue
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   helperMixin
+-   searchMixin
+
+2. Computed
+
+-   dateRangeText: Joins the selected date with ' ~ '
+
+3. Methods
+
+-   getData(), formOutput(), getEditRowObject()
+-   fetchPendingLeaves(): Fetches Pending Leaves for the logged in User
+-   isDateBefore(): checks if the date passed is before todays date
+-   deleteLeaveEntry(): Same As deleteEntry
+
+## manage-agents
+
+Travel Agent Section which contains detail for travel agent, their Addresses, Employees and Familarity Trip.
+
+### index.vue
+
+This section displays the Travel Agents and the Grade assigned to them. Admin/Management can assign a grade to the travel Agent, while sales/remote sales team member can only assign a grade for the country selected for Tarvel Agent
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   searchMixin
+
+2. Components
+
+-   companyInfo
+-   ChangeLogModal
+-   UploadModal
+-   UploadLogs
+-   ViewMoreModal
+
+3. Computed
+
+-   hidePreviousIcon: To hide the Previous Arrow in the ViewMoreModal Components Slot
+
+4. Methods
+
+-   getData(), setConfig(), advanceSearch(), formOutput(), getEditRowObject(), deleteEntry(),
+-   getCountryList(): Gets a list of all Active Countries
+-   getCities(): Gets a list of all Cities from the database
+-   openChangelogsModal(): Toggle Opens Changelog modal
+-   openUploadlogsModal(): Toggle Opens Upload Logs modal
+-   openInformationModal(): Opens Viewmore Modal also stores value for selectedCompany and its Index
+-   toggleUploadModal(): Toggle Upload modal
+-   deleteTravelAgentEntry(): Same As deleteEntry
+-   disableCompany(): Same As disableEntry
+-   uploadFileFunc(): Calls the file upload API call
+-   closeUploadModal(): Closes Upload modal
+-   previousItem(): If Previous Arrow button is clicked this function is called
+-   nextItem(): If next Arrow button is clicked this function is called
+-   downloadSampleFileFunc(): Is called when Download File button is clicked in Upload Modal
+
+### CompanyInfo.vue
+
+It Sets the Tab For Each Selected Travel Agent in index.vue
+
+### CompanyAddresses.vue
+
+This section displays the Addresses for Selected Travel Agent Any User can Add/Edit or Disable an address
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   searchMixin
+
+2. Components
+
+-   ChangeLogModal
+
+3. Methods
+
+-   getData(), setInputConfig(), setSearchConfig(), advanceSearch(), formOutput(), getEditRowObject()
+-   getCities(): Gets a list of all Cities from the database
+-   openChangelogsModal(): Toggle Opens Changelog modal
+-   disablePartner(): Same As disableEntry
+
+### CompanyEmployees.vue
+
+This section displays the Employees for Selected Travel Agent Any User can Add/Edit or Disable an Employee. But to create an employee an address should already exist
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   searchMixin
+-   helperMixin
+
+2. Components
+
+-   ChangeLogModal
+
+3. Methods
+
+-   getData(), setInputConfig(), setSearchConfig(), advanceSearch(), formOutput(), getEditRowObject()
+-   getAddresses(): Gets a list of all Address for the selected travel agent
+-   getStates(): Gets a list of all States
+-   openChangelogsModal(): Toggle Opens Changelog modal
+-   disableEmployee(): Same As disableEntry
+-   addCompanyEmployeeWrapper(): After Checking certain condition in formoutput, this function is called to add the travel agent Employee
+
+### CompanyFamTrip.vue
+
+This section displays the Addresses for Selected Travel Agent Any User can Add/Edit or Disable an address
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   searchMixin
+
+2. Components
+
+-   ChangeLogModal
+
+3. Methods
+
+-   getData(), setInputConfig(), setSearchConfig(), advanceSearch(), formOutput(), getEditRowObject(), deleteEntry()
+-   getEmployees(): Gets a list of all Employees for the selected travel agent
+-   getCountryList(): Gets a list of all active countries
+-   openChangelogsModal(): Toggle Opens Changelog modal
+-   disableEmployee(): Same As disableEntry
+
+## manage-targets
+
+This section is only visible to the Admin/Management
+
+### index.vue
+
+This File Creates the tab structure and passes data to the component in the tab accordingly.
+
+1. Component
+
+-   daily-sales-report/reportsList.vue
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   commonAPICallsMixin
+
+2. Methods
+
+-   getSalesCallList(): Basic fetch call to get all Sales call made by the logged in user this is the passed to setConfig. As the list of sales call is required to make a DSR.
+-   setConfig(): Sets Tab config for the DSR section. This tab config consists of the props data, input config, search config that needs to be passed to reportsList.vue Component.
+
+### reportsList.vue
+
+This component gets rendedred as TAB item. When this component gets rendered as 'My DSR' it fetches data for for the specific logged in User. While when rendered as 'ALL DSR' fetches data for all the user. Header Needs to be set for the columns that need to be visible
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   helperMixin
+-   searchMixin
+-   datePickerMixin
+
+2. Computed
+
+-   dateRangeText: Joins the selected date with ' ~ '
+
+3. Methods
+
+-   getData(), advanceSearch(), formOutput(), getEditRowObject()
+-   canUserEdit(): Checks if the DSR Entry fits into the Edit period. The current Edit period is two months in the past and 1 month in future. For example if the current month is February, the call date can be from December of previous year to March.
+-   deleteCall() - Same as deleteEntry()
+
+4. Props
+
+-   name: This is passed to the form component and is the name displayed on the top of the form
+-   type: receives 'my_dsr' or 'all_dsr' to render different elements.
+-   placeholder: This is placeholder for the search input
+-   inputConfig: Config to set the form
+-   searchConfig: Config to set the advance search
