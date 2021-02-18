@@ -239,6 +239,7 @@
 					.tz("Asia/Kolkata")
 					.startOf("month");
 				let diffrenceInDates = currentMonth.diff(callMonth, "months", true);
+				// If the current Month is February, the value for differenceInDates is in the bracket. December(-2) January(-1) February(0) March(1)
 				if (this.type == "my_dsr" && -2 <= diffrenceInDates && diffrenceInDates <= 1) {
 					return true;
 				} else {
