@@ -91,12 +91,11 @@
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import inputFormMixin from "../../mixins/inputFormMixin";
 	import searchMixin from "../../mixins/searchMixin";
-	import { required, email, minLength, numeric, alpha } from "vuelidate/lib/validators";
-	import { mapActions, mapGetters, mapMutations } from "vuex";
-	import helpers from "../../components/helpers";
+	import { required, minLength } from "vuelidate/lib/validators";
+	import { mapActions } from "vuex";
 
 	export default {
-		name: "SalesLeaveManager",
+		name: "ProductTargets",
 		mixins: [defaultCRUDMixin, inputFormMixin, searchMixin],
 		async created() {
 			this.getData();
