@@ -688,6 +688,7 @@ Listed Below are some commonly used functions
 -   getEditRowObject(): Adds \_id and updated_on to the data thats passed to the input form.
 -   deleteEntry(): Calls DELETE API call to delete the selected entry
 -   disableEntry(): Calls EDIT API call to disable the selected entry
+-   getCountryList(): Gets a list of all Active Countries
 
 ## admin-bulletin
 
@@ -937,8 +938,7 @@ This section displays the Travel Agents and the Grade assigned to them. Admin/Ma
 
 4. Methods
 
--   getData(), setConfig(), advanceSearch(), formOutput(), getEditRowObject(), deleteEntry(),
--   getCountryList(): Gets a list of all Active Countries
+-   getData(), setConfig(), advanceSearch(), formOutput(), getEditRowObject(), deleteEntry(), getCountryList()
 -   getCities(): Gets a list of all Cities from the database
 -   openChangelogsModal(): Toggle Opens Changelog modal
 -   openUploadlogsModal(): Toggle Opens Upload Logs modal
@@ -1017,45 +1017,42 @@ This section displays the Addresses for Selected Travel Agent Any User can Add/E
 
 3. Methods
 
--   getData(), setInputConfig(), setSearchConfig(), advanceSearch(), formOutput(), getEditRowObject(), deleteEntry()
+-   getData(), setInputConfig(), setSearchConfig(), advanceSearch(), formOutput(), getEditRowObject(), deleteEntry(), getCountryList()
 -   getEmployees(): Gets a list of all Employees for the selected travel agent
--   getCountryList(): Gets a list of all active countries
 -   openChangelogsModal(): Toggle Opens Changelog modal
 -   disableEmployee(): Same As disableEntry
 
 ## manage-targets
 
-This section is only visible to the Admin/Management
+This section is only visible to the Admin/Management. It is used to Create, Delete Targets for any Year. Target is set to countries. To the sales team and remote sales team this is visible in the report section
 
 ### index.vue
 
-This File Creates the tab structure and passes data to the component in the tab accordingly.
+In this section a year can be created, for whom the target needs to be set. In the Input config form, an existing year can be selected to just duplicate the targets.
 
 1. Component
 
--   daily-sales-report/reportsList.vue
-
-1. Mixins
-
--   defaultCRUDMixin
--   commonAPICallsMixin
-
-2. Methods
-
--   getSalesCallList(): Basic fetch call to get all Sales call made by the logged in user this is the passed to setConfig. As the list of sales call is required to make a DSR.
--   setConfig(): Sets Tab config for the DSR section. This tab config consists of the props data, input config, search config that needs to be passed to reportsList.vue Component.
-
-### reportsList.vue
-
-This component gets rendedred as TAB item. When this component gets rendered as 'My DSR' it fetches data for for the specific logged in User. While when rendered as 'ALL DSR' fetches data for all the user. Header Needs to be set for the columns that need to be visible
+-   manage-targets/ProductTargets.vue
 
 1. Mixins
 
 -   defaultCRUDMixin
 -   inputFormMixin
--   helperMixin
+
+2. Methods
+
+-   setInputConfig(), formOutput(), getEditRowObject()
+-   getYearlyTargets(): Same as getData
+-   deleteYear(): same as deleteEntry
+-   openTargetsModal(): used to toggle viewMoreModal
+
+### ProductTargets.vue
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
 -   searchMixin
--   datePickerMixin
 
 2. Computed
 
@@ -1063,14 +1060,12 @@ This component gets rendedred as TAB item. When this component gets rendered as 
 
 3. Methods
 
--   getData(), advanceSearch(), formOutput(), getEditRowObject()
--   canUserEdit(): Checks if the DSR Entry fits into the Edit period. The current Edit period is two months in the past and 1 month in future. For example if the current month is February, the call date can be from December of previous year to March.
--   deleteCall() - Same as deleteEntry()
+-   getData(), advanceSearch(),setInputConfig(), formOutput(), getEditRowObject(), getCountryList()
+-   getCurrencyList(): Fetches a list of all active currencies in the system.
+-   saveChanges() - This function is called when 'Save Changes' button is called. In the function the target list is traversed, where the target for whom value was set to blank. Also Every value is converted to a Number. Then an API function is called to save the values
+-   discardChange(): Sets the Target values to the initial values.
+-   resetValues(): This is called when another year is selected and the values for the component need to reset.
 
 4. Props
 
--   name: This is passed to the form component and is the name displayed on the top of the form
--   type: receives 'my_dsr' or 'all_dsr' to render different elements.
--   placeholder: This is placeholder for the search input
--   inputConfig: Config to set the form
--   searchConfig: Config to set the advance search
+-   targetYear: Contains the detail for the year selected in index.vue
