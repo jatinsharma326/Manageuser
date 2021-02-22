@@ -1069,3 +1069,45 @@ In this section a year can be created, for whom the target needs to be set. In t
 4. Props
 
 -   targetYear: Contains the detail for the year selected in index.vue
+
+## manage-users
+
+This is where system users are created, updated or disabled.
+
+### index.vue
+
+This File Creates the tab structure and passes data to the component in the tab accordingly.
+
+1. Component
+
+-   manage-users/Users.vue
+
+2. Methods
+
+-   getCountryList()
+-   setTabConfig(): Sets Tab config for the Manage Users section. This tab config consists of the props data, input config, search config that needs to be passed to Users.vue Component.
+
+### Users.vue
+
+This component gets rendedred as TAB item.
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   helperMixin
+-   searchMixin
+
+2. Methods
+
+-   getData(), advanceSearch(), formOutput(), getEditRowObject(), disableUser(), setSearchConfig()
+-   getMainContentSubtitle() - Gets different subtitle content for the Info Card Slot, based on the logged in user.
+-   userPasswordReset() - Sends an API call to Reset password for the selected user.
+
+3. Props
+
+-   name: This is passed to the form component and is the name displayed on the top of the form
+-   type: receives 'my_dsr' or 'all_dsr' to render different elements.
+-   placeholder: This is placeholder for the search input
+-   inputConfig: Config to set the form
+-   activeCountriesList: Array of Active countries used to assign a country to any sales agent User.
