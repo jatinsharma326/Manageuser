@@ -253,12 +253,12 @@
 				let tempArray = [];
 				let startDate = moment()
 					.tz("Asia/Kolkata")
-					// .startOf("month")
+					.startOf("year")
 					.format("YYYY-MM-DD");
 				let endDate = moment()
 					.tz("Asia/Kolkata")
-					.add(3, "month")
-					.endOf("month")
+					// .add(3, "month")
+					.endOf("year")
 					.format("YYYY-MM-DD");
 				tempArray.push(startDate);
 				tempArray.push(endDate);
