@@ -73,6 +73,7 @@
 
 				return this.getSalesCall({
 					filter: this.filter,
+					callType: "sales_call",
 				}).then((data) => {
 					this.callsList = data.list;
 				});
