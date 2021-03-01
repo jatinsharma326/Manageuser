@@ -82,6 +82,7 @@
 			expanded: [],
 			filter: {},
 			fetchCount: 0,
+			totalCount: 0,
 		}),
 		methods: {
 			...mapActions("MSR", ["getReportList", "downloadReportFile"]),
