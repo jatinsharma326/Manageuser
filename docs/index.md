@@ -689,8 +689,9 @@ Listed Below are some commonly used functions
 -   deleteEntry(): Calls DELETE API call to delete the selected entry
 -   disableEntry(): Calls EDIT API call to disable the selected entry
 -   getCountryList(): Gets a list of all Active Countries
+-   **setDateRange()** - This Function sets the date range from start of the current month to the end of current month
 
-## admin-bulletin
+## admin-bulletin & notice-board
 
 This Component is only visible to the admin and management users. It can be used to set daily bulletin which is then visible on the dashboard
 
@@ -711,12 +712,7 @@ This Component is only visible to the admin and management users. It can be used
 
 3. Methods
 
--   setDateRange(): Sets the Date Range from Start of month to End of month.
--   getData(): Basic fetch call to get Admin Bulletin data.
--   setConfig(): Sets input config for the admin bulletin form.
--   formOutput(): This is where form output is checked and then addAdminBulletin or editAdminBulletin API function is called.
--   getEditRowObject(): Adds \_id and updated_on to the data thats passed to the input form.
--   deleteEntry(): Calls deleteAdminBulletin() API call to delete the selected entry
+-   setDateRange(), getData(), setConfig(), formOutput(), getEditRowObject(), deleteEntry()
 
 ## daily-sales-report
 
@@ -1111,3 +1107,145 @@ This component gets rendedred as TAB item.
 -   placeholder: This is placeholder for the search input
 -   inputConfig: Config to set the form
 -   activeCountriesList: Array of Active countries used to assign a country to any sales agent User.
+
+## monthly-sales-report
+
+This section is visible to all the users. Sales Team member and remote sales team member can create/edit a MSR by selecting a product, year, month and a monthly highlight. Admin/ Management can only view these MSR Entries. Admin/Management can see all the created Entries for the selected year. Sales/Remote Sales Users can only see the entries created by them.
+
+### index.vue
+
+In this section MSR Entries can be created/updated. Admin/ Management can only view these MSR Entries. Admin/Management can see all the created Entries for the selected year. Sales/Remote Sales Users can only see the entries created by them.
+
+1. Component
+
+-   monthly-sales-report/ReportView.vue
+
+2. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   searchMixin
+-   commonAPICallsMixin
+
+3. Methods
+
+-   getData(), setInputConfig(), formOutput(), getEditRowObject(), advanceSearch(),setSearchConfig()
+-   setYear(): Sets the current and selected year
+-   getMonthName(): Returns the complete name of the month based on the month number, for eg when 02 is passed to the function, February is returned.
+-   getCountries(): For sales agent user sets the countrylist to the ones associated with the sales agent, For Remote sales agent countries list is set to all active countries
+-   openExportForm(): used to toggle open exportForm. Export form is only visible to remotes sales user.
+-   closeExportForm(): used to toggle close exportForm. Export form is only visible to remotes sales user.
+-   exportFormOutput(): downloads the MSR for all products for selected year and month.
+-   openTargetsModal(): used to toggle viewMoreModal
+-   openMonthModal(): opens viewMoreModal to render reportview component
+
+### ReportView.vue
+
+This renders a downloadable list of all consolidated DSR entries
+
+1. Mixins
+
+-   helperMixins
+-   defaultCRUDMixin
+
+2. Methods
+
+-   getData()
+-   downloadReport(): Downloads the reportfor selected MSR Entry
+
+3. Props
+
+-   monthInfo: This is the info for the selected month. based on which get call is made
+
+## representing-partner
+
+This section is visible to all the users. Sales Team member and remote sales team member can only view the data. Admin/ Management can add/edit/disable these partners.
+
+### index.vue
+
+This component is where the partner companies are listed with the info of their proprietors information.
+
+1. Component
+
+-   representing-partner/PartnerEmployees.vue
+
+2. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   searchMixin
+-   helperMixin
+
+3. Methods
+
+-   getData(), formOutput(), getEditRowObject(), advanceSearch(),setSearchConfig()
+-   disablePartner(): Same as disableEntry()
+-   openEmployeeModal(): Opens viewmore modal and sets the selected partner information
+
+### PartnerEmployees.vue
+
+This component is where the partner companies employees are listed based on the country that they belong to.
+
+2. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   searchMixin
+-   helperMixin
+
+3. Methods
+
+-   getData(), formOutput(), getEditRowObject(), advanceSearch(),setSearchConfig(), setInputConfig()
+-   deleteEmployee(): Same as deleteEntry()
+
+## daily-sales-report
+
+Daily sales report section is accessible to all the users in system where my DSR section is only visible to sales and remote sales agent. My DSR Consists of all the sales report made by the user that is logged in. All DSR consists of DSR made by all the system users.
+
+### index.vue
+
+This File Creates the tab structure and passes data to the component in the tab accordingly.
+
+1. Component
+
+-   daily-sales-report/reportsList.vue
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   commonAPICallsMixin
+
+2. Methods
+
+-   getSalesCallList(): Basic fetch call to get all Sales call made by the logged in user this is the passed to setConfig. As the list of sales call is required to make a DSR.
+-   setConfig(): Sets Tab config for the DSR section. This tab config consists of the props data, input config, search config that needs to be passed to reportsList.vue Component.
+
+### reportsList.vue
+
+This component gets rendedred as TAB item. When this component gets rendered as 'My DSR' it fetches data for for the specific logged in User. While when rendered as 'ALL DSR' fetches data for all the user. Header Needs to be set for the columns that need to be visible
+
+1. Mixins
+
+-   defaultCRUDMixin
+-   inputFormMixin
+-   helperMixin
+-   searchMixin
+-   datePickerMixin
+
+2. Computed
+
+-   dateRangeText: Joins the selected date with ' ~ '
+
+3. Methods
+
+-   getData(), advanceSearch(), formOutput(), getEditRowObject()
+-   canUserEdit(): Checks if the DSR Entry fits into the Edit period. The current Edit period is two months in the past and 1 month in future. For example if the current month is February, the call date can be from December of previous year to March.
+-   deleteCall() - Same as deleteEntry()
+
+4. Props
+
+-   name: This is passed to the form component and is the name displayed on the top of the form
+-   type: receives 'my_dsr' or 'all_dsr' to render different elements.
+-   placeholder: This is placeholder for the search input
+-   inputConfig: Config to set the form
+-   searchConfig: Config to set the advance search
