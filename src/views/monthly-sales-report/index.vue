@@ -431,30 +431,30 @@
 					updated_on: data.record.updated_on,
 				};
 			},
-			disablePartner(data) {
-				if (
-					window.confirm(
-						"Do you really want to " + (data.record.active ? "Disable the Partner?" : "Enable the Partner?")
-					)
-				) {
-					this.openLoaderDialog();
-					this.editReportMonth({
-						_id: data._id,
-						active: !data.record.active,
-						updated_on: data.record.updated_on,
-						status: data.record.active ? "disabled" : "enabled",
-					}).then((data) => {
-						this.closeLoaderDialog();
-						if (data.ok) {
-							this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
-							this.getData();
-							this.closeForm();
-						} else {
-							this.openSnackbar({ text: data.message });
-						}
-					});
-				}
-			},
+			// disablePartner(data) {
+			// 	if (
+			// 		window.confirm(
+			// 			"Do you really want to " + (data.record.active ? "Disable the Partner?" : "Enable the Partner?")
+			// 		)
+			// 	) {
+			// 		this.openLoaderDialog();
+			// 		this.editReportMonth({
+			// 			_id: data._id,
+			// 			active: !data.record.active,
+			// 			updated_on: data.record.updated_on,
+			// 			status: data.record.active ? "disabled" : "enabled",
+			// 		}).then((data) => {
+			// 			this.closeLoaderDialog();
+			// 			if (data.ok) {
+			// 				this.openSnackbar({ text: "Sucessfully Updated Partner Status" });
+			// 				this.getData();
+			// 				this.closeForm();
+			// 			} else {
+			// 				this.openSnackbar({ text: data.message });
+			// 			}
+			// 		});
+			// 	}
+			// },
 			openMonthModal(monthData) {
 				this.selectedMonthInfo = { ...monthData };
 				this.viewMoreModal = true;
