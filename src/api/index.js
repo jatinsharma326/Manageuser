@@ -1,22 +1,14 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
 const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://crmglobaldestinations.in/";
-// const BASE_URL = isBuildVersion ? "https://crmglobaldestinations.in/" : "https://crmglobaldestinations.in/";
-// const BASE_URL = isBuildVersion ? "http://192.168.1.103:1401/" : "http://192.168.1.103:1401/";
-// const BASE_URL = isBuildVersion ? "http://192.168.1.101:1401/" : "http://192.168.1.101:1401/";
-// const BASE_URL = isBuildVersion ? "http://192.168.31.6:1401/" : "http://192.168.31.6:1401/";
-// const BASE_URL = isBuildVersion ? "http://192.168.43.67:1401/" : "http://192.168.43.67:1401/";
-// const BASE_URL = isBuildVersion ? "http://192.168.1.35:1401/" : "http://192.168.1.35:1401/";
-// const BASE_URL = isBuildVersion ? "https://3128e8a0ed71.ngrok.io/" : "https://3128e8a0ed71.ngrok.io/";
+// const BASE_URL = isBuildVersion ? window.location.origin + "/" : "http://192.168.0.9:1401/";
 
 export default {
+	BASE_URL,
 	LOGIN: BASE_URL + "Common/v0.1/login",
 	LOGOUT: BASE_URL + "Common/v0.1/logout",
-	BASE_URL,
 
 	EXTEND_USER_SESSION: BASE_URL + "Session/v0.1/extend-session",
-	// // Auth End Points
-	// VERIFY_AND__UPDATE_USER_PASSWORD: BASE_URL + "/Mortal/v0.1/verify-mortal",
 
 	RESET_PASSWORD: BASE_URL + "Admin/v0.1/reset-password",
 	ALL_COUNTRIES: BASE_URL + "Global/v0.1/countries",
@@ -24,9 +16,9 @@ export default {
 	ALL_ZONE: BASE_URL + "Global/v0.1/zones",
 	ALL_BUSINESS_TYPE: BASE_URL + "Global/v0.1/business-types",
 	ALL_CURRENCIES: BASE_URL + "Global/v0.1/currencies",
-	ACTIVE_COUNTRIES: BASE_URL + "Partners/v0.1/active-countries",
 	ALL_STATES: BASE_URL + "Global/v0.1/states",
 	ALL_CITIES: BASE_URL + "Global/v0.1/cities",
+	ACTIVE_COUNTRIES: BASE_URL + "Partners/v0.1/active-countries",
 	ACTIVE_CURRENCIES: BASE_URL + "Global/v0.1/active-currencies",
 
 	//API ENDPOINT FOR MANAGE USER DATA
