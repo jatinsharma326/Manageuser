@@ -62,7 +62,7 @@
 					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
 				</template>
 				<template v-slot:[`item.company_data.defaulter`]="{ item }">
-					<template v-if="item.company_data.defaulter">
+					<template v-if="item && item.company_data && item.company_data.defaulter">
 						<v-chip small color="error">Yes</v-chip>
 					</template>
 					<template v-else>
