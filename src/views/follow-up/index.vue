@@ -115,7 +115,7 @@
 							</template>
 							<v-list>
 								<v-list-item @click="openInputForm(true, item)">EDIT</v-list-item>
-								<v-list-item @click="deleteEntry(item)">DELETE</v-list-item>
+								<v-list-item v-if="isOnlySalesAgent" @click="deleteEntry(item)">DELETE</v-list-item>
 							</v-list>
 						</v-menu>
 					</template>
@@ -147,8 +147,40 @@
 				:isEditMode="isEditMode"
 			></UserForm>
 			<div class="floating-button">
-				<v-btn @click="openInputForm()" color="primary" dark fab>
-					<v-icon>mdi-plus</v-icon>
+				<v-speed-dial v-model="fab" direction="top" :open-on-hover="hover" transition="scale-transition">
+					<template v-slot:activator>
+						<v-btn v-model="fab" color="primary" dark fab>
+							<v-icon v-if="fab">
+								mdi-arrow-down-drop-circle
+							</v-icon>
+							<v-icon v-else>
+								mdi-arrow-up-drop-circle
+							</v-icon>
+						</v-btn>
+					</template>
+					<v-tooltip left>
+						<template v-slot:activator="{ on, attrs }">
+							<v-btn @click="openInputForm()" color="secondary" dark small fab v-bind="attrs" v-on="on">
+								<v-icon>mdi-plus</v-icon>
+							</v-btn>
+						</template>
+						<span>Add Follow Up Entry</span>
+					</v-tooltip>
+					<v-tooltip v-if="!checkDownloadButtonStatus" left>
+						<template v-slot:activator="{ on, attrs }">
+							<v-btn fab dark small color="tertiary" @click="downloadReport()" v-bind="attrs" v-on="on">
+								<v-icon>mdi-download</v-icon>
+							</v-btn>
+						</template>
+						<span>Download Followup Report</span>
+					</v-tooltip>
+				</v-speed-dial>
+			</div>
+		</template>
+		<template v-else>
+			<div class="floating-button">
+				<v-btn @click="downloadReport()" color="primary" dark fab>
+					<v-icon>mdi-download</v-icon>
 				</v-btn>
 			</div>
 		</template>
@@ -202,6 +234,8 @@
 			inputConfig: [],
 			citiesList: [],
 			followUpList: [],
+			fab: false,
+			hover: true,
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Product", value: "country", width: 150 },
@@ -239,6 +273,12 @@
 			dateRangeText() {
 				return this.datePickerDate.join(" ~ ");
 			},
+			checkDownloadButtonStatus() {
+				if (this.fetchCount == 0) {
+					return true;
+				}
+				return false;
+			},
 		},
 		methods: {
 			...mapActions("FollowUp", [
@@ -249,6 +289,7 @@
 				"editFollowUp",
 				"deleteFollowUp",
 			]),
+			...mapActions("Reports", ["downloadYearlyRawReport"]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -264,6 +305,7 @@
 				tempArray.push(endDate);
 				this.datePickerDate = tempArray;
 			},
+
 			getCountries() {
 				if (this.userType == this.SALES_AGENT) {
 					this.countriesList = [...this.userData.usr_data.countries];
@@ -271,6 +313,7 @@
 					return this.getCountryList();
 				}
 			},
+
 			getCities() {
 				return this.getCitiesList({
 					filter: {},
@@ -278,6 +321,7 @@
 					this.citiesList = data.list;
 				});
 			},
+
 			getData() {
 				this.openLoaderDialog();
 				this.filter.date_from = moment(this.datePickerDate[0])
@@ -311,6 +355,7 @@
 					}
 				});
 			},
+
 			setConfig(
 				userList = [],
 				companyList = [],
@@ -727,6 +772,7 @@
 				this.pageNo = 1;
 				this.getData();
 			},
+
 			async formOutput(data) {
 				var formData = JSON.parse(JSON.stringify(data));
 
@@ -801,6 +847,7 @@
 					});
 				}
 			},
+
 			getEditRowObject(data) {
 				return {
 					...data,
@@ -808,6 +855,7 @@
 					updated_on: data.record.updated_on,
 				};
 			},
+
 			deleteEntry(call) {
 				if (window.confirm("Do you really want to Delete the FollowUp?")) {
 					this.openLoaderDialog();
@@ -831,6 +879,26 @@
 				} else {
 					return true;
 				}
+			},
+
+			downloadReport() {
+				let dateSelection = JSON.parse(JSON.stringify(this.datePickerDate));
+				dateSelection.sort();
+				this.filter.date_from = moment(dateSelection[0])
+					.tz("Asia/Kolkata")
+					.startOf("month")
+					.toISOString();
+				this.filter.date_to = moment(dateSelection[1])
+					.tz("Asia/Kolkata")
+					.endOf("month")
+					.toISOString();
+
+				this.openLoaderDialog();
+				this.downloadYearlyRawReport({
+					filter: this.filter,
+				}).then(() => {
+					this.closeLoaderDialog();
+				});
 			},
 		},
 		watch: {},
