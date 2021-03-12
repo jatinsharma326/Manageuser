@@ -29,6 +29,11 @@
 				:items="companyList"
 				item-key="_id"
 			>
+				<template v-slot:[`item.name`]="{ item }">
+					<div @click="openInformationModal(item)" class="clickable-link">
+						{{ item.name }}
+					</div>
+				</template>
 				<template v-slot:[`item.defaulter`]="{ item }">
 					<template v-if="item.defaulter">
 						<v-chip small color="error">Yes</v-chip>
@@ -822,6 +827,11 @@
 </script>
 
 <style lang="scss" scopped>
+	.clickable-link {
+		text-decoration: underline;
+		color: $primary;
+		cursor: pointer;
+	}
 	.agentsWrapper {
 		padding: 20px 5px;
 		height: 100%;
