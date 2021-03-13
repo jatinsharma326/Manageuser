@@ -59,7 +59,7 @@
 		<div v-if="totalCount === 0" class="content-error-message">
 			No Followup entries. Please add followup entries to see the reports
 		</div>
-		<div v-else class="leaves-table">
+		<div v-else class="info-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer
@@ -89,6 +89,7 @@
 	import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 	import searchMixin from "../../mixins/searchMixin";
 	import datePickerMixin from "../../mixins/datePickerMixin";
+	import commonAPICallsMixin from "../../mixins/commonAPICallsMixin";
 	import helperMixin from "../../mixins/helperMixins";
 	import moment from "moment-timezone";
 	import { mapActions, mapGetters, mapMutations } from "vuex";
@@ -100,7 +101,8 @@
 		async created() {
 			this.setDateRange();
 			this.getData();
-			this.setSearchConfig(this.countriesList, this.userList);
+			await this.getCompanies();
+			this.setSearchConfig(this.countriesList, this.userList, this.companyList);
 		},
 		data: () => ({
 			selectedCardInfo: {},
@@ -108,6 +110,7 @@
 			dataList: [],
 			selectionDateTo: [],
 			selectionDateFrom: [],
+			companyList: [],
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
 				{ text: "Travel Agent", value: "agency_name", width: 200 },
@@ -131,6 +134,7 @@
 		},
 		methods: {
 			...mapActions("Reports", ["getTravelAgentReport", "downloadAgencyWiseReport"]),
+			...mapActions("ManageAgents", ["getCompaniesList"]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -189,8 +193,20 @@
 				this.pageNo = 1;
 				this.getData();
 			},
-			setSearchConfig(countriesList = [], userList = []) {
+			setSearchConfig(countriesList = [], userList = [], companyList = []) {
 				this.selectedSearchConfig = [
+					{
+						name: "Company",
+						key: "company_names",
+						multi: true,
+						inputType: "dropdown",
+						defaultValue: [],
+						isListInStore: false,
+						listItems: companyList,
+						itemText: "name",
+						itemValue: "name",
+						classes: ["full"],
+					},
 					{
 						name: "Inquiry Type",
 						key: "business_types",
@@ -260,6 +276,18 @@
 			},
 			updatedPageNo(page) {
 				this.getData();
+			},
+			getCompanies() {
+				return this.getCompaniesList({
+					filter: {
+						active: true,
+					},
+					active: true,
+					list: true,
+				}).then((data) => {
+					this.companyList = data.list;
+					// this.modifiedCompanyList = data.list.map((e) => e.name);
+				});
 			},
 		},
 		watch: {},
