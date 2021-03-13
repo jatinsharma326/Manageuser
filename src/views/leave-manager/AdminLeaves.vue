@@ -290,12 +290,12 @@
 		margin-top: 20px;
 		margin-bottom: 20px;
 	}
-	.info-table {
-		margin: 10px;
-		padding: 10px;
-		border: 1px solid $primary;
-		border-radius: 5px;
-	}
+	// .info-table {
+	// 	margin: 10px;
+	// 	padding: 10px;
+	// 	border: 1px solid $primary;
+	// 	border-radius: 5px;
+	// }
 	.expandable-section {
 		padding: 1em !important;
 		.expandable-section-title {

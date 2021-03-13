@@ -334,12 +334,12 @@
 			font-weight: 600;
 		}
 	}
-	.info-table {
-		margin: 10px;
-		padding: 10px;
-		border: 1px solid $primary;
-		border-radius: 5px;
-	}
+	// .info-table {
+	// 	margin: 10px;
+	// 	padding: 10px;
+	// 	border: 1px solid $primary;
+	// 	border-radius: 5px;
+	// }
 	.expandable-section {
 		background-color: white;
 		.expandable-section-title {
