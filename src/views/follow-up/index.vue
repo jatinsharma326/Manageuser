@@ -1,5 +1,5 @@
 <template>
-	<div class="reportListWrapper">
+	<div class="reportListWrapper daily-sales-report">
 		<div class="SearchbarWrapper">
 			<div class="searchbar">
 				<Search
@@ -48,7 +48,7 @@
 		<div v-if="totalCount === 0" class="content-error-message">
 			Please add a Followup Entry
 		</div>
-		<div v-else class="leaves-table">
+		<div v-else class="info-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer
@@ -57,6 +57,7 @@
 				show-expand
 				item-key="_id"
 				:items="followUpList"
+				:fixed-header="true"
 			>
 				<template v-slot:[`item.date_of_enquiry`]="{ item }">
 					{{ item.date_of_enquiry ? getFormattedDate(item.date_of_enquiry, "MMMM Do YYYY dddd") : "-" }}
@@ -238,10 +239,10 @@
 			hover: true,
 			headers: [
 				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+				{ text: "Company Name", value: "company_data.name", width: 200, class: "sticky-header" },
 				{ text: "Product", value: "country", width: 150 },
 				{ text: "Created By", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
-				{ text: "Company Name", value: "company_data.name", width: 200 },
 				{ text: "Defaulter", value: "company_data.defaulter", width: 200 },
 				{ text: "City", value: "city", width: 150 },
 				{ text: "Zone", value: "zone", width: 150 },
@@ -931,12 +932,23 @@
 		}
 	}
 	.reportListWrapper {
-		.leaves-table {
-			margin: 10px;
-			padding: 10px;
-			border: 1px solid $primary;
-			border-radius: 5px;
-		}
+		// .info-table {
+		// 	table > tbody > tr > td:nth-child(3),
+		// 	table > thead > tr > th:nth-child(3) {
+		// 		position: sticky !important;
+		// 		position: -webkit-sticky !important;
+		// 		left: 0;
+		// 		z-index: 2;
+		// 		background: #f8f8f8;
+		// 	}
+		// 	table > thead > tr > th:nth-child(3) {
+		// 		z-index: 3 !important;
+
+		// 		// &.sticky-header {
+		// 		//     background-color: #f8f8f8 !important;
+		// 		// }
+		// 	}
+		// }
 		.expandable-section {
 			padding: 1em !important;
 			.expandable-section-title {
@@ -945,6 +957,29 @@
 			}
 			.expandable-section-content {
 				white-space: pre-wrap;
+			}
+		}
+	}
+</style>
+
+<style lang="scss">
+	.reportListWrapper.daily-sales-report {
+		.info-table {
+			table > tbody > tr > td:nth-child(3),
+			table > thead > tr > th:nth-child(3) {
+				position: sticky !important;
+				position: -webkit-sticky !important;
+				left: 0;
+				z-index: 2;
+				background: #f8f8f8;
+			}
+			table > thead > tr > th:nth-child(3) {
+				z-index: 3 !important;
+				background-color: white !important;
+
+				// &.sticky-header {
+				//     background-color: #f8f8f8 !important;
+				// }
 			}
 		}
 	}
