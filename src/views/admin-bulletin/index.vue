@@ -41,7 +41,7 @@
 		<div v-if="totalCount === 0" class="content-error-message">
 			Please add an Entry
 		</div>
-		<div v-else class="leaves-table">
+		<div v-else class="info-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer
@@ -377,12 +377,12 @@
 		}
 	}
 	.adminBulletinWrapper {
-		.leaves-table {
-			margin: 10px;
-			padding: 10px;
-			border: 1px solid $primary;
-			border-radius: 5px;
-		}
+		// .info-table {
+		// 	margin: 10px;
+		// 	padding: 10px;
+		// 	border: 1px solid $primary;
+		// 	border-radius: 5px;
+		// }
 		// .expandable-section {
 		// 	padding: 1em !important;
 		// 	.expandable-section-title {

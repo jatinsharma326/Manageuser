@@ -67,7 +67,7 @@
 		<div v-if="totalCount === 0" class="content-error-message">
 			No Followup entries. Please add followup entries to see the reports
 		</div>
-		<div v-else class="leaves-table">
+		<div v-else class="info-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer

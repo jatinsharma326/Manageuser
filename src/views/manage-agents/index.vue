@@ -21,7 +21,7 @@
 			{{ errorMessage }}
 		</div>
 
-		<div v-if="listLayout" class="leaves-table">
+		<div v-if="listLayout" class="info-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer

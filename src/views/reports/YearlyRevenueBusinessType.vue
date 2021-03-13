@@ -8,7 +8,7 @@
 				>Download Chart</v-btn
 			>
 		</div>
-		<!-- <div class="leaves-table">
+		<!-- <div class="info-table">
 			<v-data-table
 				:items-per-page="pageSize"
 				hide-default-footer

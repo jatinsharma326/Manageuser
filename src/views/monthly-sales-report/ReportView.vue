@@ -10,7 +10,7 @@
 		<div v-if="totalCount === 0" class="content-error-message">
 			No data in the DSR for the selected product
 		</div>
-		<div v-else class="leaves-table">
+		<div v-else class="info-table">
 			<v-data-table
 				:items-per-page="fetchCount"
 				hide-default-footer
@@ -153,7 +153,7 @@
 			margin-bottom: 20px;
 		}
 	}
-	.leaves-table {
+	.info-table {
 		padding: 10px;
 		border: 1px solid $primary;
 		border-radius: 5px;

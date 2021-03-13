@@ -51,7 +51,7 @@
 			</div>
 		</div>
 
-		<div class="leaves-table">
+		<div class="info-table">
 			<v-data-table :items-per-page="pageSize" hide-default-footer :headers="headers" :items="dataList">
 				<template v-slot:[`header.record_1`]="{ header }">
 					{{

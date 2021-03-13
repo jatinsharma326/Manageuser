@@ -3,7 +3,7 @@
 		<div v-if="totalCount === 0" class="content-error-message">
 			Please add a country to set Targets
 		</div>
-		<div v-else class="leaves-table">
+		<div v-else class="info-table">
 			<!-- <v-data-table hide-default-footer :headers="headers" :items="productTargetList" mobile-breakpoint="300"> -->
 			<v-data-table
 				:items-per-page="fetchCount"
@@ -334,7 +334,7 @@
 			font-weight: 600;
 		}
 	}
-	.leaves-table {
+	.info-table {
 		margin: 10px;
 		padding: 10px;
 		border: 1px solid $primary;
