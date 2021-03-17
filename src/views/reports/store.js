@@ -204,7 +204,8 @@ export default {
 		},
 		downloadYearlyRawReport: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
-			let fileName = "Raw Data";
+			let fileName = payload.fileName ? payload.fileName : "Yearly Revenue Raw Data.xlsx";
+
 			return dispatch(
 				"fileDownload_API_Call",
 				{
@@ -221,7 +222,7 @@ export default {
 						const url = window.URL.createObjectURL(new Blob([data]));
 						const link = document.createElement("a");
 						link.href = url;
-						link.setAttribute("download", "Yearly Revenue Raw Data.xlsx");
+						link.setAttribute("download", fileName);
 						document.body.appendChild(link);
 						link.click();
 						return;
