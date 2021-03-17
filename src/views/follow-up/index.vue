@@ -444,6 +444,7 @@
 							"BOOKING ON HOLD",
 							"CONFIRMED",
 							"FILE LOST",
+							"DORMANT",
 							"CANCELLED",
 						],
 						classes: ["half"],
@@ -606,6 +607,7 @@
 							"BOOKING ON HOLD",
 							"CONFIRMED",
 							"FILE LOST",
+							"DORMANT",
 							"CANCELLED",
 						],
 						validations: {
@@ -897,6 +899,7 @@
 				this.openLoaderDialog();
 				this.downloadYearlyRawReport({
 					filter: this.filter,
+					fileName: "Follow Up Report.xlsx",
 				}).then(() => {
 					this.closeLoaderDialog();
 				});
