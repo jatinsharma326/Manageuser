@@ -94,6 +94,12 @@ const routes = [
 		component: () => import("../views/notice-board"),
 		meta: { policy: [10, 20] },
 	},
+	{
+		path: "/update-countries",
+		name: "Update Countries",
+		component: () => import("../views/update-countries"),
+		meta: { policy: [10, 20] },
+	},
 ];
 
 const router = new VueRouter({
