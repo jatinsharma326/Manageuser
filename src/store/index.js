@@ -19,6 +19,7 @@ import Reports from "../views/reports/store";
 import VirtualReach from "../views/virtual-reach/store";
 import AdminBulletin from "../views/admin-bulletin/store";
 import NoticeBoard from "../views/notice-board/store";
+import UpdateCountries from "../views/update-countries/store";
 
 Vue.use(Vuex);
 
@@ -103,6 +104,7 @@ export default new Vuex.Store({
 		VirtualReach,
 		AdminBulletin,
 		NoticeBoard,
+		UpdateCountries,
 	},
 
 	state: initialState(),
