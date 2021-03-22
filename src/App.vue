@@ -213,6 +213,13 @@
 							highlight: "#00a0ff",
 							iconColor: "#00a0ff",
 						},
+						{
+							icon: "search",
+							title: "Update Countries",
+							route: "/update-countries",
+							highlight: "#00a0ff",
+							iconColor: "#00a0ff",
+						},
 					];
 					this.routeItems = this.routeItems.concat(tempArray);
 					console.log("route items", this.routeItems);
