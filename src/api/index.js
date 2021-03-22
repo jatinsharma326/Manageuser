@@ -109,4 +109,7 @@ export default {
 
 	// VIRTUAL REACH ENDPOINT
 	ADMIN_BULLETIN: BASE_URL + "Bulletins/v0.1/admin-bulletins",
+
+	// Countries Endpoint
+	UPDATE_COUNTRIES: BASE_URL + "Admin/v0.1/countries",
 };
