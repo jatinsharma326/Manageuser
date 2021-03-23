@@ -131,6 +131,7 @@
 			...mapGetters(["userData"]),
 		},
 		methods: {
+			...mapActions(["getCountries"]),
 			...mapActions("UpdateCountries", ["getCountriesToUpdate", "addCountry", "editCountry"]),
 			getData() {
 				this.openLoaderDialog();
@@ -167,6 +168,7 @@
 					}).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
+							this.getCountries();
 							this.openSnackbar({
 								text: "Sucessfully Updated Country Status",
 							});
@@ -224,6 +226,7 @@
 					this.addCountry(formData).then((data) => {
 						this.closeLoaderDialog();
 						if (data.ok) {
+							this.getCountries();
 							this.openSnackbar({
 								text: "Sucessfully Added the Country",
 							});
