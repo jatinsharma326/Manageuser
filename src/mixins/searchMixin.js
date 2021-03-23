@@ -57,6 +57,7 @@ const searchMixins = {
 		},
 		queryString(data) {
 			this.filter["search_text"] = data;
+			this.pageNo = 1;
 			this.getData();
 		},
 	},
