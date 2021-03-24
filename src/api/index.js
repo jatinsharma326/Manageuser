@@ -1,7 +1,7 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
-// const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://crmglobaldestinations.in/";
-const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://f783648379c9.ngrok.io/";
+const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://crmglobaldestinations.in/";
+// const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://f783648379c9.ngrok.io/";
 
 export default {
 	BASE_URL,
