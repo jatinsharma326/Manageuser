@@ -267,7 +267,7 @@
 				{ text: "", value: "actions" },
 			],
 			expanded: [],
-			keysToWatch: ["status", "payment_status"],
+			keysToWatch: ["status", "payment_status", "company_id"],
 		}),
 		computed: {
 			...mapGetters(["userData"]),
@@ -291,6 +291,7 @@
 				"deleteFollowUp",
 			]),
 			...mapActions("Reports", ["downloadYearlyRawReport"]),
+			...mapActions("ManageAgents", ["getAgentCitiesList", "getAgentEmployeeInformation"]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -517,16 +518,47 @@
 					},
 					{
 						name: "City*",
-						type: "Dropdown",
+						type: "AsyncDropdownWithMoreInfo",
+						triggerKey: "company_id",
+						subtitleContent: (item) => {
+							return "";
+						},
+						titleContent: (item) => {
+							return item.value;
+						},
+						apiCall: (company_id) => {
+							console.log("call_id", company_id);
+							// let call = this.callsList.find((e) => e._id == call_id);
+							return this.getAgentCitiesList({
+								// filter: {
+								company_id,
+								// active: true,
+								// },
+								// active: true,
+							}).then((data) => {
+								return data.list;
+							});
+						},
 						key: "city",
 						width: "half",
-						multi: false,
-						isListInStore: false,
-						listItems: citiesList,
+						itemText: "text",
+						itemValue: "value",
 						validations: {
 							required,
 						},
 					},
+					// {
+					// 	name: "City*",
+					// 	type: "Dropdown",
+					// 	key: "city",
+					// 	width: "half",
+					// 	multi: false,
+					// 	isListInStore: false,
+					// 	listItems: citiesList,
+					// 	validations: {
+					// 		required,
+					// 	},
+					// },
 					{
 						name: "Name of Contact*",
 						type: "String",
