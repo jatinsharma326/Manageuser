@@ -96,6 +96,76 @@ export default {
 					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
 				});
 		},
+		getAgentCitiesList: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.AGENT_CITIES,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+							fetchCount: data.fetchCount,
+							totalCount: data.totalCount,
+						};
+					} else {
+						fail(data.message || "Failed to get Agent Cities List");
+						return {
+							ok: false,
+							list: [],
+							fetchCount: 0,
+							totalCount: 0,
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to get Agent Cities List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
+		getAgentEmployeeInformation: ({ commit, dispatch }, payload) => {
+			let fail = (msg) => commit("failure", msg);
+			return dispatch(
+				"apiCall",
+				{
+					method: "get",
+					params: payload,
+					url: constants.AGENT_EMPLOYEE_DETAILS,
+				},
+				{ root: true }
+			)
+				.then((data) => {
+					if (data.ok) {
+						return {
+							ok: true,
+							list: data.data,
+							fetchCount: data.fetchCount,
+							totalCount: data.totalCount,
+						};
+					} else {
+						fail(data.message || "Failed to get Agent Employee Information List");
+						return {
+							ok: false,
+							list: [],
+							fetchCount: 0,
+							totalCount: 0,
+						};
+					}
+				})
+				.catch((err) => {
+					console.log("Yo ", err);
+					fail(err.toString() || "Failed to get Agent Employee Information List");
+					return { ok: false, totalCount: 0, fetchCount: 0, list: [] };
+				});
+		},
 
 		getUploadLogs: ({ commit, dispatch }, payload) => {
 			let fail = (msg) => commit("failure", msg);
