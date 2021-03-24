@@ -1,7 +1,7 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
-const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://crmglobaldestinations.in/";
-// const BASE_URL = isBuildVersion ? window.location.origin + "/" : "http://192.168.0.9:1401/";
+// const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://crmglobaldestinations.in/";
+const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://f783648379c9.ngrok.io/";
 
 export default {
 	BASE_URL,
@@ -112,4 +112,8 @@ export default {
 
 	// Countries Endpoint
 	UPDATE_COUNTRIES: BASE_URL + "Admin/v0.1/countries",
+
+	// AGENT EMPLOYEES ENDPOINT
+	AGENT_CITIES: BASE_URL + "Address/v0.1/cities",
+	AGENT_EMPLOYEE_DETAILS: BASE_URL + "TravelAgentEmployees/v0.1/travel-agent",
 };
