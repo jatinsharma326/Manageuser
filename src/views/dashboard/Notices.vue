@@ -75,7 +75,8 @@
 									{{ getFormattedDate(entry.date_of_creation) }}
 								</template>
 								<template v-slot:moreInfo>
-									{{ entry.notice_board_bulletin }}
+									<div v-html="entry.notice_board_bulletin"></div>
+									<!-- {{ entry.notice_board_bulletin }} -->
 								</template>
 							</InformationCard>
 						</div>
@@ -156,6 +157,20 @@
 					this.columnOneTotalCount = data.totalCount;
 				});
 			},
+			convertTextToUrl(data) {
+				let list = JSON.parse(JSON.stringify(data));
+				for (const listItem of list) {
+					// console.log("listItem", listItem);
+					// let tempObj = listItem;
+					let contentToURL = listItem.notice_board_bulletin;
+					const urlRegex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gim;
+					listItem.notice_board_bulletin = contentToURL.replace(urlRegex, function(url) {
+						return '<a target="_blank" href="' + url + '">' + url + "</a>";
+					});
+				}
+				// console.log(list);
+				return list;
+			},
 			getNoticeBoardList() {
 				this.openLoaderDialog();
 				this.getNoticeBoard({
@@ -170,7 +185,7 @@
 					if (!data.ok) {
 						this.openSnackbar({ text: "Failed to Fetched Notice Board List" });
 					}
-					this.noticeBoard = data.list;
+					this.noticeBoard = this.convertTextToUrl(data.list);
 					this.columnTwoTotalCount = data.totalCount;
 				});
 			},
