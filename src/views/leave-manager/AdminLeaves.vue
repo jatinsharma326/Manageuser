@@ -16,6 +16,7 @@
 		</div>
 		<div class="info-table">
 			<v-data-table
+				:items-per-page="pageSize"
 				hide-default-footer
 				:headers="headers"
 				:expanded.sync="expanded"
