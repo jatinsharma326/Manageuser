@@ -267,7 +267,7 @@
 				{ text: "", value: "actions" },
 			],
 			expanded: [],
-			keysToWatch: ["status", "payment_status", "company_id"],
+			keysToWatch: ["status", "payment_status", "company_id", "employee_id"],
 		}),
 		computed: {
 			...mapGetters(["userData"]),
@@ -291,7 +291,11 @@
 				"deleteFollowUp",
 			]),
 			...mapActions("Reports", ["downloadYearlyRawReport"]),
-			...mapActions("ManageAgents", ["getAgentCitiesList", "getAgentEmployeeInformation"]),
+			...mapActions("ManageAgents", [
+				"getAgentCitiesList",
+				"getCompanyEmployeeList",
+				"getAgentEmployeeInformation",
+			]),
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -561,20 +565,77 @@
 					// },
 					{
 						name: "Name of Contact*",
-						type: "String",
-						key: "contact_person",
-						width: "half",
+						type: "AsyncDropdownWithMoreInfo",
+						triggerKey: "company_id",
+						subtitleContent: (item) => {
+							return item.designation + " - " + item.company_address_data.branch_name;
+						},
+						titleContent: (item) => {
+							return item.name;
+						},
+						apiCall: (company_id) => {
+							// let call = this.callsList.find((e) => e._id == call_id);
+							return this.getCompanyEmployeeList({
+								filter: {
+									company_id,
+									active: true,
+								},
+								active: true,
+							}).then((data) => {
+								return data.list;
+							});
+						},
+						key: "employee_id",
+						width: "full",
+						itemText: "name",
+						itemValue: "_id",
 						validations: {
 							required,
-							minLength: minLength(1),
 						},
 					},
+					// {
+					// 	name: "Name of Contact*",
+					// 	type: "String",
+					// 	key: "contact_person",
+					// 	width: "half",
+					// 	validations: {
+					// 		required,
+					// 		minLength: minLength(1),
+					// 	},
+					// },
 					{
 						name: "Contact No.",
-						type: "String",
+						type: "AsyncDropdownWithMoreInfo",
+						triggerKey: "employee_id",
+						subtitleContent: (item) => {
+							return "";
+						},
+						titleContent: (item) => {
+							return item.value;
+						},
+						apiCall: (employee_id) => {
+							// let call = this.callsList.find((e) => e._id == call_id);
+							return this.getAgentEmployeeInformation({
+								// filter: {
+								_id: employee_id,
+								// active: true,
+								// },
+								// active: true,
+							}).then((data) => {
+								return data.list;
+							});
+						},
 						key: "contact_number",
-						width: "half",
+						width: "full",
+						itemText: "text",
+						itemValue: "value",
 					},
+					// {
+					// 	name: "Contact No.",
+					// 	type: "String",
+					// 	key: "contact_number",
+					// 	width: "half",
+					// },
 					{
 						name: "Date of Travel*",
 						type: "Date",
@@ -850,9 +911,35 @@
 					formData.reminder_date = helpers.getISODate(formData.reminder_date);
 				}
 
-				if (formData.currency_type == "") formData.currency_type == null;
-				if (formData.payment_type == "") formData.payment_type == null;
-				if (formData.payment_status == "") formData.payment_status == null;
+				if (formData.currency_type == "") formData.currency_type = null;
+				if (formData.payment_type == "" || formData.payment_status === "PENDING") {
+					console.log(formData.payment_type, "Came Here ");
+					formData.payment_type = null;
+				}
+
+				if (
+					formData.payment_status == "RECEIVED" &&
+					!(
+						formData.payment_type == "ADVANCE RECEIVED" ||
+						formData.payment_type == "INR FOR CONFIRMATION" ||
+						formData.payment_type == "FULL PAYMENT"
+					)
+				) {
+					formData.payment_type = null;
+				}
+				if (
+					formData.payment_status == "REFUND" &&
+					!(
+						formData.payment_type == "NONE" ||
+						formData.payment_type == "CREDIT NOTE" ||
+						formData.payment_type == "EMAIL CONFIRMATION"
+					)
+				) {
+					formData.payment_type = null;
+				}
+				if (formData.payment_status == "") formData.payment_status = null;
+
+				// if (formData.payment_status === "PENDING") formData.payment_type == null;
 
 				formData.date_of_travel = helpers.getISODate(formData.date_of_travel);
 				formData.month_of_travel = Number(this.getFormattedDate(formData.date_of_travel, "MM"));
