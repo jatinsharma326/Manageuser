@@ -652,8 +652,9 @@
 							}
 						}
 					} else if (i.type == "AsyncDropdownWithMoreInfo" && watchKey == i.triggerKey) {
-						if (nv) {
+						if (nv && nv != ov) {
 							i.apiCall(nv).then((data) => {
+								this.formElements[i.key] = null;
 								this.asyncList[i.key] = data;
 							});
 						}
