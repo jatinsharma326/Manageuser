@@ -165,7 +165,16 @@
 					let contentToURL = listItem.notice_board_bulletin;
 					const urlRegex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gim;
 					listItem.notice_board_bulletin = contentToURL.replace(urlRegex, function(url) {
-						return '<a target="_blank" href="' + url + '">' + url + "</a>";
+						const httpchecker = new RegExp("^https?:\/\/", "ig");
+
+						return (
+							'<a target="_blank" href="' +
+							(!httpchecker.test(url) ? "http://" : "") +
+							url +
+							'">' +
+							url +
+							"</a>"
+						);
 					});
 				}
 				// console.log(list);
