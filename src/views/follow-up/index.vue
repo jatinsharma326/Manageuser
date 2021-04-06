@@ -531,7 +531,7 @@
 							return item.value;
 						},
 						apiCall: (company_id) => {
-							console.log("call_id", company_id);
+							// console.log("call_id", company_id);
 							// let call = this.callsList.find((e) => e._id == call_id);
 							return this.getAgentCitiesList({
 								// filter: {
