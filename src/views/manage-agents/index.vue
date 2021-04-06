@@ -230,7 +230,7 @@
 							>mdi-arrow-left-bold</v-icon
 						>
 					</template>
-					<span v-if="companyList[selectedCompanyIndex - 1]">{{
+					<span v-if="companyList && companyList.length && companyList[selectedCompanyIndex - 1]">{{
 						companyList[selectedCompanyIndex - 1].name
 					}}</span>
 				</v-tooltip>
@@ -248,7 +248,7 @@
 							>mdi-arrow-right-bold</v-icon
 						>
 					</template>
-					<span v-if="companyList[selectedCompanyIndex + 1]">{{
+					<span v-if="companyList && companyList.length && companyList[selectedCompanyIndex + 1]">{{
 						companyList[selectedCompanyIndex + 1].name
 					}}</span>
 				</v-tooltip>
@@ -434,7 +434,7 @@
 					this.totalCount = data.totalCount;
 					this.fetchCount = data.fetchCount;
 
-					if (this.companyList.length) {
+					if (this.companyList && this.companyList.length) {
 						this.companyList = this.companyList.map((d, index) => ({
 							...d,
 							serial_number: (this.pageNo - 1) * this.pageSize + (index + 1),
