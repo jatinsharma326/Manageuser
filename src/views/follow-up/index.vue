@@ -79,6 +79,32 @@
 				<template v-slot:[`item.reminder_date`]="{ item }">
 					{{ item.reminder_date ? getFormattedDate(item.reminder_date, "MMMM Do YYYY dddd") : "-" }}
 				</template>
+				<template v-slot:[`item.status`]="{ item, header }">
+					<template v-if="header.text == 'FS Indicator'">
+						<v-chip v-if="item.status == 'POTENTIAL'" x-small color="#FFA500" class="white--text">{{
+							item.status
+						}}</v-chip>
+						<v-chip v-else-if="item.status == 'BOOKING ON HOLD'" x-small color="#32CD32">{{
+							item.status
+						}}</v-chip>
+						<v-chip v-else-if="item.status == 'CONFIRMED'" x-small color="#008000" class="white--text">{{
+							item.status
+						}}</v-chip>
+						<v-chip v-else-if="item.status == 'FILE LOST'" x-small color="#800000" class="white--text">{{
+							item.status
+						}}</v-chip>
+						<v-chip v-else-if="item.status == 'DORMANT'" x-small color="#800080" class="white--text">{{
+							item.status
+						}}</v-chip>
+						<v-chip v-else-if="item.status == 'CANCELLED'" x-small color="#4B0082" class="white--text">{{
+							item.status
+						}}</v-chip>
+						<v-chip v-else x-small color="#C0C0C0">{{ item.status }}</v-chip>
+					</template>
+					<template v-else>
+						{{ item.status }}
+					</template>
+				</template>
 				<template v-slot:[`item.payment_status`]="{ item }">
 					{{ item.payment_status ? item.payment_status : "-" }}
 				</template>
@@ -103,7 +129,8 @@
 				<template v-slot:expanded-item="{ headers, item }">
 					<td class="expandable-section table-expanded-background " :colspan="headers.length">
 						<div class="expandable-section-title">Remark</div>
-						<div class="expandable-section-content" v-html="item.remark">{{}}</div>
+						<div v-if="item.remark" class="expandable-section-content" v-html="item.remark"></div>
+						<div v-else class="expandable-section-content">No Remarks yet for this followup</div>
 					</td>
 				</template>
 				<template v-slot:[`item.actions`]="{ item }">
@@ -206,6 +233,7 @@
 		mixins: [defaultCRUDMixin, inputFormMixin, helperMixin, searchMixin, datePickerMixin, commonAPICallsMixin],
 		async created() {
 			this.setDateRange();
+			// this.setHeader();
 			this.getData();
 			this.openLoaderDialog();
 			let promiseArray = [];
@@ -238,7 +266,10 @@
 			fab: false,
 			hover: true,
 			headers: [
-				{ text: "Sr. No.", align: "start", value: "serial_number", width: 100 },
+				{ text: "", value: "actions", width: 68 },
+				{ text: "", value: "data-table-expand" },
+				{ text: "Sr. No.", align: "start", value: "serial_number", width: 70 },
+				{ text: "File Status", value: "status", width: 150 },
 				{ text: "Company Name", value: "company_data.name", width: 200, class: "sticky-header" },
 				{ text: "Product", value: "country", width: 150 },
 				{ text: "Created By", value: "mortal_data.name", width: 150 },
@@ -254,7 +285,7 @@
 				{ text: "Child Pax", value: "number_of_pax_child", width: 150 },
 				{ text: "Inquiry Type", value: "business_types", width: 150 },
 				{ text: "Email Subject", value: "email_subject", width: 150 },
-				{ text: "File Status", value: "status", width: 150 },
+				// { text: "File Status", value: "status", width: 150 },
 				{ text: "Competitor Name", value: "competitor_name", width: 200 },
 				{ text: "Follow Up", value: "reminder_date", width: 150 },
 				{ text: "Payment Status", value: "payment_status", width: 180 },
@@ -264,7 +295,6 @@
 				{ text: "Pending (Amount)", value: "amount_pending", width: 200 },
 				{ text: "Received (Amount)", value: "amount_received", width: 200 },
 				{ text: "Last Updated On", value: "record.updated_on", width: 200 },
-				{ text: "", value: "actions" },
 			],
 			expanded: [],
 			keysToWatch: ["status", "payment_status", "company_id", "employee_id"],
@@ -296,6 +326,12 @@
 				"getCompanyEmployeeList",
 				"getAgentEmployeeInformation",
 			]),
+			// setHeader() {
+			// 	if (!this.isAdminOrManagement) {
+			// 		this.headers.push({ text: "", value: "actions" });
+			// 	}
+			// },
+
 			setDateRange() {
 				let tempArray = [];
 				let startDate = moment()
@@ -1023,6 +1059,14 @@
 					this.closeLoaderDialog();
 				});
 			},
+
+			// getFileStatus(item, header) {
+			// 	if(header.text = "FS Indicator") {
+
+			// 	} else {
+
+			// 	}
+			// }
 		},
 		watch: {},
 		props: {},
@@ -1087,15 +1131,40 @@
 <style lang="scss">
 	.reportListWrapper.daily-sales-report {
 		.info-table {
-			table > tbody > tr > td:nth-child(3),
-			table > thead > tr > th:nth-child(3) {
+			table > tbody > tr > td:nth-child(-n + 5),
+			table > thead > tr > th:nth-child(-n + 5) {
 				position: sticky !important;
 				position: -webkit-sticky !important;
-				left: 0;
 				z-index: 2;
 				background: #f8f8f8;
 			}
+
+			table > tbody > tr > td:nth-child(1),
+			table > thead > tr > th:nth-child(1) {
+				left: 0;
+			}
+			table > tbody > tr > td:nth-child(2),
+			table > thead > tr > th:nth-child(2) {
+				left: 68px;
+			}
+			table > tbody > tr > td:nth-child(3),
 			table > thead > tr > th:nth-child(3) {
+				left: 122px;
+			}
+			table > tbody > tr > td:nth-child(4),
+			table > thead > tr > th:nth-child(4) {
+				left: 192px;
+			}
+			table > tbody > tr > td:nth-child(5),
+			table > thead > tr > th:nth-child(5) {
+				left: 342px;
+			}
+
+			table > thead > tr > th:nth-child(1),
+			table > thead > tr > th:nth-child(2),
+			table > thead > tr > th:nth-child(3),
+			table > thead > tr > th:nth-child(4),
+			table > thead > tr > th:nth-child(5) {
 				z-index: 3 !important;
 				background-color: white !important;
 
