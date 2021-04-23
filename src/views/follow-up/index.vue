@@ -79,31 +79,31 @@
 				<template v-slot:[`item.reminder_date`]="{ item }">
 					{{ item.reminder_date ? getFormattedDate(item.reminder_date, "MMMM Do YYYY dddd") : "-" }}
 				</template>
-				<template v-slot:[`item.status`]="{ item, header }">
-					<template v-if="header.text == 'FS Indicator'">
-						<v-chip v-if="item.status == 'POTENTIAL'" x-small color="#FFA500" class="white--text">{{
-							item.status
-						}}</v-chip>
-						<v-chip v-else-if="item.status == 'BOOKING ON HOLD'" x-small color="#32CD32">{{
-							item.status
-						}}</v-chip>
-						<v-chip v-else-if="item.status == 'CONFIRMED'" x-small color="#008000" class="white--text">{{
-							item.status
-						}}</v-chip>
-						<v-chip v-else-if="item.status == 'FILE LOST'" x-small color="#800000" class="white--text">{{
-							item.status
-						}}</v-chip>
-						<v-chip v-else-if="item.status == 'DORMANT'" x-small color="#800080" class="white--text">{{
-							item.status
-						}}</v-chip>
-						<v-chip v-else-if="item.status == 'CANCELLED'" x-small color="#4B0082" class="white--text">{{
-							item.status
-						}}</v-chip>
-						<v-chip v-else x-small color="#C0C0C0">{{ item.status }}</v-chip>
-					</template>
+				<template v-slot:[`item.status`]="{ item }">
+					<!-- <template v-if="header.text == 'FS Indicator'"> -->
+					<v-chip v-if="item.status == 'POTENTIAL'" x-small color="#FFA500" class="white--text">{{
+						item.status
+					}}</v-chip>
+					<v-chip v-else-if="item.status == 'BOOKING ON HOLD'" x-small color="#32CD32">{{
+						item.status
+					}}</v-chip>
+					<v-chip v-else-if="item.status == 'CONFIRMED'" x-small color="#008000" class="white--text">{{
+						item.status
+					}}</v-chip>
+					<v-chip v-else-if="item.status == 'FILE LOST'" x-small color="#800000" class="white--text">{{
+						item.status
+					}}</v-chip>
+					<v-chip v-else-if="item.status == 'DORMANT'" x-small color="#800080" class="white--text">{{
+						item.status
+					}}</v-chip>
+					<v-chip v-else-if="item.status == 'CANCELLED'" x-small color="#4B0082" class="white--text">{{
+						item.status
+					}}</v-chip>
+					<v-chip v-else x-small color="#C0C0C0">{{ item.status }}</v-chip>
+					<!-- </template>
 					<template v-else>
 						{{ item.status }}
-					</template>
+					</template> -->
 				</template>
 				<template v-slot:[`item.payment_status`]="{ item }">
 					{{ item.payment_status ? item.payment_status : "-" }}
