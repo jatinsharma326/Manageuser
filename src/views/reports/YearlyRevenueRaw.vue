@@ -99,6 +99,9 @@
 				<template v-slot:[`item.currency_type`]="{ item }">
 					{{ item.currency_type ? item.currency_type : "-" }}
 				</template>
+				<template v-slot:[`item.company_data`]="{ item }">
+					{{ item && item.company_data ? item.company_data.name : "-" }}
+				</template>
 				<!-- <template v-slot:[`item.amount_pending`]="{ item }">
 					{{ item.amount_pending ? item.amount_pending : "-" }}
 				</template> -->
@@ -159,7 +162,7 @@
 				{ text: "Product", value: "country", width: 150 },
 				{ text: "Created By", value: "mortal_data.name", width: 150 },
 				// { text: "Date of Enquiry", value: "date_of_enquiry", width: 200 },
-				{ text: "Company Name", value: "company_data.name", width: 200 },
+				{ text: "Company Name", value: "company_data", width: 200 },
 				{ text: "City", value: "city", width: 150 },
 				// { text: "Zone", value: "zone", width: 150 },
 				{ text: "Date of Travel", value: "date_of_travel", width: 150 },

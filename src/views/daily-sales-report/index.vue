@@ -175,11 +175,11 @@
 									type: "DropdownWithMoreInfo",
 									isCustom: true,
 									subtitleContent: (item) => {
-										return (
-											helper.getFormattedDate(item.date_of_call, "DD-MM-YYYY") +
-											"-" +
-											item.company_data.name
-										);
+										return item && item.company_data && item.company_data.name
+											? helper.getFormattedDate(item.date_of_call, "DD-MM-YYYY") +
+													"-" +
+													item.company_data.name
+											: "";
 									},
 									titleContent: (item) => {
 										return item.sr_no;

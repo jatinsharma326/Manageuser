@@ -67,6 +67,9 @@
 				<template v-slot:[`item.countries`]="{ item }">
 					{{ item.countries.join(", ") }}
 				</template>
+				<template v-slot:[`item.company_data`]="{ item }">
+					{{ item && item.company_data ? item.company_data.name : "-" }}
+				</template>
 				<template v-slot:[`item.travel_agent_employee.email_ids`]="{ item }">
 					{{ item.travel_agent_employee.email_ids.join(", ") }}
 				</template>
@@ -168,7 +171,7 @@
 				{ text: "Product", value: "countries", width: 150 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Visit", value: "sales_call_data.date_of_call", width: 200 },
-				{ text: "Company Name", value: "company_data.name", width: 200 },
+				{ text: "Company Name", value: "company_data", width: 200 },
 				{ text: "Branch Name", value: "company_address_data.branch_name", width: 150 },
 				{ text: "City", value: "company_address_data.city", width: 150 },
 				{ text: "State", value: "company_address_data.state", width: 150 },

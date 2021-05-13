@@ -64,6 +64,9 @@
 				<template v-slot:[`item.date_of_call`]="{ item }">
 					{{ getFormattedDate(item.date_of_call, "MMMM Do YYYY dddd") }}
 				</template>
+				<template v-slot:[`item.company_data`]="{ item }">
+					{{ item && item.company_data ? item.company_data.name : "-" }}
+				</template>
 				<template v-slot:[`item.actions`]="{ item }">
 					<template v-if="canUserEdit(item)">
 						<v-menu bottom left>
@@ -151,7 +154,7 @@
 				{ text: "Index", align: "start", value: "sr_no", width: 100 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Visit", value: "date_of_call", width: 200 },
-				{ text: "Company Name", value: "company_data.name", width: 200 },
+				{ text: "Company Name", value: "company_data", width: 200 },
 				{ text: "Branch Name", value: "company_address_data.branch_name", width: 150 },
 				{ text: "City", value: "company_address_data.city", width: 150 },
 				{ text: "State", value: "company_address_data.state", width: 150 },
@@ -253,7 +256,7 @@
 						company_id: formData.company_id,
 						date_of_call: formData.date_of_call,
 					}).then((data) => {
-						if (data.ok && data.data && data.data.length) {
+						if (data.ok && data.data && data.data.length && data.data[0].company_data) {
 							if (
 								window.confirm(
 									`${data.data.map((e) => e.mortal_data.name).join(", ")} also ${

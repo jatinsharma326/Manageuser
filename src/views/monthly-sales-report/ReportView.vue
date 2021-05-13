@@ -29,6 +29,9 @@
 				<template v-slot:[`item.travel_agent_employee.email_ids`]="{ item }">
 					{{ item.travel_agent_employee.email_ids.join(", ") }}
 				</template>
+				<template v-slot:[`item.sales_call_data.company_data`]="{ item }">
+					{{ item && item.sales_call_data.company_data ? item.sales_call_data.company_data.name : "-" }}
+				</template>
 				<template v-slot:expanded-item="{ headers, item }">
 					<td class="expandable-section table-expanded-background " :colspan="headers.length">
 						<div class="expandable-section-title">Remark</div>
@@ -68,7 +71,7 @@
 				{ text: "Index", align: "start", value: "sales_call_data.sr_no", width: 100 },
 				{ text: "Name", value: "mortal_data.name", width: 150 },
 				{ text: "Date of Visit", value: "sales_call_data.date_of_call", width: 200 },
-				{ text: "Company Name", value: "sales_call_data.company_data.name", width: 200 },
+				{ text: "Company Name", value: "sales_call_data.company_data", width: 200 },
 				{ text: "Branch Name", value: "sales_call_data.company_address_data.branch_name", width: 150 },
 				{ text: "City", value: "sales_call_data.company_address_data.city", width: 150 },
 				{ text: "State", value: "sales_call_data.company_address_data.state", width: 150 },
