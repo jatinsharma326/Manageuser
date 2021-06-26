@@ -1,5 +1,8 @@
 <template>
 	<div class="informationCardWrapper">
+		<!-- Design a Card had some property which is dynamic class  -->
+		<!-- Mani slot which was used by the UserComponent
+		are topLeft,topRight,mainContent,mainContentSubtitle,actionButton and more-->
 		<v-card
 			:class="{
 				'remove-bottom-border-radius': show,
@@ -12,6 +15,7 @@
 		>
 			<div class="top-content-wrapper">
 				<div class="subtitle color-secondary fw-600 text-uppercase">
+					<!-- v-chip is like the button with no click and 0 opacity -->
 					<v-chip outlined x-small color="primary">
 						<slot name="topLeft"></slot>
 					</v-chip>
@@ -45,6 +49,9 @@
 					</div>
 
 					<v-spacer></v-spacer>
+					<!-- ExpandedCard is named a chevron -->
+					<!-- 11))) These Expand Card came from User as a props and then it be used according to the usage  -->
+
 					<div v-if="expandCard">
 						<v-btn color="tertiary" icon @click="show = !show">
 							<v-icon>{{ show ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>

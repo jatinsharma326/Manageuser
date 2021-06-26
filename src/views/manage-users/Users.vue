@@ -2,6 +2,8 @@
   <div class="usersComponentWrapper primary-background-color">
     <v-row class="px-6 manageusers-search-bar" justify="center" align="center">
       <v-col cols="12" sm="8" md="6">
+        <!-- The search string uses the queryString event which comes from the mixin which fetches the data -->
+        <!-- Find the query String inside the search mixin -->
         <Search
           @queryString="queryString"
           @filterObject="advanceSearch"
@@ -16,9 +18,14 @@
     <div v-if="showErrorMessage" class="content-error-message">
       {{ errorMessage }}
     </div>
-
+  <!-- This is a Card Component -->
+  <!-- 9))) Now the content come is Information Card -->
     <div class="card-wrapper">
+    <!-- 10)))  The userList is a data which came from a function getUserList() The getUserList function fetches the required data from api -->
       <div v-for="user in userList" :key="user._id" class="card-element">
+        <!-- 11))) Now we fetch out the data now we have to use the data in Information Card -->
+        <!-- expandedCard Fetches out the true function which when click toggle -->
+        <!-- These are the slots that  -->
         <InformationCard
           :expandCard="true"
           :isCardDisabled="!user.record.active"
@@ -39,6 +46,7 @@
           </template>
           <template v-slot:actionButtons>
             <template v-if="isAdminOrManagement">
+              If you are in AdminOrManagement then you will only be able to edit the buttons
               <v-btn @click="userPasswordReset(user)" color="orange " text>
                 Reset
               </v-btn>
@@ -60,6 +68,9 @@
               </div>
             </template>
           </template>
+          <!-- The slot which can be only the upper card closes here -->
+          <!-- The next slot start which is used for expanding the content came from here -->
+
           <template v-slot:expandCardContent>
             <v-list>
               <v-list-item
@@ -161,9 +172,11 @@
             </v-list>
           </template>
         </InformationCard>
+        <!-- 12)))The Whole UserForm is now over here -->
       </div>
     </div>
-
+  <!-- This is the Code if it is required then it only be work -->
+  
     <div v-if="isPaginationRequired" class="paginationWrapper text-center">
       <v-pagination
         @input="updatedPageNo"
@@ -182,7 +195,8 @@
         ></v-autocomplete>
       </div>
     </div>
-
+  <!-- This component is used to Toogle and preview the information which it had -->
+  <!-- Userform is known as modal which is open when the bottom right button is clicked -->
     <UserForm
       @formOutput="formOutput"
       @closeForm="closeForm"
@@ -193,7 +207,7 @@
       :formData="rowToEdit"
       :isEditMode="isEditMode"
     ></UserForm>
-
+<!-- isAdminOrManagement Came from defaultCRUD Mixin -->
     <div v-if="isAdminOrManagement" class="floating-button">
       <v-btn @click="openInputForm()" color="primary" dark fab>
         <v-icon>mdi-plus</v-icon>
@@ -203,10 +217,12 @@
 </template>
 
 <script>
+// Used to fetch out the userType of the Login
 import defaultCRUDMixin from "../../mixins/defaultCRUDMixins";
 import helperMixin from "../../mixins/helperMixins";
 import inputFormMixin from "../../mixins/inputFormMixin";
 import searchMixin from "../../mixins/searchMixin";
+// Helper mixins is used to fetch out the formatted Date and some other things related to date
 import helpers from "../../components/helpers";
 import { mapActions, mapGetters, mapMutations } from "vuex";
 
@@ -218,6 +234,7 @@ export default {
     userList: [],
   }),
   created() {
+    // console.log(this.filter);
     this.getData();
     this.setSearchConfig();
   },
@@ -243,6 +260,8 @@ export default {
         pageNo: this.pageNo,
       }).then((data) => {
         this.closeLoaderDialog();
+        // 2c))) what is the use of the key in checkForErrorMessage(data,key)
+        // In my Opinion The values that are stored in the Api data which is like user countries to sort this we can use the key value pair
         this.userList = this.checkForErrorMessage(data, "user");
         this.totalCount = data.totalCount;
         this.fetchCount = data.fetchCount;

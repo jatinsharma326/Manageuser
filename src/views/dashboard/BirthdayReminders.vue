@@ -4,8 +4,11 @@
       <div class="column-one column">
         <div class="title-section">
           <div class="title">Agent Birthdays</div>
+          <!-- This is the showColumn Part means when you click it shows column and it show not means it is a toogle-->
           <v-btn color="tertiary" icon @click="showColumnOne = !showColumnOne">
             <v-icon>{{
+              <!-- This show ColumnOne is treated at the bottom of the page this will give you the decent idea of how many pages you are using -->
+
               showColumnOne ? "mdi-chevron-up" : "mdi-chevron-down"
             }}</v-icon>
           </v-btn>
@@ -20,6 +23,7 @@
               :key="index + '_travelAgentEmployee'"
               class="card-element"
             >
+              <!-- Information Card which is From Components -->
               <InformationCard
                 :isBirthDate="checkForBirthDate(person.birth_date)"
                 :expandCard="false"
@@ -49,6 +53,7 @@
           </div>
         </div>
       </div>
+      <!-- This is a Second column -->
       <div class="column-two column">
         <div class="title-section">
           <div class="title">Teams Birthdays</div>
@@ -126,14 +131,17 @@ export default {
     ...mapMutations(["openLoaderDialog", "closeLoaderDialog", "openSnackbar"]),
     ...mapActions("Dashboard", ["getAgentBirthdays", "getGDEmployeeBirthdays"]),
 
+      //Increase the pages As You Click View More
     loadMoreColumnOne() {
       this.columnOnePageSize = this.columnOnePageSize + 20;
       this.getAgentBirthdayList();
     },
+    //Increase the Page of column two as you click one by one
     loadMoreColumnTwo() {
       this.columnTwoPageSize = this.columnTwoPageSize + 20;
       this.getGDEmployeeBirthdayList();
     },
+    //This Function checks the Birthdate using timezone
     checkForBirthDate(date) {
       let dateToCheck = moment(date).tz("Asia/Kolkata").format("DD-MM-YYYY");
       let dateToday = moment().tz("Asia/Kolkata").format("DD-MM-YYYY");
@@ -142,6 +150,7 @@ export default {
       }
       return false;
     },
+    //This Function come from store/index.js
     getAgentBirthdayList() {
       this.openLoaderDialog();
       this.getAgentBirthdays({
@@ -156,6 +165,8 @@ export default {
         this.columnOneTotalCount = data.totalCount;
       });
     },
+    //This is also comes from getGDEmployeeBirthdayList
+
     getGDEmployeeBirthdayList() {
       this.openLoaderDialog();
       this.getGDEmployeeBirthdays({

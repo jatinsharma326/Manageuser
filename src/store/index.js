@@ -280,6 +280,9 @@ export default new Vuex.Store({
 					.catch((err) => apiErrorFunction({ err, commit, reject }));
 			});
 		},
+
+		//InExtended User session the api get fetch and checkout which type of API you fetch
+		//The API may be of typeTenLogin or typeThirtyLogin
 		extendUserSession: ({ commit, state }, { refreshToken, currentState }) => {
 			let fail = (msg) => commit("loginFail", msg);
 			return axios
@@ -325,6 +328,8 @@ export default new Vuex.Store({
 					return { ok: false };
 				});
 		},
+
+		//This is the Important Function which is used for login Authentication or passing the data
 		login: ({ commit, state }, payload) => {
 			let fail = (msg) => commit("loginFail", msg);
 			if (!payload.username || !payload.password) {
@@ -380,6 +385,8 @@ export default new Vuex.Store({
 					return { ok: false };
 				});
 		},
+
+		//logout is used when we want to getout from the login page
 		logout: ({ commit, state }) => {
 			let fail = (msg) => commit("logoutFail", msg);
 			return axios

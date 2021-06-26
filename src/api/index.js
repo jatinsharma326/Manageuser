@@ -1,7 +1,7 @@
 const isBuildVersion = process.env.NODE_ENV === "production";
 
-const BASE_URL = isBuildVersion ? window.location.origin + "/" : "https://crmglobaldestinations.in/";
-// const BASE_URL = isBuildVersion ? window.location.origin + "/" : "http://192.168.0.14:1401/";
+const BASE_URL = isBuildVersion ? window.location.origin + "/" : "http://194.195.214.188:1401/";
+
 
 export default {
 	BASE_URL,

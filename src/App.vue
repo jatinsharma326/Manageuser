@@ -8,7 +8,7 @@
 			fixed
 			app
 		>
-			<div class="logo-wrapper"><img src="./assets/Global_Destination_Logo.png" alt="" /></div>
+			<div class="logo-wrapper"><img src="https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80" alt="" /></div>
 			<!-- <v-list color="primary" id="navigation-list" flat> -->
 			<v-list id="navigation-list" flat>
 				<template v-for="(navItem, index) of routeItems">
@@ -110,53 +110,8 @@
 					route: "/manage-agents",
 					highlight: false,
 				},
-				{
-					icon: "repeat",
-					title: "Regions and Partners",
-					route: "/regions-and-partners",
-					highlight: "#00a0ff",
-					iconColor: "#00a0ff",
-				},
-				{
-					icon: "delete_forever",
-					title: "Sales Call",
-					route: "/sales-call",
-					highlight: false,
-				},
-				{
-					icon: "loop",
-					title: "Daily Sales Report",
-					route: "/dsr",
-					highlight: "#00a0ff",
-					iconColor: "#00a0ff",
-				},
-				{
-					icon: "list_alt",
-					title: "Monthly Sales Report",
-					route: "/msr",
-					highlight: false,
-				},
-				{
-					icon: "search",
-					title: "Follow Up",
-					route: "/follow-up",
-					highlight: "#00a0ff",
-					iconColor: "#00a0ff",
-				},
-				{
-					icon: "search",
-					title: "Reports",
-					route: "/reports",
-					highlight: "#00a0ff",
-					iconColor: "#00a0ff",
-				},
-				{
-					icon: "search",
-					title: "Manage Leaves",
-					route: "/leaves",
-					highlight: "#00a0ff",
-					iconColor: "#00a0ff",
-				},
+			
+			
 			],
 		}),
 		async created() {
@@ -168,6 +123,8 @@
 				this.currentRoute = this.settingsRoute.title;
 			}
 			// this.title = this.title.split("/")[0] + " / " + this.currentRoute;
+
+      //Means what the title it becomes the current route
 			this.title = this.currentRoute;
 			let promises = [];
 			promises.push(this.getCountries());
@@ -192,34 +149,8 @@
 			setRouteItems() {
 				if (this.userType == this.ADMIN || this.userType == this.MANAGEMENT) {
 					let tempArray = [
-						{
-							icon: "search",
-							title: "Set Targets",
-							route: "/targets",
-							highlight: "#00a0ff",
-							iconColor: "#00a0ff",
-						},
-						{
-							icon: "search",
-							title: "Admin Bulletin",
-							route: "/admin-bulletin",
-							highlight: "#00a0ff",
-							iconColor: "#00a0ff",
-						},
-						{
-							icon: "search",
-							title: "Notice Board",
-							route: "/notice-board",
-							highlight: "#00a0ff",
-							iconColor: "#00a0ff",
-						},
-						{
-							icon: "search",
-							title: "Update Countries",
-							route: "/update-countries",
-							highlight: "#00a0ff",
-							iconColor: "#00a0ff",
-						},
+					
+						
 					];
 					this.routeItems = this.routeItems.concat(tempArray);
 					console.log("route items", this.routeItems);
@@ -247,7 +178,7 @@
 				this.openLoaderDialog();
 				await this.logout();
 				this.closeLoaderDialog();
-				if (this.currentRoute != "Dashboard") this.$router.push({ path: "/" });
+				if (this.currentRoute != "Dashboard") await this.$router.push({path: "/"});
 				localStorage.clear();
 				this.resetState();
 				this.$emit("userHasLoggedOut");
@@ -321,10 +252,10 @@
 	}
 
 	.toolbarWrapper {
-		background: linear-gradient(90deg, rgba(55, 182, 201, 1) 0%, rgba(166, 206, 68, 1) 100%);
+		background: linear-gradient(90deg, rgba(55, 182, 201, 1) 0%, rgb(255, 49, 49) 100%);
 	}
 	.navigationDrawerWrapper {
-		background: linear-gradient(180deg, rgba(55, 182, 201, 1) 0%, rgba(166, 206, 68, 1) 100%);
+		background: linear-gradient(180deg, rgba(55, 182, 201, 1) 0%, rgb(145, 38, 216) 100%);
 	}
 
 	.snackbarComponentWrapper {

@@ -1,5 +1,5 @@
 import constants from "@/api";
-
+// In this store JS the Use of CRUD is been initiated and through which we can reset add or delete the things
 const initialState = () => ({});
 export default {
 	namespaced: true,
@@ -17,6 +17,7 @@ export default {
 	},
 	actions: {
 		getUserList: ({ commit, dispatch }, payload) => {
+			
 			let fail = (msg) => commit("failure", msg);
 			return dispatch(
 				"apiCall",

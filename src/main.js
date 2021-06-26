@@ -11,7 +11,7 @@ import "./styles/main.scss";
 import Vuelidate from "vuelidate";
 Vue.use(Vuelidate);
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = true;
 
 router.beforeEach((to, from, next) => {
 	let userType = store.getters.userType || Number(localStorage.userType);

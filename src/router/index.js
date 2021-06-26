@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 
 const routes = [
+
 	{
 		path: "/",
 		name: "Dashoard",
@@ -22,30 +23,7 @@ const routes = [
 		component: () => import("../views/manage-agents"),
 		meta: { policy: [10, 20, 30, 40] },
 	},
-	{
-		path: "/regions-and-partners",
-		name: "Regions and Partners",
-		component: () => import("../views/representing-partner"),
-		meta: { policy: [10, 20, 30, 40] },
-	},
-	{
-		path: "/sales-call",
-		name: "Sales Call",
-		component: () => import("../views/sales-call"),
-		meta: { policy: [10, 20, 30, 40] },
-	},
-	{
-		path: "/dsr",
-		name: "Daily Sales Report",
-		component: () => import("../views/daily-sales-report"),
-		meta: { policy: [10, 20, 30, 40] },
-	},
-	{
-		path: "/msr",
-		name: "Monthly Sales Report",
-		component: () => import("../views/monthly-sales-report"),
-		meta: { policy: [10, 20, 30, 40] },
-	},
+	
 	{
 		path: "/follow-up",
 		name: "Follow Up",
@@ -70,12 +48,7 @@ const routes = [
 		component: () => import("../views/leave-manager"),
 		meta: { policy: [10, 20, 30, 40] },
 	},
-	{
-		path: "/targets",
-		name: "Manage Targets",
-		component: () => import("../views/manage-targets"),
-		meta: { policy: [10, 20] },
-	},
+
 	{
 		path: "/virtual-reach",
 		name: "Virtual Reach",
@@ -88,21 +61,11 @@ const routes = [
 		component: () => import("../views/admin-bulletin"),
 		meta: { policy: [10, 20] },
 	},
-	{
-		path: "/notice-board",
-		name: "Notice Board",
-		component: () => import("../views/notice-board"),
-		meta: { policy: [10, 20] },
-	},
-	{
-		path: "/update-countries",
-		name: "Update Countries",
-		component: () => import("../views/update-countries"),
-		meta: { policy: [10, 20] },
-	},
+
 ];
 
 const router = new VueRouter({
+	mode:'history',
 	routes,
 });
 

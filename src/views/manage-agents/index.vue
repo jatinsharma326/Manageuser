@@ -1,5 +1,6 @@
 <template>
 	<div class="agentsWrapper primary-background-color">
+    <!-- This is Search and upper part -->
 		<v-row class="px-6 manageagents-search-bar" justify="space-around" align="center">
 			<v-col cols="12" sm="8" md="6">
 				<Search
@@ -20,7 +21,7 @@
 		<div v-if="showErrorMessage" class="content-error-message">
 			{{ errorMessage }}
 		</div>
-
+    <!-- Upto This -->
 		<div v-if="listLayout" class="info-table">
 			<v-data-table
 				:items-per-page="pageSize"

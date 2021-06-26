@@ -1,11 +1,17 @@
 <template>
 	<div class="manageUserWrapper">
+    <!-- It Give out three name which on click fetch some of the component -->
 		<v-tabs grow v-model="tab">
-			<v-tab v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">{{ ele.name }}</v-tab>
+			<!-- This line fetches the route with tabConfig as state -->
+			<v-tab v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">{{ ele.name }}</v-tab> 
 		</v-tabs>
+		<!-- This fetches the item f which we want to display when the tab were clicked respectively  -->
+		<!-- This is the container in which the item helds -->
 		<v-tabs-items class="tabItemWrapper" v-model="tab">
+			<!-- These are the items that were display -->
 			<v-tab-item v-for="(ele, index) in tabConfig" :key="ele.id + '__' + index">
 				<!-- <component :dataProp="ele.props" v-bind:is="ele.component" /> -->
+        <!-- The Search Component is also plaaced in User -->
 				<Users v-bind="{ ...ele.props }"></Users>
 			</v-tab-item>
 		</v-tabs-items>
@@ -21,6 +27,7 @@
 		components: { Users },
 		async created() {
 			// this.getPartnerList();
+			console.warn(this.name);
 			await this.getCountryList();
 			this.setTabConfig(this.activeCountriesList);
 		},
@@ -36,6 +43,7 @@
 			// ...mapActions(["getPartnerList"]),
 			...mapActions("ManageTargets", ["getActiveCountries"]),
 			getCountryList() {
+				
 				return this.getActiveCountries().then((data) => {
 					this.activeCountriesList = data.list;
 				});

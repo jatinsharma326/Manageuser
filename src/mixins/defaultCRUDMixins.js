@@ -1,3 +1,4 @@
+// 8))) In the default CRUD mixin this helps to check out the userType if it is ADMIN or Management
 import InformationCard from "../components/InformationCard.vue";
 import ViewMoreModal from "../components/ViewMoreModal";
 import { mapActions, mapGetters, mapMutations } from "vuex";
